@@ -1,14 +1,20 @@
+using Dalamud.Game.ClientState.Statuses;
+using FFXIVClientStructs.FFXIV.Common.Lua;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Net.Sockets;
+using System.Net.WebSockets;
 using System.Security.Authentication;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using WoLightning.Types;
+using static FFXIVClientStructs.FFXIV.Client.UI.AddonActionCross;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace WoLightning.Classes
@@ -34,46 +40,27 @@ namespace WoLightning.Classes
     public class ClientWebserver : IDisposable // Todo - Rewrite.
     {
         private readonly Plugin Plugin;
+
+        public ConnectionStatusWebserver Status = ConnectionStatusWebserver.NotStarted;
+
+        private ClientWebSocket? WebSocket;
+        private readonly Uri Address = new Uri("wss://localhost:7149");
+        
+
         public string ServerVersion = string.Empty;
-        private List<double> lastPings { get; set; } = new(); // Todo implement proper Ping class instead
 
-        private readonly double maxPingsStored = 5;
-        public ConnectionStatusWebserver Status { get; set; } = ConnectionStatusWebserver.NotStarted;
-        public readonly TimerPlus PingTimer = new TimerPlus();
-        private readonly double pingSpeed = new TimeSpan(0, 0, 3).TotalMilliseconds;
-        private readonly double retrySpeed = new TimeSpan(0, 3, 0).TotalMilliseconds;
-
-        public bool failsafe { get; set; } = false;
-
-        private HttpClient? Client;
         public ClientWebserver(Plugin plugin)
         {
             Plugin = plugin;
-            lastPings.EnsureCapacity(6);
+            
         }
         public void Dispose()
         {
-            if (Client != null)
-            {
-                Client.CancelPendingRequests();
-                Client.Dispose();
-                Client = null;
-            }
-            PingTimer.Stop();
-            PingTimer.Dispose();
+            
         }
-
-        public int Ping()
+        public async void Connect()
         {
-            double avg = 0;
-            if (lastPings.Count > 5) lastPings = lastPings.Slice(0, 5);
-            foreach (double time in lastPings) avg += time;
-            return (int)(avg / lastPings.Count / 3); // adjusted due to the 3 second pinging
-        }
-
-        public void createHttpClient()
-        {
-            if (Client != null) return;
+            if (WebSocket != null) return;
 
             if(Plugin.Authentification.DevKey.Length == 0)
             {
@@ -89,167 +76,52 @@ namespace WoLightning.Classes
                 return;
             }
 
-            var handler = new HttpClientHandler();
-            handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-            handler.SslProtocols = SslProtocols.Tls12;
-            handler.ClientCertificates.Add(Plugin.Authentification.getCertificate());
-            handler.AllowAutoRedirect = true;
-            handler.MaxConnectionsPerServer = 2;
-
-            handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, error) => { return cert != null && handler.ClientCertificates.Contains(cert); };
-            Client = new(handler) { Timeout = TimeSpan.FromSeconds(10) };
-            Plugin.Log("ClientWebserver successfully created!");
-
-            connect();
+            try
+            {
+                WebSocket = new ClientWebSocket();
+                await WebSocket.ConnectAsync(Address, new CancellationToken());
+                await WebSocket.SendAsync(Encoding.UTF8.GetBytes("New Connection"), WebSocketMessageType.Text, true, CancellationToken.None);
+                Receive();
+                Plugin.Log(WebSocket.State.ToString());
+            }
+            catch (Exception ex) { FatalError(ex); }
         }
 
-        public void connect()
+        public async void Disconnect()
         {
-            PingTimer.Interval = pingSpeed;
-            PingTimer.Elapsed -= sendPing; // make sure we only have one ping event
-            PingTimer.Elapsed += sendPing;
-            PingTimer.Start();
-            request(OperationCode.Login);
-        }
-        public void disconnect()
-        {
-            PingTimer.Interval = retrySpeed;
-            PingTimer.Refresh();
-        }
-        public void disconnect(bool force)
-        {
-            PingTimer.Interval = retrySpeed;
-            if (PingTimer.Enabled) PingTimer.Elapsed -= sendPing;
-            if (PingTimer.Enabled) PingTimer.Stop();
+            if (WebSocket == null) return;
+            try
+            {
+                await WebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None);
+                Plugin.Log(WebSocket.State.ToString());
+            }
+            catch (Exception ex) { FatalError(ex); }
         }
 
-        public void request(OperationCode Op) { request(Op, null, null); }
-        public void request(OperationCode Op, String? OpData) { request(Op, OpData, null); }
-        public async void request(OperationCode Op, String? OpData, Player? Target)
+        public void Send(OperationCode Op) { Send(Op, null, null); }
+        public void Send(OperationCode Op, String? OpData) { Send(Op, OpData, null); }
+        public async void Send(OperationCode Op, String? OpData, Player? Target)
         {
             if (Status == ConnectionStatusWebserver.Unavailable) return;
-
-            if (Plugin.ClientState.LocalPlayer == null ||
-                Client == null) return;
-
-
-
-
-            NetPacket packet = new NetPacket(Op, Plugin.LocalPlayer, OpData, Target);
-
-            using StringContent jsonContent = new(
-                JsonSerializer.Serialize(new
-                {
+            if (WebSocket == null || Plugin.ClientState.LocalPlayer == null) return;
+            try
+            {
+                NetPacket packet = new NetPacket(Op, Plugin.LocalPlayer, OpData, Target);
+                string message = JsonSerializer.Serialize(new {
                     hash = "n982093c09209jg0920g", // Plugin.Authentification.getHash()
                     devKey = Plugin.Authentification.DevKey,
                     packet,
-                }),
-            Encoding.UTF8,
-            "application/json");
-
-            try
-            {
-
-                Stopwatch timeTaken = Stopwatch.StartNew();
-                var s = await Client.PostAsync($"https://theheadpatcat.ddns.net/post/WoLightning", jsonContent);
-                timeTaken.Stop();
-                lastPings.Insert(0, timeTaken.ElapsedMilliseconds);
-                switch (s.StatusCode)
-                {
-
-                    case HttpStatusCode.OK:
-                        if (PingTimer.Interval != pingSpeed) // todo add more precise logic
-                        {
-                            PingTimer.Interval = pingSpeed;
-                            if (PingTimer.Enabled) PingTimer.Refresh();
-                            else PingTimer.Start();
-                            Plugin.Log("Reset Timer");
-                        }
-                        Status = ConnectionStatusWebserver.Connected;
-                        if (s.Content != null) processResponse(packet, s.Content.ReadAsStringAsync());
-                        break;
-
-                    case HttpStatusCode.Locked:
-                        Status = ConnectionStatusWebserver.DevMode;
-                        Plugin.Log("The Server is currently in DevMode.");
-                        disconnect();
-                        break;
-
-                    // Softerrors DEPRECATED
-                    case HttpStatusCode.Unauthorized:
-                        Status = ConnectionStatusWebserver.UnknownUser;
-                        Plugin.Log("The Server dídnt know us, so we got registered.");
-                        if (s.Content != null) processResponse(packet, s.Content.ReadAsStringAsync());
-                        break;
-
-                    case HttpStatusCode.UpgradeRequired:
-                        Status = ConnectionStatusWebserver.Outdated;
-                        Plugin.Log("We are running a outdated Version.");
-                        if (s.Content != null) processResponse(packet, s.Content.ReadAsStringAsync());
-                        break;
-
-                    case HttpStatusCode.Forbidden:
-                        Status = ConnectionStatusWebserver.InvalidKey;
-                        Plugin.Error("Our Key does not match the key on the Serverside.", packet);
-                        break;
-
-
-                    // Harderrors
-                    case HttpStatusCode.NotFound:
-                        Status = ConnectionStatusWebserver.FatalError;
-                        Plugin.Error("We sent a invalid Request to the Server.", packet);
-                        break;
-                    case HttpStatusCode.InternalServerError:
-                        Status = ConnectionStatusWebserver.FatalError;
-                        Plugin.Error("We sent a invalid Packet to the Server.", packet);
-                        break;
-
-                    default:
-                        Status = ConnectionStatusWebserver.FatalError;
-                        Plugin.Error($"Unknown Response {s.StatusCode}", packet);
-                        return;
-                }
+                });
+                await WebSocket.SendAsync(Encoding.UTF8.GetBytes(message), WebSocketMessageType.Text, true, CancellationToken.None);
             }
-            catch (TaskCanceledException ex) when (ex.InnerException is TimeoutException)
-            {
-
-                Status = ConnectionStatusWebserver.WontRespond;
-                Plugin.Log("The Server is not responding.");
-                disconnect();
-                return;
-            }
-            catch (TaskCanceledException ex)
-            {
-                Plugin.Error("Running Request was Cancelled.", ex);
-                return;
-            }
-            catch (HttpRequestException)
-            {
-
-                Status = ConnectionStatusWebserver.WontRespond;
-                Plugin.Log("The Server is online, but refused the connection.");
-                disconnect();
-                return;
-            }
-            catch (Exception ex)
-            {
-
-                Status = ConnectionStatusWebserver.FatalError;
-                Client.CancelPendingRequests();
-                Plugin.Error(ex.ToString());
-                disconnect(true);
-                return;
-            }
-
+            catch (Exception ex) { FatalError(ex); }
         }
 
-        private async void processResponse(NetPacket originalPacket, Task<String> responseString)
+        private void processResponse(NetPacket originalPacket, string responseMessage)
         {
             try
             {
-                String? s = await responseString;
-                if (s == null) return;
-                NetPacket? re = JsonSerializer.Deserialize<NetPacket>(s);
+                NetPacket? re = JsonSerializer.Deserialize<NetPacket>(responseMessage);
                 if (re == null) return;
 
                 if (!re.validate())
@@ -272,25 +144,73 @@ namespace WoLightning.Classes
 
                 if (re.Operation != OperationCode.Ping) Plugin.Log(re);
 
-                String? result = Plugin.Operation.execute(originalPacket, re);
-                if (result != null)
+                String? errorMessage = Plugin.Operation.execute(originalPacket, re);
+                if (errorMessage != null)
                 {
-                    Plugin.Error(result, re);
+                    Plugin.Error(errorMessage, re);
                     return;
                 }
 
             }
-            catch (Exception ex)
-            {
-                Plugin.Error(ex.ToString());
-            }
+            catch (Exception ex) { FatalError(ex); }
         }
 
-        internal void sendPing(object? o, ElapsedEventArgs? e)
+        private async void Receive()
         {
-            if (Status != ConnectionStatusWebserver.Connected) request(OperationCode.Login);
-            else request(OperationCode.Ping);
+            if (WebSocket == null) return;
+            Status = ConnectionStatusWebserver.Connected;
+
+            try
+            {
+                List<byte> webSocketPayload = new List<byte>(1024 * 4);
+                byte[] MessageBuffer = new byte[1024 * 4];
+                bool connectionAlive = true;
+                await Task.Run(async () =>
+                {
+                    while (connectionAlive)
+                    {
+                        webSocketPayload.Clear();
+
+                        WebSocketReceiveResult? webSocketResponse;
+                        do
+                        {
+                            // Wait until Server sends message
+                            webSocketResponse = await WebSocket.ReceiveAsync(MessageBuffer, CancellationToken.None);
+
+                            // Save bytes
+                            webSocketPayload.AddRange(new ArraySegment<byte>(MessageBuffer, 0, webSocketResponse.Count));
+                        }
+                        while (webSocketResponse.EndOfMessage == false);
+
+                        if (webSocketResponse.MessageType == WebSocketMessageType.Text)
+                        {
+                            // 3. Convert textual message from bytes to string
+                            string message = Encoding.UTF8.GetString(webSocketPayload.ToArray());
+                            Plugin.Log($"Server says {message}");
+                        }
+                        else if (webSocketResponse.MessageType == WebSocketMessageType.Close)
+                        {
+                            // 4. Close the connection
+                            Plugin.Log($"Server has closed the Connection.");
+                            connectionAlive = false;
+                        }
+                    }
+                });
+            }
+            catch (Exception ex) { FatalError(ex); }
         }
 
+        internal void FatalError(Exception ex)
+        {
+            Status = ConnectionStatusWebserver.FatalError;
+            try
+            {
+                WebSocket.Abort();
+                WebSocket.Dispose();
+            }
+            catch(Exception ex2) { Plugin.Log(ex2.ToString()); }
+            WebSocket = null;
+            Plugin.Log(ex.ToString());
+        }
     }
 }
