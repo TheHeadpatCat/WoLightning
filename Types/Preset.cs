@@ -18,6 +18,8 @@ namespace WoLightning.Types
         public float globalTriggerCooldownGate { get; set; } = 0.75f;
         public bool showCooldownNotifs { get; set; } = false;
 
+        public bool isWhitelistEnabled { get; set; } = false;
+
 
         // Social Triggers
         public Trigger GetPat { get; set; } = new Trigger("GetPat","You got pat'd!",false);

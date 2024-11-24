@@ -139,7 +139,7 @@ namespace WoLightning
             }
             if (ActivePreset.Die.IsEnabled() && LocalPlayer.CurrentHp == 0 && !wasDead)
             {
-                Plugin.ClientPishock.request(ActivePreset.Die);
+                Plugin.ClientPishock.request(ActivePreset.Die, Plugin.LocalPlayer);
                 wasDead = false;
             }
 
@@ -152,9 +152,9 @@ namespace WoLightning
                 {
                     int calcdIntensity = (int)((double)ActivePreset.TakeDamage.Intensity * ((double)amountPercent / ActivePreset.TakeDamage.CustomData["Proportional"][1]));
                     int calcdDuration = (int)((double)ActivePreset.TakeDamage.Duration * ((double)amountPercent / ActivePreset.TakeDamage.CustomData["Proportional"][1]));
-                    Plugin.ClientPishock.request(ActivePreset.TakeDamage, [(int)ActivePreset.TakeDamage.OpMode, calcdIntensity, calcdDuration]);
+                    Plugin.ClientPishock.request(ActivePreset.TakeDamage,Plugin.LocalPlayer, [(int)ActivePreset.TakeDamage.OpMode, calcdIntensity, calcdDuration]);
                 }
-                else Plugin.ClientPishock.request(ActivePreset.TakeDamage);
+                else Plugin.ClientPishock.request(ActivePreset.TakeDamage, Plugin.LocalPlayer);
             }
             if (lastHP > 0) wasDead = false;
         }
@@ -185,9 +185,9 @@ namespace WoLightning
                             {
                                 int calcdIntensity = ActivePreset.FailMechanic.Intensity * (amount / ActivePreset.FailMechanic.CustomData["Proportional"][1]);
                                 int calcdDuration = ActivePreset.FailMechanic.Duration * (amount / ActivePreset.FailMechanic.CustomData["Proportional"][1]);
-                                Plugin.ClientPishock.request(ActivePreset.FailMechanic, [(int)ActivePreset.FailMechanic.OpMode, calcdIntensity, calcdDuration]);
+                                Plugin.ClientPishock.request(ActivePreset.FailMechanic, Plugin.LocalPlayer, [(int)ActivePreset.FailMechanic.OpMode, calcdIntensity, calcdDuration]);
                             }
-                            else Plugin.ClientPishock.request(ActivePreset.FailMechanic);
+                            else Plugin.ClientPishock.request(ActivePreset.FailMechanic, Plugin.LocalPlayer);
                         }
                         lastVulnAmount = amount;
                     }
@@ -203,9 +203,9 @@ namespace WoLightning
                             {
                                 int calcdIntensity = ActivePreset.FailMechanic.Intensity * (amount / ActivePreset.FailMechanic.CustomData["Proportional"][1]);
                                 int calcdDuration = ActivePreset.FailMechanic.Duration * (amount / ActivePreset.FailMechanic.CustomData["Proportional"][1]);
-                                Plugin.ClientPishock.request(ActivePreset.FailMechanic, [(int)ActivePreset.FailMechanic.OpMode, calcdIntensity, calcdDuration]);
+                                Plugin.ClientPishock.request(ActivePreset.FailMechanic, Plugin.LocalPlayer, [(int)ActivePreset.FailMechanic.OpMode, calcdIntensity, calcdDuration]);
                             }
-                            else Plugin.ClientPishock.request(ActivePreset.FailMechanic);
+                            else Plugin.ClientPishock.request(ActivePreset.FailMechanic, Plugin.LocalPlayer);
                         }
                         lastDDownAmount = amount;
                     }
@@ -221,8 +221,10 @@ namespace WoLightning
             {
                 deadIndexes[lastCheckedIndex] = true;
                 amountDead++;
-                Plugin.Log($"(Deathmode) - Player died - {amountDead}/{Plugin.PartyList.Length} members are dead.");
-                Plugin.ClientPishock.request(ActivePreset.PartymemberDies, [(int)ActivePreset.PartymemberDies.OpMode, ActivePreset.PartymemberDies.Intensity * (amountDead / Plugin.PartyList.Length), ActivePreset.PartymemberDies.Duration * (amountDead / Plugin.PartyList.Length)]);
+                Player source = new Player(Plugin.PartyList[lastCheckedIndex].Name.ToString(), (int)Plugin.PartyList[lastCheckedIndex].World.Value.RowId);
+                Plugin.Log($"(Deathmode) - Player {source.getFullName()} died - {amountDead}/{Plugin.PartyList.Length} members are dead.");
+
+                Plugin.ClientPishock.request(ActivePreset.PartymemberDies, source, [(int)ActivePreset.PartymemberDies.OpMode, ActivePreset.PartymemberDies.Intensity * (amountDead / Plugin.PartyList.Length), ActivePreset.PartymemberDies.Duration * (amountDead / Plugin.PartyList.Length)]);
             }
             else if (Plugin.PartyList[lastCheckedIndex].ObjectId > 0 && Plugin.PartyList[lastCheckedIndex].CurrentHP > 0 && deadIndexes[lastCheckedIndex])
             {
@@ -255,7 +257,7 @@ namespace WoLightning
 
                         if (message.ToString().ToLower().Contains(word.ToLower()))
                         {
-                            Plugin.ClientPishock.request(ActivePreset.SayBadWord, $"You said the bad word: {word}!", settings);
+                            Plugin.ClientPishock.request(ActivePreset.SayBadWord, Plugin.LocalPlayer, $"You said the bad word: {word}!", settings);
                         }
                     }
                 }
@@ -272,7 +274,7 @@ namespace WoLightning
                     }
                     if (!found)
                     {
-                        Plugin.ClientPishock.request(ActivePreset.DontSayWord);
+                        Plugin.ClientPishock.request(ActivePreset.DontSayWord, Plugin.LocalPlayer);
                     }
                 }
 
@@ -284,7 +286,7 @@ namespace WoLightning
                     {
                         if (FirstPersonWords.Contains(word))
                         {
-                            Plugin.ClientPishock.request(ActivePreset.SayFirstPerson);
+                            Plugin.ClientPishock.request(ActivePreset.SayFirstPerson, Plugin.LocalPlayer);
                         }
                     }
                 }
@@ -302,7 +304,7 @@ namespace WoLightning
                         {
                             if (part.Length == 1 && part == "1")
                             {
-                                Plugin.ClientPishock.request(ActivePreset.LoseDeathRoll);
+                                Plugin.ClientPishock.request(ActivePreset.LoseDeathRoll, Plugin.LocalPlayer);
                             }
                         }
                     }
@@ -324,7 +326,7 @@ namespace WoLightning
                     //Plugin.Log(message.TextValue,true);
                     if (trigger.IsEnabled() && trigger.Regex != null && trigger.Regex.IsMatch(message.TextValue))
                     {
-                        Plugin.ClientPishock.request(trigger, "[CT] " + trigger.Name + " triggered!");
+                        Plugin.ClientPishock.request(trigger, Plugin.LocalPlayer, "[CT] " + trigger.Name + " triggered!");
                     }
                 }
             }
@@ -361,11 +363,13 @@ namespace WoLightning
 
             if (ActivePreset.GetPat.IsEnabled() && emoteId == 105)
             {
-                Plugin.ClientPishock.request(ActivePreset.GetPat, $"You got pat'd by {sourceObj.Name}!");
+                Player source = new Player(sourceObj.Name.ToString(), (int)sourceObj.HomeWorld.Value.RowId);
+                Plugin.ClientPishock.request(ActivePreset.GetPat,source, $"You got pat'd by {sourceObj.Name}!");
             }
             if (ActivePreset.GetSnapped.IsEnabled() && emoteId == 205)
             {
-                Plugin.ClientPishock.request(ActivePreset.GetSnapped, $"You got snapped at by {sourceObj.Name}!");
+                Player source = new Player(sourceObj.Name.ToString(), (int)sourceObj.HomeWorld.Value.RowId);
+                Plugin.ClientPishock.request(ActivePreset.GetSnapped,source, $"You got snapped at by {sourceObj.Name}!");
             }
 
         }
@@ -400,7 +404,7 @@ namespace WoLightning
                 {
                     sittingOnChair = true;
                     sittingOnChairPos = Plugin.ClientState.LocalPlayer.Position;
-                    Plugin.ClientPishock.request(ActivePreset.SitOnFurniture);
+                    Plugin.ClientPishock.request(ActivePreset.SitOnFurniture,Plugin.LocalPlayer);
                     int calc = 5000;
                     if (ActivePreset.SitOnFurniture.Duration <= 10) calc += ActivePreset.SitOnFurniture.Duration * 1000;
                     sittingOnChairTimer.Interval = calc;
@@ -424,7 +428,7 @@ namespace WoLightning
         {
             if (sittingOnChair && Plugin.ClientState.LocalPlayer.Position.Equals(sittingOnChairPos))
             {
-                Plugin.ClientPishock.request(ActivePreset.SitOnFurniture, $"You are still sitting on Furniture!");
+                Plugin.ClientPishock.request(ActivePreset.SitOnFurniture, Plugin.LocalPlayer, $"You are still sitting on Furniture!");
                 sittingOnChairTimer.Refresh();
             }
             else

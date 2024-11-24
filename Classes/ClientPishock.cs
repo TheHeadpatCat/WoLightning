@@ -59,10 +59,10 @@ namespace WoLightning.Classes
             Client.CancelPendingRequests();
         }
 
-        public async void request(Trigger TriggerObject){ request(TriggerObject, null, null); }
-        public async void request(Trigger TriggerObject, string overrideNotif) { request(TriggerObject, overrideNotif, null); }
-        public async void request(Trigger TriggerObject, int[] overrideSettings) { request(TriggerObject, null, overrideSettings); }
-        public async void request(Trigger TriggerObject, string? overrideNotif, int[]? overrideSettings) 
+        public async void request(Trigger TriggerObject, Player SourcePlayer){ request(TriggerObject,SourcePlayer , null, null); }
+        public async void request(Trigger TriggerObject, Player SourcePlayer , string overrideNotif) { request(TriggerObject,SourcePlayer , overrideNotif, null); }
+        public async void request(Trigger TriggerObject, Player SourcePlayer , int[] overrideSettings) { request(TriggerObject,SourcePlayer , null, overrideSettings); }
+        public async void request(Trigger TriggerObject, Player SourcePlayer , string? overrideNotif, int[]? overrideSettings) 
         {
             Plugin.Log($"{TriggerObject.Name} fired - sending request for {TriggerObject.Shockers.Count} shockers.");
             
@@ -96,6 +96,32 @@ namespace WoLightning.Classes
                 return;
             }
 
+            try
+            {
+                if (SourcePlayer.getFullName() != Plugin.LocalPlayer.getFullName()) // The Trigger got activated by some 3rd party - Check for Whitelist/Blacklist
+                {
+                    var PermissionList = Plugin.Configuration.PermissionList;
+
+                    int permissionLevel = -1;
+                    if(PermissionList.ContainsKey(SourcePlayer.getFullName())) permissionLevel = PermissionList[SourcePlayer.getFullName()];
+
+                    if (permissionLevel < 1 && Plugin.Configuration.ActivePreset.isWhitelistEnabled)
+                    {
+                        Plugin.Log($" -> Blocked due to Whitelist Filter!\n{SourcePlayer.getFullName} - Permission Level: {permissionLevel}");
+                        return;
+                    }
+
+                    if (permissionLevel == 0)
+                    {
+                        Plugin.Log($" -> Blocked due to Blacklist!\n{SourcePlayer.getFullName} - Permission Level: {permissionLevel}");
+                        return;
+                    }
+                }
+            }
+
+        catch (Exception ex) {
+                Plugin.Error(ex.ToString());
+            }
             Plugin.Log($" -> Data Validated. Creating Requests...");
 
             #endregion Validation

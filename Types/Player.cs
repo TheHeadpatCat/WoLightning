@@ -155,7 +155,7 @@ namespace WoLightning.Types
 
         public string getFullName()
         {
-            return Name + "@" + WorldId;
+            return Name + "@" + getWorldName();
         }
 
         public bool validate()

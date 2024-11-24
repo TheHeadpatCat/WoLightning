@@ -49,11 +49,11 @@ public class ConfigWindow : Window, IDisposable
 
 
     // Permission List
-    private String PermissionListInput = new String("");
-    private int PermissionListSetting = -1;
+    private Player? SelectedPlayer = null;
+    private String SelectedPlayerName = new String("None");
+    private int PermissionListSetting = 1;
     private int PermissionListLevel = 0;
     private int currentPermissionIndex = -1;
-    private String selectedPlayerName = new String("");
 
 
     // Sharewindows
@@ -164,7 +164,7 @@ public class ConfigWindow : Window, IDisposable
             if (Configuration.ActivePreset.SayBadWord.IsEnabled()) DrawBadWordList();
             if (Configuration.ActivePreset.DontSayWord.IsEnabled()) DrawEnforcedWordList();
             DrawCustomTriggerTab();
-            //DrawPermissionsTab(); todo make work again
+            DrawPermissionsTab();
             //DrawCommandTab(); todo not implemented
             if (Configuration.DebugEnabled) DrawDebugTab();
 
@@ -324,6 +324,10 @@ public class ConfigWindow : Window, IDisposable
             ImGui.TextDisabled(" (?)");
             if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Activating this will show little Windows on the bottom right" +
                 "\nthat will tell you how much time is left until that trigger can activate again."); }
+
+
+
+
 
             if (Plugin.Authentification.isDisallowed) ImGui.EndDisabled();
             ImGui.EndTabItem();
@@ -566,39 +570,65 @@ public class ConfigWindow : Window, IDisposable
 
             if (Plugin.Authentification.isDisallowed) ImGui.BeginDisabled();
 
-            var PermissionList = Configuration.PermissionList;
-            if (ImGui.InputTextWithHint("##PlayerAddPerm", "Enter a player name or click on a entry", ref PermissionListInput, 48))
+            bool isWhitelistEnabled = Configuration.ActivePreset.isWhitelistEnabled;
+            if (ImGui.Checkbox("Activate Whitelist", ref isWhitelistEnabled))
             {
-                if (currentPermissionIndex != -1) // Get rid of the old settings, otherwise we build connections between two items
-                {
-                    PermissionListSetting = -1;
-                }
-            }
-
-            ImGui.ListBox("##PermissionLevel", ref PermissionListSetting, ["Blocked", "Whitelisted", "Privileged"], 3);
-
-
-            if (ImGui.Button("Add Player", new Vector2(45, 25)))
-            {
-                if (PermissionList.ContainsKey(PermissionListInput.ToLower())) PermissionList.Remove(PermissionListInput);
-                PermissionList.Add(PermissionListInput.ToLower(), PermissionListSetting);
-                Configuration.PermissionList = PermissionList;
+                Configuration.ActivePreset.isWhitelistEnabled = isWhitelistEnabled;
                 Configuration.Save();
-                currentPermissionIndex = -1;
-                PermissionListInput = new String("");
-                PermissionListSetting = -1;
-                selectedPlayerName = new String("");
             }
             ImGui.SameLine();
-            if (ImGui.Button("Remove Player", new Vector2(45, 25)))
+            ImGui.TextDisabled(" (?)");
+            if (ImGui.IsItemHovered())
             {
-                if (PermissionList.ContainsKey(PermissionListInput)) PermissionList.Remove(PermissionListInput);
+                ImGui.SetTooltip("If the Whitelist is enabled, only Whitelisted players can interact with this Plugin." +
+                "\nBlacklisted Players can never interact with it, regardless of this Setting.");
+            }
+
+            ImGui.Spacing();
+            
+            var PermissionList = Configuration.PermissionList;
+
+            IGameObject? st = Plugin.TargetManager.Target;
+            if (st != null && st.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.Player)
+            {
+                IPlayerCharacter st1 = (IPlayerCharacter)st;
+                if (SelectedPlayer == null || SelectedPlayer.Name != st1.Name.ToString())
+                {
+                    SelectedPlayer = new Player(st1.Name.ToString(), (int)st1.HomeWorld.Value.RowId);
+                }
+            }
+            else SelectedPlayer = null;
+
+            if (SelectedPlayer != null) SelectedPlayerName = SelectedPlayer.Name + "@" + SelectedPlayer.getWorldName();
+
+            ImGui.Text("Select a Player ingame, or from the List.");
+            ImGui.BeginDisabled();
+            ImGui.InputText("##SelectedPlayer", ref SelectedPlayerName, 512, ImGuiInputTextFlags.ReadOnly);
+            ImGui.EndDisabled();
+
+
+            ImGui.ListBox("##PermissionLevel", ref PermissionListSetting, ["Blacklisted", "Whitelisted"], 2);
+
+
+            if (ImGui.Button("Add Player", new Vector2(75, 25)))
+            {
+                if (SelectedPlayerName == "None") return;
+                if (PermissionList.ContainsKey(SelectedPlayerName)) PermissionList.Remove(SelectedPlayerName);
+                PermissionList.Add(SelectedPlayerName, PermissionListSetting);
                 Configuration.PermissionList = PermissionList;
                 Configuration.Save();
                 currentPermissionIndex = -1;
-                PermissionListInput = new String("");
-                PermissionListSetting = -1;
-                selectedPlayerName = new String("");
+                SelectedPlayerName = new String("None");
+            }
+            ImGui.SameLine();
+            if (ImGui.Button("Remove Player", new Vector2(100, 25)))
+            {
+                if (SelectedPlayerName == "None") return;
+                if (PermissionList.ContainsKey(SelectedPlayerName)) PermissionList.Remove(SelectedPlayerName);
+                Configuration.PermissionList = PermissionList;
+                Configuration.Save();
+                currentPermissionIndex = -1;
+                SelectedPlayerName = new String("None");
             }
 
 
@@ -610,24 +640,17 @@ public class ConfigWindow : Window, IDisposable
                 {
                     bool is_Selected = (BadcurrentWordIndex == index);
                     var permissionleveltext = new String("");
-                    switch (permissionlevel) { case 0: permissionleveltext = "Blocked"; break; case 1: permissionleveltext = "Whitelisted"; break; case 2: permissionleveltext = "Privileged"; break; };
+                    switch (permissionlevel) { case 0: permissionleveltext = "Blacklisted"; break; case 1: permissionleveltext = "Whitelisted"; break; };
                     if (ImGui.Selectable($" Player: {name}   Permission: {permissionleveltext}", ref is_Selected))
                     {
-                        selectedPlayerName = name;
+                        SelectedPlayerName = name;
                         currentPermissionIndex = index;
-                        PermissionListInput = name;
                         PermissionListSetting = permissionlevel;
                     }
                     index++;
                 }
                 ImGui.EndListBox();
             }
-
-
-            ImGui.TextWrapped(" - \"Privileged\" allows a player to enable/disable your triggers through messages. [Currently Unused]");
-            ImGui.TextWrapped(" - \"Whitelisted\" allows a player to activate your triggers, when you have \"Whitelist Mode\" on.");
-            ImGui.TextWrapped(" - \"Blocked\" disallows a player from interacting with this plugin in any way.");
-
             ImGui.EndTabItem();
         }
     }
