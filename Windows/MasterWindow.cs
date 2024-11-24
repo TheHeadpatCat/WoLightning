@@ -89,7 +89,7 @@ public class MasterWindow : Window, IDisposable
                 IPlayerCharacter st1 = (IPlayerCharacter)st;
                 if (selectedMaster == null || selectedMaster.Name != st1.Name.ToString())
                 {
-                    selectedMaster = new Player(st1.Name.ToString(), (int)st1.HomeWorld.Id);
+                    selectedMaster = new Player(st1.Name.ToString(), (int)st1.HomeWorld.Value.RowId);
                 }
             }
 

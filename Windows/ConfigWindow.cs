@@ -674,7 +674,7 @@ public class ConfigWindow : Window, IDisposable
                 IPlayerCharacter st1 = (IPlayerCharacter)st;
                 if (debugPlayerTarget == null || debugPlayerTarget.Name != st1.Name.ToString())
                 {
-                    debugPlayerTarget = new Player(st1.Name.ToString(), (int)st1.HomeWorld.Id);
+                    debugPlayerTarget = new Player(st1.Name.ToString(), (int)st1.HomeWorld.Value.RowId);
                 }
             }
 

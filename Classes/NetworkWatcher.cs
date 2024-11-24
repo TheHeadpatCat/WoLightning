@@ -172,7 +172,7 @@ namespace WoLightning
                 foreach (var status in LocalPlayer.StatusList)
                 {
                     //Yes. We have to check for the IconId. The StatusId is different for different expansions, while the Name is different through languages.
-                    if (status.GameData.Icon >= 17101 && status.GameData.Icon <= 17116) // Vuln Up
+                    if (status.GameData.Value.Icon >= 17101 && status.GameData.Value.Icon <= 17116) // Vuln Up
                     {
                         foundVuln = true;
                         var amount = status.StackCount;
@@ -192,7 +192,7 @@ namespace WoLightning
                         lastVulnAmount = amount;
                     }
 
-                    if (status.GameData.Icon >= 18441 && status.GameData.Icon <= 18456) // Damage Down
+                    if (status.GameData.Value.Icon >= 18441 && status.GameData.Value.Icon <= 18456) // Damage Down
                     {
                         foundDDown = true;
                         var amount = status.StackCount;
@@ -337,7 +337,7 @@ namespace WoLightning
             Plugin.ClientState.Logout += HandleLogout;
         }
 
-        private void HandleLogout()
+        private void HandleLogout(int type, int code)
         {
             Plugin.onLogout();
             Plugin.ClientState.Logout -= HandleLogout;
