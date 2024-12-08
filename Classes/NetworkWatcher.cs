@@ -48,7 +48,6 @@ namespace WoLightning
         public NetworkWatcher(Plugin plugin)
         {
             Plugin = plugin;
-            ActivePreset = Plugin.Configuration.ActivePreset;
             Plugin.ClientState.Login += HandleLogin;
             Plugin.ClientState.Logout += HandleLogout;
             sittingOnChairTimer.Elapsed += checkSittingOnChair;

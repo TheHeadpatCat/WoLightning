@@ -3,7 +3,7 @@
   "Name": "Warrior of Lightning",
   "Punchline": "A integration for Pishock devices",
   "Description": "Open the main window with /wol",
-  "Changelog": " # 0.4.1.3 Warrior of Lightning \n\n Fixed PartyMemberDies crash",
+  "Changelog": " # 0.4.1.5 Warrior of Lightning \n\n Fixed 'Invalid Config' crash",
   "AcceptsFeedback": true,
   "FeedbackMessage":  "Thank you for your Feedback!",
   "ApplicableVersion": "any",
