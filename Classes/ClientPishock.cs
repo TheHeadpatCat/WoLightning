@@ -143,6 +143,7 @@ namespace WoLightning.Classes
                 Plugin.NotificationManager.AddNotification(result);
             }
 
+            
             List<Shocker> saveCopy = TriggerObject.Shockers;
             Task tasks = Task.WhenAll(saveCopy.ConvertAll(shocker =>
             {
@@ -182,6 +183,8 @@ namespace WoLightning.Classes
 
                 return Client.PostAsync("https://do.pishock.com/api/apioperate", jsonContent);
             }));
+
+            Plugin.Log($" -> Requests Created. Starting Tasks...");
             try
             {
                 await tasks;
@@ -247,7 +250,7 @@ namespace WoLightning.Classes
         public async void info(string ShareCode)
         {
 
-            Plugin.Log($"Requesting Information for {ShareCode}...");
+            Plugin.Log($"Requesting Information for {ShareCode.Substring(0,3)}[..]");
 
             Shocker? shocker = Plugin.Authentification.PishockShockers.Find(shocker => shocker.Code == ShareCode);
             if (shocker == null)
@@ -323,7 +326,7 @@ namespace WoLightning.Classes
 
             foreach (var shocker in Plugin.Authentification.PishockShockers)
             {
-                Plugin.Log($" -> Requesting Information for {shocker.Code}...");
+                Plugin.Log($"Requesting Information for {shocker.Code.Substring(0, 3)}[..]");
                 shocker.Status = ShockerStatus.Unchecked;
                 using StringContent jsonContent = new(
                 JsonSerializer.Serialize(new

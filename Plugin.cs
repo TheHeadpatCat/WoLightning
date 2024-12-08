@@ -136,6 +136,8 @@ public sealed class Plugin : IDalamudPlugin
     {
         try
         {
+            LocalPlayerCharacter = ClientState.LocalPlayer;
+            LocalPlayer = new Player(LocalPlayerCharacter.Name.ToString(), (int)LocalPlayerCharacter.HomeWorld.Value.RowId);
 
             ConfigurationDirectoryPath = PluginInterface.GetPluginConfigDirectory() + "\\" + ClientState.LocalPlayer.Name;
             if (!Directory.Exists(ConfigurationDirectoryPath)) Directory.CreateDirectory(ConfigurationDirectoryPath);
@@ -175,10 +177,7 @@ public sealed class Plugin : IDalamudPlugin
                 Log(e);
             }
 
-
-
-            LocalPlayerCharacter = ClientState.LocalPlayer;
-            LocalPlayer = new Player(LocalPlayerCharacter.Name.ToString(), (int)LocalPlayerCharacter.HomeWorld.Value.RowId, Authentification.ServerKey, NetworkWatcher.running);
+            LocalPlayer.Key = Authentification.ServerKey;
 
             EmoteReaderHooks = new EmoteReaderHooks(this);
 
@@ -187,6 +186,8 @@ public sealed class Plugin : IDalamudPlugin
             MasterWindow = new MasterWindow(this);
 
             if (Configuration.ActivateOnStart) NetworkWatcher.Start();
+            LocalPlayer.Online = NetworkWatcher.running;
+
 
             ClientWebserver = new ClientWebserver(this);
             ClientWebserver.createHttpClient();

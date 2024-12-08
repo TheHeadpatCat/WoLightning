@@ -97,25 +97,46 @@ namespace WoLightning
 
         public void Save()
         {
-            LastPresetName = ActivePreset.Name;
-            PresetNames = new();
-            if (isAlternative)
+
+            try
             {
+                LastPresetName = ActivePreset.Name;
+                PresetNames = new();
+                if (isAlternative)
+                {
+                    foreach (var preset in Presets)
+                    {
+                        PresetNames.Add(preset.Name);
+                        savePreset(preset, true);
+                    }
+                    File.WriteAllText(ConfigurationDirectoryPath + "masterConfig.json", SerializeConfig(this));
+                    return;
+                }
+
                 foreach (var preset in Presets)
                 {
                     PresetNames.Add(preset.Name);
-                    savePreset(preset, true);
+                    savePreset(preset);
                 }
-                File.WriteAllText(ConfigurationDirectoryPath + "masterConfig.json", SerializeConfig(this));
-                return;
+            }
+            catch (Exception e)
+            {
+                plugin.sendNotif("Failed to save Presets!");
+                plugin.Error("Failed to save Presets!", e);
+                plugin.Log(e.ToString());
             }
 
-            foreach (var preset in Presets)
+
+            try
             {
-                PresetNames.Add(preset.Name);
-                savePreset(preset);
+                File.WriteAllText(ConfigurationDirectoryPath + "Config.json", SerializeConfig(this));
             }
-            File.WriteAllText(ConfigurationDirectoryPath + "Config.json", SerializeConfig(this));
+            catch (Exception e) // scuffed crash protection - if this happens we got a serious issue.
+            {
+                plugin.sendNotif("Failed to save Configuration!");
+                plugin.Error("Failed to save Configuration!", e);
+                plugin.Log(e.ToString());
+            }
         }
 
         public bool loadPreset(string Name)
@@ -162,7 +183,7 @@ namespace WoLightning
         internal static Configuration DeserializeConfig(string input)
         {
             if (input == "") return new Configuration();
-            return JsonConvert.DeserializeObject<Configuration>(input);
+            return JsonConvert.DeserializeObject<Configuration>(input)!;
         }
 
         internal static string SerializePreset(object? preset)
@@ -177,7 +198,7 @@ namespace WoLightning
         internal static Preset DeserializePreset(string input)
         {
             if (input == "") ; // cry
-            return JsonConvert.DeserializeObject<Preset>(input);
+            return JsonConvert.DeserializeObject<Preset>(input)!;
         }
 
         public void updateSetting(string PropertyName, int Value)
