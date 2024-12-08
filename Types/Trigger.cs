@@ -135,10 +135,12 @@ namespace WoLightning.Types
 
         public void startCooldown()
         {
+            if (Cooldown <= 0) return; // dont start a cooldown if the trigger doesnt even use them
+            
             CooldownTimer.Stop(); // failsafe for false positives
 
-            if (Duration > 10) CooldownTimer.Interval = Cooldown * 1000;
-            else CooldownTimer.Interval = Cooldown * 1000 + Duration * 1000;
+            if (Duration > 10) CooldownTimer.Interval = Cooldown * 1000 + 1;
+            else CooldownTimer.Interval = Cooldown * 1000 + Duration * 1000 + 1; // the +1 at the end is a safety net
             CooldownTimer.Start();
         }
 
