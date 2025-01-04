@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.IO;
 using WoLightning.Classes;
 using WoLightning.Types;
+using WoLightning.Webserver;
 using WoLightning.Windows;
 
 namespace WoLightning;
@@ -189,7 +190,7 @@ public sealed class Plugin : IDalamudPlugin
 
 
             ClientWebserver = new ClientWebserver(this);
-            ClientWebserver.createHttpClient();
+            ClientWebserver.Connect();
 
             ClientPishock = new ClientPishock(this);
             ClientPishock.createHttpClient();

@@ -13,4 +13,10 @@
   <ItemGroup>
     <PackageReference Include="System.Collections.Specialized" Version="4.3.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Webserver\Operations\General\" />
+    <Folder Include="Webserver\Operations\Master\Orders\" />
+    <Folder Include="Webserver\Operations\Presets\" />
+  </ItemGroup>
 </Project>

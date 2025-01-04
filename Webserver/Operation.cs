@@ -1,7 +1,7 @@
 ﻿using System;
 using WoLightning.Types;
 
-namespace WoLightning.Classes
+namespace WoLightning.Webserver
 {
     public enum OperationCode
     {
@@ -117,7 +117,7 @@ namespace WoLightning.Classes
             throw new Exception("Invalid OperationCode"); // maybe not throw this...? 
         }
 
-        public String? execute(NetPacket originalPacket, NetPacket responsePacket) // null is success - String returned is Error message
+        public string? execute(NetPacket originalPacket, NetPacket responsePacket) // null is success - String returned is Error message
         {
 
             // So, you might look at this and think to yourself... dear god this is terrible
@@ -163,15 +163,15 @@ namespace WoLightning.Classes
                     }
 
                     // We arent known to the server - register us.
-                    if (responsePacket.OpData != null && (responsePacket.OpData.Split("-")[1] == "NotRegistered"))
+                    if (responsePacket.OpData != null && responsePacket.OpData.Split("-")[1] == "NotRegistered")
                     {
-                        Plugin.ClientWebserver.request(OperationCode.Register);
+                        //Plugin.ClientWebserver.request(OperationCode.Register);
                         return null;
                     }
 
-                    if (responsePacket.OpData != null && (responsePacket.OpData.Equals("Fail-InvalidKey")))
+                    if (responsePacket.OpData != null && responsePacket.OpData.Equals("Fail-InvalidKey"))
                     {
-                        Plugin.ClientWebserver.disconnect();
+                        //Plugin.ClientWebserver.disconnect();
                         Plugin.ClientWebserver.Status = ConnectionStatusWebserver.InvalidKey;
                         return "Cannot Login - Invalid Key";
                     }
@@ -186,7 +186,7 @@ namespace WoLightning.Classes
                     }
                     else if (responsePacket.OpData != null && responsePacket.OpData == "Fail-AlreadyExists")
                     {
-                        Plugin.ClientWebserver.disconnect();
+                        //Plugin.ClientWebserver.disconnect();
                         Plugin.ClientWebserver.Status = ConnectionStatusWebserver.InvalidKey;
                         return "Cannot Register - We already exist.";
                     }
@@ -198,7 +198,7 @@ namespace WoLightning.Classes
                     {
                         Plugin.Authentification.ServerKey = string.Empty;
                         Plugin.Log("Reset Userdata on Webserver.");
-                        Plugin.ClientWebserver.request(OperationCode.Login);
+                        //Plugin.ClientWebserver.request(OperationCode.Login);
                         return null;
                     }
                     else
@@ -236,13 +236,13 @@ namespace WoLightning.Classes
                     }
                     if (responsePacket.Sender == null || !responsePacket.Sender.validate())
                     {
-                        Plugin.ClientWebserver.request(OperationCode.AnswerSub, "Fail-InvalidSender");
+                        //Plugin.ClientWebserver.request(OperationCode.AnswerSub, "Fail-InvalidSender");
                         return "Invalid Sender";
                     }
 
                     if (Plugin.Authentification.OwnedSubs.ContainsKey(responsePacket.Sender.getFullName()))
                     {
-                        Plugin.ClientWebserver.request(OperationCode.AnswerSub, "Fail-AlreadyExists");
+                        //Plugin.ClientWebserver.request(OperationCode.AnswerSub, "Fail-AlreadyExists");
                         return "Already Exists";
                     }
 
@@ -274,7 +274,7 @@ namespace WoLightning.Classes
                     }
                     else if (responsePacket.OpData.Equals("Success-Accepted"))
                     {
-                        Plugin.ClientWebserver.request(OperationCode.RegisterMaster, null, responsePacket.Sender);
+                        //Plugin.ClientWebserver.request(OperationCode.RegisterMaster, null, responsePacket.Sender);
                         return null;
                     }
 
@@ -287,7 +287,7 @@ namespace WoLightning.Classes
                     }
                     if (Plugin.Authentification.Master != null)
                     {
-                        Plugin.ClientWebserver.request(OperationCode.RegisterSub, "Fail-AlreadyBound");
+                        //Plugin.ClientWebserver.request(OperationCode.RegisterSub, "Fail-AlreadyBound");
                         return "Already bound to a Master";
                     }
                     if (!Plugin.Authentification.targetMaster.equals(responsePacket.Target)) // Make sure we cannot get spoofed
@@ -308,7 +308,7 @@ namespace WoLightning.Classes
 
                     if (Plugin.Authentification.OwnedSubs.ContainsKey(responsePacket.Sender.getFullName()))
                     {
-                        Plugin.ClientWebserver.request(OperationCode.RegisterSub, "Fail-AlreadyExists", responsePacket.Target);
+                        //Plugin.ClientWebserver.request(OperationCode.RegisterSub, "Fail-AlreadyExists", responsePacket.Target);
                         return "Already Exists";
                     }
 

@@ -17,7 +17,7 @@ using WoLightning.Types;
 using static FFXIVClientStructs.FFXIV.Client.UI.AddonActionCross;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
-namespace WoLightning.Classes
+namespace WoLightning.Webserver
 {
     public enum ConnectionStatusWebserver
     {
@@ -45,24 +45,23 @@ namespace WoLightning.Classes
 
         private ClientWebSocket? WebSocket;
         private readonly Uri Address = new Uri("wss://localhost:7149");
-        
+
 
         public string ServerVersion = string.Empty;
 
         public ClientWebserver(Plugin plugin)
         {
             Plugin = plugin;
-            
         }
         public void Dispose()
         {
-            
+
         }
         public async void Connect()
         {
             if (WebSocket != null) return;
 
-            if(Plugin.Authentification.DevKey.Length == 0)
+            if (Plugin.Authentification.DevKey.Length == 0)
             {
                 Plugin.Log("No Devkey detected - Stopping ClientWebserver creation.");
                 Status = ConnectionStatusWebserver.DevMode;
@@ -79,9 +78,12 @@ namespace WoLightning.Classes
             try
             {
                 WebSocket = new ClientWebSocket();
+                string text = JsonSerializer.Serialize(new Packet(Plugin,"Test"));
+
                 await WebSocket.ConnectAsync(Address, new CancellationToken());
-                await WebSocket.SendAsync(Encoding.UTF8.GetBytes("New Connection"), WebSocketMessageType.Text, true, CancellationToken.None);
+                await WebSocket.SendAsync(Encoding.UTF8.GetBytes(text), WebSocketMessageType.Text, true, CancellationToken.None);
                 Receive();
+                JsonSerializer.Deserialize<Packet>(text);
                 Plugin.Log(WebSocket.State.ToString());
             }
             catch (Exception ex) { FatalError(ex); }
@@ -99,15 +101,16 @@ namespace WoLightning.Classes
         }
 
         public void Send(OperationCode Op) { Send(Op, null, null); }
-        public void Send(OperationCode Op, String? OpData) { Send(Op, OpData, null); }
-        public async void Send(OperationCode Op, String? OpData, Player? Target)
+        public void Send(OperationCode Op, string? OpData) { Send(Op, OpData, null); }
+        public async void Send(OperationCode Op, string? OpData, Player? Target)
         {
             if (Status == ConnectionStatusWebserver.Unavailable) return;
             if (WebSocket == null || Plugin.ClientState.LocalPlayer == null) return;
             try
             {
                 NetPacket packet = new NetPacket(Op, Plugin.LocalPlayer, OpData, Target);
-                string message = JsonSerializer.Serialize(new {
+                string message = JsonSerializer.Serialize(new
+                {
                     hash = "n982093c09209jg0920g", // Plugin.Authentification.getHash()
                     devKey = Plugin.Authentification.DevKey,
                     packet,
@@ -144,7 +147,7 @@ namespace WoLightning.Classes
 
                 if (re.Operation != OperationCode.Ping) Plugin.Log(re);
 
-                String? errorMessage = Plugin.Operation.execute(originalPacket, re);
+                string? errorMessage = Plugin.Operation.execute(originalPacket, re);
                 if (errorMessage != null)
                 {
                     Plugin.Error(errorMessage, re);
@@ -208,7 +211,7 @@ namespace WoLightning.Classes
                 WebSocket.Abort();
                 WebSocket.Dispose();
             }
-            catch(Exception ex2) { Plugin.Log(ex2.ToString()); }
+            catch (Exception ex2) { Plugin.Log(ex2.ToString()); }
             WebSocket = null;
             Plugin.Log(ex.ToString());
         }

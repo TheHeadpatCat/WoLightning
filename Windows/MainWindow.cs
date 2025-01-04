@@ -3,10 +3,10 @@ using ImGuiNET;
 using System;
 using System.Numerics;
 using WoLightning.Types;
-using static WoLightning.Classes.ClientWebserver;
+using static WoLightning.Webserver.ClientWebserver;
 using static WoLightning.Classes.ClientPishock;
 using System.Data;
-using WoLightning.Classes;
+using WoLightning.Webserver;
 
 namespace WoLightning.Windows;
 
@@ -100,7 +100,7 @@ public class MainWindow : Window, IDisposable
                 case ConnectionStatusWebserver.Outdated:
                     ImGui.TextColored(new Vector4(1, 0, 0, 1), "Can't Connect - Outdated Version!"); break;
                 case ConnectionStatusWebserver.WontRespond:
-                    ImGui.TextColored(new Vector4(1, 0, 0, 1), $"Offline.\nRetrying in {(int)TimeSpan.FromMilliseconds(Plugin.ClientWebserver.PingTimer.TimeLeft).TotalSeconds}s..."); break;
+                    //ImGui.TextColored(new Vector4(1, 0, 0, 1), $"Offline.\nRetrying in {(int)TimeSpan.FromMilliseconds(Plugin.ClientWebserver.PingTimer.TimeLeft).TotalSeconds}s..."); break;
                 case ConnectionStatusWebserver.FatalError:
                     ImGui.TextColored(new Vector4(1, 0, 0, 1), "Something went wrong!\nPlease check the /xllog window."); break;
                 case ConnectionStatusWebserver.InvalidKey:
@@ -130,7 +130,7 @@ public class MainWindow : Window, IDisposable
 
             if (Plugin.NetworkWatcher.running) { ImGui.TextColored(activeColor, "The plugin is running."); }
             else { ImGui.TextColored(deactivatedColor, "The plugin is deactivated."); }
-            if (Plugin.ClientWebserver.failsafe) ImGui.TextColored(deactivatedColor, "Failsafe is engaged. Use /red to reactivate the plugin.");
+            //if (Plugin.ClientWebserver.failsafe) ImGui.TextColored(deactivatedColor, "Failsafe is engaged. Use /red to reactivate the plugin.");
 
             if (!Plugin.NetworkWatcher.running && ImGui.Button("Start Plugin", new Vector2(ImGui.GetWindowSize().X - 15, 50)))
             {
@@ -289,7 +289,7 @@ public class MainWindow : Window, IDisposable
                 if (ImGui.Button("Accept##eulaAccept", new Vector2(ImGui.GetWindowSize().X / 2 - 5, 25)))
                 {
                     Plugin.Authentification.acceptedEula = true;
-                    Plugin.ClientWebserver.createHttpClient();
+                    //Plugin.ClientWebserver.createHttpClient();
                     isEulaModalActive = false;
                     ImGui.CloseCurrentPopup();
                 }

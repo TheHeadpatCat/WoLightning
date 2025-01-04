@@ -13,8 +13,8 @@ using System.Numerics;
 using System.Text.RegularExpressions;
 using System.Threading.Channels;
 using System.Timers;
-using WoLightning.Classes;
 using WoLightning.Types;
+using WoLightning.Webserver;
 
 
 
@@ -711,11 +711,11 @@ public class ConfigWindow : Window, IDisposable
 
             if (ImGui.Button("Test Operation", new Vector2(200, 60)))
             {
-                Plugin.ClientWebserver.request(
+                /*Plugin.ClientWebserver.request(
                     Operation.getOperationCode(
                         debugOpCodes[debugOpIndex].Split(" - ")[1]),
                         debugOpData,
-                        debugPlayerTarget);
+                        debugPlayerTarget);*/
             }
 
             if (ImGui.Button("Test OnRequest()"))

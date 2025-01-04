@@ -1,5 +1,5 @@
 ﻿using System;
-using WoLightning.Classes;
+using WoLightning.Webserver;
 
 namespace WoLightning.Types
 {
