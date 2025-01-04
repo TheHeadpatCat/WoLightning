@@ -30,7 +30,6 @@ public sealed class Plugin : IDalamudPlugin
 
     public bool isFailsafeActive = false;
     public string? ConfigurationDirectoryPath { get; set; }
-
     public IPlayerCharacter LocalPlayerCharacter { get; set; }
     public Player LocalPlayer { get; set; }
 

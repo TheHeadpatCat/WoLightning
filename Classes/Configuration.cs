@@ -19,6 +19,7 @@ namespace WoLightning
 
         public bool DebugEnabled { get; set; } = false;
         public bool LogEnabled { get; set; } = true;
+        public string WebserverURL { get; } = "https://theheadpatcat.ddns.net/post/WoLightning";
 
         // Preset Settings
         [NonSerialized] public Preset ActivePreset = new("Default","Unknown");
