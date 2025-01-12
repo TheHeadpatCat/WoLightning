@@ -261,11 +261,11 @@ public sealed class Plugin : IDalamudPlugin
         foreach (var property in typeof(Preset).GetProperties())
         {
             //Log($"{property.Name} - {property.PropertyType}");
-            if (property.PropertyType == typeof(Trigger))
+            if (property.PropertyType == typeof(ShockOptions))
             {
                 object? obj = property.GetValue(Configuration.ActivePreset);
                 if (obj == null) continue;
-                Trigger t = (Trigger)obj;
+                ShockOptions t = (ShockOptions)obj;
 
                 if (shockers.Count == 0)
                 {

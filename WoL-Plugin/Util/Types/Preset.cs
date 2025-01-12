@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using WoLightning.WoL_Plugin.Game.Rules.Social;
 
 namespace WoLightning.Util.Types
 {
     [Serializable]
-    public class Preset(string Name, string CreatorFullName)
+    public class Preset(Plugin Plugin,string Name, string CreatorFullName)
     {
         public string Name { get; set; } = Name;
         public string CreatorFullName { get; set; } = CreatorFullName;
@@ -19,24 +21,23 @@ namespace WoLightning.Util.Types
 
 
         // Social Triggers
-        public Trigger GetPat { get; set; } = new Trigger("GetPat", "You got pat'd!", false);
-        public Trigger GetSnapped { get; set; } = new Trigger("GetSnapped", "You got snap'd!", false);
-        public Trigger LoseDeathRoll { get; set; } = new Trigger("LoseDeathroll", "You lost a deathroll!", false);
-        public Trigger SitOnFurniture { get; set; } = new Trigger("SitOnFurniture", "You are sitting on furniture!", false);
-        public Trigger SayFirstPerson { get; set; } = new Trigger("SayFirstPerson", "You refered to yourself wrongly!", false);
-        public Trigger SayBadWord = new Trigger("SayBadWord", "You said a bad word!", true);
-        public Trigger DontSayWord = new Trigger("DontSayWord", "You forgot to say a enforced word!", true);
+        public ShockOptions GetPat { get; set; } = new ShockOptions("GetPat", "You got pat'd!", false);
+        public ShockOptions GetSnapped { get; set; } = new ShockOptions("GetSnapped", "You got snap'd!", false);
+        public ShockOptions LoseDeathRoll { get; set; } = new ShockOptions("LoseDeathroll", "You lost a deathroll!", false);
+        public ShockOptions SitOnFurniture { get; set; } = new ShockOptions("SitOnFurniture", "You are sitting on furniture!", false);
+        public ShockOptions SayFirstPerson { get; set; } = new ShockOptions("SayFirstPerson", "You refered to yourself wrongly!", false);
+        public ShockOptions SayBadWord = new ShockOptions("SayBadWord", "You said a bad word!", true);
+        public ShockOptions DontSayWord = new ShockOptions("DontSayWord", "You forgot to say a enforced word!", true);
+
+        public DoEmote DoEmote { get; set; } = new DoEmote(Plugin ,new ShockOptions());
+        public DoEmoteTo DoEmoteTo { get; set; } = new DoEmoteTo();
 
         // Combat Triggers
-        public Trigger TakeDamage { get; set; } = new Trigger("TakeDamage", "You took damage!", true);
-        public Trigger FailMechanic { get; set; } = new Trigger("FailMechanic", "You failed a mechanic!", true);
-        public Trigger Die { get; set; } = new Trigger("Die", "You died!", false);
-        public Trigger PartymemberDies { get; set; } = new Trigger("PartymemberDies", "A partymember died!", false);
-        public Trigger Wipe { get; set; } = new Trigger("Wipe", "Your party wiped!", false);
-
-        // Custom Triggers
-        public List<RegexTrigger> SayCustomMessage { get; set; } = new List<RegexTrigger>();
-        public List<ChatType.ChatTypes> Channels { get; set; } = new List<ChatType.ChatTypes>();
+        public ShockOptions TakeDamage { get; set; } = new ShockOptions("TakeDamage", "You took damage!", true);
+        public ShockOptions FailMechanic { get; set; } = new ShockOptions("FailMechanic", "You failed a mechanic!", true);
+        public ShockOptions Die { get; set; } = new ShockOptions("Die", "You died!", false);
+        public ShockOptions PartymemberDies { get; set; } = new ShockOptions("PartymemberDies", "A partymember died!", false);
+        public ShockOptions Wipe { get; set; } = new ShockOptions("Wipe", "Your party wiped!", false);
 
 
         public void resetInvalidTriggers()
@@ -46,16 +47,16 @@ namespace WoLightning.Util.Types
             foreach (var property in typeof(Preset).GetProperties())
             {
                 //Log($"{property.Name} - {property.PropertyType}");
-                if (property.PropertyType == typeof(Trigger))
+                if (property.PropertyType == typeof(ShockOptions))
                 {
                     object? obj = property.GetValue(this);
                     if (obj == null) continue;
-                    Trigger t = (Trigger)obj;
+                    ShockOptions t = (ShockOptions)obj;
 
-                    if (!t.ValidateNoShockers())
+                    if (!t.Validate())
                     {
                         property.SetValue(this, property.GetValue(cleanPreset));
-                        ((Trigger)property.GetValue(this)!).hasBeenReset = true;
+                        ((ShockOptions)property.GetValue(this)!).hasBeenReset = true;
                     }
                 }
             }

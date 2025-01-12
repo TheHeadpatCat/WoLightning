@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WoLightning.Util.Types;
 
 namespace WoLightning.WoL_Plugin.Game.Rules
 {
@@ -15,10 +16,15 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         PVE = 3,
         PVP = 4,
         misc = 5,
+        master = 6,
     }
 
-    internal class BaseRule : IDisposable
+    [Serializable]
+    public class BaseRule : IDisposable
     {
+        [NonSerialized] protected Plugin Plugin;
+        public ShockOptions ShockOptions { get; init; }
+
         public string Name { get; } = "BaseRule";
         public string Description { get; } = "Sample Description";
         public RuleCategory Category { get; } = RuleCategory.Unknown;
@@ -28,7 +34,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
         public bool isRunning { get; } = false;
 
-
+        [NonSerialized] public Action<BaseRule> Triggered;
         public void Start()
         {
             throw new NotImplementedException();
@@ -37,6 +43,11 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         public void Stop()
         {
             throw new NotImplementedException();
+        }
+
+        public void Trigger(string Text)
+        {
+            Plugin.sendNotif(Text);
         }
 
         public void Dispose()

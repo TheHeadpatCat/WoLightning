@@ -962,11 +962,11 @@ public class ConfigWindow : Window, IDisposable
 
 
 
-    private void createEntry(Trigger TriggerObject, string Name, string Description) { createEntry(TriggerObject, Name, Description, "", false, false); }
-    private void createEntry(Trigger TriggerObject, string Name, string Description, bool noOptions) { createEntry(TriggerObject, Name, Description, "", noOptions, false); }
-    private void createEntry(Trigger TriggerObject, string Name, string Description, string Hint) { createEntry(TriggerObject, Name, Description, Hint, false, false); }
+    private void createEntry(ShockOptions TriggerObject, string Name, string Description) { createEntry(TriggerObject, Name, Description, "", false, false); }
+    private void createEntry(ShockOptions TriggerObject, string Name, string Description, bool noOptions) { createEntry(TriggerObject, Name, Description, "", noOptions, false); }
+    private void createEntry(ShockOptions TriggerObject, string Name, string Description, string Hint) { createEntry(TriggerObject, Name, Description, Hint, false, false); }
 
-    private void createEntry(Trigger TriggerObject, string Name, string Description, string Hint, bool noOptions, bool noCooldown)
+    private void createEntry(ShockOptions TriggerObject, string Name, string Description, string Hint, bool noOptions, bool noCooldown)
     {
         createShockerSelector(TriggerObject);
         bool enabled = TriggerObject.IsEnabled();
@@ -1021,7 +1021,7 @@ public class ConfigWindow : Window, IDisposable
         ImGui.Separator();
     }
 
-    private void createPickerBox(Trigger TriggerObject, bool noCooldown)
+    private void createPickerBox(ShockOptions TriggerObject, bool noCooldown)
     {
         bool changed = false;
 
@@ -1093,7 +1093,7 @@ public class ConfigWindow : Window, IDisposable
         if (changed) Configuration.Save();
     }
 
-    private void createShockerSelector(Trigger TriggerObject)
+    private void createShockerSelector(ShockOptions TriggerObject)
     {
         // Todo add proper formatting, this popup looks terrible
         Vector2 center = ImGui.GetMainViewport().GetCenter();
@@ -1142,7 +1142,7 @@ public class ConfigWindow : Window, IDisposable
 
     }
 
-    private void createProportional(Trigger TriggerObject, string Description, int minValue, int maxValue)
+    private void createProportional(ShockOptions TriggerObject, string Description, int minValue, int maxValue)
     {
         TriggerObject.setupCustomData();
         bool isEnabled = TriggerObject.CustomData["Proportional"][0] == 1;

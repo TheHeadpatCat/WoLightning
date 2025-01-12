@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using WoLightning.Util.Types;
+using WoLightning.WoL_Plugin.Game.Rules;
 
 namespace WoLightning.Clients.Pishock
 {
@@ -25,8 +26,8 @@ namespace WoLightning.Clients.Pishock
 
         private Plugin Plugin;
         public ConnectionStatusPishock Status { get; set; } = ConnectionStatusPishock.NotStarted;
-
         private HttpClient? Client;
+
         public ClientPishock(Plugin plugin)
         {
             Plugin = plugin;
@@ -53,10 +54,10 @@ namespace WoLightning.Clients.Pishock
             Client.CancelPendingRequests();
         }
 
-        public async void request(Trigger TriggerObject, Player SourcePlayer) { request(TriggerObject, SourcePlayer, null, null); }
-        public async void request(Trigger TriggerObject, Player SourcePlayer, string overrideNotif) { request(TriggerObject, SourcePlayer, overrideNotif, null); }
-        public async void request(Trigger TriggerObject, Player SourcePlayer, int[] overrideSettings) { request(TriggerObject, SourcePlayer, null, overrideSettings); }
-        public async void request(Trigger TriggerObject, Player SourcePlayer, string? overrideNotif, int[]? overrideSettings)
+        public async void request(ShockOptions TriggerObject, Player SourcePlayer) { request(TriggerObject, SourcePlayer, null, null); }
+        public async void request(ShockOptions TriggerObject, Player SourcePlayer, string overrideNotif) { request(TriggerObject, SourcePlayer, overrideNotif, null); }
+        public async void request(ShockOptions TriggerObject, Player SourcePlayer, int[] overrideSettings) { request(TriggerObject, SourcePlayer, null, overrideSettings); }
+        public async void request(ShockOptions TriggerObject, Player SourcePlayer, string? overrideNotif, int[]? overrideSettings)
         {
             Plugin.Log($"{TriggerObject.Name} fired - sending request for {TriggerObject.Shockers.Count} shockers.");
 
@@ -194,6 +195,68 @@ namespace WoLightning.Clients.Pishock
                 }
             }
 
+        }
+
+        public async void sendRequest(BaseRule Rule)
+        {
+
+            #region Validation
+            if (Plugin.Authentification.PishockName.Length < 3
+                || Plugin.Authentification.PishockApiKey.Length < 16)
+            {
+                Plugin.Log(" -> Aborted due to invalid Account Settings!");
+                return;
+            }
+
+            if (Plugin.isFailsafeActive)
+            {
+                Plugin.Log(" -> Blocked request due to failsafe mode!");
+                return;
+            }
+
+            if (!Rule.ShockOptions.Validate())
+            {
+                Plugin.Log(" -> Blocked due to invalid ShockOptions!");
+                return;
+            }
+            #endregion
+
+
+            List<Shocker> saveCopy = Rule.ShockOptions.Shockers;
+            Task tasks = Task.WhenAll(saveCopy.ConvertAll(shocker =>
+            {
+                if (shocker.Type != ShockerType.Pishock) return new Task(null); //todo find a smarter way to stop task creation - maybe filter in iteration?
+                StringContent jsonContent = new(
+                    JsonSerializer.Serialize(new
+                    {
+                        Username = Plugin.Authentification.PishockName,
+                        Apikey = Plugin.Authentification.PishockApiKey,
+                        Name = "WoLPlugin",
+                        shocker.Code,
+                        Op = (int)Rule.ShockOptions.OpMode,
+                        Rule.ShockOptions.Intensity,
+                        Rule.ShockOptions.Duration,
+                    }),
+                    Encoding.UTF8,
+                    "application/json");
+                
+                return Client.PostAsync("https://do.pishock.com/api/apioperate", jsonContent);
+            }));
+
+            Plugin.Log($" -> Requests Created. Starting Tasks...");
+            try
+            {
+                await tasks;
+                Plugin.Log($" -> Requests sent!");
+            }
+            catch (Exception)
+            {
+                if (tasks.Exception != null)
+                {
+                    Plugin.Error(tasks.Exception.ToString());
+                    Plugin.Error("Error when sending post request to pishock api");
+                }
+            }
         }
 
 
