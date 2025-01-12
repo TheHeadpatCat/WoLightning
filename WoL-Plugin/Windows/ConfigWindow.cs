@@ -30,6 +30,7 @@ public class ConfigWindow : Window, IDisposable
     private int presetIndex = 0;
 
     List<int> durationArray = [100, 300, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    List<CooldownModifier> modifierArray = [CooldownModifier.Miliseconds, CooldownModifier.Seconds, CooldownModifier.Minutes, CooldownModifier.Hours];
 
     private Vector4 descColor = new Vector4(0.7f, 0.7f, 0.7f, 0.8f);
     private Vector4 nameColorOff = new Vector4(1, 1, 1, 0.9f);
@@ -146,8 +147,6 @@ public class ConfigWindow : Window, IDisposable
 
     public override void PreDraw()
     {
-        // Flags must be added or removed before Draw() is being called, or they won't apply
-        //presetIndex = Configuration.Presets.IndexOf(Configuration.ActivePreset);
 
     }
 
@@ -1072,12 +1071,23 @@ public class ConfigWindow : Window, IDisposable
         if (!noCooldown)
         {
             int Cooldown = TriggerObject.Cooldown;
-            ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 1.25f - 30);
-            if (ImGui.SliderInt("Cooldown (sec) ##Cooldown" + TriggerObject.Name, ref Cooldown, 0, 60))
+            ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 1.25f - 100);
+            if (ImGui.SliderInt("##Cooldown" + TriggerObject.Name, ref Cooldown, 0, 300))
             {
                 TriggerObject.Cooldown = Cooldown;
                 changed = true;
             }
+            ImGui.SameLine();
+            int modifierIndex = modifierArray.IndexOf(TriggerObject.modifier);
+            ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 4f - 30);
+            if (ImGui.Combo("##TimeModifier", ref modifierIndex, ["Miliseconds", "Seconds", "Minutes", "Hours"], 4,4))
+            {
+                TriggerObject.modifier = modifierArray[modifierIndex];
+                changed = true;
+            }
+
+            ImGui.SameLine();
+            ImGui.Text("Cooldown");
         }
 
         if (changed) Configuration.Save();

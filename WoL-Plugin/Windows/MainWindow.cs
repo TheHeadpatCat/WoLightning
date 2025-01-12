@@ -291,7 +291,7 @@ public class MainWindow : Window, IDisposable
     }
     private async void DrawOpenShockAccount()
     {
-
+        ImGui.Text("Coming Soon! (i hope)");
     }
 
     private async void DrawEulaWindow()

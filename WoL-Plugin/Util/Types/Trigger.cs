@@ -11,6 +11,14 @@ namespace WoLightning.Util.Types
         Beep = 2
     }
 
+    public enum CooldownModifier
+    {
+        Miliseconds = 1000,
+        Seconds = 10000,
+        Minutes = 600000,
+        Hours = 36000000,
+    }
+
     [Serializable]
     public class Trigger
     {
@@ -20,6 +28,7 @@ namespace WoLightning.Util.Types
         public int Intensity { get; set; } = 1;
         public int Duration { get; set; } = 1;
         public int Cooldown { get; set; } = 0;
+        public CooldownModifier modifier { get; set; } = CooldownModifier.Seconds;
 
         public List<Shocker> Shockers { get; set; } = new(); // List of all Shocker Codes to run on
         public bool Randomize { get; set; } = false;
@@ -78,7 +87,7 @@ namespace WoLightning.Util.Types
 
         public override string ToString()
         {
-            return $"[Trigger] Name:{Name} Mode:{OpMode} {Intensity}%|{Duration}s Cooldown:{Cooldown}s Applied to {Shockers.Count} Shockers.";
+            return $"[Trigger] Name:{Name} Mode:{OpMode} {Intensity}%|{Duration}s Cooldown:{Cooldown * (int)modifier}ms Applied to {Shockers.Count} Shockers.";
         }
 
         public string durationString()
@@ -139,8 +148,8 @@ namespace WoLightning.Util.Types
 
             CooldownTimer.Stop(); // failsafe for false positives
 
-            if (Duration > 10) CooldownTimer.Interval = Cooldown * 1000 + 1;
-            else CooldownTimer.Interval = Cooldown * 1000 + Duration * 1000 + 1; // the +1 at the end is a safety net
+            if (Duration > 10) CooldownTimer.Interval = Cooldown * 1000 * (int)modifier + 1;
+            else CooldownTimer.Interval = Cooldown * 1000 + Duration * 1000 * (int)modifier + 1; // the +1 at the end is a safety net
             CooldownTimer.Start();
         }
 
