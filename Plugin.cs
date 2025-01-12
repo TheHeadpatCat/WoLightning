@@ -9,9 +9,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using WoLightning.Classes;
-using WoLightning.Types;
-using WoLightning.Webserver;
+using WoLightning.Clients.Pishock;
+using WoLightning.Clients.Webserver;
+using WoLightning.Configurations;
+using WoLightning.Game;
+using WoLightning.Util;
+using WoLightning.Util.Types;
 using WoLightning.Windows;
 
 namespace WoLightning;

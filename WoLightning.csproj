@@ -11,12 +11,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Collections.Specialized" Version="4.3.0" />
+    <Compile Remove="WoL-Plugin\Clients\Webserver\Operations\General\**" />
+    <Compile Remove="WoL-Plugin\Clients\Webserver\Operations\Master\**" />
+    <Compile Remove="WoL-Plugin\Clients\Webserver\Operations\Presets\**" />
+    <EmbeddedResource Remove="WoL-Plugin\Clients\Webserver\Operations\General\**" />
+    <EmbeddedResource Remove="WoL-Plugin\Clients\Webserver\Operations\Master\**" />
+    <EmbeddedResource Remove="WoL-Plugin\Clients\Webserver\Operations\Presets\**" />
+    <None Remove="WoL-Plugin\Clients\Webserver\Operations\General\**" />
+    <None Remove="WoL-Plugin\Clients\Webserver\Operations\Master\**" />
+    <None Remove="WoL-Plugin\Clients\Webserver\Operations\Presets\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Webserver\Operations\General\" />
-    <Folder Include="Webserver\Operations\Master\Orders\" />
-    <Folder Include="Webserver\Operations\Presets\" />
+    <PackageReference Include="System.Collections.Specialized" Version="4.3.0" />
   </ItemGroup>
 </Project>
