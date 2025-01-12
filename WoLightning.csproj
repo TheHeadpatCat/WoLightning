@@ -25,4 +25,12 @@
   <ItemGroup>
     <PackageReference Include="System.Collections.Specialized" Version="4.3.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="WoL-Plugin\Game\Rules\General\" />
+    <Folder Include="WoL-Plugin\Game\Rules\Misc\" />
+    <Folder Include="WoL-Plugin\Game\Rules\PVP\" />
+    <Folder Include="WoL-Plugin\Game\Rules\PVE\" />
+    <Folder Include="WoL-Plugin\Game\Rules\Social\" />
+  </ItemGroup>
 </Project>
