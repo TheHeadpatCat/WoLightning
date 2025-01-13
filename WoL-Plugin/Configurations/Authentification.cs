@@ -32,36 +32,10 @@ namespace WoLightning.Configurations
         public List<Shocker> PishockShockers { get; set; } = [];
         public string PishockApiKey { get; set; } = string.Empty;
 
-
-
-
-        // Mastermode - Authentification Process
-
-        [NonSerialized]
-        public string? errorStringMaster = string.Empty;
-
-        [NonSerialized]
-        public bool isRequesting = false;
-        [NonSerialized]
-        public Player? targetMaster;
-
-        [NonSerialized]
-        public bool gotRequest = false;
-        [NonSerialized]
-        public Player? targetSub;
-
-
-
-
-        // Mastermode - Master Settings
-        public bool IsMaster { get; set; } = false;
-        public Dictionary<string, Player> OwnedSubs { get; set; } = [];
-
-        // Mastermode - Sub Settings
-        public bool HasMaster { get; set; } = false;
-        public Player? Master { get; set; }
-        public bool isDisallowed { get; set; } = false; //locks the interface
-
+        // OpenShock things
+        public string OpenShockURL {  get; set; } = "";
+        public string OpenShockApiKey { get; set;} = string.Empty;
+        public List<Shocker> OpenShockShockers { get; set; } = [];
 
         public string DevKey { get; set; } = string.Empty;
 

@@ -4,6 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WoLightning.Util.Types;
+using ImGuiNET;
+using System.Numerics;
+using System.Threading.Channels;
+using Newtonsoft.Json;
 
 namespace WoLightning.WoL_Plugin.Game.Rules
 {
@@ -20,34 +24,49 @@ namespace WoLightning.WoL_Plugin.Game.Rules
     }
 
     [Serializable]
-    public class BaseRule : IDisposable
+    abstract public class BaseRule : IDisposable
     {
+        [JsonIgnore] abstract public string Name { get; }
+        [JsonIgnore] abstract public string Description { get; }
+        [JsonIgnore] virtual public string Hint { get; }
+        [JsonIgnore] abstract public RuleCategory Category { get; }
+
+        virtual public ShockOptions ShockOptions { get; init; }
+        virtual public bool IsEnabled { get; set; }
+        virtual public bool IsLocked { get; set; }
+
         [NonSerialized] protected Plugin Plugin;
-        public ShockOptions ShockOptions { get; init; }
-
-        public string Name { get; } = "BaseRule";
-        public string Description { get; } = "Sample Description";
-        public RuleCategory Category { get; } = RuleCategory.Unknown;
-
-        public bool IsEnabled { get; set; } = false;
-        public bool IsLocked { get; set; } = false;
-
-        public bool isRunning { get; } = false;
-
         [NonSerialized] public Action<BaseRule> Triggered;
-        public void Start()
+        [NonSerialized] protected RuleUI RuleUI;
+
+        protected BaseRule(Plugin plugin)
+        {
+            this.Plugin = plugin;
+            ShockOptions = new ShockOptions();
+            RuleUI = new RuleUI(plugin,this);
+        }
+
+        virtual public void Start()
         {
             throw new NotImplementedException();
         }
 
-        public void Stop()
+        virtual public void Stop()
         {
             throw new NotImplementedException();
         }
 
-        public void Trigger(string Text)
+        virtual public void Trigger(string Text)
         {
+            if (ShockOptions.hasCooldown()) return;
+            Triggered?.Invoke(this);
             Plugin.sendNotif(Text);
+            ShockOptions.startCooldown();
+        }
+
+        virtual public void Draw()
+        {
+            RuleUI.Draw();
         }
 
         public void Dispose()

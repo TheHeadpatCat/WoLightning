@@ -20,6 +20,10 @@ namespace WoLightning.Util.Types
         public bool isWhitelistEnabled { get; set; } = false;
 
 
+        public DoEmote DoEmote { get; set; } = new DoEmote(Plugin);
+        public DoEmoteTo DoEmoteTo { get; set; } = new DoEmoteTo(Plugin);
+
+        /*
         // Social Triggers
         public ShockOptions GetPat { get; set; } = new ShockOptions("GetPat", "You got pat'd!", false);
         public ShockOptions GetSnapped { get; set; } = new ShockOptions("GetSnapped", "You got snap'd!", false);
@@ -29,8 +33,7 @@ namespace WoLightning.Util.Types
         public ShockOptions SayBadWord = new ShockOptions("SayBadWord", "You said a bad word!", true);
         public ShockOptions DontSayWord = new ShockOptions("DontSayWord", "You forgot to say a enforced word!", true);
 
-        public DoEmote DoEmote { get; set; } = new DoEmote(Plugin ,new ShockOptions());
-        public DoEmoteTo DoEmoteTo { get; set; } = new DoEmoteTo();
+        
 
         // Combat Triggers
         public ShockOptions TakeDamage { get; set; } = new ShockOptions("TakeDamage", "You took damage!", true);
@@ -38,11 +41,11 @@ namespace WoLightning.Util.Types
         public ShockOptions Die { get; set; } = new ShockOptions("Die", "You died!", false);
         public ShockOptions PartymemberDies { get; set; } = new ShockOptions("PartymemberDies", "A partymember died!", false);
         public ShockOptions Wipe { get; set; } = new ShockOptions("Wipe", "Your party wiped!", false);
-
+        */
 
         public void resetInvalidTriggers()
         {
-            Preset cleanPreset = new Preset("Clean", "None");
+            Preset cleanPreset = new Preset(Plugin,"Clean", "None");
 
             foreach (var property in typeof(Preset).GetProperties())
             {

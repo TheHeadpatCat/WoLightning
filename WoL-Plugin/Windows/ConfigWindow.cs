@@ -16,6 +16,7 @@ using WoLightning.Clients.Webserver;
 using WoLightning.Configurations;
 using WoLightning.Util;
 using WoLightning.Util.Types;
+using WoLightning.WoL_Plugin.Game.Rules;
 
 
 
@@ -83,15 +84,9 @@ public class ConfigWindow : Window, IDisposable
     private int debugOpIndex = 0;
     private string debugOpData = "";
     private Player debugPlayerTarget = null;
-    private string[] debugOpCodes = Operation.allOpCodesString(true);
+    //private string[] debugOpCodes = Operation.allOpCodesString(true);
 
 
-
-
-
-    // We give this window a constant ID using ###
-    // This allows for labels being dynamic, like "{FPS Counter}fps###XYZ counter window",
-    // and the window ID will always be "###XYZ counter window" for ImGui
     public ConfigWindow(Plugin plugin) : base($"Warrior of Lightning Configuration - v{plugin.Configuration.Version}##configmain")
     {
         Flags = ImGuiWindowFlags.AlwaysUseWindowPadding;
@@ -155,18 +150,24 @@ public class ConfigWindow : Window, IDisposable
 
         DrawHeader();
 
-        if (Configuration.Version < 30) return; //safety check for old configs
+        if (Configuration.Version < 1) return; //safety check for old configs
 
         if (ImGui.BeginTabBar("Tab Bar##tabbarmain", ImGuiTabBarFlags.None))
         {
             DrawGeneralTab();
+            //DrawSocialTab();
+            //DrawPVETab();
+            //DrawPVPTab();
+            //DrawMiscTab();
+            /*
             DrawDefaultTriggerTab();
-            if (Configuration.ActivePreset.SayBadWord.IsEnabled()) DrawBadWordList();
-            if (Configuration.ActivePreset.DontSayWord.IsEnabled()) DrawEnforcedWordList();
+            //if (Configuration.ActivePreset.SayBadWord.IsEnabled()) DrawBadWordList();
+            //if (Configuration.ActivePreset.DontSayWord.IsEnabled()) DrawEnforcedWordList();
             DrawCustomTriggerTab();
             DrawPermissionsTab();
             //DrawCommandTab(); todo not implemented
-            if (Configuration.DebugEnabled) DrawDebugTab();
+            */
+            //if (Configuration.DebugEnabled) DrawDebugTab();
 
             ImGui.EndTabBar();
         }
@@ -174,7 +175,7 @@ public class ConfigWindow : Window, IDisposable
 
     private void DrawHeader()
     {
-        if (Configuration.Version < new Configuration().Version)
+        if (Configuration.Version < 1)
         {
             ImGui.TextColored(new Vector4(1, 0, 0, 1), "Your Configuration is incompatible.");
             if (ImGui.Button("Reset & Update Config"))
@@ -182,7 +183,7 @@ public class ConfigWindow : Window, IDisposable
                 Configuration = new Configuration();
                 Configuration.Initialize(Plugin, isAlternative, Plugin.ConfigurationDirectoryPath, true);
 
-                Configuration.Presets.Add(new Preset("Default", Plugin.LocalPlayer.getFullName()));
+                Configuration.Presets.Add(new Preset(Plugin,"Default", Plugin.LocalPlayer.getFullName()));
                 Configuration.Save();
                 Configuration.loadPreset(addInput);
                 Configuration.deletePreset(Configuration.ActivePreset);
@@ -195,16 +196,7 @@ public class ConfigWindow : Window, IDisposable
             }
         }
 
-        if (Plugin.Authentification.HasMaster)
-        {
-            ImGui.Text("You are bound to " + Plugin.Authentification.Master.Name);
-        }
 
-        if (Plugin.Authentification.isDisallowed)
-        {
-            ImGui.TextColored(redCol, $"They do not allow you to change your settings.");
-            ImGui.BeginDisabled();
-        }
 
         DrawPresetHeader();
     }
@@ -257,7 +249,7 @@ public class ConfigWindow : Window, IDisposable
             {
                 if (addInput.Length > 0)
                 {
-                    Preset tPreset = new Preset(addInput, "Unknwon");
+                    Preset tPreset = new Preset(Plugin,addInput, "Unknown");
                     Configuration.Presets.Add(tPreset);
                     Configuration.Save();
                     Configuration.loadPreset(addInput);
@@ -307,12 +299,12 @@ public class ConfigWindow : Window, IDisposable
         }
     }
 
-    #region Tabs
+    
     private void DrawGeneralTab()
     {
         if (ImGui.BeginTabItem("General"))
         {
-            if (Plugin.Authentification.isDisallowed) ImGui.BeginDisabled();
+            //if (Plugin.Authentification.isDisallowed) ImGui.BeginDisabled();
 
             bool showCooldownNotifs = Configuration.ActivePreset.showCooldownNotifs;
             if (ImGui.Checkbox("Show Cooldown Notifications", ref showCooldownNotifs))
@@ -328,14 +320,20 @@ public class ConfigWindow : Window, IDisposable
                 "\nthat will tell you how much time is left until that trigger can activate again.");
             }
 
+            Plugin.Configuration.ActivePreset.DoEmote.Draw();
+            if (!Plugin.Configuration.ActivePreset.DoEmote.IsEnabled) Plugin.Configuration.ActivePreset.DoEmote.Start();
+            Plugin.Configuration.ActivePreset.DoEmoteTo.Draw();
 
 
 
-
-            if (Plugin.Authentification.isDisallowed) ImGui.EndDisabled();
+            //if (Plugin.Authentification.isDisallowed) ImGui.EndDisabled();
             ImGui.EndTabItem();
         }
     }
+
+
+
+    /*
     private void DrawBadWordList()
     {
         if (ImGui.BeginTabItem("Bad Word List"))
@@ -659,8 +657,7 @@ public class ConfigWindow : Window, IDisposable
         }
     }
 
-    //[Conditional("DEBUG")] //only draw debug tab if built locally with debug, yell at me if you dont want this
-    // No Longer needed, since i reimplemented the Configuration.DebugEnabled check - which for some reason wasnt used?
+    
     private void DrawDebugTab()
     {
         if (ImGui.BeginTabItem("Debug"))
@@ -719,7 +716,7 @@ public class ConfigWindow : Window, IDisposable
                     Operation.getOperationCode(
                         debugOpCodes[debugOpIndex].Split(" - ")[1]),
                         debugOpData,
-                        debugPlayerTarget);*/
+                        debugPlayerTarget);
             }
 
             if (ImGui.Button("Test OnRequest()"))
@@ -737,6 +734,7 @@ public class ConfigWindow : Window, IDisposable
     }
     #endregion
 
+    
     private void DrawSocial()
     {
         if (!ImGui.CollapsingHeader("Social Triggers"))
@@ -957,12 +955,12 @@ public class ConfigWindow : Window, IDisposable
     }
 
 
+    */
 
 
+    /*
 
 
-
-    private void createEntry(ShockOptions TriggerObject, string Name, string Description) { createEntry(TriggerObject, Name, Description, "", false, false); }
     private void createEntry(ShockOptions TriggerObject, string Name, string Description, bool noOptions) { createEntry(TriggerObject, Name, Description, "", noOptions, false); }
     private void createEntry(ShockOptions TriggerObject, string Name, string Description, string Hint) { createEntry(TriggerObject, Name, Description, Hint, false, false); }
 
@@ -1153,6 +1151,7 @@ public class ConfigWindow : Window, IDisposable
             ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 2 - 25);
             if (ImGui.SliderInt($"{Description}##proportionalSlider{TriggerObject.Name}", ref setValue, minValue, maxValue)) TriggerObject.CustomData["Proportional"][1] = setValue;
         }
+    
     }
-
+    */
 }

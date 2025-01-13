@@ -54,6 +54,7 @@ public class MasterWindow : Window, IDisposable
     public override async void Draw()
 
     {
+        /*
         if (Plugin.Authentification.HasMaster) drawIsSubmissive();
         else drawBecomeSubmissive();
 
@@ -61,11 +62,11 @@ public class MasterWindow : Window, IDisposable
 
         if (Plugin.Authentification.IsMaster) drawIsMaster();
         else drawBecomeMaster();
-
+        */
     }
 
 
-
+    /*
     private void drawBecomeSubmissive()
     {
         if (ImGui.CollapsingHeader("Become a Submissive"))
@@ -154,7 +155,7 @@ public class MasterWindow : Window, IDisposable
 
             ImGui.Text("You have received a request from ");
             ImGui.SameLine();
-            ImGui.TextColored(new Vector4(0.6f, 0, 0.6f, 1), /*Plugin.Authentification.targetSub.getFullName()*/ "Nobody");
+            ImGui.TextColored(new Vector4(0.6f, 0, 0.6f, 1), Plugin.Authentification.targetSub.getFullName() "Nobody");
             ImGui.Separator();
 
             ImGui.Text("They want to submit to you for the Mastermode.\nDo you accept?");
@@ -225,5 +226,5 @@ public class MasterWindow : Window, IDisposable
     {
         if (!this.IsOpen) Toggle();
     }
-
+    */
 }

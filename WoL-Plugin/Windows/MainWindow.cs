@@ -147,7 +147,7 @@ public class MainWindow : Window, IDisposable
 
     private async void DrawControlPanel()
     {
-        if (Plugin.Authentification.isDisallowed) ImGui.BeginDisabled();
+        //if (Plugin.Authentification.isDisallowed) ImGui.BeginDisabled();
         presetIndex = Plugin.Configuration.PresetIndex;
         if (presetIndex == -1) Plugin.Configuration.Save();
         ImGui.SetNextItemWidth(ImGui.GetWindowWidth() - 15);
@@ -176,7 +176,7 @@ public class MainWindow : Window, IDisposable
             Plugin.Configuration.ActivateOnStart = ActivateOnStart;
             Plugin.Configuration.Save();
         }
-        if (Plugin.Authentification.isDisallowed) ImGui.EndDisabled();
+        //if (Plugin.Authentification.isDisallowed) ImGui.EndDisabled();
         if (ImGui.Button("Open Trigger Configuration", new Vector2(ImGui.GetWindowSize().X - 15, 25)))
         {
             Plugin.ToggleConfigUI();
@@ -211,7 +211,7 @@ public class MainWindow : Window, IDisposable
     private async void DrawPishockAccount()
     {
         ImGui.SetNextItemWidth(ImGui.GetWindowWidth() - 15);
-        if (Plugin.Authentification.isDisallowed) ImGui.BeginDisabled();
+        //if (Plugin.Authentification.isDisallowed) ImGui.BeginDisabled();
         var PishockNameField = Plugin.Authentification.PishockName;
         if (ImGui.InputTextWithHint("##PishockUsername", "Pishock Username", ref PishockNameField, 24))
             Plugin.Authentification.PishockName = PishockNameField;
@@ -235,7 +235,7 @@ public class MainWindow : Window, IDisposable
         if (ImGui.Button("+ Add##registerShocker"))
         {
             Plugin.Log(Plugin.Authentification.PishockShareCode);
-            Plugin.Authentification.PishockShockers.Add(new Shocker($"Shocker{Plugin.Authentification.PishockShockers.Count}", Plugin.Authentification.PishockShareCode, ShockerType.Pishock));
+            Plugin.Authentification.PishockShockers.Add(new Shocker(ShockerType.Pishock,$"Shocker{Plugin.Authentification.PishockShockers.Count}", Plugin.Authentification.PishockShareCode));
             Plugin.ClientPishock.info(Plugin.Authentification.PishockShareCode);
         }
         int x = 0;
@@ -279,7 +279,7 @@ public class MainWindow : Window, IDisposable
         }
 
 
-        if (Plugin.Authentification.isDisallowed) ImGui.EndDisabled();
+        //if (Plugin.Authentification.isDisallowed) ImGui.EndDisabled();
 
         if (ImGui.Button("Save & Test", new Vector2(ImGui.GetWindowSize().X - 15, 25)))
         {

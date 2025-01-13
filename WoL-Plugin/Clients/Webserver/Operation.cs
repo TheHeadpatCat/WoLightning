@@ -51,7 +51,7 @@ namespace WoLightning.Clients.Webserver
 
     }
 
-
+    /*
     public class Operation
     {
         private readonly Plugin Plugin;
@@ -348,4 +348,7 @@ namespace WoLightning.Clients.Webserver
         }
 
     }
+
+
+    */
 }

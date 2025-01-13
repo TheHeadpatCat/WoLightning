@@ -22,7 +22,7 @@ namespace WoLightning.Configurations
         public string WebserverURL { get; } = "https://theheadpatcat.ddns.net/post/WoLightning";
 
         // Preset Settings
-        [NonSerialized] public Preset ActivePreset = new("Default", "Unknown");
+        [NonSerialized] public Preset ActivePreset;
         [NonSerialized] public List<Preset> Presets = new();
         [NonSerialized] public List<string> PresetNames = new(); // used for comboBoxes
         [NonSerialized] public int PresetIndex = 0;
@@ -50,6 +50,8 @@ namespace WoLightning.Configurations
             this.isAlternative = isAlternative;
             this.ConfigurationDirectoryPath = ConfigurationDirectoryPath;
 
+            ActivePreset = new Preset(plugin, "Default", plugin.LocalPlayer.Name);
+
             string f = "";
             if (!isAlternative && File.Exists(ConfigurationDirectoryPath + "Config.json")) f = File.ReadAllText(ConfigurationDirectoryPath + "Config.json");
             if (isAlternative && File.Exists(ConfigurationDirectoryPath + "masterConfig.json")) f = File.ReadAllText(ConfigurationDirectoryPath + "masterConfig.json");
@@ -71,14 +73,14 @@ namespace WoLightning.Configurations
                     catch (Exception e)
                     {
                         plugin.Log(e);
-                        tPreset = new Preset("Default", plugin.LocalPlayer.getFullName());
+                        tPreset = new Preset(plugin,"Default", plugin.LocalPlayer.getFullName());
                     }
                     Presets.Add(tPreset);
                 }
             }
             if (Presets.Count == 0)
             {
-                ActivePreset = new Preset("Default", plugin.LocalPlayer.getFullName());
+                ActivePreset = new Preset(plugin, "Default", plugin.LocalPlayer.getFullName());
                 Presets.Add(ActivePreset);
                 Save();
                 loadPreset("Default");
@@ -166,7 +168,7 @@ namespace WoLightning.Configurations
 
             File.Delete(ConfigurationDirectoryPath + "\\Presets\\" + target.Name + ".json");
             Presets.Remove(target);
-            if (!Presets.Exists(preset => preset.Name == "Default")) Presets.Add(new Preset("Default", plugin.LocalPlayer.getFullName()));
+            if (!Presets.Exists(preset => preset.Name == "Default")) Presets.Add(new Preset(plugin, "Default", plugin.LocalPlayer.getFullName()));
             loadPreset("Default");
             Save();
         }

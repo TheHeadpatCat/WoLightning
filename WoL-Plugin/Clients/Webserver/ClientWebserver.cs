@@ -137,12 +137,14 @@ namespace WoLightning.Clients.Webserver
 
                 if (re.Operation != OperationCode.Ping) Plugin.Log(re);
 
+                /*
                 string? errorMessage = Plugin.Operation.execute(originalPacket, re);
                 if (errorMessage != null)
                 {
                     Plugin.Error(errorMessage, re);
                     return;
                 }
+                */
 
             }
             catch (Exception ex) { FatalError(ex); }

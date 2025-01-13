@@ -54,6 +54,7 @@ namespace WoLightning.Clients.Pishock
             Client.CancelPendingRequests();
         }
 
+        /*
         public async void request(ShockOptions TriggerObject, Player SourcePlayer) { request(TriggerObject, SourcePlayer, null, null); }
         public async void request(ShockOptions TriggerObject, Player SourcePlayer, string overrideNotif) { request(TriggerObject, SourcePlayer, overrideNotif, null); }
         public async void request(ShockOptions TriggerObject, Player SourcePlayer, int[] overrideSettings) { request(TriggerObject, SourcePlayer, null, overrideSettings); }
@@ -196,6 +197,8 @@ namespace WoLightning.Clients.Pishock
             }
 
         }
+
+        */
 
         public async void sendRequest(BaseRule Rule)
         {

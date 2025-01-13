@@ -30,6 +30,7 @@ public sealed class Plugin : IDalamudPlugin
     private const string OpenConfigFolder = "/wolfolder";
 
     public const int currentVersion = 416;
+    public const int configurationVersion = 416;
     public const string randomKey = "Currently Unused";
 
     public bool isFailsafeActive = false;
@@ -68,7 +69,6 @@ public sealed class Plugin : IDalamudPlugin
     public ClientWebserver? ClientWebserver { get; set; }
     public Authentification? Authentification { get; set; }
     public Configuration? Configuration { get; set; }
-    public Operation Operation { get; set; }
 
 
 
@@ -104,7 +104,7 @@ public sealed class Plugin : IDalamudPlugin
         PartyList = partyList;
         TargetManager = targetManager;
 
-        Operation = new Operation(this);
+        
 
         NetworkWatcher = new NetworkWatcher(this); // we need this to check for logins
         WindowSystem.AddWindow(BufferWindow);
@@ -317,7 +317,7 @@ public sealed class Plugin : IDalamudPlugin
     public void ToggleMainUI() => MainWindow.Toggle();
     public void ToggleMasterUI() => MasterWindow.Toggle();
     public void ToggleMasterConfigUI() => MasterWindow.CopiedConfigWindow.Toggle();
-    public void ShowMasterUI() => MasterWindow.Open();
+    //public void ShowMasterUI() => MasterWindow.Open();
 
     #region Logging
     public void Log(string message)

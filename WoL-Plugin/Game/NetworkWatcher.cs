@@ -50,7 +50,7 @@ namespace WoLightning.Game
             Plugin = plugin;
             Plugin.ClientState.Login += HandleLogin;
             Plugin.ClientState.Logout += HandleLogout;
-            sittingOnChairTimer.Elapsed += checkSittingOnChair;
+            //sittingOnChairTimer.Elapsed += checkSittingOnChair;
         }
 
         public void Start() //Todo only start specific services, when respective trigger is on
@@ -99,8 +99,10 @@ namespace WoLightning.Game
             running = false;
         }
 
+
         private void checkLocalPlayerState(IFramework Framework)
         {
+            /*
             try
             {
                 if (LocalPlayer == null)
@@ -128,8 +130,11 @@ namespace WoLightning.Game
             {
                 Plugin.Error(e.ToString());
             }
+        
+            */
         }
 
+        /*
         private void HandleHPChange()
         {
             if (lastMaxHP != LocalPlayer.MaxHp)
@@ -236,8 +241,11 @@ namespace WoLightning.Game
             lastPartyCheck = 0;
         }
 
+        */
+
         public unsafe void HandleChatMessage(XivChatType type, int timespamp, ref SeString senderE, ref SeString message, ref bool isHandled)
         {
+            /*
             if (Plugin.ClientState.LocalPlayer == null)
             {
                 Plugin.Error("Localplayer is null while we received a message - Ignoring...", true);
@@ -330,6 +338,8 @@ namespace WoLightning.Game
                     }
                 }
             }
+        
+            */
         }
 
         private void HandleLogin()
@@ -360,7 +370,7 @@ namespace WoLightning.Game
         private void OnEmoteIncoming(IPlayerCharacter sourceObj, ushort emoteId)
         {
             //Plugin.PluginLog.Info("[INCOMING EMOTE] Source: " + sourceObj.ToString() + " EmoteId: " + emoteId);
-
+            /*
             if (ActivePreset.GetPat.IsEnabled() && emoteId == 105)
             {
                 Player source = new Player(sourceObj.Name.ToString(), (int)sourceObj.HomeWorld.Value.RowId);
@@ -371,7 +381,7 @@ namespace WoLightning.Game
                 Player source = new Player(sourceObj.Name.ToString(), (int)sourceObj.HomeWorld.Value.RowId);
                 Plugin.ClientPishock.request(ActivePreset.GetSnapped, source, $"You got snapped at by {sourceObj.Name}!");
             }
-
+            */
         }
 
         private void OnEmoteUnrelated(IPlayerCharacter sourceObj, IGameObject targetObj, ushort emoteId)
@@ -397,7 +407,7 @@ namespace WoLightning.Game
             // 50 = /sit
             // 51 = getup from /sit
             // 52 = /groundsit
-
+            /*
             if (ActivePreset.SitOnFurniture.IsEnabled())
             {
                 if (emoteId == 50) // /sit on Chair done
@@ -422,8 +432,10 @@ namespace WoLightning.Game
                     sittingOnChairTimer.Stop();
                 }
             }
+            */
         }
 
+        /*
         private void checkSittingOnChair(object? sender, ElapsedEventArgs? e)
         {
             if (sittingOnChair && Plugin.ClientState.LocalPlayer.Position.Equals(sittingOnChairPos))
@@ -437,7 +449,7 @@ namespace WoLightning.Game
                 sittingOnChairTimer.Stop();
             }
         }
-
+        */
 
         /* Unused Debug stuff
         private void HandleNetworkMessage(nint dataPtr, ushort OpCode, uint sourceActorId, uint targetActorId, NetworkMessageDirection direction)
