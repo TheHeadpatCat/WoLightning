@@ -15,7 +15,7 @@ using static WoLightning.Util.Types.ChatType;
 
 namespace WoLightning.Game
 {
-    public class NetworkWatcher
+    internal class NetworkWatcher // DEPRECATED CLASS
     {
         public bool running = false;
         Plugin Plugin;
@@ -48,8 +48,8 @@ namespace WoLightning.Game
         public NetworkWatcher(Plugin plugin)
         {
             Plugin = plugin;
-            Plugin.ClientState.Login += HandleLogin;
-            Plugin.ClientState.Logout += HandleLogout;
+            Plugin.Log("NetworkWatchter Constructor Called");
+            Plugin.Log("constructor Finished");
             //sittingOnChairTimer.Elapsed += checkSittingOnChair;
         }
 
@@ -88,8 +88,6 @@ namespace WoLightning.Game
             Plugin.Framework.Update -= checkLocalPlayerState;
 
             Plugin.ChatGui.ChatMessage -= HandleChatMessage;
-            Plugin.ClientState.Login -= HandleLogin;
-            Plugin.ClientState.Logout -= HandleLogout;
             //Plugin.ClientState.TerritoryChanged -= HandlePlayerTerritoryChange;
             Plugin.EmoteReaderHooks.OnEmoteIncoming -= OnEmoteIncoming;
             Plugin.EmoteReaderHooks.OnEmoteOutgoing -= OnEmoteOutgoing;
@@ -340,20 +338,6 @@ namespace WoLightning.Game
             }
         
             */
-        }
-
-        private void HandleLogin()
-        {
-            Plugin.onLogin();
-            Plugin.ClientState.Login -= HandleLogin;
-            Plugin.ClientState.Logout += HandleLogout;
-        }
-
-        private void HandleLogout(int type, int code)
-        {
-            Plugin.onLogout();
-            Plugin.ClientState.Logout -= HandleLogout;
-            Plugin.ClientState.Login += HandleLogin;
         }
 
 

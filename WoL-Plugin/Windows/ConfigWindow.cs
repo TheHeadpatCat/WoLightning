@@ -25,7 +25,7 @@ namespace WoLightning.Windows;
 
 public class ConfigWindow : Window, IDisposable
 {
-    private Configuration Configuration;
+    private Configuration? Configuration;
     private Plugin Plugin;
 
     private int presetIndex = 0;
@@ -87,7 +87,7 @@ public class ConfigWindow : Window, IDisposable
     //private string[] debugOpCodes = Operation.allOpCodesString(true);
 
 
-    public ConfigWindow(Plugin plugin) : base($"Warrior of Lightning Configuration - v{plugin.Configuration.Version}##configmain")
+    public ConfigWindow(Plugin plugin) : base($"Warrior of Lightning Configuration##configmain")
     {
         Flags = ImGuiWindowFlags.AlwaysUseWindowPadding;
 
@@ -98,13 +98,9 @@ public class ConfigWindow : Window, IDisposable
             MaximumSize = new Vector2(2000, 2000)
         };
 
-        Configuration = plugin.Configuration;
-        Configuration.Save(); //make sure all fields exist on first start
+        //Configuration = plugin.Configuration;
+        //Configuration.Save(); //make sure all fields exist on first start
         Plugin = plugin;
-
-
-        timeOutRequest.Interval = 300000;
-        timeOutRequest.Elapsed += resetRequest;
     }
 
     public ConfigWindow(Plugin plugin, Configuration configuration, MasterWindow parent) : base($"Master of Lightning Configuration - v{plugin.Configuration.Version}##configmaster")
@@ -117,8 +113,8 @@ public class ConfigWindow : Window, IDisposable
             MaximumSize = new Vector2(2000, 2000)
         };
 
-        Configuration = configuration;
-        Configuration.Save(); //make sure all fields exist on first start
+        //Configuration = configuration;
+        //Configuration.Save(); //make sure all fields exist on first start
         Plugin = plugin;
         isAlternative = true;
         Parent = parent;
@@ -130,14 +126,13 @@ public class ConfigWindow : Window, IDisposable
     public void Dispose()
     {
         if (this.IsOpen) this.Toggle();
-        Configuration.Save();
+        Configuration!.Save();
     }
 
-    private void resetRequest(object sender, ElapsedEventArgs e)
+    public void SetConfiguration(Configuration? conf)
     {
-        timeOutRequest.Stop();
-        //Plugin.Authentification.MasterNameFull = "";
-
+        Configuration = conf;
+        Configuration!.Save();
     }
 
     public override void PreDraw()
@@ -147,6 +142,7 @@ public class ConfigWindow : Window, IDisposable
 
     public override void Draw()
     {
+        if(Configuration == null) return;
 
         DrawHeader();
 
@@ -183,7 +179,7 @@ public class ConfigWindow : Window, IDisposable
                 Configuration = new Configuration();
                 Configuration.Initialize(Plugin, isAlternative, Plugin.ConfigurationDirectoryPath, true);
 
-                Configuration.Presets.Add(new Preset(Plugin,"Default", Plugin.LocalPlayer.getFullName()));
+                Configuration.Presets.Add(new Preset("Default", Plugin.LocalPlayer.getFullName()));
                 Configuration.Save();
                 Configuration.loadPreset(addInput);
                 Configuration.deletePreset(Configuration.ActivePreset);
@@ -249,7 +245,7 @@ public class ConfigWindow : Window, IDisposable
             {
                 if (addInput.Length > 0)
                 {
-                    Preset tPreset = new Preset(Plugin,addInput, "Unknown");
+                    Preset tPreset = new Preset(addInput, "Unknown");
                     Configuration.Presets.Add(tPreset);
                     Configuration.Save();
                     Configuration.loadPreset(addInput);

@@ -156,19 +156,6 @@ public class MainWindow : Window, IDisposable
             Plugin.Configuration.loadPreset(Plugin.Configuration.PresetNames[presetIndex]);
         }
 
-        if (Plugin.NetworkWatcher.running) { ImGui.TextColored(activeColor, "The plugin is running."); }
-        else { ImGui.TextColored(deactivatedColor, "The plugin is deactivated."); }
-        //if (Plugin.ClientWebserver.failsafe) ImGui.TextColored(deactivatedColor, "Failsafe is engaged. Use /red to reactivate the plugin.");
-
-        if (!Plugin.NetworkWatcher.running && ImGui.Button("Start Plugin", new Vector2(ImGui.GetWindowSize().X - 15, 50)))
-        {
-            Plugin.NetworkWatcher.Start();
-        }
-        else if (Plugin.NetworkWatcher.running && ImGui.Button("Stop Plugin", new Vector2(ImGui.GetWindowSize().X - 15, 50)))
-        {
-            Plugin.NetworkWatcher.Dispose();
-        }
-
         var ActivateOnStart = Plugin.Configuration.ActivateOnStart;
 
         if (ImGui.Checkbox("Activate whenever the game starts.", ref ActivateOnStart))

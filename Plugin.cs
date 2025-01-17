@@ -16,6 +16,7 @@ using WoLightning.Game;
 using WoLightning.Util;
 using WoLightning.Util.Types;
 using WoLightning.Windows;
+using static FFXIVClientStructs.FFXIV.Client.UI.Agent.AgentLobby.Delegates;
 
 namespace WoLightning;
 
@@ -63,7 +64,6 @@ public sealed class Plugin : IDalamudPlugin
 
 
     // Handler Classes
-    public NetworkWatcher NetworkWatcher { get; set; }
     public EmoteReaderHooks? EmoteReaderHooks { get; set; }
     public ClientPishock? ClientPishock { get; set; }
     public ClientWebserver? ClientWebserver { get; set; }
@@ -104,10 +104,13 @@ public sealed class Plugin : IDalamudPlugin
         PartyList = partyList;
         TargetManager = targetManager;
 
-        
 
-        NetworkWatcher = new NetworkWatcher(this); // we need this to check for logins
+        MainWindow = new MainWindow(this);
+        ConfigWindow = new ConfigWindow(this);
+
         WindowSystem.AddWindow(BufferWindow);
+        WindowSystem.AddWindow(MainWindow);
+        WindowSystem.AddWindow(ConfigWindow);
 
         if (ClientState.LocalPlayer != null) onLogin();
 
@@ -133,6 +136,10 @@ public sealed class Plugin : IDalamudPlugin
 
         PluginInterface.UiBuilder.OpenConfigUi += ToggleConfigUI;
         PluginInterface.UiBuilder.OpenMainUi += ToggleMainUI;
+
+        ClientState.Login += onLogin;
+        ClientState.Logout += onLogout;
+        if (ClientState.LocalPlayer != null) onLogin();
     }
 
     public void onLogin()
@@ -184,23 +191,13 @@ public sealed class Plugin : IDalamudPlugin
 
             EmoteReaderHooks = new EmoteReaderHooks(this);
 
-            MainWindow = new MainWindow(this);
-            ConfigWindow = new ConfigWindow(this);
-            MasterWindow = new MasterWindow(this);
-
-            if (Configuration.ActivateOnStart) NetworkWatcher.Start();
-            LocalPlayer.Online = NetworkWatcher.running;
-
-
             ClientWebserver = new ClientWebserver(this);
             ClientWebserver.Connect();
 
             ClientPishock = new ClientPishock(this);
             ClientPishock.createHttpClient();
 
-            WindowSystem.AddWindow(ConfigWindow);
-            WindowSystem.AddWindow(MainWindow);
-            WindowSystem.AddWindow(MasterWindow);
+            ConfigWindow.SetConfiguration(Configuration);
         }
         catch (Exception ex)
         {
@@ -209,44 +206,33 @@ public sealed class Plugin : IDalamudPlugin
         }
     }
 
-    public void onLogout()
+    public void onLogout(int type, int code)
     {
-
-        MainWindow.Dispose();
-        ConfigWindow.Dispose();
-        MasterWindow.Dispose();
-
-        WindowSystem.RemoveWindow(MainWindow);
-        WindowSystem.RemoveWindow(ConfigWindow);
-        WindowSystem.RemoveWindow(MasterWindow);
-
         EmoteReaderHooks.Dispose();
         ClientWebserver.Dispose();
 
         Configuration.Dispose();
         Authentification.Dispose();
-        NetworkWatcher.Stop();
+        ConfigWindow.SetConfiguration(null);
     }
 
 
     public void Dispose()
     {
-        MainWindow.Dispose();
-        ConfigWindow.Dispose();
-        MasterWindow.Dispose();
-        BufferWindow.Dispose();
-        WindowSystem.RemoveWindow(MainWindow);
-        WindowSystem.RemoveWindow(ConfigWindow);
-        WindowSystem.RemoveWindow(MasterWindow);
+        if(MainWindow != null) WindowSystem.RemoveWindow(MainWindow);
+        if(ConfigWindow != null) WindowSystem.RemoveWindow(ConfigWindow);
+        if(MasterWindow != null) WindowSystem.RemoveWindow(MasterWindow);
         WindowSystem.RemoveWindow(BufferWindow);
 
+        MainWindow.Dispose();
+        ConfigWindow.Dispose();
+        BufferWindow.Dispose();
 
         EmoteReaderHooks.Dispose();
         ClientWebserver.Dispose();
 
         Configuration.Dispose();
         Authentification.Dispose();
-        NetworkWatcher.Dispose();
 
         CommandManager.RemoveHandler(CommandName);
         CommandManager.RemoveHandler(CommandNameAlias);

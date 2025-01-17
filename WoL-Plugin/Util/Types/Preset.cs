@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using WoLightning.WoL_Plugin.Game.Rules.Social;
@@ -6,8 +7,10 @@ using WoLightning.WoL_Plugin.Game.Rules.Social;
 namespace WoLightning.Util.Types
 {
     [Serializable]
-    public class Preset(Plugin Plugin,string Name, string CreatorFullName)
+    public class Preset(string Name, string CreatorFullName)
     {
+
+        [JsonIgnore] bool isInitialized = false;
         public string Name { get; set; } = Name;
         public string CreatorFullName { get; set; } = CreatorFullName;
 
@@ -20,8 +23,15 @@ namespace WoLightning.Util.Types
         public bool isWhitelistEnabled { get; set; } = false;
 
 
-        public DoEmote DoEmote { get; set; } = new DoEmote(Plugin);
-        public DoEmoteTo DoEmoteTo { get; set; } = new DoEmoteTo(Plugin);
+        public DoEmote DoEmote { get; set; }
+        public DoEmoteTo DoEmoteTo { get; set; }
+
+        public void Initialize(Plugin Plugin)
+        {
+            isInitialized = true;
+            DoEmote = new DoEmote(Plugin);
+            DoEmoteTo = new DoEmoteTo(Plugin);
+        }
 
         /*
         // Social Triggers
@@ -45,7 +55,7 @@ namespace WoLightning.Util.Types
 
         public void resetInvalidTriggers()
         {
-            Preset cleanPreset = new Preset(Plugin,"Clean", "None");
+            Preset cleanPreset = new Preset("Clean", "None");
 
             foreach (var property in typeof(Preset).GetProperties())
             {

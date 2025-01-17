@@ -30,6 +30,7 @@ namespace WoLightning.Configurations
         public string LastPresetName { get; set; } = "Default";
         // General Settings
         public bool ActivateOnStart { get; set; } = false;
+        [NonSerialized] public bool IsRunning = false;
 
         // Generic Lists
         public Dictionary<string, int> PermissionList { get; set; } = new Dictionary<string, int>();
@@ -50,7 +51,8 @@ namespace WoLightning.Configurations
             this.isAlternative = isAlternative;
             this.ConfigurationDirectoryPath = ConfigurationDirectoryPath;
 
-            ActivePreset = new Preset(plugin, "Default", plugin.LocalPlayer.Name);
+            ActivePreset = new Preset("Default", plugin.LocalPlayer.Name);
+            ActivePreset.Initialize(plugin);
 
             string f = "";
             if (!isAlternative && File.Exists(ConfigurationDirectoryPath + "Config.json")) f = File.ReadAllText(ConfigurationDirectoryPath + "Config.json");
@@ -73,14 +75,14 @@ namespace WoLightning.Configurations
                     catch (Exception e)
                     {
                         plugin.Log(e);
-                        tPreset = new Preset(plugin,"Default", plugin.LocalPlayer.getFullName());
+                        tPreset = new Preset("Default", plugin.LocalPlayer.getFullName());
                     }
                     Presets.Add(tPreset);
                 }
             }
             if (Presets.Count == 0)
             {
-                ActivePreset = new Preset(plugin, "Default", plugin.LocalPlayer.getFullName());
+                ActivePreset = new Preset("Default", plugin.LocalPlayer.getFullName());
                 Presets.Add(ActivePreset);
                 Save();
                 loadPreset("Default");
@@ -148,6 +150,7 @@ namespace WoLightning.Configurations
             ActivePreset = Presets.Find(preset => preset.Name == Name);
             PresetIndex = Presets.IndexOf(ActivePreset);
             LastPresetName = ActivePreset.Name;
+            ActivePreset.Initialize(plugin);
             ActivePreset.resetInvalidTriggers();
             return true;
         }
@@ -168,7 +171,7 @@ namespace WoLightning.Configurations
 
             File.Delete(ConfigurationDirectoryPath + "\\Presets\\" + target.Name + ".json");
             Presets.Remove(target);
-            if (!Presets.Exists(preset => preset.Name == "Default")) Presets.Add(new Preset(plugin, "Default", plugin.LocalPlayer.getFullName()));
+            if (!Presets.Exists(preset => preset.Name == "Default")) Presets.Add(new Preset("Default", plugin.LocalPlayer.getFullName()));
             loadPreset("Default");
             Save();
         }
@@ -202,69 +205,6 @@ namespace WoLightning.Configurations
         {
             if (input == "") ; // cry
             return JsonConvert.DeserializeObject<Preset>(input)!;
-        }
-
-        public void updateSetting(string PropertyName, int Value)
-        {
-            foreach (PropertyInfo prop in GetType().GetProperties())
-            {
-
-                if (prop.PropertyType == typeof(int) && prop.Name.ToLower() == PropertyName.ToLower())
-                {
-                    try
-                    {
-                        prop.SetValue(this, Value);
-                        Save();
-                        return;
-                    }
-                    catch
-                    {
-                        // tried to set invalid setting
-                    }
-                }
-            }
-        }
-
-        public void updateSetting(string PropertyName, int[] Value)
-        {
-            foreach (PropertyInfo prop in GetType().GetProperties())
-            {
-
-                if (prop.PropertyType == typeof(int[]) && prop.Name.ToLower() == PropertyName.ToLower())
-                {
-                    try
-                    {
-                        prop.SetValue(this, Value);
-                        Save();
-                        return;
-                    }
-                    catch
-                    {
-                        // tried to set invalid setting
-                    }
-                }
-            }
-        }
-
-        public void updateSetting(string PropertyName, bool Value)
-        {
-            foreach (PropertyInfo prop in GetType().GetProperties())
-            {
-
-                if (prop.PropertyType == typeof(bool) && prop.Name.ToLower() == PropertyName.ToLower())
-                {
-                    try
-                    {
-                        prop.SetValue(this, Value);
-                        Save();
-                        return;
-                    }
-                    catch
-                    {
-                        // tried to set invalid setting
-                    }
-                }
-            }
         }
 
         public void Dispose()
