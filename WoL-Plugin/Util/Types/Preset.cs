@@ -21,6 +21,10 @@ namespace WoLightning.Util.Types
         public bool showCooldownNotifs { get; set; } = false;
 
         public bool isWhitelistEnabled { get; set; } = false;
+        public List<Player> Whitelist { get; set; }
+
+        public bool isBlacklistEnabled { get; set; } = false;
+        public List<Player> Blacklist { get; set; }
 
 
         public DoEmote DoEmote { get; set; }
@@ -31,6 +35,14 @@ namespace WoLightning.Util.Types
             isInitialized = true;
             DoEmote = new DoEmote(Plugin);
             DoEmoteTo = new DoEmoteTo(Plugin);
+        }
+
+        public bool isPlayerAllowedToTrigger(Player player)
+        {
+            bool isAllowed = true;
+            if (isBlacklistEnabled &&  Blacklist.Contains(player))isAllowed = false;
+            if (isWhitelistEnabled && !Whitelist.Contains(player))isAllowed = false;
+            return isAllowed;
         }
 
         /*

@@ -25,11 +25,13 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         override public void Start()
         {
             Plugin.EmoteReaderHooks.OnEmoteOutgoing += Check;
+            IsRunning = true;
         }
 
         override public void Stop() 
         {
             Plugin.EmoteReaderHooks.OnEmoteOutgoing -= Check;
+            IsRunning = false;
         }
 
         public void Check(IGameObject target,ushort emoteId)

@@ -317,7 +317,7 @@ public class ConfigWindow : Window, IDisposable
             }
 
             Plugin.Configuration.ActivePreset.DoEmote.Draw();
-            if (!Plugin.Configuration.ActivePreset.DoEmote.IsEnabled) Plugin.Configuration.ActivePreset.DoEmote.Start();
+            if (!Plugin.Configuration.ActivePreset.DoEmote.IsRunning) Plugin.Configuration.ActivePreset.DoEmote.Start();
             Plugin.Configuration.ActivePreset.DoEmoteTo.Draw();
 
 

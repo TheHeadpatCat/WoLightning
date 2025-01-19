@@ -17,10 +17,10 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         Unknown = 0,
         General = 1,
         Social = 2,
-        PVE = 3,
+        Combat = 3,
         PVP = 4,
-        misc = 5,
-        master = 6,
+        Misc = 5,
+        Master = 6,
     }
 
     [Serializable]
@@ -31,8 +31,15 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         [JsonIgnore] virtual public string Hint { get; }
         [JsonIgnore] abstract public RuleCategory Category { get; }
 
-        virtual public ShockOptions ShockOptions { get; init; }
+        virtual public ShockOptions ShockOptions { get; set; }
+
+        // TODO: Implement Point system
+        virtual public float Points { get; set; }
+        virtual public float PointsToTrigger { get; set; }
+
         virtual public bool IsEnabled { get; set; }
+        [NonSerialized] public bool IsRunning;
+        
         virtual public bool IsLocked { get; set; }
 
         [NonSerialized] protected Plugin Plugin;
@@ -58,7 +65,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
         virtual public void Trigger(string Text)
         {
-            if (ShockOptions.hasCooldown()) return;
+            if (ShockOptions.hasCooldown() || !IsRunning) return;
+            if (Plugin.Configuration)
             Triggered?.Invoke(this);
             Plugin.sendNotif(Text);
             ShockOptions.startCooldown();

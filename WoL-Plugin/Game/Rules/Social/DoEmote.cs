@@ -23,14 +23,14 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
         override public void Start()
         {
-            IsEnabled = true;
+            IsRunning = true;
             Plugin.EmoteReaderHooks.OnEmoteSelf += Check;
             Plugin.EmoteReaderHooks.OnEmoteOutgoing += Check;
         }
 
         override public void Stop() 
         {
-            IsEnabled = false;
+            IsRunning = false;
             Plugin.EmoteReaderHooks.OnEmoteSelf -= Check;
             Plugin.EmoteReaderHooks.OnEmoteOutgoing -= Check;
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dalamud.Game.ClientState.Objects.SubKinds;
+using System;
 
 namespace WoLightning.Util.Types
 {
@@ -144,6 +145,14 @@ namespace WoLightning.Util.Types
             WorldId = worldId;
             Key = key;
             PluginActive = pluginActive;
+        }
+
+        //Player source = new Player(Plugin.PartyList[lastCheckedIndex].Name.ToString(), (int)Plugin.PartyList[lastCheckedIndex].World.Value.RowId);
+
+        public Player(IPlayerCharacter playerCharacter)
+        {
+            Name = playerCharacter.Name.ToString();
+            WorldId = (int)playerCharacter.HomeWorld.Value.RowId;
         }
 
         public string getWorldName()

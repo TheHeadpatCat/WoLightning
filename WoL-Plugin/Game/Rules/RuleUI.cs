@@ -34,7 +34,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         public void Draw()
         {
             DrawBase();
-            if (IsOptionsOpen && Rule.IsEnabled) DrawOptions();
+            if (IsOptionsOpen && Rule.IsRunning) DrawOptions();
             ImGui.Spacing();
             ImGui.Separator();
         }
@@ -42,9 +42,9 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         protected void DrawBase()
         {
             ImGui.BeginGroup();
-            bool refEn = Rule.IsEnabled;
+            bool refEn = Rule.IsRunning;
             ImGui.Checkbox("##checkbox" + Rule.Name, ref refEn);
-            if (Rule.IsEnabled)
+            if (Rule.IsRunning)
             {
                 if (IsOptionsOpen && ImGui.ArrowButton("##collapse" + Rule.Name, ImGuiDir.Down))
                 {
@@ -59,7 +59,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
             ImGui.SameLine();
             ImGui.BeginGroup();
-            if (Rule.IsEnabled) ImGui.TextColored(ColorNameEnabled, "  " + Rule.Name + $"  [{Rule.ShockOptions.OpMode}]");
+            if (Rule.IsRunning) ImGui.TextColored(ColorNameEnabled, "  " + Rule.Name + $"  [{Rule.ShockOptions.OpMode}]");
             else ImGui.TextColored(ColorNameDisabled, "  " + Rule.Name);
             ImGui.TextColored(ColorDescription, $"  {Rule.Description}");
             if (Rule.Hint !=null && Rule.Hint.Length > 0)

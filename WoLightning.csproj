@@ -30,6 +30,5 @@
     <Folder Include="WoL-Plugin\Game\Rules\Misc\" />
     <Folder Include="WoL-Plugin\Game\Rules\Master\" />
     <Folder Include="WoL-Plugin\Game\Rules\PVP\" />
-    <Folder Include="WoL-Plugin\Game\Rules\PVE\" />
   </ItemGroup>
 </Project>
