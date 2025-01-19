@@ -66,7 +66,15 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         virtual public void Trigger(string Text)
         {
             if (ShockOptions.hasCooldown() || !IsRunning) return;
-            if (Plugin.Configuration)
+            Triggered?.Invoke(this);
+            Plugin.sendNotif(Text);
+            ShockOptions.startCooldown();
+        }
+
+        virtual public void Trigger(string Text,Player source)
+        {
+            if (ShockOptions.hasCooldown() || !IsRunning) return;
+            if (!Plugin.Configuration.ActivePreset.isPlayerAllowedToTrigger(source)) return;
             Triggered?.Invoke(this);
             Plugin.sendNotif(Text);
             ShockOptions.startCooldown();

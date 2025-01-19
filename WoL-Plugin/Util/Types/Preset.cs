@@ -39,6 +39,7 @@ namespace WoLightning.Util.Types
 
         public bool isPlayerAllowedToTrigger(Player player)
         {
+            if (player == null) return false;
             bool isAllowed = true;
             if (isBlacklistEnabled &&  Blacklist.Contains(player))isAllowed = false;
             if (isWhitelistEnabled && !Whitelist.Contains(player))isAllowed = false;

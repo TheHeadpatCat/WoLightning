@@ -11,15 +11,21 @@ using WoLightning.Util.Types;
 namespace WoLightning.Configurations
 {
 
+    public enum DebugLevel
+    {
+        None = 0,
+        Basic = 1,
+        Verbose = 2,
+        All = 3,
+    }
+
     [Serializable]
     public class Configuration : IPluginConfiguration, IDisposable
     {
+        public DebugLevel DebugLevel { get; set; } = DebugLevel.None;
         public int Version { get; set; } = 411;
-
-
-        public bool DebugEnabled { get; set; } = false;
-        public bool LogEnabled { get; set; } = true;
-        public string WebserverURL { get; } = "https://theheadpatcat.ddns.net/post/WoLightning";
+        public string LastPresetName { get; set; } = "Default";
+        public bool ActivateOnStart { get; set; } = false;
 
         // Preset Settings
         [NonSerialized] public Preset ActivePreset;
@@ -27,28 +33,13 @@ namespace WoLightning.Configurations
         [NonSerialized] public List<string> PresetNames = new(); // used for comboBoxes
         [NonSerialized] public int PresetIndex = 0;
 
-        public string LastPresetName { get; set; } = "Default";
-        // General Settings
-        public bool ActivateOnStart { get; set; } = false;
-        [NonSerialized] public bool IsRunning = false;
-
-        // Generic Lists
-        public Dictionary<string, int> PermissionList { get; set; } = new Dictionary<string, int>();
-        public Dictionary<string, int> SubsActivePresetIndexes { get; set; } = new Dictionary<string, int>();
-        public Dictionary<string, bool> SubsIsDisallowed { get; set; } = new Dictionary<string, bool>();
-
-
-
-        // Instance-Only things - Not Saved
-        [NonSerialized] public bool isAlternative = false;
-        [NonSerialized] public string ConfigurationDirectoryPath;
-        [NonSerialized] public Dictionary<string, bool> SubsIsActive = new Dictionary<string, bool>();
         [NonSerialized] private Plugin plugin;
+        [NonSerialized] public string ConfigurationDirectoryPath;
 
         public void Initialize(Plugin plugin, bool isAlternative, string ConfigurationDirectoryPath)
         {
             this.plugin = plugin;
-            this.isAlternative = isAlternative;
+            //this.isAlternative = isAlternative;
             this.ConfigurationDirectoryPath = ConfigurationDirectoryPath;
 
             ActivePreset = new Preset("Default", plugin.LocalPlayer.Name);
@@ -94,12 +85,14 @@ namespace WoLightning.Configurations
 
         public void Initialize(Plugin plugin, bool isAlternative, string ConfigurationDirectoryPath, bool createNew)
         {
-            this.isAlternative = isAlternative;
+            //this.isAlternative = isAlternative;
             this.ConfigurationDirectoryPath = ConfigurationDirectoryPath;
 
             Save();
         }
 
+
+        #region Save and Loading
         public void Save()
         {
 
@@ -107,16 +100,6 @@ namespace WoLightning.Configurations
             {
                 LastPresetName = ActivePreset.Name;
                 PresetNames = new();
-                if (isAlternative)
-                {
-                    foreach (var preset in Presets)
-                    {
-                        PresetNames.Add(preset.Name);
-                        savePreset(preset, true);
-                    }
-                    File.WriteAllText(ConfigurationDirectoryPath + "masterConfig.json", SerializeConfig(this));
-                    return;
-                }
 
                 foreach (var preset in Presets)
                 {
@@ -175,8 +158,9 @@ namespace WoLightning.Configurations
             loadPreset("Default");
             Save();
         }
+        #endregion
 
-
+        #region Serialization
         internal static string SerializeConfig(object? config)
         {
             return JsonConvert.SerializeObject(config, Formatting.Indented, new JsonSerializerSettings
@@ -206,6 +190,7 @@ namespace WoLightning.Configurations
             if (input == "") ; // cry
             return JsonConvert.DeserializeObject<Preset>(input)!;
         }
+        #endregion
 
         public void Dispose()
         {

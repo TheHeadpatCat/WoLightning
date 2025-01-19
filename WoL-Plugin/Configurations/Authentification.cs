@@ -21,10 +21,12 @@ namespace WoLightning.Configurations
 
         private string? ConfigurationDirectoryPath { get; init; }
 
-        // Webserver thingsprivate
+        // Webserver things
+        public string WebserverURL { get; } = "https://theheadpatcat.ddns.net/post/WoLightning";
         public bool acceptedEula { get; set; } = false;
         public string ServerKey { get; set; } = string.Empty;
-        private string Hash = string.Empty;
+        private string Hash {  get; set; }
+        
 
         // Pishock things
         public string PishockName { get; set; } = string.Empty;
@@ -59,7 +61,7 @@ namespace WoLightning.Configurations
 
         public string getHash()
         {
-            if (Hash.Length > 0) return Hash;
+            if (Hash != null && Hash.Length > 0) return Hash;
 
             byte[] arr = Encoding.ASCII.GetBytes(Plugin.currentVersion + Plugin.randomKey);
             byte[] hashed = SHA256.Create().ComputeHash(arr);
