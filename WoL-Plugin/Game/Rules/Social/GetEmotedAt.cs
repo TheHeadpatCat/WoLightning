@@ -1,10 +1,5 @@
 ﻿using Dalamud.Game.ClientState.Objects.SubKinds;
-using Dalamud.Game.ClientState.Objects.Types;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Util.Types;
 
@@ -16,7 +11,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         override public string Description { get; } = "Triggers whenever a specified player sends a emote to you.";
         override public RuleCategory Category { get; } = RuleCategory.Social;
 
-        public Dictionary<ushort,SpecificPlayer> TriggeringEmotes { get; set; } = new();
+        public Dictionary<ushort, SpecificPlayer> TriggeringEmotes { get; set; } = new();
 
         public GetEmotedAt(Plugin plugin) : base(plugin) { }
 
@@ -37,12 +32,12 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
             RuleUI.Draw();
         }
 
-        public void Check(IPlayerCharacter player,ushort emoteId)
+        public void Check(IPlayerCharacter player, ushort emoteId)
         {
             SpecificPlayer? targets = TriggeringEmotes[emoteId];
             if (targets == null) return;
-            if (targets.Compare(new Player(player)))Trigger("You used Emote " + emoteId + " on a Player!");
+            if (targets.Compare(new Player(player))) Trigger("You used Emote " + emoteId + " on a Player!");
         }
-    
+
     }
 }

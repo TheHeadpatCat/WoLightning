@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json;
+using System;
 using WoLightning.Util.Types;
-using ImGuiNET;
-using System.Numerics;
-using System.Threading.Channels;
-using Newtonsoft.Json;
 
 namespace WoLightning.WoL_Plugin.Game.Rules
 {
@@ -39,7 +32,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
         virtual public bool IsEnabled { get; set; }
         [NonSerialized] public bool IsRunning;
-        
+
         virtual public bool IsLocked { get; set; }
 
         [NonSerialized] protected Plugin Plugin;
@@ -50,7 +43,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         {
             this.Plugin = plugin;
             ShockOptions = new ShockOptions();
-            RuleUI = new RuleUI(plugin,this);
+            RuleUI = new RuleUI(plugin, this);
         }
 
         virtual public void Start()
@@ -71,7 +64,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             ShockOptions.startCooldown();
         }
 
-        virtual public void Trigger(string Text,Player source)
+        virtual public void Trigger(string Text, Player source)
         {
             if (ShockOptions.hasCooldown() || !IsRunning) return;
             if (!Plugin.Configuration.ActivePreset.isPlayerAllowedToTrigger(source)) return;

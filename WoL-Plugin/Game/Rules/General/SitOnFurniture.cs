@@ -1,10 +1,5 @@
-﻿using Dalamud.Game.ClientState.Objects.Types;
-using FFXIVClientStructs.FFXIV.Common.Math;
+﻿using FFXIVClientStructs.FFXIV.Common.Math;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 using WoLightning.Util;
 using WoLightning.Util.Types;
@@ -32,7 +27,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
             IsRunning = true;
         }
 
-        override public void Stop() 
+        override public void Stop()
         {
             Plugin.EmoteReaderHooks.OnSitEmote -= Check;
             sittingOnChairTimer.Elapsed -= checkSittingOnChair;
@@ -41,7 +36,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
         public void Check(ushort emoteId)
         {
-            
+
             if (emoteId == 50) // /sit on Chair done
             {
                 sittingOnChair = true;
@@ -63,7 +58,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                 sittingOnChair = false;
                 sittingOnChairTimer.Stop();
             }
-            
+
         }
 
         private void checkSittingOnChair(object? sender, ElapsedEventArgs? e)

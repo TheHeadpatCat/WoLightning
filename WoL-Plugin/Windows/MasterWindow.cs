@@ -1,6 +1,4 @@
-﻿using Dalamud.Game.ClientState.Objects.SubKinds;
-using Dalamud.Game.ClientState.Objects.Types;
-using Dalamud.Interface.Windowing;
+﻿using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using System;
 using System.Numerics;

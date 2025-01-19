@@ -25,8 +25,8 @@ namespace WoLightning.Configurations
         public string WebserverURL { get; } = "https://theheadpatcat.ddns.net/post/WoLightning";
         public bool acceptedEula { get; set; } = false;
         public string ServerKey { get; set; } = string.Empty;
-        private string Hash {  get; set; }
-        
+        private string Hash { get; set; }
+
 
         // Pishock things
         public string PishockName { get; set; } = string.Empty;
@@ -35,8 +35,8 @@ namespace WoLightning.Configurations
         public string PishockApiKey { get; set; } = string.Empty;
 
         // OpenShock things
-        public string OpenShockURL {  get; set; } = "";
-        public string OpenShockApiKey { get; set;} = string.Empty;
+        public string OpenShockURL { get; set; } = "";
+        public string OpenShockApiKey { get; set; } = string.Empty;
         public List<Shocker> OpenShockShockers { get; set; } = [];
 
         public string DevKey { get; set; } = string.Empty;

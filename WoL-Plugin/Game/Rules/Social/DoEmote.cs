@@ -1,12 +1,6 @@
 ﻿using Dalamud.Game.ClientState.Objects.Types;
-using ImGuiNET;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WoLightning.Util.Types;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Social
 {
@@ -18,7 +12,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         override public RuleCategory Category { get; } = RuleCategory.Social;
 
         public List<ushort> TriggeringEmotes { get; set; } = new List<ushort>();
-        
+
         public DoEmote(Plugin plugin) : base(plugin) { }
 
         override public void Start()
@@ -28,7 +22,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
             Plugin.EmoteReaderHooks.OnEmoteOutgoing += Check;
         }
 
-        override public void Stop() 
+        override public void Stop()
         {
             IsRunning = false;
             Plugin.EmoteReaderHooks.OnEmoteSelf -= Check;
@@ -45,10 +39,10 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
             //if(TriggeringEmotes.Contains(emoteId))Trigger("You used emote " + emoteId);
             Trigger("You used emote " + emoteId);
         }
-        public void Check(IGameObject target,ushort emoteId)
+        public void Check(IGameObject target, ushort emoteId)
         {
             if (TriggeringEmotes.Contains(emoteId)) Trigger("You used emote " + emoteId);
-            
+
         }
     }
 }

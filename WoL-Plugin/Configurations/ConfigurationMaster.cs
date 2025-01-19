@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WoLightning.Clients.Webserver.Operations.Account;
 using WoLightning.Util.Types;
-using static FFXIVClientStructs.FFXIV.Client.UI.RaptureAtkHistory.Delegates;
 
 namespace WoLightning.WoL_Plugin.Configurations
 {
@@ -27,7 +22,7 @@ namespace WoLightning.WoL_Plugin.Configurations
 
         public void Save()
         {
-            
+
         }
 
         public void Dispose()

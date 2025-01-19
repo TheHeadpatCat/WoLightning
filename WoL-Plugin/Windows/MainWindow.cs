@@ -191,7 +191,7 @@ public class MainWindow : Window, IDisposable
 
             if (isPishockMenuOpen) DrawPishockAccount();
             else DrawOpenShockAccount();
-            
+
         }
     }
 
@@ -222,7 +222,7 @@ public class MainWindow : Window, IDisposable
         if (ImGui.Button("+ Add##registerShocker"))
         {
             Plugin.Log(Plugin.Authentification.PishockShareCode);
-            Plugin.Authentification.PishockShockers.Add(new Shocker(ShockerType.Pishock,$"Shocker{Plugin.Authentification.PishockShockers.Count}", Plugin.Authentification.PishockShareCode));
+            Plugin.Authentification.PishockShockers.Add(new Shocker(ShockerType.Pishock, $"Shocker{Plugin.Authentification.PishockShockers.Count}", Plugin.Authentification.PishockShareCode));
             Plugin.ClientPishock.info(Plugin.Authentification.PishockShareCode);
         }
         int x = 0;

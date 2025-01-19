@@ -1,7 +1,4 @@
-﻿using System;
-using WoLightning.Util.Types;
-
-namespace WoLightning.Clients.Webserver
+﻿namespace WoLightning.Clients.Webserver
 {
     public enum OperationCode
     {

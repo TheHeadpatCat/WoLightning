@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using WoLightning.Util.Types;
 
 namespace WoLightning.WoL_Plugin.Util.Types
@@ -22,9 +18,9 @@ namespace WoLightning.WoL_Plugin.Util.Types
             bool found = false;
             foreach (Player p in Players)
             {
-                if(p.Equals(otherPlayer)) found = true;
+                if (p.Equals(otherPlayer)) found = true;
             }
-            if(IsBlacklist) return !found;
+            if (IsBlacklist) return !found;
             return found;
 
         }

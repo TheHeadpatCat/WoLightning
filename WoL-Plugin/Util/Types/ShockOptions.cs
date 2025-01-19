@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using WoLightning.WoL_Plugin.Game.Rules;
 
 namespace WoLightning.Util.Types
 {
@@ -33,7 +31,7 @@ namespace WoLightning.Util.Types
         public int Cooldown { get; set; } = 0;
         public CooldownModifier modifier { get; set; } = CooldownModifier.Seconds;
 
-        
+
         // Randomization
         public bool isIntensityRandomized { get; set; } = false;
         public int RandomizeIntensityMin { get; set; } = 1;
@@ -45,7 +43,7 @@ namespace WoLightning.Util.Types
         [NonSerialized] public TimerPlus CooldownTimer = new();
         [NonSerialized] public bool hasBeenReset = false;
 
-        
+
 
         public ShockOptions()
         {
@@ -71,8 +69,8 @@ namespace WoLightning.Util.Types
         {
             return isEnabled && Shockers.Count > 0;
         }
-        
-        
+
+
 
         public override string ToString()
         {

@@ -36,9 +36,9 @@ namespace WoLightning.Util.Types
         public ShockerStatus Status = ShockerStatus.Unchecked;
 
         [NonSerialized]
-        public Action<BaseRule,Shocker> Triggered;
+        public Action<BaseRule, Shocker> Triggered;
         [NonSerialized]
-        public Action<int,int, Shocker> TriggeredManually;
+        public Action<int, int, Shocker> TriggeredManually;
 
         public Shocker(ShockerType type, string name, string code)
         {
@@ -46,6 +46,6 @@ namespace WoLightning.Util.Types
             Name = name;
             Code = code;
         }
-        
+
     }
 }

@@ -1,22 +1,11 @@
-﻿using Dalamud.Game.ClientState.Objects.SubKinds;
-using Dalamud.Game.ClientState.Objects.Types;
-using Dalamud.Game.Text;
-using Dalamud.Game.Text.SeStringHandling;
-using Dalamud.Interface;
-using Dalamud.Interface.Colors;
-using Dalamud.Interface.Utility;
-using Dalamud.Interface.Windowing;
+﻿using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Text.RegularExpressions;
-using System.Timers;
-using WoLightning.Clients.Webserver;
 using WoLightning.Configurations;
 using WoLightning.Util;
 using WoLightning.Util.Types;
-using WoLightning.WoL_Plugin.Game.Rules;
 
 
 
@@ -142,7 +131,7 @@ public class ConfigWindow : Window, IDisposable
 
     public override void Draw()
     {
-        if(Configuration == null) return;
+        if (Configuration == null) return;
 
         DrawHeader();
 
@@ -295,7 +284,7 @@ public class ConfigWindow : Window, IDisposable
         }
     }
 
-    
+
     private void DrawGeneralTab()
     {
         if (ImGui.BeginTabItem("General"))

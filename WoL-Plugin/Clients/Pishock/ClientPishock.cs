@@ -1,5 +1,4 @@
-﻿using Dalamud.Interface.ImGuiNotification;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -242,7 +241,7 @@ namespace WoLightning.Clients.Pishock
                     }),
                     Encoding.UTF8,
                     "application/json");
-                
+
                 return Client.PostAsync("https://do.pishock.com/api/apioperate", jsonContent);
             }));
 

@@ -16,7 +16,6 @@ using WoLightning.Game;
 using WoLightning.Util;
 using WoLightning.Util.Types;
 using WoLightning.Windows;
-using static FFXIVClientStructs.FFXIV.Client.UI.Agent.AgentLobby.Delegates;
 
 namespace WoLightning;
 
@@ -219,9 +218,9 @@ public sealed class Plugin : IDalamudPlugin
 
     public void Dispose()
     {
-        if(MainWindow != null) WindowSystem.RemoveWindow(MainWindow);
-        if(ConfigWindow != null) WindowSystem.RemoveWindow(ConfigWindow);
-        if(MasterWindow != null) WindowSystem.RemoveWindow(MasterWindow);
+        if (MainWindow != null) WindowSystem.RemoveWindow(MainWindow);
+        if (ConfigWindow != null) WindowSystem.RemoveWindow(ConfigWindow);
+        if (MasterWindow != null) WindowSystem.RemoveWindow(MasterWindow);
         WindowSystem.RemoveWindow(BufferWindow);
 
         MainWindow.Dispose();

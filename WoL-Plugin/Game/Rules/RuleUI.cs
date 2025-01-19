@@ -1,12 +1,6 @@
 ﻿using ImGuiNET;
-using Lumina.Excel.Sheets;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using WoLightning.Util.Types;
 
 namespace WoLightning.WoL_Plugin.Game.Rules
@@ -25,7 +19,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         List<int> durationArray = [100, 300, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         List<CooldownModifier> modifierArray = [CooldownModifier.Miliseconds, CooldownModifier.Seconds, CooldownModifier.Minutes, CooldownModifier.Hours];
 
-        public RuleUI(Plugin Plugin,BaseRule RuleParent)
+        public RuleUI(Plugin Plugin, BaseRule RuleParent)
         {
             this.Plugin = Plugin;
             this.Rule = RuleParent;
@@ -62,7 +56,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             if (Rule.IsRunning) ImGui.TextColored(ColorNameEnabled, "  " + Rule.Name + $"  [{Rule.ShockOptions.OpMode}]");
             else ImGui.TextColored(ColorNameDisabled, "  " + Rule.Name);
             ImGui.TextColored(ColorDescription, $"  {Rule.Description}");
-            if (Rule.Hint !=null && Rule.Hint.Length > 0)
+            if (Rule.Hint != null && Rule.Hint.Length > 0)
             {
                 ImGui.SameLine();
                 ImGui.TextDisabled("(?)");
