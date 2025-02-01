@@ -30,8 +30,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         virtual public float Points { get; set; }
         virtual public float PointsToTrigger { get; set; }
 
-        virtual public bool IsEnabled { get; set; }
-        [NonSerialized] public bool IsRunning;
+        virtual public bool IsEnabled { get; set; } // True when the User has it checked as "On"
+        [NonSerialized] public bool IsRunning;      // True when we are actually running the "Check" function
 
         virtual public bool IsLocked { get; set; }
 

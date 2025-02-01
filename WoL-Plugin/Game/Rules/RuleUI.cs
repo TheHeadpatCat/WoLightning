@@ -11,7 +11,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         BaseRule Rule;
         // UI
         bool IsOptionsOpen = false;
-        bool isShockerSelectorOpen = false;
+        bool isModalShockerSelectorOpen = false;
         Vector4 ColorNameEnabled = new Vector4(0.5f, 1, 0.3f, 0.9f);
         Vector4 ColorNameDisabled = new Vector4(1, 1, 1, 0.9f);
         Vector4 ColorDescription = new Vector4(0.7f, 0.7f, 0.7f, 0.8f);
@@ -28,7 +28,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         public void Draw()
         {
             DrawBase();
-            if (IsOptionsOpen && Rule.IsRunning) DrawOptions();
+            if (Rule.IsEnabled && IsOptionsOpen) DrawOptions();
             ImGui.Spacing();
             ImGui.Separator();
         }
@@ -36,9 +36,9 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         protected void DrawBase()
         {
             ImGui.BeginGroup();
-            bool refEn = Rule.IsRunning;
+            bool refEn = Rule.IsEnabled;
             ImGui.Checkbox("##checkbox" + Rule.Name, ref refEn);
-            if (Rule.IsRunning)
+            if (Rule.IsEnabled)
             {
                 if (IsOptionsOpen && ImGui.ArrowButton("##collapse" + Rule.Name, ImGuiDir.Down))
                 {
@@ -53,7 +53,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
             ImGui.SameLine();
             ImGui.BeginGroup();
-            if (Rule.IsRunning) ImGui.TextColored(ColorNameEnabled, "  " + Rule.Name + $"  [{Rule.ShockOptions.OpMode}]");
+            if (Rule.IsEnabled) ImGui.TextColored(ColorNameEnabled, "  " + Rule.Name + $"  [{Rule.ShockOptions.OpMode}]");
             else ImGui.TextColored(ColorNameDisabled, "  " + Rule.Name);
             ImGui.TextColored(ColorDescription, $"  {Rule.Description}");
             if (Rule.Hint != null && Rule.Hint.Length > 0)
@@ -68,14 +68,13 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         protected void DrawOptions()
         {
             bool changed = false;
+            DrawShockerSelector();
             DrawOptionsBase(ref changed);
             DrawOptionsCooldown(ref changed);
             if (changed) Plugin.Configuration.Save();
         }
         protected void DrawOptionsBase(ref bool changed)
         {
-            if (ImGui.Button($"Assigned {Rule.ShockOptions.Shockers.Count} Shockers##assignedShockers" + Rule.Name, new Vector2(50, 100)))
-                isShockerSelectorOpen = true;
             ImGui.BeginGroup();
             ImGui.Text("    Mode");
             ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 3 - 50);
@@ -132,6 +131,41 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
             ImGui.SameLine();
             ImGui.Text("Cooldown");
+        }
+
+        protected void DrawShockerSelector()
+        {
+            if (ImGui.Button($"Assigned {Rule.ShockOptions.Shockers.Count} Shockers##assignedShockers" + Rule.Name, new Vector2(50, 100)))
+            {
+                isModalShockerSelectorOpen = true;
+                ImGui.OpenPopup("Select Shockers##ShockerSelect" + Rule.Name);
+            }
+
+            if (isModalShockerSelectorOpen) //setup modal
+            {
+                Vector2 center = ImGui.GetMainViewport().GetCenter();
+                ImGui.SetNextWindowPos(center, ImGuiCond.Appearing, new Vector2(0.5f, 0.5f));
+                ImGui.SetNextWindowSize(new Vector2(400, 400));
+            }
+
+            if (ImGui.BeginPopupModal("Select Shockers##ShockerSelect" + Rule.Name, ref isModalShockerSelectorOpen,
+            ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.Popup))
+            {
+                if (Plugin.Authentification.GetShockerCount() == 0)
+                {
+                    ImGui.TextWrapped("It seems you havent added any Shockers yet!\n" +
+                        "Please add them through the \"Account Settings\" in the main window.");
+                    if (ImGui.Button($"Okay##okayShockerSelectorAbort", new Vector2(ImGui.GetWindowSize().X / 2, 25)))
+                    {
+                        ImGui.CloseCurrentPopup();
+                    }
+                    return;
+                }
+                
+
+                //todo: make shocker selector
+
+            }
         }
     }
 }

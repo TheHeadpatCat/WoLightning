@@ -148,7 +148,7 @@ public class MainWindow : Window, IDisposable
     private async void DrawControlPanel()
     {
         //if (Plugin.Authentification.isDisallowed) ImGui.BeginDisabled();
-        presetIndex = Plugin.Configuration.PresetIndex;
+        presetIndex = Plugin.Configuration.ActivePresetIndex;
         if (presetIndex == -1) Plugin.Configuration.Save();
         ImGui.SetNextItemWidth(ImGui.GetWindowWidth() - 15);
         if (ImGui.Combo("", ref presetIndex, [.. Plugin.Configuration.PresetNames], Plugin.Configuration.Presets.Count, 6))

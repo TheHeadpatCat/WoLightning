@@ -29,14 +29,19 @@ namespace WoLightning.Configurations
 
         // Preset Settings
         [NonSerialized] public Preset ActivePreset;
+        [NonSerialized] public int ActivePresetIndex = 0;
+
         [NonSerialized] public List<Preset> Presets = new();
         [NonSerialized] public List<string> PresetNames = new(); // used for comboBoxes
-        [NonSerialized] public int PresetIndex = 0;
+        
+
+        public Action<Preset,int> PresetChanged;
+
 
         [NonSerialized] private Plugin plugin;
         [NonSerialized] public string ConfigurationDirectoryPath;
 
-        public void Initialize(Plugin plugin, bool isAlternative, string ConfigurationDirectoryPath)
+        public void Initialize(Plugin plugin, string ConfigurationDirectoryPath)
         {
             this.plugin = plugin;
             //this.isAlternative = isAlternative;
@@ -46,8 +51,7 @@ namespace WoLightning.Configurations
             ActivePreset.Initialize(plugin);
 
             string f = "";
-            if (!isAlternative && File.Exists(ConfigurationDirectoryPath + "Config.json")) f = File.ReadAllText(ConfigurationDirectoryPath + "Config.json");
-            if (isAlternative && File.Exists(ConfigurationDirectoryPath + "masterConfig.json")) f = File.ReadAllText(ConfigurationDirectoryPath + "masterConfig.json");
+            if (File.Exists(ConfigurationDirectoryPath + "Config.json")) f = File.ReadAllText(ConfigurationDirectoryPath + "Config.json");
 
             Configuration s = DeserializeConfig(f);
             foreach (PropertyInfo property in typeof(Configuration).GetProperties().Where(p => p.CanWrite)) property.SetValue(this, property.GetValue(s, null), null);
@@ -83,7 +87,7 @@ namespace WoLightning.Configurations
             if (!loadPreset(LastPresetName)) loadPreset("Default");
         }
 
-        public void Initialize(Plugin plugin, bool isAlternative, string ConfigurationDirectoryPath, bool createNew)
+        public void Initialize(Plugin plugin, string ConfigurationDirectoryPath, bool createNew)
         {
             //this.isAlternative = isAlternative;
             this.ConfigurationDirectoryPath = ConfigurationDirectoryPath;
@@ -131,10 +135,14 @@ namespace WoLightning.Configurations
         {
             if (!Presets.Exists(preset => preset.Name == Name)) return false;
             ActivePreset = Presets.Find(preset => preset.Name == Name);
-            PresetIndex = Presets.IndexOf(ActivePreset);
+            if (ActivePreset == null) throw  new Exception("Preset not Found");
+            ActivePresetIndex = Presets.IndexOf(ActivePreset);
             LastPresetName = ActivePreset.Name;
             ActivePreset.Initialize(plugin);
             ActivePreset.resetInvalidTriggers();
+
+            PresetChanged?.Invoke(ActivePreset,ActivePresetIndex);
+
             return true;
         }
 

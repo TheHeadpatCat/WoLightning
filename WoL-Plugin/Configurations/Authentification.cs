@@ -59,6 +59,7 @@ namespace WoLightning.Configurations
             Save();
         }
 
+        #region Hashing
         public string getHash()
         {
             if (Hash != null && Hash.Length > 0) return Hash;
@@ -77,7 +78,6 @@ namespace WoLightning.Configurations
 
             return Hash;
         }
-
         public X509Certificate2 getCertificate()
         {
             X509Certificate2 certificate = new();
@@ -105,12 +105,12 @@ namespace WoLightning.Configurations
             }
             return certificate;
         }
+        #endregion
 
         public void Save()
         {
             File.WriteAllText(ConfigurationDirectoryPath + "Authentification.json", SerializeAuthentification(this));
         }
-
         public void Dispose()
         {
             Save();
@@ -124,11 +124,16 @@ namespace WoLightning.Configurations
                 TypeNameHandling = TypeNameHandling.Objects
             });
         }
-
         private Authentification DeserializeAuthentification(string input)
         {
             if (input == "") return new Authentification();
             return JsonConvert.DeserializeObject<Authentification>(input);
         }
+
+        public int GetShockerCount()
+        {
+            return PishockShockers.Count + OpenShockShockers.Count;
+        }
+
     }
 }

@@ -3,6 +3,7 @@ using ImGuiNET;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using WoLightning.Clients.Webserver.Operations.Account;
 using WoLightning.Configurations;
 using WoLightning.Util;
 using WoLightning.Util.Types;
@@ -17,64 +18,15 @@ public class ConfigWindow : Window, IDisposable
     private Configuration? Configuration;
     private Plugin Plugin;
 
-    private int presetIndex = 0;
+    private Preset ActivePreset;
+    private int ActivePresetIndex = -1;
 
-    List<int> durationArray = [100, 300, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    List<CooldownModifier> modifierArray = [CooldownModifier.Miliseconds, CooldownModifier.Seconds, CooldownModifier.Minutes, CooldownModifier.Hours];
+    private Vector2 center = ImGui.GetMainViewport().GetCenter();
 
-    private Vector4 descColor = new Vector4(0.7f, 0.7f, 0.7f, 0.8f);
-    private Vector4 nameColorOff = new Vector4(1, 1, 1, 0.9f);
-    private Vector4 nameColorOn = new Vector4(0.5f, 1, 0.3f, 0.9f);
-    private Vector4 nameColorReset = new Vector4(0.7f, 0.3f, 0, 1);
+    private bool isModalAddPresetOpen = false;
+    private bool isModalDeletePresetOpen = false;
 
-    // Badword List
-    private String BadWordListInput = new String("");
-    private int[] BadWordListSetting = new int[3];
-    private String BadselectedWord = new String("");
-    private int BadcurrentWordIndex = -1;
-
-    // Enforced Word List
-    private String DontSayWordListInput = new String("");
-    private int[] DontSayWordListSetting = new int[3];
-    private String DontSayselectedWord = new String("");
-    private int DontSaycurrentWordIndex = -1;
-
-
-    // Permission List
-    private Player? SelectedPlayer = null;
-    private String SelectedPlayerName = new String("None");
-    private int PermissionListSetting = 1;
-    private int PermissionListLevel = 0;
-    private int currentPermissionIndex = -1;
-
-
-    // Sharewindows
-    private Vector4 redCol = new Vector4(1, 0, 0, 1);
-    private bool isAddModalOpen = true;
-    private bool isRemoveModalOpen = true;
-    private bool isShareModalOpen = true;
-    private string addInput = "";
-    private string importInput = "";
-    private string exportInput = "";
-
-
-    // MasterWindow Config
-    private bool isAlternative = false;
-    private MasterWindow? Parent;
-    private int selectedSubIndex = 0;
-    private string selectedSubNameFull;
-    private TimerPlus timeOutRequest = new TimerPlus();
-
-    // Debug stuffs
-    private int debugFtype = 0;
-    private string debugFsender = "";
-    private string debugFmessage = "";
-
-    private int debugOpIndex = 0;
-    private string debugOpData = "";
-    private Player debugPlayerTarget = null;
-    //private string[] debugOpCodes = Operation.allOpCodesString(true);
-
+    private string ModalAddPresetInputName = string.Empty;
 
     public ConfigWindow(Plugin plugin) : base($"Warrior of Lightning Configuration##configmain")
     {
@@ -86,42 +38,30 @@ public class ConfigWindow : Window, IDisposable
             MinimumSize = new Vector2(580, 620),
             MaximumSize = new Vector2(2000, 2000)
         };
-
-        //Configuration = plugin.Configuration;
-        //Configuration.Save(); //make sure all fields exist on first start
         Plugin = plugin;
+
     }
 
-    public ConfigWindow(Plugin plugin, Configuration configuration, MasterWindow parent) : base($"Master of Lightning Configuration - v{plugin.Configuration.Version}##configmaster")
+    private void onPresetChanged(Preset preset,int index)
     {
-        Flags = ImGuiWindowFlags.AlwaysUseWindowPadding;
-
-        SizeConstraints = new WindowSizeConstraints
-        {
-            MinimumSize = new Vector2(580, 620),
-            MaximumSize = new Vector2(2000, 2000)
-        };
-
-        //Configuration = configuration;
-        //Configuration.Save(); //make sure all fields exist on first start
-        Plugin = plugin;
-        isAlternative = true;
-        Parent = parent;
-
-
-
+        ActivePreset = preset;
+        ActivePresetIndex = index;
     }
 
     public void Dispose()
     {
         if (this.IsOpen) this.Toggle();
         Configuration!.Save();
+        Configuration.PresetChanged -= onPresetChanged;
     }
 
     public void SetConfiguration(Configuration? conf)
     {
+        if (Configuration != null) Configuration.PresetChanged -= onPresetChanged;
         Configuration = conf;
         Configuration!.Save();
+        ActivePreset = Configuration.ActivePreset;
+        Configuration.PresetChanged += onPresetChanged;
     }
 
     public override void PreDraw()
@@ -131,7 +71,7 @@ public class ConfigWindow : Window, IDisposable
 
     public override void Draw()
     {
-        if (Configuration == null) return;
+        if (Configuration == null || ActivePresetIndex == -1) return;
 
         DrawHeader();
 
@@ -165,123 +105,30 @@ public class ConfigWindow : Window, IDisposable
             ImGui.TextColored(new Vector4(1, 0, 0, 1), "Your Configuration is incompatible.");
             if (ImGui.Button("Reset & Update Config"))
             {
-                Configuration = new Configuration();
-                Configuration.Initialize(Plugin, isAlternative, Plugin.ConfigurationDirectoryPath, true);
-
-                Configuration.Presets.Add(new Preset("Default", Plugin.LocalPlayer.getFullName()));
-                Configuration.Save();
-                Configuration.loadPreset(addInput);
-                Configuration.deletePreset(Configuration.ActivePreset);
-                Configuration.Save();
-
-                Plugin.sendNotif("Your configuration has been reset!");
-
-                if (!isAlternative) Plugin.Configuration = Configuration;
-                else Parent.Configuration = Configuration;
+                
             }
         }
-
-
-
         DrawPresetHeader();
     }
 
     private void DrawPresetHeader()
     {
 
+        DrawModalAddPreset();
+        DrawModalDeletePreset();
+
         ImGui.PushItemWidth(ImGui.GetWindowSize().X - 90);
 
-        presetIndex = Configuration.PresetIndex;
-        if (ImGui.Combo("", ref presetIndex, [.. Configuration.PresetNames], Configuration.Presets.Count, 6))
-        {
-            Configuration.loadPreset(Configuration.PresetNames[presetIndex]);
-        }
+        // Preset Selector
+        ActivePresetIndex = Configuration.ActivePresetIndex;
+        if (ImGui.Combo("", ref ActivePresetIndex, [.. Configuration.PresetNames], Configuration.Presets.Count, 6))
+        { Configuration.loadPreset(Configuration.PresetNames[ActivePresetIndex]); }
+        // Preset Modal Openers - Add & Delete
         ImGui.SameLine();
-        if (ImGui.SmallButton("+"))
-        {
-            importInput = "";
-            addInput = "";
-            ImGui.OpenPopup("Add Preset##addPreMod");
-        }
+        if (ImGui.SmallButton("+")){ ModalAddPresetInputName = ""; ImGui.OpenPopup("Add Preset##addPreMod"); }
         ImGui.SameLine();
-        if (ImGui.SmallButton("X"))
-        {
-            ImGui.OpenPopup("Delete Preset##delPreMod");
-        }
+        if (ImGui.SmallButton("X")) ImGui.OpenPopup("Delete Preset##delPreMod");
 
-        Vector2 center = ImGui.GetMainViewport().GetCenter();
-        ImGui.SetNextWindowPos(center, ImGuiCond.Appearing, new Vector2(0.5f, 0.5f));
-        ImGui.SetNextWindowSize(new Vector2(300, 150));
-
-        if (ImGui.BeginPopupModal("Add Preset##addPreMod", ref isAddModalOpen, ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.Popup | ImGuiWindowFlags.NoTitleBar))
-        {
-            ImGui.Text("Please name your new preset.");
-            ImGui.PushItemWidth(ImGui.GetWindowSize().X - 10);
-            if (importInput.Length != 0) ImGui.BeginDisabled();
-            ImGui.InputText("##addInput", ref addInput, 32, ImGuiInputTextFlags.CharsNoBlank);
-            if (importInput.Length != 0) ImGui.EndDisabled();
-
-            /*
-            ImGui.Text("Or enter a Sharestring to import.");
-            ImGui.PushItemWidth(ImGui.GetWindowSize().X - 10);
-            if (addInput.Length != 0) ImGui.BeginDisabled();
-            ImGui.InputText("##importInput", ref importInput, 256, ImGuiInputTextFlags.CharsNoBlank);
-            if (addInput.Length != 0) ImGui.EndDisabled();
-            */
-
-            ImGui.PushItemWidth(ImGui.GetWindowSize().X / 2);
-            if (ImGui.Button("Add##addPre", new Vector2(ImGui.GetWindowSize().X / 2, 25)))
-            {
-                if (addInput.Length > 0)
-                {
-                    Preset tPreset = new Preset(addInput, "Unknown");
-                    Configuration.Presets.Add(tPreset);
-                    Configuration.Save();
-                    Configuration.loadPreset(addInput);
-                }
-                if (importInput.Length > 0)
-                {
-                    //Configuration.importPreset(importInput);
-                }
-
-                ImGui.CloseCurrentPopup();
-            }
-            ImGui.SameLine();
-            if (ImGui.Button("Cancel##canPre", new Vector2(ImGui.GetWindowSize().X / 2 - 10, 25))) ImGui.CloseCurrentPopup();
-            ImGui.EndPopup();
-        }
-
-        ImGui.SetNextWindowPos(center, ImGuiCond.Appearing, new Vector2(0.5f, 0.5f));
-        ImGui.SetNextWindowSize(new Vector2(290, 120));
-
-        if (ImGui.BeginPopupModal("Share Preset##shaPreMod", ref isShareModalOpen, ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.Popup | ImGuiWindowFlags.NoTitleBar))
-        {
-            ImGui.TextWrapped("Use this string to share your current preset!");
-            ImGui.PushItemWidth(ImGui.GetWindowSize().X - 10);
-            ImGui.InputText("", ref exportInput, 256, ImGuiInputTextFlags.ReadOnly | ImGuiInputTextFlags.AutoSelectAll);
-            //if (ImGui.Button("Generate##shaGen", new Vector2(ImGui.GetWindowSize().X - 10, 25))) exportInput = Configuration.sharePreset(Configuration.ActivePreset);
-            if (ImGui.Button("Close##shaClo", new Vector2(ImGui.GetWindowSize().X - 10, 25))) ImGui.CloseCurrentPopup();
-            ImGui.EndPopup();
-        }
-
-
-        ImGui.SetNextWindowPos(center, ImGuiCond.Appearing, new Vector2(0.5f, 0.5f));
-        ImGui.SetNextWindowSize(new Vector2(250, 85));
-
-        if (ImGui.BeginPopupModal("Delete Preset##delPreMod", ref isRemoveModalOpen, ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.Popup | ImGuiWindowFlags.NoTitleBar))
-        {
-            ImGui.TextWrapped("Are you sure you want to delete this preset?");
-            ImGui.PushItemWidth(ImGui.GetWindowSize().X - 10);
-            if (ImGui.Button("Confirm##conRem", new Vector2(ImGui.GetWindowSize().X / 2, 25)))
-            {
-
-                Configuration.deletePreset(Configuration.ActivePreset);
-                ImGui.CloseCurrentPopup();
-            }
-            ImGui.SameLine();
-            if (ImGui.Button("Cancel##canRem", new Vector2(ImGui.GetWindowSize().X / 2 - 10, 25))) ImGui.CloseCurrentPopup();
-            ImGui.EndPopup();
-        }
     }
 
 
@@ -306,7 +153,6 @@ public class ConfigWindow : Window, IDisposable
             }
 
             Plugin.Configuration.ActivePreset.DoEmote.Draw();
-            if (!Plugin.Configuration.ActivePreset.DoEmote.IsRunning) Plugin.Configuration.ActivePreset.DoEmote.Start();
             Plugin.Configuration.ActivePreset.DoEmoteTo.Draw();
 
 
@@ -316,6 +162,60 @@ public class ConfigWindow : Window, IDisposable
         }
     }
 
+
+    #region Modals
+
+    private void DrawModalAddPreset()
+    {
+        ImGui.SetNextWindowPos(center, ImGuiCond.Appearing, new Vector2(0.5f, 0.5f));
+        ImGui.SetNextWindowSize(new Vector2(300, 150));
+
+        if (ImGui.BeginPopupModal("Add Preset##addPreMod", ref isModalAddPresetOpen, ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.Popup | ImGuiWindowFlags.NoTitleBar))
+        {
+            ImGui.Text("Please name your new preset.");
+            ImGui.PushItemWidth(ImGui.GetWindowSize().X - 10);
+            ImGui.InputText("##addInput", ref ModalAddPresetInputName, 32, ImGuiInputTextFlags.CharsNoBlank);
+
+            ImGui.PushItemWidth(ImGui.GetWindowSize().X / 2);
+            if (ImGui.Button("Add##addPre", new Vector2(ImGui.GetWindowSize().X / 2, 25)))
+            {
+                if (ModalAddPresetInputName.Length > 0)
+                {
+                    Preset tPreset = new Preset(ModalAddPresetInputName, "Unknown");
+                    Configuration.Presets.Add(tPreset);
+                    Configuration.Save();
+                    Configuration.loadPreset(ModalAddPresetInputName);
+                }
+
+                ImGui.CloseCurrentPopup();
+            }
+            ImGui.SameLine();
+            if (ImGui.Button("Cancel##canPre", new Vector2(ImGui.GetWindowSize().X / 2 - 10, 25))) ImGui.CloseCurrentPopup();
+            ImGui.EndPopup();
+        }
+    }
+    private void DrawModalDeletePreset()
+    {
+        ImGui.SetNextWindowPos(center, ImGuiCond.Appearing, new Vector2(0.5f, 0.5f));
+        ImGui.SetNextWindowSize(new Vector2(250, 85));
+
+        if (ImGui.BeginPopupModal("Delete Preset##delPreMod", ref isModalDeletePresetOpen, ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.Popup | ImGuiWindowFlags.NoTitleBar))
+        {
+            ImGui.TextWrapped("Are you sure you want to delete this preset?");
+            ImGui.PushItemWidth(ImGui.GetWindowSize().X - 10);
+            if (ImGui.Button("Confirm##conRem", new Vector2(ImGui.GetWindowSize().X / 2, 25)))
+            {
+
+                Configuration.deletePreset(Configuration.ActivePreset);
+                ImGui.CloseCurrentPopup();
+            }
+            ImGui.SameLine();
+            if (ImGui.Button("Cancel##canRem", new Vector2(ImGui.GetWindowSize().X / 2 - 10, 25))) ImGui.CloseCurrentPopup();
+            ImGui.EndPopup();
+        }
+    }
+
+    #endregion
 
 
     /*
