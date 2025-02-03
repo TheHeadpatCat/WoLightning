@@ -75,6 +75,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
         virtual public void Draw()
         {
+
             RuleUI.Draw();
         }
 

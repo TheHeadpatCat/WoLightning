@@ -44,6 +44,7 @@ public class ConfigWindow : Window, IDisposable
 
     private void onPresetChanged(Preset preset,int index)
     {
+        Plugin.Log("onPresetChaged() - " + index);
         ActivePreset = preset;
         ActivePresetIndex = index;
     }
@@ -57,10 +58,12 @@ public class ConfigWindow : Window, IDisposable
 
     public void SetConfiguration(Configuration? conf)
     {
+        Plugin.Log("SetConfiguration()");
         if (Configuration != null) Configuration.PresetChanged -= onPresetChanged;
         Configuration = conf;
         Configuration!.Save();
         ActivePreset = Configuration.ActivePreset;
+        ActivePresetIndex = Configuration.ActivePresetIndex;
         Configuration.PresetChanged += onPresetChanged;
     }
 
@@ -71,7 +74,12 @@ public class ConfigWindow : Window, IDisposable
 
     public override void Draw()
     {
-        if (Configuration == null || ActivePresetIndex == -1) return;
+        if (Configuration == null || ActivePresetIndex == -1)
+        {
+            if (Configuration == null) Plugin.Log("Configuration is null");
+            if (ActivePresetIndex == -1) Plugin.Log("Active Preset hasnt been picked");
+            return;
+        }
 
         DrawHeader();
 
@@ -80,7 +88,7 @@ public class ConfigWindow : Window, IDisposable
         if (ImGui.BeginTabBar("Tab Bar##tabbarmain", ImGuiTabBarFlags.None))
         {
             DrawGeneralTab();
-            //DrawSocialTab();
+            DrawSocialTab();
             //DrawPVETab();
             //DrawPVPTab();
             //DrawMiscTab();
@@ -100,14 +108,6 @@ public class ConfigWindow : Window, IDisposable
 
     private void DrawHeader()
     {
-        if (Configuration.Version < 1)
-        {
-            ImGui.TextColored(new Vector4(1, 0, 0, 1), "Your Configuration is incompatible.");
-            if (ImGui.Button("Reset & Update Config"))
-            {
-                
-            }
-        }
         DrawPresetHeader();
     }
 
@@ -136,8 +136,6 @@ public class ConfigWindow : Window, IDisposable
     {
         if (ImGui.BeginTabItem("General"))
         {
-            //if (Plugin.Authentification.isDisallowed) ImGui.BeginDisabled();
-
             bool showCooldownNotifs = Configuration.ActivePreset.showCooldownNotifs;
             if (ImGui.Checkbox("Show Cooldown Notifications", ref showCooldownNotifs))
             {
@@ -152,16 +150,23 @@ public class ConfigWindow : Window, IDisposable
                 "\nthat will tell you how much time is left until that trigger can activate again.");
             }
 
-            Plugin.Configuration.ActivePreset.DoEmote.Draw();
-            Plugin.Configuration.ActivePreset.DoEmoteTo.Draw();
-
-
-
-            //if (Plugin.Authentification.isDisallowed) ImGui.EndDisabled();
             ImGui.EndTabItem();
         }
     }
+    private void DrawSocialTab()
+    {
+        if (ImGui.BeginTabItem("Social"))
+        {
+            ActivePreset.DoEmote.Draw();
+            ActivePreset.DoEmoteTo.Draw();
+            ActivePreset.GetEmotedAt.Draw();
+            ActivePreset.SayWord.Draw();
+            ActivePreset.DontSayWord.Draw();
+            
 
+            ImGui.EndTabItem();
+        }
+    }
 
     #region Modals
 

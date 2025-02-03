@@ -29,8 +29,8 @@ public sealed class Plugin : IDalamudPlugin
     private const string Failsafe = "/red";
     private const string OpenConfigFolder = "/wolfolder";
 
-    public const int currentVersion = 416;
-    public const int configurationVersion = 416;
+    public const int currentVersion = 1000;
+    public const int configurationVersion = 1000;
     public const string randomKey = "Currently Unused";
 
     public bool isFailsafeActive = false;
@@ -143,6 +143,7 @@ public sealed class Plugin : IDalamudPlugin
 
     public void onLogin()
     {
+        Log("Running onLogin()");
         try
         {
             LocalPlayerCharacter = ClientState.LocalPlayer;
@@ -160,7 +161,7 @@ public sealed class Plugin : IDalamudPlugin
             Configuration = new Configuration();
             try
             {
-                Configuration.Initialize(this, false, ConfigurationDirectoryPath);
+                Configuration.Initialize(this, ConfigurationDirectoryPath);
             }
             catch (Exception e)
             {
@@ -307,41 +308,41 @@ public sealed class Plugin : IDalamudPlugin
     #region Logging
     public void Log(string message)
     {
-        if (!this.Configuration.LogEnabled) return;
+        
         PluginLog.Verbose(message);
-        TextLog.Log(message);
+        
     }
 
     public void Log(Object obj)
     {
-        if (!this.Configuration.LogEnabled) return;
+        
         PluginLog.Verbose(obj.ToString());
         TextLog.Log(obj);
     }
 
     public void Log(string message, bool noText)
     {
-        if (!this.Configuration.LogEnabled) return;
+        
         PluginLog.Verbose(message);
     }
 
     public void Log(Object obj, bool noText)
     {
-        if (!this.Configuration.LogEnabled) return;
+        
         PluginLog.Verbose(obj.ToString());
     }
 
 
     public void Error(string message)
     {
-        if (!this.Configuration.LogEnabled) return;
+        
         PluginLog.Error(message);
         TextLog.Log("--- ERROR: \n" + message);
     }
 
     public void Error(string message, Object obj)
     {
-        if (!this.Configuration.LogEnabled) return;
+       
         PluginLog.Error(message);
         PluginLog.Error(obj.ToString());
         TextLog.Log("--- ERROR: \n" + message);
@@ -350,13 +351,13 @@ public sealed class Plugin : IDalamudPlugin
 
     public void Error(string message, bool noText)
     {
-        if (!this.Configuration.LogEnabled) return;
+        
         PluginLog.Error(message);
     }
 
     public void Error(string message, Object obj, bool noText)
     {
-        if (!this.Configuration.LogEnabled) return;
+       
         PluginLog.Error(message);
         PluginLog.Error(obj.ToString());
     }

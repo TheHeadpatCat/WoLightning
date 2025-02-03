@@ -10,7 +10,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
     public class DoEmoteTo : BaseRule
     {
         override public string Name { get; } = "Do a Emote to someone";
-        override public string Description { get; } = "Triggers whenever you do a specified Emote, while having a specified player targeted.";
+        override public string Description { get; } = "Triggers whenever you do a Emote, while having a player targeted.";
         override public RuleCategory Category { get; } = RuleCategory.Social;
 
         public Dictionary<ushort, List<Player>> TriggeringEmotes { get; set; } = new();

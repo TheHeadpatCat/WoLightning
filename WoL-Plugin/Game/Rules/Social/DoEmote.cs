@@ -29,11 +29,6 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
             Plugin.EmoteReaderHooks.OnEmoteOutgoing -= Check;
         }
 
-        public override void Draw()
-        {
-            RuleUI.Draw();
-        }
-
         public void Check(ushort emoteId)
         {
             //if(TriggeringEmotes.Contains(emoteId))Trigger("You used emote " + emoteId);

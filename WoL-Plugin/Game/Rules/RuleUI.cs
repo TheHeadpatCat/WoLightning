@@ -27,6 +27,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
         public void Draw()
         {
+            if(Rule.Name == null || Rule.Name.Length == 0) return;
             DrawBase();
             if (Rule.IsEnabled && IsOptionsOpen) DrawOptions();
             ImGui.Spacing();

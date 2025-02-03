@@ -22,7 +22,7 @@ public class MasterWindow : Window, IDisposable
         Configuration = new Configuration();
         try
         {
-            Configuration.Initialize(Plugin, true, Plugin.ConfigurationDirectoryPath);
+            Configuration.Initialize(Plugin,Plugin.ConfigurationDirectoryPath);
         }
         catch
         {
@@ -36,7 +36,7 @@ public class MasterWindow : Window, IDisposable
             MaximumSize = new Vector2(650, 800)
         };
 
-        CopiedConfigWindow = new ConfigWindow(Plugin, Configuration, this);
+        CopiedConfigWindow = new ConfigWindow(Plugin);
         Plugin.WindowSystem.AddWindow(CopiedConfigWindow);
     }
 

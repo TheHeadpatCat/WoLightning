@@ -26,14 +26,26 @@ namespace WoLightning.Util.Types
         public List<Player> Blacklist { get; set; }
 
 
+        // Social Triggers
         public DoEmote DoEmote { get; set; }
         public DoEmoteTo DoEmoteTo { get; set; }
+        public GetEmotedAt GetEmotedAt { get; set; }
+
+        public SayWord SayWord { get; set; }
+        public DontSayWord DontSayWord { get; set; }
+
+        public LoseDeathroll LoseDeathroll { get; set; }
+        
 
         public void Initialize(Plugin Plugin)
         {
             isInitialized = true;
             DoEmote = new DoEmote(Plugin);
             DoEmoteTo = new DoEmoteTo(Plugin);
+            GetEmotedAt = new GetEmotedAt(Plugin);
+            SayWord = new SayWord(Plugin);
+            DontSayWord = new DontSayWord(Plugin);
+            LoseDeathroll = new LoseDeathroll(Plugin);
         }
 
         public bool isPlayerAllowedToTrigger(Player player)
