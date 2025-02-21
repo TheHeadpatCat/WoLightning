@@ -138,7 +138,7 @@ public sealed class Plugin : IDalamudPlugin
 
         ClientState.Login += onLogin;
         ClientState.Logout += onLogout;
-        if (ClientState.LocalPlayer != null) onLogin();
+        PluginLog.Verbose("Finished initializing Plugin.");
     }
 
     public void onLogin()

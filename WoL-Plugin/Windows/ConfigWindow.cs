@@ -58,7 +58,7 @@ public class ConfigWindow : Window, IDisposable
 
     public void SetConfiguration(Configuration? conf)
     {
-        Plugin.Log("SetConfiguration()");
+        Plugin.Log("SetConfiguration() is called");
         if (Configuration != null) Configuration.PresetChanged -= onPresetChanged;
         Configuration = conf;
         Configuration!.Save();
@@ -162,6 +162,7 @@ public class ConfigWindow : Window, IDisposable
             ActivePreset.GetEmotedAt.Draw();
             ActivePreset.SayWord.Draw();
             ActivePreset.DontSayWord.Draw();
+            ActivePreset.LoseDeathroll.Draw();
             
 
             ImGui.EndTabItem();

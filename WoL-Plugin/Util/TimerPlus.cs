@@ -41,7 +41,7 @@ namespace WoLightning.Util
             Elapsed -= del;
         }
 
-        private void ElapsedAction(object sender, ElapsedEventArgs e)
+        private void ElapsedAction(object? sender, ElapsedEventArgs? e)
         {
             if (AutoReset)
                 m_dueTime = DateTime.Now.AddMilliseconds(Interval);

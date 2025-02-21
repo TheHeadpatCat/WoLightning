@@ -9,7 +9,7 @@ namespace WoLightning.Util.Types
     public class Preset(string Name, string CreatorFullName)
     {
 
-        [JsonIgnore] bool isInitialized = false;
+        public bool isInitialized { get; set; } = false;
         public string Name { get; set; } = Name;
         public string CreatorFullName { get; set; } = CreatorFullName;
 
@@ -39,6 +39,8 @@ namespace WoLightning.Util.Types
 
         public void Initialize(Plugin Plugin)
         {
+            if(isInitialized) return;
+            Plugin.Log("Initializing Preset - " + Name);
             isInitialized = true;
             DoEmote = new DoEmote(Plugin);
             DoEmoteTo = new DoEmoteTo(Plugin);

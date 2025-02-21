@@ -38,7 +38,11 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         {
             ImGui.BeginGroup();
             bool refEn = Rule.IsEnabled;
-            ImGui.Checkbox("##checkbox" + Rule.Name, ref refEn);
+            if(ImGui.Checkbox("##checkbox" + Rule.Name, ref refEn))
+            {
+                Rule.IsEnabled = refEn;
+                Plugin.Configuration.Save();
+            }
             if (Rule.IsEnabled)
             {
                 if (IsOptionsOpen && ImGui.ArrowButton("##collapse" + Rule.Name, ImGuiDir.Down))
@@ -136,7 +140,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
         protected void DrawShockerSelector()
         {
-            if (ImGui.Button($"Assigned {Rule.ShockOptions.Shockers.Count} Shockers##assignedShockers" + Rule.Name, new Vector2(50, 100)))
+            if (ImGui.Button($"Assigned {Rule.ShockOptions.Shockers.Count} Shockers##assignedShockers" + Rule.Name, new Vector2(150,25)))
             {
                 isModalShockerSelectorOpen = true;
                 ImGui.OpenPopup("Select Shockers##ShockerSelect" + Rule.Name);
@@ -160,13 +164,18 @@ namespace WoLightning.WoL_Plugin.Game.Rules
                     {
                         ImGui.CloseCurrentPopup();
                     }
+                    ImGui.EndPopup();
                     return;
                 }
-                
 
                 //todo: make shocker selector
 
+
+
+                ImGui.EndPopup();
             }
+            
+
         }
     }
 }

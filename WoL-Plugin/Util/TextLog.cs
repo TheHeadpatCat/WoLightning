@@ -38,7 +38,7 @@ namespace WoLightning.Util
                 {
                     long length = new FileInfo(FilePath).Length;
                     Plugin.PluginLog.Verbose("Log Size: " + length);
-                    if (length > 5243000)
+                    if (length > 5243000) //fixme: maybe dont check for length? we have a thing called filesize, you buffon
                     {
                         File.Delete(FilePath);
                         File.Create(FilePath).Close();

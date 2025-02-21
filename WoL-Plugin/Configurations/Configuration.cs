@@ -30,28 +30,21 @@ namespace WoLightning.Configurations
         // Preset Settings
         [NonSerialized] public Preset ActivePreset;
         [NonSerialized] public int ActivePresetIndex = 0;
-
         [NonSerialized] public List<Preset> Presets = new();
         [NonSerialized] public List<string> PresetNames = new(); // used for comboBoxes
-        
-
-        public Action<Preset,int> PresetChanged;
-
-
+        [NonSerialized] public Action<Preset,int> PresetChanged;
         [NonSerialized] private Plugin plugin;
         [NonSerialized] public string ConfigurationDirectoryPath;
 
         public void Initialize(Plugin plugin, string ConfigurationDirectoryPath)
         {
             this.plugin = plugin;
-            //this.isAlternative = isAlternative;
             this.ConfigurationDirectoryPath = ConfigurationDirectoryPath;
-
-            ActivePreset = new Preset("Default", plugin.LocalPlayer.Name);
-            ActivePreset.Initialize(plugin);
-
+            
             string f = "";
             if (File.Exists(ConfigurationDirectoryPath + "Config.json")) f = File.ReadAllText(ConfigurationDirectoryPath + "Config.json");
+
+            plugin.Log("Initializing Config...");
 
             Configuration s = DeserializeConfig(f);
             foreach (PropertyInfo property in typeof(Configuration).GetProperties().Where(p => p.CanWrite)) property.SetValue(this, property.GetValue(s, null), null);
@@ -72,19 +65,20 @@ namespace WoLightning.Configurations
                         plugin.Log(e);
                         tPreset = new Preset("Default", plugin.LocalPlayer.getFullName());
                     }
+                    tPreset.Initialize(plugin);
                     Presets.Add(tPreset);
+                    loadPreset(tPreset.Name);
+                    return;
                 }
             }
             if (Presets.Count == 0)
             {
+                plugin.Log("No Presets found - Creating Default.");
                 ActivePreset = new Preset("Default", plugin.LocalPlayer.getFullName());
                 Presets.Add(ActivePreset);
-                Save();
                 loadPreset("Default");
                 return;
-            }
-            Save();
-            if (!loadPreset(LastPresetName)) loadPreset("Default");
+            } //fixme: preset gets reset on startup?
         }
 
         public void Initialize(Plugin plugin, string ConfigurationDirectoryPath, bool createNew)
@@ -99,9 +93,10 @@ namespace WoLightning.Configurations
         #region Save and Loading
         public void Save()
         {
-
+            plugin.Log("Configuration.Save() called");
             try
             {
+                plugin.Log("CD: " + ActivePreset.DoEmote.ShockOptions.Cooldown);
                 LastPresetName = ActivePreset.Name;
                 PresetNames = new();
 
@@ -133,6 +128,7 @@ namespace WoLightning.Configurations
 
         public bool loadPreset(string Name)
         {
+
             if (!Presets.Exists(preset => preset.Name == Name)) return false;
             ActivePreset = Presets.Find(preset => preset.Name == Name);
             if (ActivePreset == null) throw  new Exception("Preset not Found");
@@ -142,12 +138,13 @@ namespace WoLightning.Configurations
             ActivePreset.resetInvalidTriggers();
 
             PresetChanged?.Invoke(ActivePreset,ActivePresetIndex);
-
+            plugin.Log(" -> Done.");
             return true;
         }
 
         public void savePreset(Preset target)
         {
+            plugin.Log("Saving preset: " + target.Name);
             File.WriteAllText($"{ConfigurationDirectoryPath}\\Presets\\{target.Name}.json", SerializePreset(target));
         }
         public void savePreset(Preset target, bool isAlternative)
@@ -174,7 +171,8 @@ namespace WoLightning.Configurations
             return JsonConvert.SerializeObject(config, Formatting.Indented, new JsonSerializerSettings
             {
                 TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
-                TypeNameHandling = TypeNameHandling.Objects
+                TypeNameHandling = TypeNameHandling.Objects,
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
             });
         }
 
