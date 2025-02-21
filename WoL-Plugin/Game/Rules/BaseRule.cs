@@ -41,8 +41,13 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
         protected BaseRule(Plugin plugin)
         {
-            this.Plugin = plugin;
+            setPlugin(plugin);
             ShockOptions = new ShockOptions();
+        }
+
+        virtual public void setPlugin(Plugin plugin)
+        {
+            this.Plugin = plugin;
             RuleUI = new RuleUI(plugin, this);
         }
 

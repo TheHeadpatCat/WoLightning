@@ -39,7 +39,18 @@ namespace WoLightning.Util.Types
 
         public void Initialize(Plugin Plugin)
         {
-            if(isInitialized) return;
+            if (isInitialized) // fixme: this is terrible, maybe iterate in some way?
+            {
+                DoEmote.setPlugin(Plugin);
+                DoEmoteTo.setPlugin(Plugin);
+                GetEmotedAt.setPlugin(Plugin);
+                SayWord.setPlugin(Plugin);
+                DontSayWord.setPlugin(Plugin);
+                LoseDeathroll.setPlugin(Plugin);
+                return;
+            }
+
+
             Plugin.Log("Initializing Preset - " + Name);
             isInitialized = true;
             DoEmote = new DoEmote(Plugin);

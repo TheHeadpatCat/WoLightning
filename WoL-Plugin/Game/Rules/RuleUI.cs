@@ -1,6 +1,7 @@
 ﻿using ImGuiNET;
 using System.Collections.Generic;
 using System.Numerics;
+using WoLightning.Configurations;
 using WoLightning.Util.Types;
 
 namespace WoLightning.WoL_Plugin.Game.Rules
@@ -154,7 +155,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             }
 
             if (ImGui.BeginPopupModal("Select Shockers##ShockerSelect" + Rule.Name, ref isModalShockerSelectorOpen,
-            ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.Popup))
+            ImGuiWindowFlags.NoResize | ImGuiWindowFlags.Popup))
             {
                 if (Plugin.Authentification.GetShockerCount() == 0)
                 {
@@ -170,6 +171,33 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
                 //todo: make shocker selector
 
+                ImGui.Text("Please select all shockers that should activate for this trigger:");
+                foreach (var shocker in Plugin.Authentification.PishockShockers)
+                {
+                    bool isEnabled = Rule.ShockOptions.Shockers.Find(sh => sh.Code == shocker.Code) != null;
+                    
+                    if (ImGui.Checkbox($"##shockerbox{shocker.Code}", ref isEnabled))
+                    { // this could probably be solved more elegantly
+                        if (isEnabled) Rule.ShockOptions.Shockers.Add(shocker);
+                        else Rule.ShockOptions.Shockers.RemoveAt(Rule.ShockOptions.Shockers.FindIndex(sh => sh.Code == shocker.Code));
+                    }
+                    ImGui.SameLine();
+                    if(shocker.Status == ShockerStatus.Online)ImGui.TextColored(ColorNameEnabled,shocker.Name);
+                    else ImGui.TextColored(ColorNameDisabled, shocker.Name);
+                }
+
+                ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X /2 - 170,ImGui.GetWindowSize().Y - 35));
+                ImGui.BeginGroup();
+                if (ImGui.Button($"Apply##apply{Rule.Name}", new Vector2(ImGui.GetWindowSize().X - 120, 25)))
+                {
+                    ImGui.CloseCurrentPopup();
+                }
+                ImGui.SameLine();
+                if (ImGui.Button($"Reset##resetall{Rule.Name}", new Vector2(ImGui.GetWindowSize().X / 8, 25)))
+                {
+                    Rule.ShockOptions.Shockers.Clear();
+                }
+                ImGui.EndGroup();
 
 
                 ImGui.EndPopup();

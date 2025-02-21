@@ -188,6 +188,7 @@ public sealed class Plugin : IDalamudPlugin
             }
 
             LocalPlayer.Key = Authentification.ServerKey;
+            
 
             EmoteReaderHooks = new EmoteReaderHooks(this);
 
