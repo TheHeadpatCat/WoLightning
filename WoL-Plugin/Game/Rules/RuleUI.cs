@@ -11,8 +11,10 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         Plugin Plugin;
         BaseRule Rule;
         // UI
-        bool IsOptionsOpen = false;
+        bool isOptionsOpen = false;
         bool isModalShockerSelectorOpen = false;
+        bool hasRuleWindow = false;
+
         Vector4 ColorNameEnabled = new Vector4(0.5f, 1, 0.3f, 0.9f);
         Vector4 ColorNameDisabled = new Vector4(1, 1, 1, 0.9f);
         Vector4 ColorDescription = new Vector4(0.7f, 0.7f, 0.7f, 0.8f);
@@ -20,22 +22,23 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         List<int> durationArray = [100, 300, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         List<CooldownModifier> modifierArray = [CooldownModifier.Miliseconds, CooldownModifier.Seconds, CooldownModifier.Minutes, CooldownModifier.Hours];
 
-        public RuleUI(Plugin Plugin, BaseRule RuleParent)
+        public RuleUI(Plugin Plugin, BaseRule RuleParent, bool hasRuleWindow)
         {
             this.Plugin = Plugin;
             this.Rule = RuleParent;
+            this.hasRuleWindow = hasRuleWindow;
         }
 
         public void Draw()
         {
             if(Rule.Name == null || Rule.Name.Length == 0) return;
             DrawBase();
-            if (Rule.IsEnabled && IsOptionsOpen) DrawOptions();
+            if (Rule.IsEnabled && isOptionsOpen && !hasRuleWindow) {DrawOptions();}
             ImGui.Spacing();
             ImGui.Separator();
         }
 
-        protected void DrawBase()
+        public void DrawBase()
         {
             ImGui.BeginGroup();
             bool refEn = Rule.IsEnabled;
@@ -46,13 +49,24 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             }
             if (Rule.IsEnabled)
             {
-                if (IsOptionsOpen && ImGui.ArrowButton("##collapse" + Rule.Name, ImGuiDir.Down))
+                if (hasRuleWindow)
                 {
-                    IsOptionsOpen = !IsOptionsOpen;
+                    if(ImGui.ArrowButton("##collapse" + Rule.Name, ImGuiDir.Left))
+                    {
+                        Plugin.RuleWindow.setCurrentRule(Rule);
+                        if (!Plugin.RuleWindow.IsOpen) Plugin.RuleWindow.Toggle();
+                    }
                 }
-                if (!IsOptionsOpen && ImGui.ArrowButton("##collapse" + Rule.Name, ImGuiDir.Right))
+                else
                 {
-                    IsOptionsOpen = !IsOptionsOpen;
+                    if (isOptionsOpen && ImGui.ArrowButton("##collapse" + Rule.Name, ImGuiDir.Down))
+                    {
+                        isOptionsOpen = !isOptionsOpen;
+                    }
+                    if (!isOptionsOpen && ImGui.ArrowButton("##collapse" + Rule.Name, ImGuiDir.Right))
+                    {
+                        isOptionsOpen = !isOptionsOpen;
+                    }
                 }
             }
             ImGui.EndGroup();
@@ -71,7 +85,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             ImGui.EndGroup();
         }
 
-        protected void DrawOptions()
+        public void DrawOptions()
         {
             bool changed = false;
             DrawShockerSelector();
@@ -205,5 +219,6 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             
 
         }
+
     }
 }

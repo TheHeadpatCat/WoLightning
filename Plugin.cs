@@ -58,8 +58,9 @@ public sealed class Plugin : IDalamudPlugin
     public readonly WindowSystem WindowSystem = new("WoLightning");
     private readonly BufferWindow BufferWindow = new BufferWindow();
     private MainWindow? MainWindow { get; set; }
-    private ConfigWindow? ConfigWindow { get; set; }
+    public ConfigWindow? ConfigWindow { get; set; }
     private MasterWindow? MasterWindow { get; set; }
+    public RuleWindow? RuleWindow { get; set; }
 
 
     // Handler Classes
@@ -106,10 +107,13 @@ public sealed class Plugin : IDalamudPlugin
 
         MainWindow = new MainWindow(this);
         ConfigWindow = new ConfigWindow(this);
+        RuleWindow = new RuleWindow(this);
+        
 
         WindowSystem.AddWindow(BufferWindow);
         WindowSystem.AddWindow(MainWindow);
         WindowSystem.AddWindow(ConfigWindow);
+        WindowSystem.AddWindow(RuleWindow);
 
         if (ClientState.LocalPlayer != null) onLogin();
 
@@ -223,11 +227,13 @@ public sealed class Plugin : IDalamudPlugin
         if (MainWindow != null) WindowSystem.RemoveWindow(MainWindow);
         if (ConfigWindow != null) WindowSystem.RemoveWindow(ConfigWindow);
         if (MasterWindow != null) WindowSystem.RemoveWindow(MasterWindow);
+        if (RuleWindow != null) WindowSystem.RemoveWindow(RuleWindow);
         WindowSystem.RemoveWindow(BufferWindow);
 
         MainWindow.Dispose();
         ConfigWindow.Dispose();
         BufferWindow.Dispose();
+        RuleWindow.Dispose();
 
         EmoteReaderHooks.Dispose();
         ClientWebserver.Dispose();

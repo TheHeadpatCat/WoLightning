@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using WoLightning.Util.Types;
+using ImGuiNET;
 
 namespace WoLightning.WoL_Plugin.Game.Rules
 {
@@ -23,6 +24,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         [JsonIgnore] abstract public string Description { get; }
         [JsonIgnore] virtual public string Hint { get; }
         [JsonIgnore] abstract public RuleCategory Category { get; }
+        [JsonIgnore] virtual public bool isUsingCustomData { get; } = false;
 
         virtual public ShockOptions ShockOptions { get; set; }
 
@@ -38,6 +40,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         [NonSerialized] protected Plugin Plugin;
         [NonSerialized] public Action<BaseRule> Triggered;
         [NonSerialized] protected RuleUI RuleUI;
+        
 
         protected BaseRule(Plugin plugin)
         {
@@ -48,7 +51,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         virtual public void setPlugin(Plugin plugin)
         {
             this.Plugin = plugin;
-            RuleUI = new RuleUI(plugin, this);
+            RuleUI = new RuleUI(plugin, this, isUsingCustomData);
         }
 
         virtual public void Start()
@@ -80,8 +83,13 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
         virtual public void Draw()
         {
-
             RuleUI.Draw();
+        }
+
+        virtual public void DrawRuleWindow()
+        {
+            ImGui.Text("This Rule doesnt have any special settings.");
+            return;
         }
 
         public void Dispose()
