@@ -50,6 +50,22 @@ namespace WoLightning.Util.Types
             CooldownTimer.AutoReset = false;
             CooldownTimer.Stop();
         }
+        public ShockOptions(int Mode, int Intensity, int Duration)
+        {
+            this.OpMode = (OpMode)Mode;
+            this.Intensity = Intensity;
+            this.Duration = Duration;
+            CooldownTimer.AutoReset = false;
+            CooldownTimer.Stop();
+        }
+        public ShockOptions(int[] Settings)
+        {
+            this.OpMode = (OpMode)Settings[0];
+            this.Intensity = Settings[1];
+            this.Duration = Settings[2];
+            CooldownTimer.AutoReset = false;
+            CooldownTimer.Stop();
+        }
 
         public bool Validate()
         {
@@ -75,6 +91,11 @@ namespace WoLightning.Util.Types
         public override string ToString()
         {
             return $"[ShockOptions] Mode:{OpMode} {Intensity}%|{Duration}s Cooldown:{Cooldown * (int)modifier}ms Applied to {Shockers.Count} Shockers.";
+        }
+
+        public int[] toSimpleArray()
+        {
+            return [(int)OpMode,Intensity,Duration];
         }
 
         #region Util

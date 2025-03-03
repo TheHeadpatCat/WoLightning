@@ -13,7 +13,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         // UI
         bool isOptionsOpen = false;
         bool isModalShockerSelectorOpen = false;
-        bool hasRuleWindow = false;
+        public bool hasRuleWindow = false;
 
         Vector4 ColorNameEnabled = new Vector4(0.5f, 1, 0.3f, 0.9f);
         Vector4 ColorNameDisabled = new Vector4(1, 1, 1, 0.9f);
