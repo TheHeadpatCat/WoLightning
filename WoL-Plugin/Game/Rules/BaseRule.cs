@@ -41,6 +41,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         [NonSerialized] protected Plugin Plugin;
         [NonSerialized] public Action<BaseRule> Triggered;
         [NonSerialized] protected RuleUI RuleUI;
+        [NonSerialized] public bool hasRuleWindow;
 
         [NonSerialized] protected List<int> DurationArray = [100, 300, 500, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         [NonSerialized] protected string[] DurationArrayString = ["0.1s", "0.3s", "0.5s", "1s", "2s", "3s", "4s", "5s", "6s", "7s", "8s", "9s", "10s"];

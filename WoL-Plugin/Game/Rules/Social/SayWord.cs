@@ -19,6 +19,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
         public Dictionary<SpecificWord, ShockOptions> BannedWords { get; set; }
 
+        [JsonIgnore] public new bool hasRuleWindow = true;
+
         [JsonIgnore] string Input = string.Empty;
         [JsonIgnore] int Index = -1;
         [JsonIgnore] String SelectedWord = string.Empty;

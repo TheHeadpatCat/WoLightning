@@ -52,8 +52,11 @@ public class ConfigWindow : Window, IDisposable
     public void Dispose()
     {
         if (this.IsOpen) this.Toggle();
-        Configuration!.Save();
-        Configuration.PresetChanged -= onPresetChanged;
+        if (Configuration != null)
+        {
+            Configuration.Save();
+            Configuration.PresetChanged -= onPresetChanged;
+        }
     }
 
     public void SetConfiguration(Configuration? conf)

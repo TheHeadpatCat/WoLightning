@@ -13,7 +13,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         // UI
         bool isOptionsOpen = false;
         bool isModalShockerSelectorOpen = false;
-        public bool hasRuleWindow = false;
+        
 
         Vector4 ColorNameEnabled = new Vector4(0.5f, 1, 0.3f, 0.9f);
         Vector4 ColorNameDisabled = new Vector4(1, 1, 1, 0.9f);
@@ -26,14 +26,13 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         {
             this.Plugin = Plugin;
             this.Rule = RuleParent;
-            this.hasRuleWindow = hasRuleWindow;
         }
 
         public void Draw()
         {
             if(Rule.Name == null || Rule.Name.Length == 0) return;
             DrawBase();
-            if (Rule.IsEnabled && isOptionsOpen && !hasRuleWindow) {DrawOptions();}
+            if (Rule.IsEnabled && isOptionsOpen && !true) {DrawOptions();}
             ImGui.Spacing();
             ImGui.Separator();
         }
@@ -49,7 +48,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             }
             if (Rule.IsEnabled)
             {
-                if (hasRuleWindow)
+                if (true)
                 {
                     if(ImGui.ArrowButton("##collapse" + Rule.Name, ImGuiDir.Left))
                     {

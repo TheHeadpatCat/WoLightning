@@ -115,8 +115,6 @@ public sealed class Plugin : IDalamudPlugin
         WindowSystem.AddWindow(ConfigWindow);
         WindowSystem.AddWindow(RuleWindow);
 
-        if (ClientState.LocalPlayer != null) onLogin();
-
         CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
         {
             HelpMessage = "Opens the main window."
@@ -140,12 +138,19 @@ public sealed class Plugin : IDalamudPlugin
         PluginInterface.UiBuilder.OpenConfigUi += ToggleConfigUI;
         PluginInterface.UiBuilder.OpenMainUi += ToggleMainUI;
 
+        Framework.Update += onUpdate;
+
         ClientState.Login += onLogin;
         ClientState.Logout += onLogout;
         PluginLog.Verbose("Finished initializing Plugin.");
     }
 
-    public void onLogin()
+    private void onUpdate(IFramework framework)
+    {
+        if (LocalPlayerCharacter == null && ClientState.LocalPlayer != null) onLogin();
+    }
+
+    private void onLogin()
     {
         Log("Running onLogin()");
         try
@@ -228,18 +233,18 @@ public sealed class Plugin : IDalamudPlugin
         if (ConfigWindow != null) WindowSystem.RemoveWindow(ConfigWindow);
         if (MasterWindow != null) WindowSystem.RemoveWindow(MasterWindow);
         if (RuleWindow != null) WindowSystem.RemoveWindow(RuleWindow);
-        WindowSystem.RemoveWindow(BufferWindow);
+        WindowSystem?.RemoveWindow(BufferWindow);
 
-        MainWindow.Dispose();
-        ConfigWindow.Dispose();
-        BufferWindow.Dispose();
-        RuleWindow.Dispose();
+        MainWindow?.Dispose();
+        ConfigWindow?.Dispose();
+        BufferWindow?.Dispose();
+        RuleWindow?.Dispose();
 
-        EmoteReaderHooks.Dispose();
-        ClientWebserver.Dispose();
+        EmoteReaderHooks?.Dispose();
+        ClientWebserver?.Dispose();
 
-        Configuration.Dispose();
-        Authentification.Dispose();
+        Configuration?.Dispose();
+        Authentification?.Dispose();
 
         CommandManager.RemoveHandler(CommandName);
         CommandManager.RemoveHandler(CommandNameAlias);

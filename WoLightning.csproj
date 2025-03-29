@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="Dalamud.Plugin.Bootstrap.targets" />
-
+<Project Sdk="Dalamud.NET.Sdk/12.0.2">
   <PropertyGroup>
-    <Version>0.4.1.6</Version>
+    <Version>0.4.1.7</Version>
     <Description>A Plugin providing Pishock integration.</Description>
     <PackageProjectUrl>https://github.com/TheHeadPatCat/WoLightning</PackageProjectUrl>
     <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
     <IsPackable>false</IsPackable>
+    <TargetFramework>net9.0</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="WoL-Plugin\Clients\Webserver\Operations\General\**" />
     <Compile Remove="WoL-Plugin\Clients\Webserver\Operations\Master\**" />
@@ -21,11 +19,6 @@
     <None Remove="WoL-Plugin\Clients\Webserver\Operations\Master\**" />
     <None Remove="WoL-Plugin\Clients\Webserver\Operations\Presets\**" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="System.Collections.Specialized" Version="4.3.0" />
-  </ItemGroup>
-
   <ItemGroup>
     <Folder Include="WoL-Plugin\Game\Rules\Misc\" />
     <Folder Include="WoL-Plugin\Game\Rules\Master\" />
