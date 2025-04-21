@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
+using WoLightning.WoL_Plugin.Game.Rules;
 using WoLightning.WoL_Plugin.Game.Rules.Social;
 
 namespace WoLightning.Util.Types
@@ -30,35 +32,41 @@ namespace WoLightning.Util.Types
         public DoEmote DoEmote { get; set; }
         public DoEmoteTo DoEmoteTo { get; set; }
         public GetEmotedAt GetEmotedAt { get; set; }
-
         public SayWord SayWord { get; set; }
         public DontSayWord DontSayWord { get; set; }
-
         public LoseDeathroll LoseDeathroll { get; set; }
+
+
         
 
         public void Initialize(Plugin Plugin)
         {
-            if (isInitialized) // fixme: this is terrible, maybe iterate in some way?
-            {
-                DoEmote.setPlugin(Plugin);
-                DoEmoteTo.setPlugin(Plugin);
-                GetEmotedAt.setPlugin(Plugin);
-                SayWord.setPlugin(Plugin);
-                DontSayWord.setPlugin(Plugin);
-                LoseDeathroll.setPlugin(Plugin);
-                return;
-            }
-
-
             Plugin.Log("Initializing Preset - " + Name);
-            isInitialized = true;
-            DoEmote = new DoEmote(Plugin);
-            DoEmoteTo = new DoEmoteTo(Plugin);
-            GetEmotedAt = new GetEmotedAt(Plugin);
-            SayWord = new SayWord(Plugin);
-            DontSayWord = new DontSayWord(Plugin);
-            LoseDeathroll = new LoseDeathroll(Plugin);
+
+            // I have not found a better way to do this. I know this is terrible and probably a design issue.
+            
+            // Social
+            DoEmote ??= new(Plugin);
+            DoEmote.setPlugin(Plugin);
+
+            DoEmoteTo ??= new(Plugin);
+            DoEmoteTo.setPlugin(Plugin);
+
+            GetEmotedAt ??= new(Plugin);
+            GetEmotedAt.setPlugin(Plugin);
+
+            SayWord ??= new(Plugin);
+            SayWord.setPlugin(Plugin);
+
+            DontSayWord ??= new(Plugin);
+            DontSayWord.setPlugin(Plugin);
+
+            LoseDeathroll ??= new(Plugin);
+            LoseDeathroll.setPlugin(Plugin);
+            
+            // PVE
+
+
         }
 
         public bool isPlayerAllowedToTrigger(Player player)

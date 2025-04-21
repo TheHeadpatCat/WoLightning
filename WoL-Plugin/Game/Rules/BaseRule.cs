@@ -29,10 +29,6 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
         virtual public ShockOptions ShockOptions { get; set; }
 
-        // TODO: Implement Point system
-        virtual public float Points { get; set; }
-        virtual public float PointsToTrigger { get; set; }
-
         virtual public bool IsEnabled { get; set; } // True when the User has it checked as "On"
         [NonSerialized] public bool IsRunning;      // True when we are actually running the "Check" function
 
@@ -42,7 +38,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         [NonSerialized] public Action<BaseRule> Triggered;
         [NonSerialized] protected RuleUI RuleUI;
 
-        [NonSerialized] protected List<int> DurationArray = [100, 300, 500, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        [NonSerialized] protected List<int> DurationArray =      [100,     300,    500,    1,    2,    3,    4,    5,    6,    7,    8,    9,    10];
         [NonSerialized] protected string[] DurationArrayString = ["0.1s", "0.3s", "0.5s", "1s", "2s", "3s", "4s", "5s", "6s", "7s", "8s", "9s", "10s"];
 
 
