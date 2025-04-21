@@ -92,9 +92,10 @@ public class ConfigWindow : Window, IDisposable
         {
             DrawGeneralTab();
             DrawSocialTab();
-            //DrawPVETab();
-            //DrawPVPTab();
-            //DrawMiscTab();
+            DrawPVETab();
+            DrawPVPTab();
+            DrawMiscTab();
+
             /*
             DrawDefaultTriggerTab();
             //if (Configuration.ActivePreset.SayBadWord.IsEnabled()) DrawBadWordList();
@@ -166,7 +167,36 @@ public class ConfigWindow : Window, IDisposable
             ActivePreset.SayWord.Draw();
             ActivePreset.DontSayWord.Draw();
             ActivePreset.LoseDeathroll.Draw();
+
+            ImGui.EndTabItem();
+        }
+    }
+
+    private void DrawPVETab()
+    {
+        if (ImGui.BeginTabItem("PVE"))
+        {
             
+
+            ImGui.EndTabItem();
+        }
+    }
+
+    private void DrawPVPTab()
+    {
+        if (ImGui.BeginTabItem("PVP"))
+        {
+
+
+            ImGui.EndTabItem();
+        }
+    }
+
+    private void DrawMiscTab()
+    {
+        if (ImGui.BeginTabItem("Misc"))
+        {
+
 
             ImGui.EndTabItem();
         }

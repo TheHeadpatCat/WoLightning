@@ -19,7 +19,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
         public Dictionary<SpecificWord, ShockOptions> BannedWords { get; set; }
 
-        [JsonIgnore] public new bool hasRuleWindow = true;
+        override public bool hasAdvancedOptions { get; } = true;
 
         [JsonIgnore] string Input = string.Empty;
         [JsonIgnore] int Index = -1;
@@ -35,7 +35,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         }
 
 
-        public override void DrawRuleWindow()
+        public override void DrawAdvancedOptions()
         {
             ImGui.Text("If you say any of these words, you'll trigger its settings!");
 

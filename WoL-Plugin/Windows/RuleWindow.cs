@@ -24,7 +24,7 @@ public class RuleWindow : Window, IDisposable
     {
         if (this.IsOpen && !Plugin.ConfigWindow.IsOpen) this.Toggle();
         
-        if (currentRule != null) currentRule.DrawRuleWindow();
+        if (currentRule != null) currentRule.DrawAdvancedOptions();
         else if (this.IsOpen) this.Toggle();
     }
 }

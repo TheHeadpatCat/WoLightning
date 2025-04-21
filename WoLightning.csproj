@@ -20,7 +20,7 @@
     <None Remove="WoL-Plugin\Clients\Webserver\Operations\Presets\**" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="WoL-Plugin\Game\Rules\Misc\" />
+    <Folder Include="WoL-Plugin\Game\Rules\General\" />
     <Folder Include="WoL-Plugin\Game\Rules\Master\" />
     <Folder Include="WoL-Plugin\Game\Rules\PVP\" />
   </ItemGroup>

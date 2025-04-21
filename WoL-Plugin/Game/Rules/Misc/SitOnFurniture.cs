@@ -12,7 +12,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         override public string Name { get; } = "Sit on Furniture";
         override public string Description { get; } = "Triggers whenever you try to do /sit on a chair or similiar.";
         override public string Hint { get; }
-        override public RuleCategory Category { get; } = RuleCategory.General;
+        override public RuleCategory Category { get; } = RuleCategory.Misc;
 
         private bool sittingOnChair = false;
         private Vector3 sittingOnChairPos = new();

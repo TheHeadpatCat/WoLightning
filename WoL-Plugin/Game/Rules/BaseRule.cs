@@ -12,7 +12,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         Unknown = 0,
         General = 1,
         Social = 2,
-        Combat = 3,
+        PVE = 3,
         PVP = 4,
         Misc = 5,
         Master = 6,
@@ -25,7 +25,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         [JsonIgnore] abstract public string Description { get; }
         [JsonIgnore] virtual public string Hint { get; }
         [JsonIgnore] abstract public RuleCategory Category { get; }
-        [JsonIgnore] virtual public bool isUsingCustomData { get; } = false;
+        [JsonIgnore] virtual public bool hasAdvancedOptions { get; } = false;
 
         virtual public ShockOptions ShockOptions { get; set; }
 
@@ -41,7 +41,6 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         [NonSerialized] protected Plugin Plugin;
         [NonSerialized] public Action<BaseRule> Triggered;
         [NonSerialized] protected RuleUI RuleUI;
-        [NonSerialized] public bool hasRuleWindow;
 
         [NonSerialized] protected List<int> DurationArray = [100, 300, 500, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         [NonSerialized] protected string[] DurationArrayString = ["0.1s", "0.3s", "0.5s", "1s", "2s", "3s", "4s", "5s", "6s", "7s", "8s", "9s", "10s"];
@@ -56,7 +55,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         virtual public void setPlugin(Plugin plugin)
         {
             this.Plugin = plugin;
-            RuleUI = new RuleUI(plugin, this, isUsingCustomData);
+            RuleUI = new RuleUI(plugin, this, hasAdvancedOptions);
         }
 
         virtual public void Start()
@@ -91,10 +90,9 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             RuleUI.Draw();
         }
 
-        virtual public void DrawRuleWindow()
+        virtual public void DrawAdvancedOptions()
         {
-            ImGui.Text("This Rule doesnt have any special settings.");
-            return;
+            throw new NotImplementedException();
         }
 
         public void Dispose()

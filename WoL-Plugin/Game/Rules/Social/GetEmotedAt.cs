@@ -8,7 +8,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
     public class GetEmotedAt : BaseRule
     {
         override public string Name { get; } = "Get Emoted at";
-        override public string Description { get; } = "Triggers whenever a player sends a emote to you.";
+        override public string Description { get; } = "Triggers whenever a player sends a specific emote to you.";
         override public RuleCategory Category { get; } = RuleCategory.Social;
 
         public Dictionary<ushort, SpecificPlayer> TriggeringEmotes { get; set; } = new();
