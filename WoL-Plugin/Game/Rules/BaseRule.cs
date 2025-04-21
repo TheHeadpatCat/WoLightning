@@ -42,16 +42,29 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         [NonSerialized] protected string[] DurationArrayString = ["0.1s", "0.3s", "0.5s", "1s", "2s", "3s", "4s", "5s", "6s", "7s", "8s", "9s", "10s"];
 
 
+        [JsonConstructor]
+        protected BaseRule()
+        {
+
+        }
+
         protected BaseRule(Plugin plugin)
         {
             setPlugin(plugin);
-            ShockOptions = new ShockOptions();
         }
 
         virtual public void setPlugin(Plugin plugin)
         {
             this.Plugin = plugin;
-            RuleUI = new RuleUI(plugin, this, hasAdvancedOptions);
+            RuleUI = new RuleUI(plugin, this);
+            if (ShockOptions == null) ShockOptions = new ShockOptions();
+        }
+
+        virtual public void setEnabled(bool enabled)
+        {
+            IsEnabled = enabled;
+            if(IsEnabled && !IsRunning) Start();
+            if(!IsEnabled && IsRunning) Stop();
         }
 
         virtual public void Start()
@@ -78,6 +91,13 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             if (!Plugin.Configuration.ActivePreset.isPlayerAllowedToTrigger(source)) return;
             Triggered?.Invoke(this);
             Plugin.sendNotif(Text);
+            ShockOptions.startCooldown();
+        }
+
+        virtual public void Trigger(string Text, bool noNotif)
+        {
+            if (ShockOptions.hasCooldown() || !IsRunning) return;
+            Triggered?.Invoke(this);
             ShockOptions.startCooldown();
         }
 

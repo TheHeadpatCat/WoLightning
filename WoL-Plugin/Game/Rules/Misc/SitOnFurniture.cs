@@ -1,5 +1,6 @@
 ﻿using FFXIVClientStructs.FFXIV.Common.Math;
 using System;
+using System.Text.Json.Serialization;
 using System.Timers;
 using WoLightning.Util;
 using WoLightning.Util.Types;
@@ -17,7 +18,10 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         private bool sittingOnChair = false;
         private Vector3 sittingOnChairPos = new();
         readonly private TimerPlus sittingOnChairTimer = new();
+        private int safetyStop = 0;
 
+        [JsonConstructor]
+        public SitOnFurniture() { }
         public SitOnFurniture(Plugin plugin) : base(plugin) { }
 
         override public void Start()
@@ -63,15 +67,38 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
         private void checkSittingOnChair(object? sender, ElapsedEventArgs? e)
         {
+            safetyStop++;
+
+            Plugin.Log("Chair Check " + Plugin.ClientState.LocalPlayer);
+            if(safetyStop > 10)
+            {
+                Plugin.Log("Timer has exceeded safety limit - aborting Chair Check.");
+                sittingOnChair = false;
+                sittingOnChairTimer.Stop();
+                safetyStop = 0;
+                return;
+            }
+
+            if(Plugin.ClientState.LocalPlayer == null)
+            {
+                Plugin.Log("No Player");
+                sittingOnChair = false;
+                sittingOnChairTimer.Stop();
+                safetyStop = 0;
+                return;
+            }
+
             if (sittingOnChair && Plugin.ClientState.LocalPlayer.Position.Equals(sittingOnChairPos))
             {
                 Trigger("You are still sitting on Furniture!");
                 sittingOnChairTimer.Refresh();
+                safetyStop++;
             }
             else
             {
                 sittingOnChair = false;
                 sittingOnChairTimer.Stop();
+                safetyStop = 0;
             }
         }
     }

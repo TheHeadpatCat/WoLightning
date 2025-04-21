@@ -28,8 +28,10 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
         [JsonIgnore] bool Punctuation = false;
         [JsonIgnore] bool ProperCase = false;
-        
 
+
+        [JsonConstructor]
+        public SayWord() { }
         public SayWord(Plugin plugin) : base(plugin) {
             
         }

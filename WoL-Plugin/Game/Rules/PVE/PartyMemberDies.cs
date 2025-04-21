@@ -20,6 +20,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 
         [JsonIgnore] bool[] DeadPlayerIndex = [false,false,false,false,false,false,false,false]; //how do i polyfill
 
+        [JsonConstructor]
+        public PartyMemberDies() { }
         public PartyMemberDies(Plugin plugin) : base(plugin)
         {
         }

@@ -1,5 +1,6 @@
 ﻿using Dalamud.Game.ClientState.Objects.SubKinds;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Util.Types;
 
@@ -13,6 +14,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
         public Dictionary<ushort, SpecificPlayer> TriggeringEmotes { get; set; } = new();
 
+        [JsonConstructor]
+        public GetEmotedAt() { }
         public GetEmotedAt(Plugin plugin) : base(plugin) { }
 
         override public void Start()

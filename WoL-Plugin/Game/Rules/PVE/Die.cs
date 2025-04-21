@@ -21,6 +21,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
         [JsonIgnore] IPlayerCharacter Player;
         [JsonIgnore] bool IsTriggered = false;
 
+        [JsonConstructor]
+        public Die() { }
         public Die(Plugin plugin) : base(plugin)
         {
         }

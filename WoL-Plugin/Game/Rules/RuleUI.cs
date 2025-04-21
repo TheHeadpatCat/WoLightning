@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Numerics;
 using WoLightning.Configurations;
+using WoLightning.Util;
 using WoLightning.Util.Types;
 
 namespace WoLightning.WoL_Plugin.Game.Rules
@@ -14,8 +15,9 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         bool isOptionsOpen = false;
         bool isModalShockerSelectorOpen = false;
         bool hasAdvancedOptions = false;
-        
 
+        TimerPlus SaveChangesTimer = new TimerPlus();
+        
         Vector4 ColorNameEnabled = new Vector4(0.5f, 1, 0.3f, 0.9f);
         Vector4 ColorNameDisabled = new Vector4(1, 1, 1, 0.9f);
         Vector4 ColorDescription = new Vector4(0.7f, 0.7f, 0.7f, 0.8f);
@@ -23,11 +25,14 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         List<int> durationArray = [100, 300, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         List<CooldownModifier> modifierArray = [CooldownModifier.Miliseconds, CooldownModifier.Seconds, CooldownModifier.Minutes, CooldownModifier.Hours];
 
-        public RuleUI(Plugin Plugin, BaseRule RuleParent, bool hasAdvancedOptions)
+        public RuleUI(Plugin Plugin, BaseRule RuleParent)
         {
             this.Plugin = Plugin;
             this.Rule = RuleParent;
-            this.hasAdvancedOptions = hasAdvancedOptions;
+            this.hasAdvancedOptions = false;
+            SaveChangesTimer.AutoReset = false;
+            SaveChangesTimer.Interval = 2000;
+            SaveChangesTimer.Elapsed += Plugin.Configuration.Save;
         }
 
         public void Draw()
@@ -45,8 +50,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             bool refEn = Rule.IsEnabled;
             if(ImGui.Checkbox("##checkbox" + Rule.Name, ref refEn))
             {
-                Rule.IsEnabled = refEn;
-                Plugin.Configuration.Save();
+                Rule.setEnabled(refEn);
+                SaveChanges();
             }
             if (Rule.IsEnabled)
             {
@@ -91,7 +96,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             }
             DrawOptionsBase(ref changed);
             DrawOptionsCooldown(ref changed);
-            if (changed) Plugin.Configuration.Save();
+            if (changed) SaveChanges();
         }
         protected void DrawOptionsBase(ref bool changed)
         {
@@ -218,6 +223,13 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             }
             
 
+        }
+
+
+        private void SaveChanges()
+        {
+            SaveChangesTimer.Refresh();
+            SaveChangesTimer.Start();
         }
 
     }

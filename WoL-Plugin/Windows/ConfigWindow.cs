@@ -176,7 +176,13 @@ public class ConfigWindow : Window, IDisposable
     {
         if (ImGui.BeginTabItem("PVE"))
         {
-            
+            ActivePreset.Die.Draw();
+            ActivePreset.FailMechanic.Draw();
+            //ActivePreset.HealPlayer.Draw();
+            ActivePreset.PartyMemberDies.Draw();
+            ActivePreset.PartyWipes.Draw();
+            ActivePreset.TakeDamage.Draw();
+            //ActivePreset.UseSkill.Draw();
 
             ImGui.EndTabItem();
         }
@@ -196,7 +202,7 @@ public class ConfigWindow : Window, IDisposable
     {
         if (ImGui.BeginTabItem("Misc"))
         {
-
+            ActivePreset.SitOnFurniture.Draw();
 
             ImGui.EndTabItem();
         }

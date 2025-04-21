@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using WoLightning.WoL_Plugin.Game.Rules;
+using WoLightning.WoL_Plugin.Game.Rules.PVE;
 using WoLightning.WoL_Plugin.Game.Rules.Social;
 
 namespace WoLightning.Util.Types
@@ -36,8 +37,20 @@ namespace WoLightning.Util.Types
         public DontSayWord DontSayWord { get; set; }
         public LoseDeathroll LoseDeathroll { get; set; }
 
+        // PVE Triggers
+        public Die Die { get; set; }
+        public FailMechanic FailMechanic { get; set; }
+        //public HealPlayer HealPlayer { get; set; }
+        public PartyMemberDies PartyMemberDies { get; set; }
+        public PartyWipes PartyWipes { get; set; } 
+        public TakeDamage TakeDamage { get; set; }
+        //public UseSkill UseSkill { get; set; }
 
-        
+        // PVP Triggers
+
+
+        // Misc Triggers
+        public SitOnFurniture SitOnFurniture { get; set; }
 
         public void Initialize(Plugin Plugin)
         {
@@ -66,6 +79,34 @@ namespace WoLightning.Util.Types
             
             // PVE
 
+            Die ??= new(Plugin);
+            Die.setPlugin(Plugin);
+
+            FailMechanic ??= new(Plugin);
+            FailMechanic.setPlugin(Plugin);
+
+            //HealPlayer ??= new(Plugin);
+            //HealPlayer.setPlugin(Plugin);
+
+            PartyMemberDies ??= new(Plugin);
+            PartyMemberDies.setPlugin(Plugin);
+
+            PartyWipes ??= new(Plugin);
+            PartyWipes.setPlugin(Plugin);
+
+            TakeDamage ??= new(Plugin);
+            TakeDamage.setPlugin(Plugin);
+
+            //UseSkill ??= new(Plugin);
+            //UseSkill.setPlugin(Plugin);
+
+            // PVP
+
+
+            // Misc
+
+            SitOnFurniture ??= new(Plugin);
+            SitOnFurniture.setPlugin(Plugin);
 
         }
 

@@ -388,6 +388,7 @@ public sealed class Plugin : IDalamudPlugin
 
     public void sendNotif(string content)
     {
+        Log(content);
         Notification result = new Notification();
         result.InitialDuration = new TimeSpan(0, 0, 7);
         result.Title = "Warrior of Lighting";

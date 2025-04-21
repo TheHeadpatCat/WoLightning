@@ -22,6 +22,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
         [JsonIgnore] bool[] DeadPlayerIndex = [false, false, false, false, false, false, false, false]; //how do i polyfill
         [JsonIgnore] bool isTriggered = false;
 
+        [JsonConstructor]
+        public PartyWipes() { }
         public PartyWipes(Plugin plugin) : base(plugin)
         {
         }

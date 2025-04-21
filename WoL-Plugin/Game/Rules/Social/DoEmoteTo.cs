@@ -2,6 +2,7 @@
 using Dalamud.Game.ClientState.Objects.Types;
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using WoLightning.Util.Types;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Social
@@ -15,6 +16,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
         public Dictionary<ushort, List<Player>> TriggeringEmotes { get; set; } = new();
 
+        [JsonConstructor]
+        public DoEmoteTo() { }
         public DoEmoteTo(Plugin plugin) : base(plugin) { }
 
         override public void Start()

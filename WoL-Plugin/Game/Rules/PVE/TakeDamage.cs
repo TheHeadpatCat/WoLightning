@@ -22,6 +22,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
         [JsonIgnore] IPlayerCharacter Player;
         [JsonIgnore] uint lastHP = 1, lastMaxHP = 1;
 
+        [JsonConstructor]
+        public TakeDamage() { }
         public TakeDamage(Plugin plugin) : base(plugin)
         {
         }
@@ -41,10 +43,14 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 
         private void Check(IFramework framework)
         {
+            
             if (Player == null) { Player = Plugin.ClientState.LocalPlayer; return; }
 
-            lastMaxHP = Player.MaxHp;
-            if(lastMaxHP > lastHP) lastHP = lastMaxHP; // avoid false positives from synch and stuff
+            if (lastMaxHP != Player.MaxHp)
+            {
+                lastMaxHP = Player.MaxHp;
+                lastHP = lastMaxHP; // avoid false positives from synch and stuff
+            }
 
             if (lastHP > Player.CurrentHp) Trigger("You took damage!");
             lastHP = Player.CurrentHp;

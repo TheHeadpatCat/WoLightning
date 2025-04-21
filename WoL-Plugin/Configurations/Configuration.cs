@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Timers;
 using WoLightning.Util.Types;
 
 
@@ -62,8 +63,9 @@ namespace WoLightning.Configurations
                     }
                     catch (Exception e)
                     {
+                        plugin.Log("Failed to deserialize Preset: " + file);
                         plugin.Log(e);
-                        tPreset = new Preset("Default", plugin.LocalPlayer.getFullName());
+                        continue;
                     }
                     tPreset.Initialize(plugin);
                     Presets.Add(tPreset);
@@ -96,7 +98,6 @@ namespace WoLightning.Configurations
             plugin.Log("Configuration.Save() called");
             try
             {
-                plugin.Log("CD: " + ActivePreset.DoEmote.ShockOptions.Cooldown);
                 LastPresetName = ActivePreset.Name;
                 PresetNames = new();
 
@@ -124,6 +125,11 @@ namespace WoLightning.Configurations
                 plugin.Error("Failed to save Configuration!", e);
                 plugin.Log(e.ToString());
             }
+        }
+
+        public void Save(object? sender, ElapsedEventArgs? e)
+        {
+            Save();
         }
 
         public bool loadPreset(string Name)

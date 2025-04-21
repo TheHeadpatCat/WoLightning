@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Social
 {
@@ -11,6 +12,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
         public List<ushort> TriggeringEmotes { get; set; } = new List<ushort>();
 
+        [JsonConstructor]
+        public LoseDeathroll() { }
         public LoseDeathroll(Plugin plugin) : base(plugin) { }
     }
 }

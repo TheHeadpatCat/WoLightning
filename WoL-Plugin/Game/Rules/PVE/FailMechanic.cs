@@ -20,6 +20,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
         [JsonIgnore] IPlayerCharacter Player;
         [JsonIgnore] int lastVulnUpStacks = 0, lastDamageDownStacks = 0;
 
+        [JsonConstructor]
+        public FailMechanic() { }
         public FailMechanic(Plugin plugin) : base(plugin)
         {
         }
