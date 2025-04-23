@@ -1,10 +1,11 @@
-﻿using ImGuiNET;
+﻿using Dalamud.Game.Text;
+using Dalamud.Game.Text.SeStringHandling;
+using ImGuiNET;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using WoLightning.Configurations;
-using WoLightning.Util.Types;
+using WoLightning.Util;
 using WoLightning.WoL_Plugin.Util.Types;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Social
@@ -14,6 +15,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         public override string Name { get; } = "Say a Banned Word";
 
         public override string Description { get; } = "Triggers whenever you say a word from a list.";
+        override public string Hint { get; } = "Once enabled, you can set the Words in the \"Word List\" Tab!";
 
         public override RuleCategory Category { get; } = RuleCategory.Social;
 
@@ -36,11 +38,45 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         {
 
         }
+        override public void Start()
+        {
+            if (IsRunning) return;
+            IsRunning = true;
+            Plugin.ChatGui.ChatMessage += Check;
+        }
 
+        override public void Stop()
+        {
+            if (!IsRunning) return;
+            IsRunning = false;
+            Plugin.ChatGui.ChatMessage -= Check;
+        }
+        private void Check(XivChatType type, int timestamp, ref SeString senderE, ref SeString messageE, ref bool isHandled)
+        {
+            //check for chat type limitation
+            if (Plugin.Configuration.ActivePreset.LimitChats && !Plugin.Configuration.ActivePreset.Chats.Contains(type)) return;
+
+            string sender = StringSanitizer.LetterOrDigit(senderE.ToString()).ToLower();
+            if ((int)type <= 107 && sender.Equals(Plugin.ClientState.LocalPlayer.Name.ToString().ToLower()))
+            {
+                string message = StringSanitizer.LetterOrDigit(messageE.ToString());
+                foreach (var bannedWord in BannedWords)
+                {
+                    foreach (var word in message.Split(" "))
+                    {
+                        if (bannedWord.Compare(word))
+                        {
+                            Plugin.Log("Found");
+                            Trigger($"You have said {bannedWord}!");
+                        }
+                    }
+                }
+            }
+        }
 
         public override void DrawAdvancedOptions()
         {
-            ImGui.Text("If you say any of these words, you'll trigger this Rule!");
+            ImGui.Text("Saying any Word from this list, will trigger the \"Say Banned Word\" Rule!");
 
             ImGui.SetNextItemWidth(ImGui.GetWindowWidth() - 230);
             if (ImGui.InputTextWithHint("##BannedWordInput", "Click on a entry to edit it.", ref Input, 48))
@@ -62,7 +98,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
             ImGui.Spacing();
 
-            if (ImGui.Button("Add Word##BadWordAdd", new Vector2(ImGui.GetWindowWidth() / 2 - 8, 25)))
+            if (ImGui.Button("Add/Edit Word##BadWordAdd", new Vector2(ImGui.GetWindowWidth() / 2 - 8, 25)))
             {
 
                 SpecificWord? target = null;

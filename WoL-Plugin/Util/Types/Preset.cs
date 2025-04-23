@@ -1,4 +1,4 @@
-﻿using FFXIVClientStructs;
+﻿using Dalamud.Game.Text;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -21,6 +21,7 @@ namespace WoLightning.Util.Types
         public bool IsPassthroughAllowed { get; set; } = false;
         public int globalTriggerCooldown { get; set; } = 10;
         public float globalTriggerCooldownGate { get; set; } = 0.75f;
+        public bool showTriggerNotifs { get; set; } = false;
         public bool showCooldownNotifs { get; set; } = false;
 
         public bool isWhitelistEnabled { get; set; } = false;
@@ -29,6 +30,8 @@ namespace WoLightning.Util.Types
         public bool isBlacklistEnabled { get; set; } = false;
         public List<Player> Blacklist { get; set; } = new();
 
+        public bool LimitChats { get; set; } = false;
+        public List<XivChatType> Chats { get; set; } = new();
         [JsonIgnore] public List<BaseRule> Rules { get; set; } = new List<BaseRule>();
         [JsonIgnore] private Plugin Plugin;
 
@@ -46,7 +49,7 @@ namespace WoLightning.Util.Types
         public FailMechanic FailMechanic { get; set; }
         //public HealPlayer HealPlayer { get; set; }
         public PartyMemberDies PartyMemberDies { get; set; }
-        public PartyWipes PartyWipes { get; set; } 
+        public PartyWipes PartyWipes { get; set; }
         public TakeDamage TakeDamage { get; set; }
         //public UseSkill UseSkill { get; set; }
 
@@ -63,7 +66,7 @@ namespace WoLightning.Util.Types
 
             // I have not found a better way to do this. I know this is terrible and probably a design issue.
             // Reflection has its own issues
-            
+
             // Social
             DoEmote ??= new(Plugin);
             DoEmote.setPlugin(Plugin);
@@ -82,7 +85,7 @@ namespace WoLightning.Util.Types
 
             LoseDeathroll ??= new(Plugin);
             LoseDeathroll.setPlugin(Plugin);
-            
+
             // PVE
 
             Die ??= new(Plugin);
@@ -117,9 +120,9 @@ namespace WoLightning.Util.Types
 
             foreach (PropertyInfo property in this.GetType().GetProperties())
             {
-                if(property.PropertyType.BaseType == typeof(BaseRule))
+                if (property.PropertyType.BaseType == typeof(BaseRule))
                 {
-                    if(Rules.Contains((BaseRule)property.GetValue(this, null)!))continue;
+                    if (Rules.Contains((BaseRule)property.GetValue(this, null)!)) continue;
                     Rules.Add((BaseRule)property.GetValue(this, null)!);
                 }
             }
@@ -138,9 +141,9 @@ namespace WoLightning.Util.Types
                     }
                 }
             }
-            catch(Exception ex) { }
+            catch (Exception ex) { }
         }
-        public void StopRules() 
+        public void StopRules()
         {
             try
             {

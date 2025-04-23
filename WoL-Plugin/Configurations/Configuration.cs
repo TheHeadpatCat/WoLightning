@@ -33,7 +33,7 @@ namespace WoLightning.Configurations
         [NonSerialized] public int ActivePresetIndex = 0;
         [NonSerialized] public List<Preset> Presets = new();
         [NonSerialized] public List<string> PresetNames = new(); // used for comboBoxes
-        [NonSerialized] public Action<Preset,int> PresetChanged;
+        [NonSerialized] public Action<Preset, int> PresetChanged;
         [NonSerialized] private Plugin plugin;
         [NonSerialized] public string ConfigurationDirectoryPath;
 
@@ -41,7 +41,7 @@ namespace WoLightning.Configurations
         {
             this.plugin = plugin;
             this.ConfigurationDirectoryPath = ConfigurationDirectoryPath;
-            
+
             string f = "";
             if (File.Exists(ConfigurationDirectoryPath + "Config.json")) f = File.ReadAllText(ConfigurationDirectoryPath + "Config.json");
 
@@ -137,13 +137,13 @@ namespace WoLightning.Configurations
 
             if (!Presets.Exists(preset => preset.Name == Name)) return false;
             ActivePreset = Presets.Find(preset => preset.Name == Name);
-            if (ActivePreset == null) throw  new Exception("Preset not Found");
+            if (ActivePreset == null) throw new Exception("Preset not Found");
             ActivePresetIndex = Presets.IndexOf(ActivePreset);
             LastPresetName = ActivePreset.Name;
             ActivePreset.Initialize(plugin);
             ActivePreset.resetInvalidTriggers();
 
-            PresetChanged?.Invoke(ActivePreset,ActivePresetIndex);
+            PresetChanged?.Invoke(ActivePreset, ActivePresetIndex);
             plugin.Log(" -> Done.");
             return true;
         }

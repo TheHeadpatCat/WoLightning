@@ -1,13 +1,7 @@
-﻿using Dalamud.Game.ClientState.Objects.Types;
-using ImGuiNET;
-using System.Collections.Generic;
+﻿using Dalamud.Game.ClientState.Objects.SubKinds;
+using Dalamud.Plugin.Services;
 using System;
 using System.Text.Json.Serialization;
-using WoLightning.Util.Types;
-using System.Numerics;
-using WoLightning.WoL_Plugin.Util.UI;
-using Dalamud.Plugin.Services;
-using Dalamud.Game.ClientState.Objects.SubKinds;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 {
@@ -44,15 +38,15 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 
         private void Check(IFramework framework)
         {
-            if(Player == null) { Player = Plugin.ClientState.LocalPlayer; return; }
-            
-            if(Player.IsDead && !IsTriggered) //Player died and Shock has not been triggered yet
+            if (Player == null) { Player = Plugin.ClientState.LocalPlayer; return; }
+
+            if (Player.IsDead && !IsTriggered) //Player died and Shock has not been triggered yet
             {
                 Trigger("You have died!");
                 IsTriggered = true;
             }
             if (IsTriggered && !Player.IsDead) //Shock was triggered, and now we are alive again
-                IsTriggered = false; 
+                IsTriggered = false;
         }
 
     }

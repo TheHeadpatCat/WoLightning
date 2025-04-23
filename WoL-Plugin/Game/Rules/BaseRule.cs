@@ -1,8 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
-using WoLightning.Util.Types;
-using ImGuiNET;
 using System.Collections.Generic;
+using WoLightning.Util.Types;
 
 namespace WoLightning.WoL_Plugin.Game.Rules
 {
@@ -26,6 +25,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         [JsonIgnore] virtual public string Hint { get; }
         [JsonIgnore] abstract public RuleCategory Category { get; }
         [JsonIgnore] virtual public bool hasAdvancedOptions { get; } = false;
+        [JsonIgnore] virtual public bool hasExtraButton { get; } = false;
 
         virtual public ShockOptions ShockOptions { get; set; }
 
@@ -38,7 +38,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         [NonSerialized] public Action<BaseRule> Triggered;
         [NonSerialized] protected RuleUI RuleUI;
 
-        [NonSerialized] protected List<int> DurationArray =      [100,     300,    500,    1,    2,    3,    4,    5,    6,    7,    8,    9,    10];
+        [NonSerialized] protected List<int> DurationArray = [100, 300, 500, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         [NonSerialized] protected string[] DurationArrayString = ["0.1s", "0.3s", "0.5s", "1s", "2s", "3s", "4s", "5s", "6s", "7s", "8s", "9s", "10s"];
 
 
@@ -63,8 +63,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         virtual public void setEnabled(bool enabled)
         {
             IsEnabled = enabled;
-            if(IsEnabled && !IsRunning && Plugin.MainWindow.IsEnabled) Start();
-            if(!IsEnabled && IsRunning) Stop();
+            if (IsEnabled && !IsRunning && Plugin.MainWindow.IsEnabled) Start();
+            if (!IsEnabled && IsRunning) Stop();
         }
 
         virtual public void Start()
@@ -81,7 +81,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         {
             if (ShockOptions.hasCooldown() || !IsRunning) return;
             Triggered?.Invoke(this);
-            Plugin.sendNotif(Text);
+            if (Plugin.Configuration.ActivePreset.showTriggerNotifs) Plugin.sendNotif(Text);
             ShockOptions.startCooldown();
         }
 
@@ -90,7 +90,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             if (ShockOptions.hasCooldown() || !IsRunning) return;
             if (!Plugin.Configuration.ActivePreset.isPlayerAllowedToTrigger(source)) return;
             Triggered?.Invoke(this);
-            Plugin.sendNotif(Text);
+            if (Plugin.Configuration.ActivePreset.showTriggerNotifs) Plugin.sendNotif(Text);
             ShockOptions.startCooldown();
         }
 
@@ -106,6 +106,10 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             RuleUI.Draw();
         }
         virtual public void DrawAdvancedOptions()
+        {
+            throw new NotImplementedException();
+        }
+        virtual public void DrawExtraButton()
         {
             throw new NotImplementedException();
         }

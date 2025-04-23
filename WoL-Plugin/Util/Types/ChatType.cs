@@ -147,5 +147,37 @@ namespace WoLightning.Util.Types
                 _ => null
             };
         }
+
+        public static XivChatType? GetXivChatTypeFromChatType(ChatTypes type)
+        {
+            return type switch
+            {
+                ChatTypes.Tell => XivChatType.TellIncoming,
+                ChatTypes.Say => XivChatType.Say,
+                ChatTypes.Party => XivChatType.Party,
+                ChatTypes.Alliance => XivChatType.Alliance,
+                ChatTypes.Yell => XivChatType.Yell,
+                ChatTypes.Shout => XivChatType.Shout,
+                ChatTypes.FreeCompany => XivChatType.FreeCompany,
+                ChatTypes.NoviceNetwork => XivChatType.NoviceNetwork,
+                ChatTypes.LS1 => XivChatType.Ls1,
+                ChatTypes.LS2 => XivChatType.Ls2,
+                ChatTypes.LS3 => XivChatType.Ls3,
+                ChatTypes.LS4 => XivChatType.Ls4,
+                ChatTypes.LS5 => XivChatType.Ls5,
+                ChatTypes.LS6 => XivChatType.Ls6,
+                ChatTypes.LS7 => XivChatType.Ls7,
+                ChatTypes.LS8 => XivChatType.Ls8,
+                ChatTypes.CWL1 => XivChatType.CrossLinkShell1,
+                ChatTypes.CWL2 => XivChatType.CrossLinkShell2,
+                ChatTypes.CWL3 => XivChatType.CrossLinkShell3,
+                ChatTypes.CWL4 => XivChatType.CrossLinkShell4,
+                ChatTypes.CWL5 => XivChatType.CrossLinkShell5,
+                ChatTypes.CWL6 => XivChatType.CrossLinkShell6,
+                ChatTypes.CWL7 => XivChatType.CrossLinkShell7,
+                ChatTypes.CWL8 => XivChatType.CrossLinkShell8,
+                _ => null
+            };
+        }
     }
 }

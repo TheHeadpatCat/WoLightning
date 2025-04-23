@@ -1,13 +1,7 @@
-﻿using Dalamud.Game.ClientState.Objects.Types;
-using ImGuiNET;
-using System.Collections.Generic;
+﻿using Dalamud.Game.ClientState.Objects.SubKinds;
+using Dalamud.Plugin.Services;
 using System;
 using System.Text.Json.Serialization;
-using WoLightning.Util.Types;
-using System.Numerics;
-using WoLightning.WoL_Plugin.Util.UI;
-using Dalamud.Plugin.Services;
-using Dalamud.Game.ClientState.Objects.SubKinds;
 namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 {
     [Serializable]
@@ -63,7 +57,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 }
 
                 if (Status.GameData.Value.Icon >= 18441 && Status.GameData.Value.Icon <= 18456) // Damage Down
-                { 
+                {
                     var amount = Status.Param;
                     if (amount > lastDamageDownStacks) Trigger("You have failed a Mechanic!");
                     lastDamageDownStacks = amount;

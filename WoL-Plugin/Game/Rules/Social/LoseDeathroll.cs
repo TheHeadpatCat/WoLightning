@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Dalamud.Game.Text;
+using Dalamud.Game.Text.SeStringHandling;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Social
@@ -15,5 +17,39 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         [JsonConstructor]
         public LoseDeathroll() { }
         public LoseDeathroll(Plugin plugin) : base(plugin) { }
+
+        override public void Start()
+        {
+            if (IsRunning) return;
+            IsRunning = true;
+            Plugin.ChatGui.ChatMessage += Check;
+        }
+
+        override public void Stop()
+        {
+            if (!IsRunning) return;
+            IsRunning = false;
+            Plugin.ChatGui.ChatMessage -= Check;
+        }
+        private void Check(XivChatType type, int timestamp, ref SeString senderE, ref SeString messageE, ref bool isHandled)
+        {
+            if ((int)type == 2122 && messageE.Payloads.Find(pay => pay.Type == PayloadType.Icon) != null) // Deathroll channel and Icon found
+            {
+                string[] parts = messageE.ToString().Split(" ");
+                if (parts[1].Length < 6) // check if the name is "You" or similiar, as different languages exist
+                {
+                    foreach (string part in parts)
+                    {
+                        if (char.IsDigit(part[0])) // this is a number
+                        {
+                            if (part.Length == 1 && part == "1")
+                            {
+                                Trigger("You lost a Deathroll!");
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

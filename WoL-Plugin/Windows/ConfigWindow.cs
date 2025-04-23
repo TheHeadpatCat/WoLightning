@@ -1,13 +1,11 @@
 ﻿using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Game.Text;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
-using WoLightning.Clients.Webserver.Operations.Account;
 using WoLightning.Configurations;
-using WoLightning.Util;
 using WoLightning.Util.Types;
 
 
@@ -47,7 +45,7 @@ public class ConfigWindow : Window, IDisposable
 
     }
 
-    private void onPresetChanged(Preset preset,int index)
+    private void onPresetChanged(Preset preset, int index)
     {
         Plugin.Log("onPresetChaged() - " + index);
         ActivePreset = preset;
@@ -98,26 +96,29 @@ public class ConfigWindow : Window, IDisposable
             DrawGeneralTab();
             DrawSocialTab();
             DrawPVETab();
-            DrawPVPTab();
+            //DrawPVPTab();
             DrawMiscTab();
             DrawPermissionsTab();
 
-            if (ImGui.BeginTabItem("Word Lists"))
+            if (Configuration.ActivePreset.SayWord.IsEnabled || Configuration.ActivePreset.DontSayWord.IsEnabled)
             {
-                if (ImGui.BeginTabBar("Tab Bar##tabbarwords"))
+                if (ImGui.BeginTabItem("Word Lists"))
                 {
-                    if (ImGui.BeginTabItem("Banned Words"))
+                    if (ImGui.BeginTabBar("Tab Bar##tabbarwords"))
                     {
-                        ActivePreset.SayWord.DrawAdvancedOptions();
-                        ImGui.EndTabItem();
+                        if (ImGui.BeginTabItem("Banned Words"))
+                        {
+                            ActivePreset.SayWord.DrawAdvancedOptions();
+                            ImGui.EndTabItem();
+                        }
+                        if (ImGui.BeginTabItem("Enforced Words"))
+                        {
+                            ActivePreset.DontSayWord.DrawAdvancedOptions();
+                            ImGui.EndTabItem();
+                        }
                     }
-                    if (ImGui.BeginTabItem("Enforced Words"))
-                    {
-                        ActivePreset.DontSayWord.DrawAdvancedOptions();
-                        ImGui.EndTabItem();
-                    }
+                    ImGui.EndTabBar();
                 }
-                ImGui.EndTabBar();
             }
 
 
@@ -154,7 +155,7 @@ public class ConfigWindow : Window, IDisposable
         { Configuration.loadPreset(Configuration.PresetNames[ActivePresetIndex]); }
         // Preset Modal Openers - Add & Delete
         ImGui.SameLine();
-        if (ImGui.SmallButton("+")){ ModalAddPresetInputName = ""; ImGui.OpenPopup("Add Preset##addPreMod"); }
+        if (ImGui.SmallButton("+")) { ModalAddPresetInputName = ""; ImGui.OpenPopup("Add Preset##addPreMod"); }
         ImGui.SameLine();
         if (ImGui.SmallButton("X")) ImGui.OpenPopup("Delete Preset##delPreMod");
 
@@ -165,6 +166,20 @@ public class ConfigWindow : Window, IDisposable
     {
         if (ImGui.BeginTabItem("General"))
         {
+            bool showTriggerNotifs = Configuration.ActivePreset.showTriggerNotifs;
+            if (ImGui.Checkbox("Show Trigger Notifications", ref showTriggerNotifs))
+            {
+                Configuration.ActivePreset.showTriggerNotifs = showTriggerNotifs;
+                Configuration.Save();
+            }
+            ImGui.SameLine();
+            ImGui.TextDisabled(" (?)");
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.SetTooltip("Activating this will show little Notification" +
+                    "\nwhenever you trigger a Rule");
+            }
+
             bool showCooldownNotifs = Configuration.ActivePreset.showCooldownNotifs;
             if (ImGui.Checkbox("Show Cooldown Notifications", ref showCooldownNotifs))
             {
@@ -175,10 +190,25 @@ public class ConfigWindow : Window, IDisposable
             ImGui.TextDisabled(" (?)");
             if (ImGui.IsItemHovered())
             {
-                ImGui.SetTooltip("Activating this will show little Windows on the bottom right" +
+                ImGui.SetTooltip("Activating this will show little Notification" +
                 "\nthat will tell you how much time is left until that trigger can activate again.");
             }
 
+            bool limitChats = Configuration.ActivePreset.LimitChats;
+            if (ImGui.Checkbox("Only listen for messages on specific Chat Channels.", ref limitChats))
+            {
+                Configuration.ActivePreset.LimitChats = limitChats;
+                Configuration.Save();
+            }
+            ImGui.SameLine();
+            ImGui.TextDisabled(" (?)");
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.SetTooltip("Activating this will let you select Channels for the plugin to listen to." +
+                "\nThe \"Say Banned Word\" and \"Forget to say Enforced Word\" Rules will only trigger on those Channels.");
+            }
+
+            if (limitChats) DrawCustomChats();
 
 
             ImGui.EndTabItem();
@@ -192,7 +222,7 @@ public class ConfigWindow : Window, IDisposable
             ActivePreset.DoEmoteTo.Draw();
             ActivePreset.GetEmotedAt.Draw();
             ActivePreset.SayWord.Draw();
-            
+
             ActivePreset.DontSayWord.Draw();
             if (ActivePreset.DontSayWord.IsEnabled) ActivePreset.DontSayWord.DrawAdvancedOptions();
             ActivePreset.LoseDeathroll.Draw();
@@ -203,7 +233,7 @@ public class ConfigWindow : Window, IDisposable
 
     private void DrawPVETab()
     {
-        if (ImGui.BeginTabItem("PVE"))
+        if (ImGui.BeginTabItem("Combat"))
         {
             ActivePreset.Die.Draw();
             ActivePreset.FailMechanic.Draw();
@@ -352,6 +382,43 @@ public class ConfigWindow : Window, IDisposable
 
             ImGui.EndTabItem();
         }
+    }
+
+
+
+    private void DrawCustomChats() // Old Code from @lexiconmage
+    {
+        if (!ImGui.CollapsingHeader("Channel Selection"))
+        {
+            return;
+        }
+        var i = 0;
+        foreach (var e in ChatType.GetOrderedChannels())
+        {
+            // See if it is already enabled by default
+            var enabled = Configuration.ActivePreset.Chats.Contains((XivChatType)ChatType.GetXivChatTypeFromChatType(e)!);
+            // Create a new line after every 4 columns
+            if (i != 0 && (i == 4 || i == 7 || i == 11 || i == 15 || i == 19 || i == 23))
+            {
+                ImGui.NewLine();
+                //i = 0;
+            }
+            // Move to the next row if it is LS1 or CWLS1
+            if (e is ChatType.ChatTypes.LS1 or ChatType.ChatTypes.CWL1)
+                ImGui.Separator();
+
+            if (ImGui.Checkbox($"{e}", ref enabled))
+            {
+                // See If the UIHelpers.Checkbox is clicked, If not, add to the list of enabled channels, otherwise, remove it.
+                if (enabled) Configuration.ActivePreset.Chats.Add((XivChatType)ChatType.GetXivChatTypeFromChatType(e)!);
+                else Configuration.ActivePreset.Chats.Remove((XivChatType)ChatType.GetXivChatTypeFromChatType(e)!);
+                Configuration.Save();
+            }
+
+            ImGui.SameLine();
+            i++;
+        }
+        ImGui.NewLine();
     }
 
     #region Modals

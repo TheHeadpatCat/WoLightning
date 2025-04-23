@@ -1,14 +1,7 @@
-﻿using Dalamud.Game.ClientState.Objects.Types;
-using ImGuiNET;
-using System.Collections.Generic;
+﻿using Dalamud.Plugin.Services;
 using System;
-using System.Text.Json.Serialization;
-using WoLightning.Util.Types;
-using System.Numerics;
-using WoLightning.WoL_Plugin.Util.UI;
-using Dalamud.Plugin.Services;
-using Dalamud.Game.ClientState.Objects.SubKinds;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 {
@@ -54,7 +47,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 var PlayerObject = Player.GameObject;
                 if (PlayerObject == null) continue;
 
-                if (PlayerObject.IsDead && !DeadPlayerIndex[i]) { DeadPlayerIndex[i] = true;  } //player died
+                if (PlayerObject.IsDead && !DeadPlayerIndex[i]) { DeadPlayerIndex[i] = true; } //player died
                 if (!PlayerObject.IsDead && DeadPlayerIndex[i]) { DeadPlayerIndex[i] = false; isTriggered = false; } //player got revived - somehow
                 if (!isTriggered && DeadPlayerIndex.All((x) => x == true)) { Trigger("The party is wiped!"); isTriggered = true; } //everyone is dead and we havent triggered the shock
             }

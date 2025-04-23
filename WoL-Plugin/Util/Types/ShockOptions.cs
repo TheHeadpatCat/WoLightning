@@ -95,7 +95,7 @@ namespace WoLightning.Util.Types
 
         public int[] toSimpleArray()
         {
-            return [(int)OpMode,Intensity,Duration];
+            return [(int)OpMode, Intensity, Duration];
         }
 
         #region Util

@@ -1,13 +1,7 @@
-﻿using Dalamud.Game.ClientState.Objects.Types;
-using ImGuiNET;
-using System.Collections.Generic;
+﻿using Dalamud.Game.ClientState.Objects.SubKinds;
+using Dalamud.Plugin.Services;
 using System;
 using System.Text.Json.Serialization;
-using WoLightning.Util.Types;
-using System.Numerics;
-using WoLightning.WoL_Plugin.Util.UI;
-using Dalamud.Plugin.Services;
-using Dalamud.Game.ClientState.Objects.SubKinds;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 {
@@ -16,7 +10,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
     {
         override public string Name { get; } = "Take Damage";
         override public string Description { get; } = "Triggers whenever you Take Damage for any reason.";
-        override public string Hint { get; } = "This will go off ALOT. Literally any damage counts. From mechanics to auto attacks to dots or even fall damage!";
+        override public string Hint { get; } = "This will go off ALOT.\nLiterally any damage counts.\nFrom mechanics to auto attacks to dots or even fall damage!";
         override public RuleCategory Category { get; } = RuleCategory.PVE;
 
         [JsonIgnore] IPlayerCharacter Player;
@@ -45,7 +39,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 
         private void Check(IFramework framework)
         {
-            
+
             if (Player == null) { Player = Plugin.ClientState.LocalPlayer; return; }
 
             if (lastMaxHP != Player.MaxHp)

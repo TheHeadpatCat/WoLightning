@@ -5,10 +5,12 @@ using Dalamud.Interface.ImGuiNotification;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
+using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using WoLightning.Clients.Pishock;
 using WoLightning.Clients.Webserver;
 using WoLightning.Configurations;
@@ -16,6 +18,7 @@ using WoLightning.Game;
 using WoLightning.Util;
 using WoLightning.Util.Types;
 using WoLightning.Windows;
+using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning;
 
@@ -52,6 +55,7 @@ public sealed class Plugin : IDalamudPlugin
     public IGameInteropProvider GameInteropProvider { get; init; }
     public IPartyList PartyList { get; init; }
     public ITargetManager TargetManager { get; init; }
+    public IDataManager DataManager { get; init; }
     public TextLog TextLog { get; set; }
 
     // Gui Interfaces
@@ -59,7 +63,6 @@ public sealed class Plugin : IDalamudPlugin
     private readonly BufferWindow BufferWindow = new BufferWindow();
     public MainWindow? MainWindow { get; set; }
     public ConfigWindow? ConfigWindow { get; set; }
-    public MasterWindow? MasterWindow { get; set; }
 
 
     // Handler Classes
@@ -68,8 +71,7 @@ public sealed class Plugin : IDalamudPlugin
     public ClientWebserver? ClientWebserver { get; set; }
     public Authentification? Authentification { get; set; }
     public Configuration? Configuration { get; set; }
-
-
+    public GameEmotes? GameEmotes { get; set; }
 
     public Plugin(
         IDalamudPluginInterface pluginInterface,
@@ -85,7 +87,8 @@ public sealed class Plugin : IDalamudPlugin
         IObjectTable objectTable,
         IGameInteropProvider gameInteropProvider,
         IPartyList partyList,
-        ITargetManager targetManager
+        ITargetManager targetManager,
+        IDataManager dataManager
         )
     {
         // Setup all Services
@@ -102,11 +105,14 @@ public sealed class Plugin : IDalamudPlugin
         GameInteropProvider = gameInteropProvider;
         PartyList = partyList;
         TargetManager = targetManager;
+        DataManager = dataManager;
 
+        // Brio @Brio/Resources/GameDataProvider.cs#L27
+        GameEmotes = new GameEmotes(this, dataManager.GetExcelSheet<Emote>()!.ToDictionary(x => x.RowId, x => x).AsReadOnly());
 
         MainWindow = new MainWindow(this);
         ConfigWindow = new ConfigWindow(this);
-        
+
 
         WindowSystem.AddWindow(BufferWindow);
         WindowSystem.AddWindow(MainWindow);
@@ -194,7 +200,7 @@ public sealed class Plugin : IDalamudPlugin
             }
 
             LocalPlayer.Key = Authentification.ServerKey;
-            
+
 
             EmoteReaderHooks = new EmoteReaderHooks(this);
 
@@ -229,7 +235,6 @@ public sealed class Plugin : IDalamudPlugin
     {
         if (MainWindow != null) WindowSystem.RemoveWindow(MainWindow);
         if (ConfigWindow != null) WindowSystem.RemoveWindow(ConfigWindow);
-        if (MasterWindow != null) WindowSystem.RemoveWindow(MasterWindow);
         WindowSystem?.RemoveWindow(BufferWindow);
 
         MainWindow?.Dispose();
@@ -309,48 +314,46 @@ public sealed class Plugin : IDalamudPlugin
     private void DrawUI() => WindowSystem.Draw();
     public void ToggleConfigUI() => ConfigWindow.Toggle();
     public void ToggleMainUI() => MainWindow.Toggle();
-    public void ToggleMasterUI() => MasterWindow.Toggle();
-    public void ToggleMasterConfigUI() => MasterWindow.CopiedConfigWindow.Toggle();
     //public void ShowMasterUI() => MasterWindow.Open();
 
     #region Logging
     public void Log(string message)
     {
-        
+
         PluginLog.Verbose(message);
-        
+
     }
 
     public void Log(Object obj)
     {
-        
+
         PluginLog.Verbose(obj.ToString());
         TextLog.Log(obj);
     }
 
     public void Log(string message, bool noText)
     {
-        
+
         PluginLog.Verbose(message);
     }
 
     public void Log(Object obj, bool noText)
     {
-        
+
         PluginLog.Verbose(obj.ToString());
     }
 
 
     public void Error(string message)
     {
-        
+
         PluginLog.Error(message);
         TextLog.Log("--- ERROR: \n" + message);
     }
 
     public void Error(string message, Object obj)
     {
-       
+
         PluginLog.Error(message);
         PluginLog.Error(obj.ToString());
         TextLog.Log("--- ERROR: \n" + message);
@@ -359,13 +362,13 @@ public sealed class Plugin : IDalamudPlugin
 
     public void Error(string message, bool noText)
     {
-        
+
         PluginLog.Error(message);
     }
 
     public void Error(string message, Object obj, bool noText)
     {
-       
+
         PluginLog.Error(message);
         PluginLog.Error(obj.ToString());
     }

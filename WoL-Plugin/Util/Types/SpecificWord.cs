@@ -34,5 +34,10 @@ namespace WoLightning.WoL_Plugin.Util.Types
 
             return ThisWord.Equals(OtherWord);
         }
+
+        public override String ToString()
+        {
+            return this.Word;
+        }
     }
 }

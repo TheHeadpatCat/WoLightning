@@ -1,7 +1,6 @@
 ﻿using ImGuiNET;
 using System.Collections.Generic;
 using System.Numerics;
-using WoLightning.Configurations;
 using WoLightning.Util;
 using WoLightning.Util.Types;
 
@@ -16,7 +15,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         bool isModalShockerSelectorOpen = false;
 
         TimerPlus SaveChangesTimer = new TimerPlus();
-        
+
         Vector4 ColorNameEnabled = new Vector4(0.5f, 1, 0.3f, 0.9f);
         Vector4 ColorNameDisabled = new Vector4(1, 1, 1, 0.9f);
         Vector4 ColorDescription = new Vector4(0.7f, 0.7f, 0.7f, 0.8f);
@@ -35,9 +34,9 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
         public void Draw()
         {
-            if(Rule.Name == null || Rule.Name.Length == 0) return;
+            if (Rule.Name == null || Rule.Name.Length == 0) return;
             DrawBase();
-            if (Rule.IsEnabled && isOptionsOpen) {DrawOptions();}
+            if (Rule.IsEnabled && isOptionsOpen) { DrawOptions(); }
             ImGui.Spacing();
             ImGui.Separator();
         }
@@ -46,22 +45,22 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         {
             ImGui.BeginGroup();
             bool refEn = Rule.IsEnabled;
-            if(ImGui.Checkbox("##checkbox" + Rule.Name, ref refEn))
+            if (ImGui.Checkbox("##checkbox" + Rule.Name, ref refEn))
             {
                 Rule.setEnabled(refEn);
                 SaveChanges();
             }
             if (Rule.IsEnabled)
             {
-                    if (isOptionsOpen && ImGui.ArrowButton("##collapse" + Rule.Name, ImGuiDir.Down))
-                    {
-                        isOptionsOpen = !isOptionsOpen;
-                    }
-                    if (!isOptionsOpen && ImGui.ArrowButton("##collapse" + Rule.Name, ImGuiDir.Right))
-                    {
-                        isOptionsOpen = !isOptionsOpen;
-                    }
-                
+                if (isOptionsOpen && ImGui.ArrowButton("##collapse" + Rule.Name, ImGuiDir.Down))
+                {
+                    isOptionsOpen = !isOptionsOpen;
+                }
+                if (!isOptionsOpen && ImGui.ArrowButton("##collapse" + Rule.Name, ImGuiDir.Right))
+                {
+                    isOptionsOpen = !isOptionsOpen;
+                }
+
             }
             ImGui.EndGroup();
 
@@ -83,6 +82,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         {
             bool changed = false;
             DrawShockerSelector();
+            if (Rule.hasExtraButton) Rule.DrawExtraButton();
             DrawOptionsBase(ref changed);
             DrawOptionsCooldown(ref changed);
             if (changed) SaveChanges();
@@ -149,7 +149,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
         protected void DrawShockerSelector()
         {
-            if (ImGui.Button($"Assigned {Rule.ShockOptions.Shockers.Count} Shockers##assignedShockers" + Rule.Name, new Vector2(150,25)))
+            if (ImGui.Button($"Assigned {Rule.ShockOptions.Shockers.Count} Shockers##assignedShockers" + Rule.Name, new Vector2(150, 25)))
             {
                 isModalShockerSelectorOpen = true;
                 ImGui.OpenPopup("Select Shockers##ShockerSelect" + Rule.Name);
@@ -183,18 +183,18 @@ namespace WoLightning.WoL_Plugin.Game.Rules
                 foreach (var shocker in Plugin.Authentification.PishockShockers)
                 {
                     bool isEnabled = Rule.ShockOptions.Shockers.Find(sh => sh.Code == shocker.Code) != null;
-                    
+
                     if (ImGui.Checkbox($"##shockerbox{shocker.Code}", ref isEnabled))
                     { // this could probably be solved more elegantly
                         if (isEnabled) Rule.ShockOptions.Shockers.Add(shocker);
                         else Rule.ShockOptions.Shockers.RemoveAt(Rule.ShockOptions.Shockers.FindIndex(sh => sh.Code == shocker.Code));
                     }
                     ImGui.SameLine();
-                    if(shocker.Status == ShockerStatus.Online)ImGui.TextColored(ColorNameEnabled,shocker.Name);
+                    if (shocker.Status == ShockerStatus.Online) ImGui.TextColored(ColorNameEnabled, shocker.Name);
                     else ImGui.TextColored(ColorNameDisabled, shocker.Name);
                 }
 
-                ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X /2 - 170,ImGui.GetWindowSize().Y - 35));
+                ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 2 - 170, ImGui.GetWindowSize().Y - 35));
                 ImGui.BeginGroup();
                 if (ImGui.Button($"Apply##apply{Rule.Name}", new Vector2(ImGui.GetWindowSize().X - 120, 25)))
                 {
@@ -210,7 +210,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
                 ImGui.EndPopup();
             }
-            
+
 
         }
 
