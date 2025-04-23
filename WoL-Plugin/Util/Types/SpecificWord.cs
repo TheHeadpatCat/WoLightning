@@ -32,6 +32,8 @@ namespace WoLightning.WoL_Plugin.Util.Types
                 ThisWord = ThisWord.ToLower();
             }
 
+            if(!NeedsPunctuation) return ThisWord.Contains(OtherWord) || OtherWord.Contains(ThisWord);
+
             return ThisWord.Equals(OtherWord);
         }
 

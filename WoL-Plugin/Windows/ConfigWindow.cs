@@ -121,7 +121,6 @@ public class ConfigWindow : Window, IDisposable
                 }
             }
 
-
             /*
             DrawDefaultTriggerTab();
             //if (Configuration.ActivePreset.SayBadWord.IsEnabled()) DrawBadWordList();
@@ -155,9 +154,16 @@ public class ConfigWindow : Window, IDisposable
         { Configuration.loadPreset(Configuration.PresetNames[ActivePresetIndex]); }
         // Preset Modal Openers - Add & Delete
         ImGui.SameLine();
-        if (ImGui.SmallButton("+")) { ModalAddPresetInputName = ""; ImGui.OpenPopup("Add Preset##addPreMod"); }
+        if (ImGui.SmallButton("+")) { 
+            ModalAddPresetInputName = ""; 
+            isModalAddPresetOpen = true;
+            ImGui.OpenPopup("Add Preset##addPreMod"); 
+        }
         ImGui.SameLine();
-        if (ImGui.SmallButton("X")) ImGui.OpenPopup("Delete Preset##delPreMod");
+        if (ImGui.SmallButton("X")) {
+            isModalDeletePresetOpen = true;
+            ImGui.OpenPopup("Delete Preset##delPreMod");
+       }
 
     }
 
@@ -222,9 +228,7 @@ public class ConfigWindow : Window, IDisposable
             ActivePreset.DoEmoteTo.Draw();
             ActivePreset.GetEmotedAt.Draw();
             ActivePreset.SayWord.Draw();
-
             ActivePreset.DontSayWord.Draw();
-            if (ActivePreset.DontSayWord.IsEnabled) ActivePreset.DontSayWord.DrawAdvancedOptions();
             ActivePreset.LoseDeathroll.Draw();
 
             ImGui.EndTabItem();
@@ -426,7 +430,7 @@ public class ConfigWindow : Window, IDisposable
     private void DrawModalAddPreset()
     {
         ImGui.SetNextWindowPos(center, ImGuiCond.Appearing, new Vector2(0.5f, 0.5f));
-        ImGui.SetNextWindowSize(new Vector2(300, 150));
+        ImGui.SetNextWindowSize(new Vector2(340, 125));
 
         if (ImGui.BeginPopupModal("Add Preset##addPreMod", ref isModalAddPresetOpen, ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.Popup | ImGuiWindowFlags.NoTitleBar))
         {
@@ -437,18 +441,44 @@ public class ConfigWindow : Window, IDisposable
             ImGui.PushItemWidth(ImGui.GetWindowSize().X / 2);
             if (ImGui.Button("Add##addPre", new Vector2(ImGui.GetWindowSize().X / 2, 25)))
             {
-                if (ModalAddPresetInputName.Length > 0)
+                if (ModalAddPresetInputName.Length == 0)
                 {
-                    Preset tPreset = new Preset(ModalAddPresetInputName, "Unknown");
+                    ModalAddPresetInputName = Configuration.ActivePreset.Name + " Duplicate";
+                }
+
+                while (Configuration.PresetNames.Contains(ModalAddPresetInputName)) { ModalAddPresetInputName += "+"; }
+
+                Preset tPreset = new Preset(ModalAddPresetInputName, "Unknown");
                     Configuration.Presets.Add(tPreset);
                     Configuration.Save();
                     Configuration.loadPreset(ModalAddPresetInputName);
-                }
+                
 
                 ImGui.CloseCurrentPopup();
             }
             ImGui.SameLine();
             if (ImGui.Button("Cancel##canPre", new Vector2(ImGui.GetWindowSize().X / 2 - 10, 25))) ImGui.CloseCurrentPopup();
+
+            ImGui.PushItemWidth(ImGui.GetWindowSize().X / 2);
+            if (ImGui.Button("Duplicate Current Preset##addPreDuplicate", new Vector2(ImGui.GetWindowSize().X / 2, 25)))
+            {
+                if (ModalAddPresetInputName.Length == 0)
+                {
+                    ModalAddPresetInputName = Configuration.ActivePreset.Name + " Duplicate";
+                }
+
+                while (Configuration.PresetNames.Contains(ModalAddPresetInputName)) { ModalAddPresetInputName += "+"; }
+
+                    String duplicate = Newtonsoft.Json.JsonConvert.SerializeObject(Configuration.ActivePreset);
+                    Preset tPreset = Newtonsoft.Json.JsonConvert.DeserializeObject<Preset>(duplicate)!;
+                    tPreset.Name = ModalAddPresetInputName;
+                    Configuration.Presets.Add(tPreset);
+                    Configuration.Save();
+                    Configuration.loadPreset(ModalAddPresetInputName);
+                
+
+                ImGui.CloseCurrentPopup();
+            }
             ImGui.EndPopup();
         }
     }

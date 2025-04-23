@@ -4,6 +4,7 @@ using ImGuiNET;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Numerics;
 using WoLightning.Util;
 using WoLightning.WoL_Plugin.Util.Types;
@@ -89,10 +90,21 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                 }
                 Index = -1;
             }
-            ImGui.SameLine();
+            
             ImGui.Checkbox("Punctuation", ref Punctuation);
             ImGui.SameLine();
+            ImGui.TextDisabled("(?)");
+            if (ImGui.IsItemHovered()) { ImGui.SetTooltip("If this is enabled, the Word has to be properly written out on its own." +
+                "\nIf the word is \"Master\" then writing \"i like my master\" is accepted, while \"ilikemymaster\" isn't."); }
+            ImGui.SameLine();
             ImGui.Checkbox("Proper Case", ref ProperCase);
+            ImGui.SameLine();
+            ImGui.TextDisabled("(?)");
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.SetTooltip("If this is enabled, the Word has to properly match the Case." +
+                "\nIf the word is \"Collar\" then writing \"i have a Collar\" is accepted, while \"i have a collar\" isn't.");
+            }
 
             ImGui.Separator();
 

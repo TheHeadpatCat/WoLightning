@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Timers;
 using WoLightning.Util.Types;
+using static FFXIVClientStructs.FFXIV.Client.UI.RaptureAtkHistory.Delegates;
 
 
 namespace WoLightning.Configurations
@@ -57,6 +58,7 @@ namespace WoLightning.Configurations
                 {
                     string p = File.ReadAllText(file);
                     Preset tPreset;
+                    plugin.Log("Deserialzing " + file);
                     try
                     {
                         tPreset = DeserializePreset(p);
@@ -67,20 +69,17 @@ namespace WoLightning.Configurations
                         plugin.Log(e);
                         continue;
                     }
-                    tPreset.Initialize(plugin);
                     Presets.Add(tPreset);
-                    loadPreset(tPreset.Name);
-                    return;
                 }
             }
-            if (Presets.Count == 0)
+            if (Presets.Count == 0 || !loadPreset(LastPresetName))
             {
-                plugin.Log("No Presets found - Creating Default.");
+                plugin.Log("No Presets found, or cannot load last preset - Creating Default.");
                 ActivePreset = new Preset("Default", plugin.LocalPlayer.getFullName());
                 Presets.Add(ActivePreset);
                 loadPreset("Default");
                 return;
-            } //fixme: preset gets reset on startup?
+            }
         }
 
         public void Initialize(Plugin plugin, string ConfigurationDirectoryPath, bool createNew)
@@ -138,6 +137,7 @@ namespace WoLightning.Configurations
             if (!Presets.Exists(preset => preset.Name == Name)) return false;
             ActivePreset = Presets.Find(preset => preset.Name == Name);
             if (ActivePreset == null) throw new Exception("Preset not Found");
+            ActivePreset.Dispose();
             ActivePresetIndex = Presets.IndexOf(ActivePreset);
             LastPresetName = ActivePreset.Name;
             ActivePreset.Initialize(plugin);
@@ -148,6 +148,12 @@ namespace WoLightning.Configurations
             return true;
         }
 
+
+        public void saveCurrentPreset()
+        {
+            plugin.Log("Saving preset: " + ActivePreset.Name);
+            File.WriteAllText($"{ConfigurationDirectoryPath}\\Presets\\{ActivePreset.Name}.json", SerializePreset(ActivePreset));
+        }
         public void savePreset(Preset target)
         {
             plugin.Log("Saving preset: " + target.Name);
@@ -207,6 +213,7 @@ namespace WoLightning.Configurations
         public void Dispose()
         {
             Save();
+            ActivePreset.Dispose();
         }
     }
 }

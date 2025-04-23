@@ -14,8 +14,6 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         bool isOptionsOpen = false;
         bool isModalShockerSelectorOpen = false;
 
-        TimerPlus SaveChangesTimer = new TimerPlus();
-
         Vector4 ColorNameEnabled = new Vector4(0.5f, 1, 0.3f, 0.9f);
         Vector4 ColorNameDisabled = new Vector4(1, 1, 1, 0.9f);
         Vector4 ColorDescription = new Vector4(0.7f, 0.7f, 0.7f, 0.8f);
@@ -27,9 +25,6 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         {
             this.Plugin = Plugin;
             this.Rule = RuleParent;
-            SaveChangesTimer.AutoReset = false;
-            SaveChangesTimer.Interval = 2000;
-            SaveChangesTimer.Elapsed += Plugin.Configuration.Save;
         }
 
         public void Draw()
@@ -48,7 +43,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             if (ImGui.Checkbox("##checkbox" + Rule.Name, ref refEn))
             {
                 Rule.setEnabled(refEn);
-                SaveChanges();
+                Plugin.Configuration.saveCurrentPreset();
             }
             if (Rule.IsEnabled)
             {
@@ -85,7 +80,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             if (Rule.hasExtraButton) Rule.DrawExtraButton();
             DrawOptionsBase(ref changed);
             DrawOptionsCooldown(ref changed);
-            if (changed) SaveChanges();
+            if (changed) Plugin.Configuration.saveCurrentPreset();
         }
         protected void DrawOptionsBase(ref bool changed)
         {
@@ -212,13 +207,6 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             }
 
 
-        }
-
-
-        private void SaveChanges()
-        {
-            SaveChangesTimer.Refresh();
-            SaveChangesTimer.Start();
         }
 
     }

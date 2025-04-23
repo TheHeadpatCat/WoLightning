@@ -164,12 +164,34 @@ public sealed class Plugin : IDalamudPlugin
             LocalPlayerCharacter = ClientState.LocalPlayer;
             LocalPlayer = new Player(LocalPlayerCharacter.Name.ToString(), (int)LocalPlayerCharacter.HomeWorld.Value.RowId);
 
+            if (!File.Exists(PluginInterface.GetPluginConfigDirectory() + "\\version")) // Either new installation or old data - either way, purge.
+            {
+                Log("Missing Version file - purging folder.");
+                foreach(var dir in Directory.EnumerateDirectories(PluginInterface.GetPluginConfigDirectory()))
+                {
+                    Directory.Delete(dir, true);
+                }
+                File.WriteAllText(PluginInterface.GetPluginConfigDirectory() + "\\version", "1000");
+            }
+
+            int version;
+            try
+            {
+                version = int.Parse(File.ReadAllText(PluginInterface.GetPluginConfigDirectory() + "\\version"));
+            }
+            catch {}
+            
+
+
             ConfigurationDirectoryPath = PluginInterface.GetPluginConfigDirectory() + "\\" + ClientState.LocalPlayer.Name;
             if (!Directory.Exists(ConfigurationDirectoryPath)) Directory.CreateDirectory(ConfigurationDirectoryPath);
             if (!Directory.Exists(ConfigurationDirectoryPath + "\\Presets")) Directory.CreateDirectory(ConfigurationDirectoryPath + "\\Presets");
             if (!Directory.Exists(ConfigurationDirectoryPath + "\\MasterPresets")) Directory.CreateDirectory(ConfigurationDirectoryPath + "\\MasterPresets");
 
             ConfigurationDirectoryPath += "\\";
+
+            
+
 
             TextLog = new TextLog(this, ConfigurationDirectoryPath);
 

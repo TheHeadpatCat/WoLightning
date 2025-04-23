@@ -10,7 +10,7 @@ using WoLightning.WoL_Plugin.Game.Rules.Social;
 namespace WoLightning.Util.Types
 {
     [Serializable]
-    public class Preset(string Name, string CreatorFullName)
+    public class Preset(string Name, string CreatorFullName) : IDisposable
     {
 
         public bool isInitialized { get; set; } = false;
@@ -136,6 +136,23 @@ namespace WoLightning.Util.Types
                         Plugin.Error("Failed to Load Rule");
                     }
                 }
+            }
+        }
+
+        public void Dispose()
+        {
+            try
+            {
+                foreach (BaseRule rule in Rules)
+                {
+                    rule.Stop();
+                    rule.Triggered -= Plugin.ClientPishock.sendRequest;
+                    //rule.Triggered -= Plugin.ClientOpenShock.sendRequest; Todo: implement
+                }
+            }
+            catch (Exception ex)
+            {
+                if(Plugin != null) Plugin.Error(ex.StackTrace);
             }
         }
 
