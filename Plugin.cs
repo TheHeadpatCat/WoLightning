@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using WoLightning.Clients.OpenShock;
 using WoLightning.Clients.Pishock;
 using WoLightning.Clients.Webserver;
 using WoLightning.Configurations;
@@ -68,6 +69,7 @@ public sealed class Plugin : IDalamudPlugin
     // Handler Classes
     public EmoteReaderHooks? EmoteReaderHooks { get; set; }
     public ClientPishock? ClientPishock { get; set; }
+    public ClientOpenShock? ClientOpenShock { get; set; }
     public ClientWebserver? ClientWebserver { get; set; }
     public Authentification? Authentification { get; set; }
     public Configuration? Configuration { get; set; }
@@ -158,6 +160,7 @@ public sealed class Plugin : IDalamudPlugin
         Log("Running onLogin()");
         try
         {
+
             LocalPlayerCharacter = ClientState.LocalPlayer;
             LocalPlayer = new Player(LocalPlayerCharacter.Name.ToString(), (int)LocalPlayerCharacter.HomeWorld.Value.RowId);
 
@@ -169,6 +172,10 @@ public sealed class Plugin : IDalamudPlugin
             ConfigurationDirectoryPath += "\\";
 
             TextLog = new TextLog(this, ConfigurationDirectoryPath);
+
+            ClientWebserver = new ClientWebserver(this);
+            ClientPishock = new ClientPishock(this);
+            ClientOpenShock = new ClientOpenShock(this);
 
             Configuration = new Configuration();
             try
@@ -202,20 +209,20 @@ public sealed class Plugin : IDalamudPlugin
             LocalPlayer.Key = Authentification.ServerKey;
 
 
+            ClientWebserver.Connect();
+            ClientPishock.createHttpClient();
+            ClientOpenShock.createHttpClient();
+
             EmoteReaderHooks = new EmoteReaderHooks(this);
 
-            ClientWebserver = new ClientWebserver(this);
-            ClientWebserver.Connect();
 
-            ClientPishock = new ClientPishock(this);
-            ClientPishock.createHttpClient();
 
             ConfigWindow.SetConfiguration(Configuration);
             MainWindow.Initialize();
         }
         catch (Exception ex)
         {
-            PluginLog.Error(ex.ToString());
+            PluginLog.Error(ex.StackTrace);
             PluginLog.Error("Something went terribly wrong!!!");
         }
     }
@@ -314,7 +321,6 @@ public sealed class Plugin : IDalamudPlugin
     private void DrawUI() => WindowSystem.Draw();
     public void ToggleConfigUI() => ConfigWindow.Toggle();
     public void ToggleMainUI() => MainWindow.Toggle();
-    //public void ShowMasterUI() => MasterWindow.Open();
 
     #region Logging
     public void Log(string message)

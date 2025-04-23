@@ -79,9 +79,9 @@ namespace WoLightning.Game
                             return;
                         }
 
-                            if (log) Plugin.PluginLog.Verbose($"Someone is targeting someone");
-                            if (instigatorOb.GameObjectId == Plugin.ClientState.LocalPlayer.GameObjectId) OnEmoteOutgoing?.Invoke(targetOb, emoteId); // we are sending an emote
-                            else OnEmoteUnrelated?.Invoke((IPlayerCharacter)instigatorOb, targetOb, emoteId); // someone is sending a emote to someone else
+                        if (log) Plugin.PluginLog.Verbose($"Someone is targeting someone");
+                        if (instigatorOb.GameObjectId == Plugin.ClientState.LocalPlayer.GameObjectId) OnEmoteOutgoing?.Invoke(targetOb, emoteId); // we are sending an emote
+                        else OnEmoteUnrelated?.Invoke((IPlayerCharacter)instigatorOb, targetOb, emoteId); // someone is sending a emote to someone else
 
                     }
                 }

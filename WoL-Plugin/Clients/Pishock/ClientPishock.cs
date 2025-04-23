@@ -241,7 +241,6 @@ namespace WoLightning.Clients.Pishock
                     }),
                     Encoding.UTF8,
                     "application/json");
-
                 return Client.PostAsync("https://do.pishock.com/api/apioperate", jsonContent);
             }));
 

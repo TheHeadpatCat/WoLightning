@@ -122,8 +122,19 @@ namespace WoLightning.Util.Types
             {
                 if (property.PropertyType.BaseType == typeof(BaseRule))
                 {
-                    if (Rules.Contains((BaseRule)property.GetValue(this, null)!)) continue;
-                    Rules.Add((BaseRule)property.GetValue(this, null)!);
+                    try
+                    {
+                        if (Rules.Contains((BaseRule)property.GetValue(this, null)!)) continue;
+                        BaseRule r = (BaseRule)property.GetValue(this, null)!;
+                        Rules.Add(r);
+                        r.Triggered += Plugin.ClientPishock.sendRequest;
+                        //r.Triggered += Plugin.ClientOpenShock.sendRequest; Todo: implement
+                    }
+                    catch (Exception ex)
+                    {
+                        Plugin.Error(ex.StackTrace);
+                        Plugin.Error("Failed to Load Rule");
+                    }
                 }
             }
         }
