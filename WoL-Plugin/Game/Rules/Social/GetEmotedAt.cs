@@ -9,10 +9,11 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
     public class GetEmotedAt : BaseRule
     {
         override public string Name { get; } = "Get Emoted at";
-        override public string Description { get; } = "Triggers whenever a player sends a specific emote to you.";
+        override public string Description { get; } = "Triggers whenever a specific player sends a specific emote to you.";
+        override public string Hint { get; } = "The sending player must not be Blacklisted.\nIf the Whitelist is active, the sending player has to be Whitelisted.";
         override public RuleCategory Category { get; } = RuleCategory.Social;
 
-        public Dictionary<ushort, SpecificPlayer> TriggeringEmotes { get; set; } = new();
+        public List<ushort> TriggeringEmotes { get; set; } = new();
 
         [JsonConstructor]
         public GetEmotedAt() { }
@@ -20,12 +21,14 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
         override public void Start()
         {
+            if (IsRunning) return;
             IsRunning = true;
             Plugin.EmoteReaderHooks.OnEmoteIncoming += Check;
         }
 
         override public void Stop()
         {
+            if (!IsRunning) return;
             IsRunning = false;
             Plugin.EmoteReaderHooks.OnEmoteIncoming -= Check;
         }
@@ -37,9 +40,10 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
         public void Check(IPlayerCharacter player, ushort emoteId)
         {
-            SpecificPlayer? targets = TriggeringEmotes[emoteId];
-            if (targets == null) return;
-            if (targets.Compare(new Player(player))) Trigger("You used Emote " + emoteId + " on a Player!");
+            if (!TriggeringEmotes.Contains(emoteId)) return; // Emote isnt listed
+            if (player.ObjectKind != Dalamud.Game.ClientState.Objects.Enums.ObjectKind.Player) return; // The Sender wasnt a player
+            Player sendingPlayer = new Player(player.Name.ToString(), (int)player.HomeWorld.RowId);
+            Trigger(sendingPlayer + " has used Emote " + emoteId + " on you!", sendingPlayer);
         }
 
     }

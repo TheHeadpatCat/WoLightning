@@ -22,6 +22,8 @@ public class MainWindow : Window, IDisposable
 
     private bool isPishockMenuOpen = true;
 
+    public bool IsEnabled = false;
+
     public MainWindow(Plugin plugin)
         : base($"Warrior of Lightning - v{Plugin.currentVersion}##Main", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.AlwaysAutoResize)
     {
@@ -43,6 +45,12 @@ public class MainWindow : Window, IDisposable
 
     }
 
+    public void Initialize()
+    {
+        IsEnabled = Plugin.Configuration.ActivateOnStart;
+        if (IsEnabled) Plugin.Configuration.ActivePreset.StartRules();
+    }
+
     public override async void Draw()
     {
 
@@ -51,8 +59,8 @@ public class MainWindow : Window, IDisposable
             DrawShockerAPI();
             ImGui.Separator();
 
-            DrawWebserverAPI();
-            ImGui.Separator();
+            //DrawWebserverAPI();
+            //ImGui.Separator();
 
             DrawControlPanel();
 
@@ -156,6 +164,25 @@ public class MainWindow : Window, IDisposable
             Plugin.Configuration.loadPreset(Plugin.Configuration.PresetNames[presetIndex]);
         }
 
+        if (IsEnabled)
+        {
+            if (ImGui.Button("Stop Plugin", new Vector2(270, 40))) // Todo: Color coding
+            {
+                IsEnabled = false;
+                Plugin.Configuration.ActivePreset.StopRules();
+            }
+        }
+
+        if (!IsEnabled)
+        {
+            if (ImGui.Button("Start Plugin", new Vector2(270, 40)))
+            {
+                IsEnabled = true;
+                Plugin.Configuration.ActivePreset.StartRules();
+            }
+        }
+
+
         var ActivateOnStart = Plugin.Configuration.ActivateOnStart;
 
         if (ImGui.Checkbox("Activate whenever the game starts.", ref ActivateOnStart))
@@ -164,11 +191,12 @@ public class MainWindow : Window, IDisposable
             Plugin.Configuration.Save();
         }
         //if (Plugin.Authentification.isDisallowed) ImGui.EndDisabled();
-        if (ImGui.Button("Open Trigger Configuration", new Vector2(ImGui.GetWindowSize().X - 15, 25)))
+        if (ImGui.Button("Open Trigger Configuration", new Vector2(ImGui.GetWindowSize().X - 10, 25)))
         {
             Plugin.ToggleConfigUI();
         }
 
+        /*
         if (Plugin.ClientWebserver.Status != ConnectionStatusWebserver.Connected) ImGui.BeginDisabled();
         if (ImGui.Button("Master Mode", new Vector2(ImGui.GetWindowSize().X - 15, 25)))
         {
@@ -177,7 +205,7 @@ public class MainWindow : Window, IDisposable
         if (Plugin.ClientWebserver.Status != ConnectionStatusWebserver.Connected) ImGui.EndDisabled();
 
         if (Plugin.ClientWebserver.Status != ConnectionStatusWebserver.Connected && ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled)) { ImGui.SetTooltip($"You need to be Connected to the Webserver\nto access Mastermode!"); }
-
+        */
     }
 
     private async void DrawAccountPanel()

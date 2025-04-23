@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using FFXIVClientStructs;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -23,10 +24,13 @@ namespace WoLightning.Util.Types
         public bool showCooldownNotifs { get; set; } = false;
 
         public bool isWhitelistEnabled { get; set; } = false;
-        public List<Player> Whitelist { get; set; }
+        public List<Player> Whitelist { get; set; } = new();
 
         public bool isBlacklistEnabled { get; set; } = false;
-        public List<Player> Blacklist { get; set; }
+        public List<Player> Blacklist { get; set; } = new();
+
+        [JsonIgnore] public List<BaseRule> Rules { get; set; } = new List<BaseRule>();
+        [JsonIgnore] private Plugin Plugin;
 
 
         // Social Triggers
@@ -54,9 +58,11 @@ namespace WoLightning.Util.Types
 
         public void Initialize(Plugin Plugin)
         {
+            this.Plugin = Plugin;
             Plugin.Log("Initializing Preset - " + Name);
 
             // I have not found a better way to do this. I know this is terrible and probably a design issue.
+            // Reflection has its own issues
             
             // Social
             DoEmote ??= new(Plugin);
@@ -108,8 +114,44 @@ namespace WoLightning.Util.Types
             SitOnFurniture ??= new(Plugin);
             SitOnFurniture.setPlugin(Plugin);
 
+
+            foreach (PropertyInfo property in this.GetType().GetProperties())
+            {
+                if(property.PropertyType.BaseType == typeof(BaseRule))
+                {
+                    if(Rules.Contains((BaseRule)property.GetValue(this, null)!))continue;
+                    Rules.Add((BaseRule)property.GetValue(this, null)!);
+                }
+            }
         }
 
+        public void StartRules()
+        {
+            try
+            {
+                foreach (var Rule in Rules)
+                {
+                    if (Rule.IsEnabled)
+                    {
+                        Plugin.Log("Starting " + Rule.Name);
+                        Rule.Start();
+                    }
+                }
+            }
+            catch(Exception ex) { }
+        }
+        public void StopRules() 
+        {
+            try
+            {
+                foreach (var Rule in Rules)
+                {
+                    Plugin.Log("Stopping " + Rule.Name);
+                    Rule.Stop();
+                }
+            }
+            catch (Exception ex) { }
+        }
         public bool isPlayerAllowedToTrigger(Player player)
         {
             if (player == null) return false;

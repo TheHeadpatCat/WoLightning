@@ -17,7 +17,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
         public override RuleCategory Category { get; } = RuleCategory.Social;
 
-        public Dictionary<SpecificWord, ShockOptions> BannedWords { get; set; }
+        public List<SpecificWord> BannedWords { get; set; } = new();
 
         override public bool hasAdvancedOptions { get; } = true;
 
@@ -32,16 +32,17 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
         [JsonConstructor]
         public SayWord() { }
-        public SayWord(Plugin plugin) : base(plugin) {
-            
+        public SayWord(Plugin plugin) : base(plugin)
+        {
+
         }
 
 
         public override void DrawAdvancedOptions()
         {
-            ImGui.Text("If you say any of these words, you'll trigger its settings!");
+            ImGui.Text("If you say any of these words, you'll trigger this Rule!");
 
-            ImGui.SetNextItemWidth(ImGui.GetWindowWidth() - 85);
+            ImGui.SetNextItemWidth(ImGui.GetWindowWidth() - 230);
             if (ImGui.InputTextWithHint("##BannedWordInput", "Click on a entry to edit it.", ref Input, 48))
             {
                 if (Index != -1) // Get rid of the old settings, otherwise we build connections between two items
@@ -56,47 +57,6 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
             ImGui.Checkbox("Punctuation", ref Punctuation);
             ImGui.SameLine();
             ImGui.Checkbox("Proper Case", ref ProperCase);
-            
-
-            //clamp
-            if (Settings[0] < 0 || Settings[0] > 3) Settings[0] = 0;
-
-            if (Settings[1] <= 0) Settings[1] = 1;
-            if (Settings[1] > 100) Settings[1] = 100;
-
-            if (Settings[2] <= 0) Settings[2] = 100;
-            if (Settings[2] > 10 && Settings[2] != 100 && Settings[2] != 300) Settings[2] = 10;
-
-            ImGui.Separator();
-
-            ImGui.BeginGroup();
-            ImGui.Spacing();
-            ImGui.Text("    Mode");
-            ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 3 - 50);
-            ImGui.Combo("##Word", ref Settings[0], ["Shock", "Vibrate", "Beep"], 3);
-            ImGui.EndGroup();
-
-            ImGui.SameLine();
-
-            ImGui.BeginGroup();
-            ImGui.Spacing();
-            ImGui.Text("    Duration");
-            ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 4.5f);
-            int DurationIndex = DurationArray.IndexOf(Settings[2]);
-            if (ImGui.Combo("##WordDur", ref DurationIndex, DurationArrayString, 12))
-            {
-                Settings[2] = DurationArray[DurationIndex];
-            }
-            ImGui.EndGroup();
-
-            ImGui.SameLine();
-
-            ImGui.BeginGroup();
-            ImGui.Spacing();
-            ImGui.Text("    Intensity");
-            ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 2f);
-            ImGui.SliderInt("##BadWordInt", ref Settings[1], 1, 100);
-            ImGui.EndGroup();
 
             ImGui.Separator();
 
@@ -104,11 +64,11 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
             if (ImGui.Button("Add Word##BadWordAdd", new Vector2(ImGui.GetWindowWidth() / 2 - 8, 25)))
             {
-                
+
                 SpecificWord? target = null;
-                foreach ((SpecificWord BannedWord,ShockOptions Options) in BannedWords)
+                foreach (SpecificWord BannedWord in BannedWords)
                 {
-                    if(BannedWord.Word.ToLower() == Input.ToLower())
+                    if (BannedWord.Word.ToLower() == Input.ToLower())
                     {
                         target = BannedWord;
                         break;
@@ -122,7 +82,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                 target = new SpecificWord(Input);
                 target.NeedsPunctuation = Punctuation;
                 target.NeedsProperCase = ProperCase;
-                BannedWords.Add(target, new ShockOptions(Settings));
+                BannedWords.Add(target);
 
                 Index = -1;
                 Input = new String("");
@@ -136,7 +96,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
             if (ImGui.Button("Remove Word##BadWordRemove", new Vector2(ImGui.GetWindowWidth() / 2 - 8, 25)))
             {
                 SpecificWord? target = null;
-                foreach ((SpecificWord BannedWord, ShockOptions Options) in BannedWords)
+                foreach (SpecificWord BannedWord in BannedWords)
                 {
                     if (BannedWord.Word.ToLower() == Input.ToLower())
                     {
@@ -160,19 +120,16 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
             if (ImGui.BeginListBox("##BadWordListBox", new Vector2(ImGui.GetWindowWidth() - 15, 340)))
             {
                 int index = 0;
-                foreach ((SpecificWord BannedWord, ShockOptions Options) in BannedWords)
+                foreach (SpecificWord BannedWord in BannedWords)
                 {
                     string mode = new String("");
                     string durS = new String("");
                     bool is_Selected = (Index == index);
-                    switch ((int)Options.OpMode) { case 0: mode = "Shock"; break; case 1: mode = "Vibrate"; break; case 2: mode = "Beep"; break; };
-                    switch (Options.Duration) { case 100: durS = "0.1s"; break; case 300: durS = "0.3s"; break; default: durS = $"{Options.Duration}s"; break; }
-                    if (ImGui.Selectable($" Word: {BannedWord.Word}  | Mode: {mode} | Intensity: {Options.Intensity} | Duration: {durS}", ref is_Selected))
+                    if (ImGui.Selectable($"{BannedWord.Word} - Punctuation: {BannedWord.NeedsPunctuation} - Proper Case: {BannedWord.NeedsProperCase}", ref is_Selected))
                     {
                         SelectedWord = BannedWord.Word;
                         Index = index;
                         Input = BannedWord.Word;
-                        Settings = Options.toSimpleArray();
                     }
                     index++;
                 }

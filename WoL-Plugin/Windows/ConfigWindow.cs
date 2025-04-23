@@ -1,4 +1,6 @@
-﻿using Dalamud.Interface.Windowing;
+﻿using Dalamud.Game.ClientState.Objects.SubKinds;
+using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using System;
 using System.Collections.Generic;
@@ -27,6 +29,9 @@ public class ConfigWindow : Window, IDisposable
     private bool isModalDeletePresetOpen = false;
 
     private string ModalAddPresetInputName = string.Empty;
+
+    private Player? SelectedPlayer;
+    private String SelectedPlayerName = "None";
 
     public ConfigWindow(Plugin plugin) : base($"Warrior of Lightning Configuration##configmain")
     {
@@ -95,6 +100,26 @@ public class ConfigWindow : Window, IDisposable
             DrawPVETab();
             DrawPVPTab();
             DrawMiscTab();
+            DrawPermissionsTab();
+
+            if (ImGui.BeginTabItem("Word Lists"))
+            {
+                if (ImGui.BeginTabBar("Tab Bar##tabbarwords"))
+                {
+                    if (ImGui.BeginTabItem("Banned Words"))
+                    {
+                        ActivePreset.SayWord.DrawAdvancedOptions();
+                        ImGui.EndTabItem();
+                    }
+                    if (ImGui.BeginTabItem("Enforced Words"))
+                    {
+                        ActivePreset.DontSayWord.DrawAdvancedOptions();
+                        ImGui.EndTabItem();
+                    }
+                }
+                ImGui.EndTabBar();
+            }
+
 
             /*
             DrawDefaultTriggerTab();
@@ -154,6 +179,8 @@ public class ConfigWindow : Window, IDisposable
                 "\nthat will tell you how much time is left until that trigger can activate again.");
             }
 
+
+
             ImGui.EndTabItem();
         }
     }
@@ -165,7 +192,9 @@ public class ConfigWindow : Window, IDisposable
             ActivePreset.DoEmoteTo.Draw();
             ActivePreset.GetEmotedAt.Draw();
             ActivePreset.SayWord.Draw();
+            
             ActivePreset.DontSayWord.Draw();
+            if (ActivePreset.DontSayWord.IsEnabled) ActivePreset.DontSayWord.DrawAdvancedOptions();
             ActivePreset.LoseDeathroll.Draw();
 
             ImGui.EndTabItem();
@@ -203,6 +232,123 @@ public class ConfigWindow : Window, IDisposable
         if (ImGui.BeginTabItem("Misc"))
         {
             ActivePreset.SitOnFurniture.Draw();
+
+            ImGui.EndTabItem();
+        }
+    }
+
+    private void DrawPermissionsTab()
+    {
+        if (ImGui.BeginTabItem("Permissions"))
+        {
+
+            bool isWhitelistEnabled = Configuration.ActivePreset.isWhitelistEnabled;
+            if (ImGui.Checkbox("Activate Whitelist", ref isWhitelistEnabled))
+            {
+                Configuration.ActivePreset.isWhitelistEnabled = isWhitelistEnabled;
+                Configuration.Save();
+            }
+            ImGui.SameLine();
+            ImGui.TextDisabled(" (?)");
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.SetTooltip("If the Whitelist is enabled, only Whitelisted players can interact with this Plugin." +
+                "\nBlacklisted Players can never interact with it, regardless of this Setting.");
+            }
+
+            ImGui.Spacing();
+
+            var Whitelist = Configuration.ActivePreset.Whitelist;
+            var Blacklist = Configuration.ActivePreset.Blacklist;
+
+            IGameObject? st = Plugin.TargetManager.Target;
+            if (st != null && st.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.Player)
+            {
+                IPlayerCharacter st1 = (IPlayerCharacter)st;
+                if (SelectedPlayer == null || SelectedPlayer.Name != st1.Name.ToString())
+                {
+                    SelectedPlayer = new Player(st1.Name.ToString(), (int)st1.HomeWorld.Value.RowId);
+                }
+            }
+            else SelectedPlayer = null;
+
+            if (SelectedPlayer != null) SelectedPlayerName = SelectedPlayer.Name + "@" + SelectedPlayer.getWorldName();
+
+            ImGui.Text("Select a Player ingame, to add them to a List.\nClicking on a Player in the list removes them.");
+            ImGui.BeginDisabled();
+            ImGui.InputText("##SelectedPlayer", ref SelectedPlayerName, 512, ImGuiInputTextFlags.ReadOnly);
+            ImGui.EndDisabled();
+
+            if (ImGui.Button("Whitelist Player##AddWhitelistButton", new Vector2(120, 25)))
+            {
+                if (SelectedPlayerName == "None") return;
+                if (SelectedPlayerName == null) return;
+                if (Whitelist.Contains(SelectedPlayer!)) Whitelist.Remove(SelectedPlayer!);
+                if (Blacklist.Contains(SelectedPlayer!)) Blacklist.Remove(SelectedPlayer!);
+                Whitelist.Add(SelectedPlayer!);
+                Configuration.ActivePreset.Whitelist = Whitelist;
+                Configuration.Save();
+                SelectedPlayerName = new String("None");
+            }
+            ImGui.SameLine();
+            if (ImGui.Button("Blacklist Player##AddBlacklistButton", new Vector2(120, 25)))
+            {
+                if (SelectedPlayerName == "None") return;
+                if (SelectedPlayerName == null) return;
+                if (Blacklist.Contains(SelectedPlayer!)) Blacklist.Remove(SelectedPlayer!);
+                if (Whitelist.Contains(SelectedPlayer!)) Whitelist.Remove(SelectedPlayer!);
+                Blacklist.Add(SelectedPlayer!);
+                Configuration.ActivePreset.Blacklist = Blacklist;
+                Configuration.Save();
+                SelectedPlayerName = new String("None");
+            }
+
+            int removeIndex = -1;
+            if (ImGui.BeginListBox("Whitelisted\nPlayers##WhitelistBox"))
+            {
+                int index = 0;
+                foreach (var Player in Whitelist)
+                {
+                    if (ImGui.Selectable($"{Player.Name}@{Player.getWorldName()}"))
+                    {
+                        SelectedPlayerName = Player.Name;
+                        removeIndex = index;
+                    }
+                    index++;
+                }
+                ImGui.EndListBox();
+            }
+            if (removeIndex >= 0)
+            {
+                Whitelist.RemoveAt(removeIndex);
+                Configuration.ActivePreset.Whitelist = Whitelist;
+                Configuration.Save();
+                removeIndex = -1;
+            }
+
+            if (ImGui.BeginListBox("Blacklisted\nPlayers##BlacklistBox"))
+            {
+                int index = 0;
+                foreach (var Player in Blacklist)
+                {
+                    if (ImGui.Selectable($"{Player.Name}@{Player.getWorldName()}"))
+                    {
+                        SelectedPlayerName = Player.Name;
+                        removeIndex = index;
+                    }
+                    index++;
+                }
+                ImGui.EndListBox();
+            }
+            if (removeIndex >= 0)
+            {
+                Blacklist.RemoveAt(removeIndex);
+                Configuration.ActivePreset.Blacklist = Blacklist;
+                Configuration.Save();
+            }
+
+            ImGui.TextWrapped("These settings are Preset-Dependant. Swapping Presets will also swap these lists.");
+
 
             ImGui.EndTabItem();
         }

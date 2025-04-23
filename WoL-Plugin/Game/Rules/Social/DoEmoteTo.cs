@@ -12,9 +12,10 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
     {
         override public string Name { get; } = "Do a Emote to someone";
         override public string Description { get; } = "Triggers whenever you do a specific Emote, while having a player targeted.";
+        override public string Hint { get; } = "The targeted player must not be Blacklisted.\nIf the Whitelist is active, the targeted player has to be Whitelisted.";
         override public RuleCategory Category { get; } = RuleCategory.Social;
 
-        public Dictionary<ushort, List<Player>> TriggeringEmotes { get; set; } = new();
+        public List<ushort> TriggeringEmotes { get; set; } = new();
 
         [JsonConstructor]
         public DoEmoteTo() { }
@@ -22,24 +23,25 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
         override public void Start()
         {
+            if (IsRunning) return;
             Plugin.EmoteReaderHooks.OnEmoteOutgoing += Check;
             IsRunning = true;
         }
 
         override public void Stop()
         {
+            if (!IsRunning) return;
             Plugin.EmoteReaderHooks.OnEmoteOutgoing -= Check;
             IsRunning = false;
         }
 
         public void Check(IGameObject target, ushort emoteId)
         {
-            List<Player>? players = TriggeringEmotes[emoteId];
-            if (players == null) return; // Emote isnt listed
+            if (!TriggeringEmotes.Contains(emoteId)) return; // Emote isnt listed
             if (target.ObjectKind != Dalamud.Game.ClientState.Objects.Enums.ObjectKind.Player) return; // We arent targeting a player.
             IPlayerCharacter character = (IPlayerCharacter)target;
             Player targetedPlayer = new Player(character.Name.ToString(), (int)character.HomeWorld.RowId);
-            if (players.Contains(targetedPlayer)) Trigger("You used emote " + emoteId + " on " + targetedPlayer);
+            Trigger("You used emote " + emoteId + " on " + targetedPlayer, targetedPlayer);
         }
     }
 }

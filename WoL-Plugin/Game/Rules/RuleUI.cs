@@ -14,7 +14,6 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         // UI
         bool isOptionsOpen = false;
         bool isModalShockerSelectorOpen = false;
-        bool hasAdvancedOptions = false;
 
         TimerPlus SaveChangesTimer = new TimerPlus();
         
@@ -29,7 +28,6 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         {
             this.Plugin = Plugin;
             this.Rule = RuleParent;
-            this.hasAdvancedOptions = false;
             SaveChangesTimer.AutoReset = false;
             SaveChangesTimer.Interval = 2000;
             SaveChangesTimer.Elapsed += Plugin.Configuration.Save;
@@ -85,15 +83,6 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         {
             bool changed = false;
             DrawShockerSelector();
-            if (hasAdvancedOptions)
-            {
-                ImGui.SameLine();
-                if (ImGui.Button("Advanced Options##" + Rule.Name))
-                {
-                    Plugin.RuleWindow.setCurrentRule(Rule);
-                    Plugin.RuleWindow.Toggle();
-                }
-            }
             DrawOptionsBase(ref changed);
             DrawOptionsCooldown(ref changed);
             if (changed) SaveChanges();

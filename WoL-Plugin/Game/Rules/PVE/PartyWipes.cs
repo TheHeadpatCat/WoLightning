@@ -30,12 +30,14 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 
         override public void Start()
         {
+            if (IsRunning) return;
             IsRunning = true;
             Plugin.Framework.Update += Check;
         }
 
         override public void Stop()
         {
+            if (!IsRunning) return;
             IsRunning = false;
             Plugin.Framework.Update -= Check;
         }

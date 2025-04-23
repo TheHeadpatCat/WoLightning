@@ -14,10 +14,11 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
     public class DoEmote : BaseRule
     {
         override public string Name { get; } = "Do a Emote";
-        override public string Description { get; } = "Triggers whenever you do a specified Emote.";
+        override public string Description { get; } = "Triggers whenever you do a specific Emote.";
         override public RuleCategory Category { get; } = RuleCategory.Social;
+        override public bool hasAdvancedOptions { get; } = true;
 
-        public List<ushort> TriggeringEmotes { get; set; } = new List<ushort>();
+        List<ushort> TriggeringEmotes { get; set; } = new();
 
         [JsonConstructor]
         public DoEmote() { }
@@ -26,6 +27,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
         override public void Start()
         {
+            if(IsRunning) return;
             IsRunning = true;
             Plugin.EmoteReaderHooks.OnEmoteSelf += Check;
             Plugin.EmoteReaderHooks.OnEmoteOutgoing += Check;
@@ -33,6 +35,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
         override public void Stop()
         {
+            if(!IsRunning) return;
             IsRunning = false;
             Plugin.EmoteReaderHooks.OnEmoteSelf -= Check;
             Plugin.EmoteReaderHooks.OnEmoteOutgoing -= Check;
@@ -40,16 +43,20 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
         public void Check(ushort emoteId)
         {
-            //if(TriggeringEmotes.Contains(emoteId))Trigger("You used emote " + emoteId);
-            Trigger("You used emote " + emoteId);
+            if (TriggeringEmotes.Contains(emoteId)) Trigger("You used emote " + emoteId);
         }
         public void Check(IGameObject target, ushort emoteId)
         {
             if (TriggeringEmotes.Contains(emoteId)) Trigger("You used emote " + emoteId);
         }
-        public override void DrawAdvancedOptions()
-        {
-            ImGui.Text("Advanced Options");
-        }
+
+    }
+
+    [Serializable]
+    internal class Option
+    {
+        public bool usesDefault { get; set; } = true;
+        public ShockOptions ShockOptions { get; set; } = new();
+        [JsonConstructor] public Option() { }
     }
 }

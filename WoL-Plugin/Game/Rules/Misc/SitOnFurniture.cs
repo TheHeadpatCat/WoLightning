@@ -35,6 +35,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         {
             Plugin.EmoteReaderHooks.OnSitEmote -= Check;
             sittingOnChairTimer.Elapsed -= checkSittingOnChair;
+            sittingOnChairTimer.Stop();
             IsRunning = false;
         }
 

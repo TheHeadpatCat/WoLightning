@@ -57,10 +57,9 @@ public sealed class Plugin : IDalamudPlugin
     // Gui Interfaces
     public readonly WindowSystem WindowSystem = new("WoLightning");
     private readonly BufferWindow BufferWindow = new BufferWindow();
-    private MainWindow? MainWindow { get; set; }
+    public MainWindow? MainWindow { get; set; }
     public ConfigWindow? ConfigWindow { get; set; }
-    private MasterWindow? MasterWindow { get; set; }
-    public RuleWindow? RuleWindow { get; set; }
+    public MasterWindow? MasterWindow { get; set; }
 
 
     // Handler Classes
@@ -107,13 +106,11 @@ public sealed class Plugin : IDalamudPlugin
 
         MainWindow = new MainWindow(this);
         ConfigWindow = new ConfigWindow(this);
-        RuleWindow = new RuleWindow(this);
         
 
         WindowSystem.AddWindow(BufferWindow);
         WindowSystem.AddWindow(MainWindow);
         WindowSystem.AddWindow(ConfigWindow);
-        WindowSystem.AddWindow(RuleWindow);
 
         CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
         {
@@ -208,6 +205,7 @@ public sealed class Plugin : IDalamudPlugin
             ClientPishock.createHttpClient();
 
             ConfigWindow.SetConfiguration(Configuration);
+            MainWindow.Initialize();
         }
         catch (Exception ex)
         {
@@ -232,13 +230,11 @@ public sealed class Plugin : IDalamudPlugin
         if (MainWindow != null) WindowSystem.RemoveWindow(MainWindow);
         if (ConfigWindow != null) WindowSystem.RemoveWindow(ConfigWindow);
         if (MasterWindow != null) WindowSystem.RemoveWindow(MasterWindow);
-        if (RuleWindow != null) WindowSystem.RemoveWindow(RuleWindow);
         WindowSystem?.RemoveWindow(BufferWindow);
 
         MainWindow?.Dispose();
         ConfigWindow?.Dispose();
         BufferWindow?.Dispose();
-        RuleWindow?.Dispose();
 
         EmoteReaderHooks?.Dispose();
         ClientWebserver?.Dispose();

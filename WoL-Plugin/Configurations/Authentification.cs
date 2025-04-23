@@ -24,7 +24,7 @@ namespace WoLightning.Configurations
         // Webserver things
         public string WebserverURL { get; } = "https://theheadpatcat.ddns.net/post/WoLightning";
         public bool acceptedEula { get; set; } = false;
-        public string ServerKey { get; set; } = string.Empty;
+        public string ServerKey { get; set; } = string.Empty; // TODO: Move to own .json file to lower chance of loss
         private string Hash { get; set; }
 
 

@@ -63,18 +63,18 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         virtual public void setEnabled(bool enabled)
         {
             IsEnabled = enabled;
-            if(IsEnabled && !IsRunning) Start();
+            if(IsEnabled && !IsRunning && Plugin.MainWindow.IsEnabled) Start();
             if(!IsEnabled && IsRunning) Stop();
         }
 
         virtual public void Start()
         {
-            throw new NotImplementedException();
+            Plugin.Log(Name + ".Start() is not Implemented");
         }
 
         virtual public void Stop()
         {
-            throw new NotImplementedException();
+            Plugin.Log(Name + ".Stop() is not Implemented");
         }
 
         virtual public void Trigger(string Text)
@@ -105,7 +105,6 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         {
             RuleUI.Draw();
         }
-
         virtual public void DrawAdvancedOptions()
         {
             throw new NotImplementedException();
