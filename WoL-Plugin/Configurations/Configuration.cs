@@ -205,7 +205,7 @@ namespace WoLightning.Configurations
 
         internal static Preset DeserializePreset(string input)
         {
-            if (input == "") ; // cry
+            if (input == "") return null!; // cry
             return JsonConvert.DeserializeObject<Preset>(input)!;
         }
         #endregion

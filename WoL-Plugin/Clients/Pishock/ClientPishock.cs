@@ -227,7 +227,7 @@ namespace WoLightning.Clients.Pishock
             List<Shocker> saveCopy = Rule.ShockOptions.Shockers;
             Task tasks = Task.WhenAll(saveCopy.ConvertAll(shocker =>
             {
-                if (shocker.Type != ShockerType.Pishock) return new Task(null); //todo find a smarter way to stop task creation - maybe filter in iteration?
+                if (shocker.Type != ShockerType.Pishock) return new Task(null!); //todo find a smarter way to stop task creation - maybe filter in iteration?
                 StringContent jsonContent = new(
                     JsonSerializer.Serialize(new
                     {
@@ -434,7 +434,7 @@ namespace WoLightning.Clients.Pishock
             using (var reader = new StreamReader(response.ReadAsStream()))
             {
                 string message = reader.ReadToEnd();
-                Plugin.Log(message);
+                Plugin.Log(" -> Shocker Data Received.");
                 message = message.Replace("\"", "");
                 message = message.Replace("{", "");
                 message = message.Replace("}", "");
@@ -458,7 +458,7 @@ namespace WoLightning.Clients.Pishock
             using (var reader = new StreamReader(response.ReadAsStream()))
             {
                 string message = reader.ReadToEnd();
-                Plugin.Log(message);
+                Plugin.Log(" -> Shocker Data Received.");
                 message = message.Replace("\"", "");
                 message = message.Replace("{", "");
                 message = message.Replace("}", "");

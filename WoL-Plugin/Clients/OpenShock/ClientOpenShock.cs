@@ -80,7 +80,7 @@ namespace WoLightning.Clients.OpenShock
             List<Shocker> saveCopy = Rule.ShockOptions.Shockers;
             Task tasks = Task.WhenAll(saveCopy.ConvertAll(shocker =>
             {
-                if (shocker.Type != ShockerType.OpenShock) return new Task(null); //todo find a smarter way to stop task creation - maybe filter in iteration?
+                if (shocker.Type != ShockerType.OpenShock) return new Task(null!); //todo find a smarter way to stop task creation - maybe filter in iteration?
 
                 StringContent jsonContent = new(
                     JsonSerializer.Serialize(new

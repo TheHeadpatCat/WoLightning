@@ -12,7 +12,7 @@ namespace WoLightning.WoL_Plugin.Util
     {
 
         Plugin Plugin { get; set; }
-        ClientLanguage Language { get; set; }
+        public ClientLanguage Language { get; set; }
 
         public LanguageStrings(Plugin Plugin)
         {

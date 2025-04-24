@@ -127,7 +127,7 @@ namespace WoLightning.Configurations
         private Authentification DeserializeAuthentification(string input)
         {
             if (input == "") return new Authentification();
-            return JsonConvert.DeserializeObject<Authentification>(input);
+            return JsonConvert.DeserializeObject<Authentification>(input)!;
         }
 
         public int GetShockerCount()

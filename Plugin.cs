@@ -1,3 +1,4 @@
+using Dalamud.Game;
 using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.Command;
@@ -162,7 +163,6 @@ public sealed class Plugin : IDalamudPlugin
         ClientState.Login += onLogin;
         ClientState.Logout += onLogout;
         PluginLog.Verbose("Finished initializing Plugin.");
-        ;
     }
 
     private void onUpdate(IFramework framework)
@@ -252,18 +252,18 @@ public sealed class Plugin : IDalamudPlugin
 
             ClientWebserver.Connect();
             ClientPishock.createHttpClient();
-            ClientOpenShock.createHttpClient();
+            //ClientOpenShock.createHttpClient();
 
             EmoteReaderHooks = new EmoteReaderHooks(this);
 
-
-
             ConfigWindow.SetConfiguration(Configuration);
             MainWindow.Initialize();
+
+            Log("The Game is running " + (ClientLanguage)GameConfig.System.GetUInt("Language") + " Language");
         }
         catch (Exception ex)
         {
-            PluginLog.Error(ex.StackTrace);
+            PluginLog.Error(ex.StackTrace!);
             PluginLog.Error("Something went terribly wrong!!!");
         }
     }
@@ -366,16 +366,15 @@ public sealed class Plugin : IDalamudPlugin
     #region Logging
     public void Log(string message)
     {
-
         PluginLog.Verbose(message);
-
+        if(TextLog != null) TextLog.Log(message);
     }
 
     public void Log(Object obj)
     {
 
-        PluginLog.Verbose(obj.ToString());
-        TextLog.Log(obj);
+        if(obj.ToString() != null) PluginLog.Verbose(obj.ToString()!);
+        if (TextLog != null) TextLog.Log(obj);
     }
 
     public void Log(string message, bool noText)
@@ -387,7 +386,7 @@ public sealed class Plugin : IDalamudPlugin
     public void Log(Object obj, bool noText)
     {
 
-        PluginLog.Verbose(obj.ToString());
+        if(obj.ToString() != null) PluginLog.Verbose(obj.ToString()!);
     }
 
 
@@ -402,7 +401,7 @@ public sealed class Plugin : IDalamudPlugin
     {
 
         PluginLog.Error(message);
-        PluginLog.Error(obj.ToString());
+        if(obj.ToString() != null) PluginLog.Error(obj.ToString()!);
         TextLog.Log("--- ERROR: \n" + message);
         TextLog.Log(obj);
     }
@@ -417,7 +416,7 @@ public sealed class Plugin : IDalamudPlugin
     {
 
         PluginLog.Error(message);
-        PluginLog.Error(obj.ToString());
+        if(obj.ToString() != null) PluginLog.Error(obj.ToString()!);
     }
     #endregion
 
