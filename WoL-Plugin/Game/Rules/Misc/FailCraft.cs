@@ -45,7 +45,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             if (Player == null) { Player = Plugin.ClientState.LocalPlayer; return; }
             if (Player.MaxCp == 0) return; // We are not a Crafter.
             String message = messageE.ToString();
-            if (message.Equals("Your synthesis fails!")) Trigger("You have failed a Craft!"); // Todo: Add support for languages
+            if (message.Equals(Plugin.LanguageStrings.FailCraftTrigger())) Trigger("You have failed a Craft!");
 
         }
     }

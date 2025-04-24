@@ -33,7 +33,8 @@ public sealed class Plugin : IDalamudPlugin
     private const string Failsafe = "/red";
     private const string OpenConfigFolder = "/wolfolder";
 
-    public const int currentVersion = 500;
+    public const int currentVersion = 501;
+    public const String currentVersionString = "0.5.0.1";
     public const int configurationVersion = 500;
     public const string randomKey = "Currently Unused";
 
@@ -58,6 +59,7 @@ public sealed class Plugin : IDalamudPlugin
     public ITargetManager TargetManager { get; init; }
     public IDataManager DataManager { get; init; }
     public IToastGui ToastGui { get; init; }
+    public IGameConfig GameConfig { get; init; }
     public TextLog TextLog { get; set; }
 
     // Gui Interfaces
@@ -75,6 +77,7 @@ public sealed class Plugin : IDalamudPlugin
     public Authentification? Authentification { get; set; }
     public Configuration? Configuration { get; set; }
     public GameEmotes? GameEmotes { get; set; }
+    public LanguageStrings? LanguageStrings { get; set; }
 
     public Plugin(
         IDalamudPluginInterface pluginInterface,
@@ -91,7 +94,8 @@ public sealed class Plugin : IDalamudPlugin
         IGameInteropProvider gameInteropProvider,
         IPartyList partyList,
         ITargetManager targetManager,
-        IDataManager dataManager
+        IDataManager dataManager,
+        IGameConfig gameConfig
 ,
         IToastGui toastGui
 
@@ -113,6 +117,11 @@ public sealed class Plugin : IDalamudPlugin
         TargetManager = targetManager;
         DataManager = dataManager;
         ToastGui = toastGui;
+        GameConfig = gameConfig;
+
+
+        
+        LanguageStrings languageStrings = new LanguageStrings(this);
 
         // Brio @Brio/Resources/GameDataProvider.cs#L27
         GameEmotes = new GameEmotes(this, dataManager.GetExcelSheet<Emote>()!.ToDictionary(x => x.RowId, x => x).AsReadOnly());
@@ -180,13 +189,17 @@ public sealed class Plugin : IDalamudPlugin
                 File.WriteAllText(PluginInterface.GetPluginConfigDirectory() + "\\version", currentVersion + "");
             }
 
-            int version;
-            try
+            int version = int.Parse(File.ReadAllText(PluginInterface.GetPluginConfigDirectory() + "\\version"));
+
+            if(version < currentVersion)
             {
-                version = int.Parse(File.ReadAllText(PluginInterface.GetPluginConfigDirectory() + "\\version"));
+
+                // Todo: Show new version stuff.
+
+                File.Delete(PluginInterface.GetPluginConfigDirectory() + "\\version");
+                File.WriteAllText(PluginInterface.GetPluginConfigDirectory() + "\\version", currentVersion + "");
             }
-            catch {}
-            
+
 
 
             ConfigurationDirectoryPath = PluginInterface.GetPluginConfigDirectory() + "\\" + ClientState.LocalPlayer.Name;

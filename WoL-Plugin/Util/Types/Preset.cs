@@ -124,7 +124,7 @@ namespace WoLightning.Util.Types
             FailCraft.setPlugin(Plugin);
 
             FishEscaped ??= new(Plugin);
-            FailCraft.setPlugin(Plugin);
+            FishEscaped.setPlugin(Plugin);
 
 
             foreach (PropertyInfo property in this.GetType().GetProperties())

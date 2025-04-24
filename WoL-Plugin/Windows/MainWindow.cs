@@ -25,7 +25,7 @@ public class MainWindow : Window, IDisposable
     public bool IsEnabled = false;
 
     public MainWindow(Plugin plugin)
-        : base($"Warrior of Lightning - v{Plugin.currentVersion}##Main", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.AlwaysAutoResize)
+        : base($"Warrior of Lightning - v{Plugin.currentVersionString}##Main", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.AlwaysAutoResize)
     {
 
         SizeConstraints = new WindowSizeConstraints
@@ -244,12 +244,12 @@ public class MainWindow : Window, IDisposable
         if (ImGui.InputTextWithHint("##PishockSharecode", "Sharecode from your Shocker", ref PishockCodeField, 256,ImGuiInputTextFlags.EnterReturnsTrue))
         {
             if (PishockCodeField.StartsWith("https://pishock.com/#/Control?sharecode=")) PishockCodeField = PishockCodeField.Split("https://pishock.com/#/Control?sharecode=")[1];
-            Plugin.Authentification.PishockShareCode = PishockCodeField;
+            Plugin.Authentification.PishockShareCode = PishockCodeField.Trim();
         }
         ImGui.SameLine();
         if (ImGui.Button("+ Add##registerShocker"))
         {
-            Plugin.Log(Plugin.Authentification.PishockShareCode);
+            Plugin.Authentification.PishockShareCode = PishockCodeField.Trim();
             Plugin.Authentification.PishockShockers.Add(new Shocker(ShockerType.Pishock, $"Shocker{Plugin.Authentification.PishockShockers.Count}", Plugin.Authentification.PishockShareCode));
             Plugin.ClientPishock.info(Plugin.Authentification.PishockShareCode);
         }
