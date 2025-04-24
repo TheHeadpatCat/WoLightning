@@ -9,31 +9,29 @@ You have to use the [XIVQuicklauncher](https://goatcorp.github.io/) with Dalamud
 ### Warning! This is a still in a prototype phase - Expect things to go wrong!
 
 
-If any problems or Questions or even suggestions come up, you can send those in our Discord Server!
-https://discord.gg/hMyWcZyhRa
-Or if you want to be fancy, open a Issue. That also works.
+If any problems or Questions or even suggestions come up, you can send those in our Discord Server!  
+https://discord.gg/hMyWcZyhRa  
+Or if you want to be fancy, open a Issue. That also works.  
 
 
 ## Current Features
  - Social Triggers:  
- Getting /pet'd  
- Getting /snap'd at (By [thattuys](https://github.com/thattuys))  
- Sitting on Furniture  
+ Doing a specified Emote  
+ Doing a specified Emote to someone  
+ Getting emoted at by someone  
+ Saying a Banned Word from a List  
+ Forgetting to say a Enforced Word from a List  
  Losing a Deathroll  
- Saying specific phrases/words or not saying them  
  
  - Combat Triggers:  
- Party Wipes  
  Dying  
- Any Partymember dying  
- Failing Mechanics  
- Taking Damage (Proprtional calculation supported)  
+ Failing a Mechanic  
+ Any Partymember dies  
+ Party Wipes  
+ Taking any kind of Damage  
  
-- Creation of Custom Triggers (By [Lexiconmage](https://github.com/lexiconmage))
+- Presets for quick swapping of Settings    
 
-- Preset profiles    
-- Master Mode [CURRENTLY DISABLED]  
-  Allows another player to take control over your Configuration.
 - A safeword with /red  
   This disables all Pishock functionality from the plugin until used again.
  
