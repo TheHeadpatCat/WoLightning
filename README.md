@@ -16,18 +16,18 @@ Or if you want to be fancy, open a Issue. That also works.
 
 ## Current Features
  - Social Triggers:  
- Doing a specified Emote
- Doing a specified Emote to someone
- Getting emoted at by someone
- Saying a Banned Word from a List
- Forgetting to say a Enforced Word from a List
- Losing a Deathroll
+ Doing a specified Emote  
+ Doing a specified Emote to someone  
+ Getting emoted at by someone  
+ Saying a Banned Word from a List  
+ Forgetting to say a Enforced Word from a List  
+ Losing a Deathroll  
  
  - Combat Triggers:  
- Dying
- Failing a Mechanic
- Any Partymember dies
- Party Wipes
+ Dying  
+ Failing a Mechanic  
+ Any Partymember dies  
+ Party Wipes  
  Taking any kind of Damage  
  
 - Presets for quick swapping of Settings    
