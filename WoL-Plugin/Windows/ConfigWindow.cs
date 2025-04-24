@@ -4,6 +4,7 @@ using Dalamud.Game.Text;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using System;
+using System.Diagnostics;
 using System.Numerics;
 using WoLightning.Configurations;
 using WoLightning.Util.Types;
@@ -38,7 +39,7 @@ public class ConfigWindow : Window, IDisposable
 
         SizeConstraints = new WindowSizeConstraints
         {
-            MinimumSize = new Vector2(580, 620),
+            MinimumSize = new Vector2(580, 660),
             MaximumSize = new Vector2(2000, 2000)
         };
         Plugin = plugin;
@@ -133,6 +134,29 @@ public class ConfigWindow : Window, IDisposable
 
             ImGui.EndTabBar();
         }
+
+
+        ImGui.SetCursorPosY(ImGui.GetWindowHeight() - 40);
+        ImGui.Separator();
+        ImGui.Text("Found a issue or got a feature request?");
+        ImGui.SameLine();
+        if (ImGui.Button("Join the Discord",new Vector2(130,25)))
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "https://discord.gg/hMyWcZyhRa",
+                    UseShellExecute = true
+                });
+            }
+            catch(Exception e) { Plugin.Log(e); }
+        }
+    }
+
+    private Vector2 ImVec2(object x, object value)
+    {
+        throw new NotImplementedException();
     }
 
     private void DrawHeader()
