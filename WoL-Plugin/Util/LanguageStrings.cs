@@ -22,20 +22,20 @@ namespace WoLightning.WoL_Plugin.Util
 
         public string FailCraftTrigger()
         {
-            string output = "";
+            string output = "Unknown";
             switch (Language)
             {
                 case ClientLanguage.English:
                     output = "Your synthesis fails!";
                     break;
                 case ClientLanguage.French:
-                    output = "Your synthesis fails!";
+                    output = "La synthèse échoue...";
                     break;
                 case ClientLanguage.German:
-                    output = "Your synthesis fails!";
+                    output = "Deine Synthese ist fehlgeschlagen!";
                     break;
                 case ClientLanguage.Japanese:
-                    output = "Your synthesis fails!";
+                    output = "は製作に失敗した……";
                     break;
             }
             return output;
@@ -43,25 +43,45 @@ namespace WoLightning.WoL_Plugin.Util
 
         public string FishEscapedTrigger()
         {
-            string output = "";
+            string output = "Unknown";
             switch (Language)
             {
                 case ClientLanguage.English:
                     output = "The fish gets away...";
                     break;
                 case ClientLanguage.French:
-                    output = "The fish gets away...";
+                    output = "Le poisson a réussi à se défaire de l'hameçon...";
                     break;
                 case ClientLanguage.German:
-                    output = "The fish gets away...";
+                    output = "Der Fisch konnte sich vom Haken reißen.";
                     break;
                 case ClientLanguage.Japanese:
-                    output = "The fish gets away...";
+                    output = "釣り針にかかった魚に逃げられてしまった……";
                     break;
             }
             return output;
         }
 
+        public string DeathrollTrigger()
+        {
+            string output = "Unknown";
+            switch (Language)
+            {
+                case ClientLanguage.English:
+                    output = "Random! You roll a ";
+                    break;
+                case ClientLanguage.French:
+                    output = "Vous jetez les dés et obtenez ";
+                    break;
+                case ClientLanguage.German:
+                    output = "Du würfelst eine ";
+                    break;
+                case ClientLanguage.Japanese:
+                    output = "ダイス！ ---"; // Doesnt work since it always includes the name of the player
+                    break;
+            }
+            return output;
+        }
 
     }
 }

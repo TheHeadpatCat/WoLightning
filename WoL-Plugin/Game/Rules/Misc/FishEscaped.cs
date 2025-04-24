@@ -45,7 +45,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             if (Player == null) { Player = Plugin.ClientState.LocalPlayer; return; }
             if (Player.MaxGp == 0) return; // We are not a Gatherer.
             String message = messageE.ToString();
-            if (message.Equals(Plugin.LanguageStrings.FishEscapedTrigger())) Trigger("You failed to catch a Fish!");
+            if (message.Contains(Plugin.LanguageStrings.FishEscapedTrigger())) Trigger("You failed to catch a Fish!");
         }
     }
 }

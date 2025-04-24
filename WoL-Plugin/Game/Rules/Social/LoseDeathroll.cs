@@ -35,8 +35,9 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         {
             if ((int)type == 2122 && messageE.Payloads.Find(pay => pay.Type == PayloadType.Icon) != null) // Deathroll channel and Icon found
             {
-                string[] parts = messageE.ToString().Split(" ");
-                if (parts[1].Length < 6) // check if the name is "You" or similiar, as different languages exist
+                string message = messageE.ToString();
+                string[] parts = message.Split(" ");
+                if (message.StartsWith(Plugin.LanguageStrings.DeathrollTrigger()))
                 {
                     foreach (string part in parts)
                     {
