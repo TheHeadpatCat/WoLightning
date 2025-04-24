@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using WoLightning.WoL_Plugin.Game.Rules;
+using WoLightning.WoL_Plugin.Game.Rules.Misc;
 using WoLightning.WoL_Plugin.Game.Rules.PVE;
 using WoLightning.WoL_Plugin.Game.Rules.Social;
 
@@ -58,6 +59,8 @@ namespace WoLightning.Util.Types
 
         // Misc Triggers
         public SitOnFurniture SitOnFurniture { get; set; }
+        public FailCraft FailCraft { get; set; }
+        public FishEscaped FishEscaped { get; set; }
 
         public void Initialize(Plugin Plugin)
         {
@@ -116,6 +119,12 @@ namespace WoLightning.Util.Types
 
             SitOnFurniture ??= new(Plugin);
             SitOnFurniture.setPlugin(Plugin);
+
+            FailCraft ??= new(Plugin);
+            FailCraft.setPlugin(Plugin);
+
+            FishEscaped ??= new(Plugin);
+            FailCraft.setPlugin(Plugin);
 
 
             foreach (PropertyInfo property in this.GetType().GetProperties())

@@ -33,8 +33,8 @@ public sealed class Plugin : IDalamudPlugin
     private const string Failsafe = "/red";
     private const string OpenConfigFolder = "/wolfolder";
 
-    public const int currentVersion = 1000;
-    public const int configurationVersion = 1000;
+    public const int currentVersion = 500;
+    public const int configurationVersion = 500;
     public const string randomKey = "Currently Unused";
 
     public bool isFailsafeActive = false;
@@ -57,6 +57,7 @@ public sealed class Plugin : IDalamudPlugin
     public IPartyList PartyList { get; init; }
     public ITargetManager TargetManager { get; init; }
     public IDataManager DataManager { get; init; }
+    public IToastGui ToastGui { get; init; }
     public TextLog TextLog { get; set; }
 
     // Gui Interfaces
@@ -91,6 +92,9 @@ public sealed class Plugin : IDalamudPlugin
         IPartyList partyList,
         ITargetManager targetManager,
         IDataManager dataManager
+,
+        IToastGui toastGui
+
         )
     {
         // Setup all Services
@@ -108,6 +112,7 @@ public sealed class Plugin : IDalamudPlugin
         PartyList = partyList;
         TargetManager = targetManager;
         DataManager = dataManager;
+        ToastGui = toastGui;
 
         // Brio @Brio/Resources/GameDataProvider.cs#L27
         GameEmotes = new GameEmotes(this, dataManager.GetExcelSheet<Emote>()!.ToDictionary(x => x.RowId, x => x).AsReadOnly());
@@ -148,6 +153,7 @@ public sealed class Plugin : IDalamudPlugin
         ClientState.Login += onLogin;
         ClientState.Logout += onLogout;
         PluginLog.Verbose("Finished initializing Plugin.");
+        ;
     }
 
     private void onUpdate(IFramework framework)
@@ -171,7 +177,7 @@ public sealed class Plugin : IDalamudPlugin
                 {
                     Directory.Delete(dir, true);
                 }
-                File.WriteAllText(PluginInterface.GetPluginConfigDirectory() + "\\version", "1000");
+                File.WriteAllText(PluginInterface.GetPluginConfigDirectory() + "\\version", currentVersion + "");
             }
 
             int version;

@@ -266,6 +266,8 @@ public class ConfigWindow : Window, IDisposable
         if (ImGui.BeginTabItem("Misc"))
         {
             ActivePreset.SitOnFurniture.Draw();
+            ActivePreset.FailCraft.Draw();
+            ActivePreset.FishEscaped.Draw();
 
             ImGui.EndTabItem();
         }

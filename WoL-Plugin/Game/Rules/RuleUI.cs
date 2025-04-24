@@ -29,11 +29,15 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
         public void Draw()
         {
-            if (Rule.Name == null || Rule.Name.Length == 0) return;
-            DrawBase();
-            if (Rule.IsEnabled && isOptionsOpen) { DrawOptions(); }
-            ImGui.Spacing();
-            ImGui.Separator();
+            try
+            {
+                if (Rule.Name == null || Rule.Name.Length == 0) return;
+                DrawBase();
+                if (Rule.IsEnabled && isOptionsOpen) { DrawOptions(); }
+                ImGui.Spacing();
+                ImGui.Separator();
+            }
+            catch { }
         }
 
         public void DrawBase()

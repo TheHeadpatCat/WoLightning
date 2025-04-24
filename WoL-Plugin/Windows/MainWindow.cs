@@ -30,8 +30,8 @@ public class MainWindow : Window, IDisposable
 
         SizeConstraints = new WindowSizeConstraints
         {
-            MinimumSize = new Vector2(280, 250),
-            MaximumSize = new Vector2(280, 2000)
+            MinimumSize = new Vector2(270, 250),
+            MaximumSize = new Vector2(320, 2000)
         };
 
         Plugin = plugin;
@@ -240,8 +240,8 @@ public class MainWindow : Window, IDisposable
         ImGui.Separator();
         ImGui.Spacing();
         var PishockCodeField = Plugin.Authentification.PishockShareCode;
-        ImGui.SetNextItemWidth(220);
-        if (ImGui.InputTextWithHint("##PishockSharecode", "Sharecode from your Shocker", ref PishockCodeField, 256))
+        ImGui.SetNextItemWidth(ImGui.GetWindowWidth() - 60);
+        if (ImGui.InputTextWithHint("##PishockSharecode", "Sharecode from your Shocker", ref PishockCodeField, 256,ImGuiInputTextFlags.EnterReturnsTrue))
         {
             if (PishockCodeField.StartsWith("https://pishock.com/#/Control?sharecode=")) PishockCodeField = PishockCodeField.Split("https://pishock.com/#/Control?sharecode=")[1];
             Plugin.Authentification.PishockShareCode = PishockCodeField;

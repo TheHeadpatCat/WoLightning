@@ -11,18 +11,17 @@ using System.Text.Json.Serialization;
 namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 {
     [Serializable]
-    public class FailCraftHQ : BaseRule
+    public class FishEscaped : BaseRule
     {
-        override public string Name { get; } = "Fail a HQ Craft";
-        override public string Description { get; } = "Triggers whenever you fail to craft a HQ Item when it would have been possible.";
+        override public string Name { get; } = "Fail to catch a Fish";
+        override public string Description { get; } = "Triggers whenever a Fish escapes your Rod.";
         override public RuleCategory Category { get; } = RuleCategory.Misc;
-        [JsonIgnore] Recipe? CurrentCraft { get; set; }
         [JsonIgnore] IPlayerCharacter Player;
 
 
         [JsonConstructor]
-        public FailCraftHQ() { }
-        public FailCraftHQ(Plugin plugin) : base(plugin)
+        public FishEscaped() { }
+        public FishEscaped(Plugin plugin) : base(plugin)
         {
         }
 
@@ -41,18 +40,12 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             Plugin.ToastGui.QuestToast -= Check;
         }
 
-        private unsafe void Check(ref SeString messageE, ref QuestToastOptions options, ref bool isHandled)
+        private void Check(ref SeString messageE, ref QuestToastOptions options, ref bool isHandled)
         {
             if (Player == null) { Player = Plugin.ClientState.LocalPlayer; return; }
-            if (Player.MaxCp == 0) return; // We are not a Crafter.
-
-            /*
-            var agent = AgentRecipeNote.Instance();
-            CurrentCraft = Plugin.DataManager.GetExcelSheet<Recipe>().GetRowOrDefault(agent->ActiveCraftRecipeId);
-            if(CurrentCraft == null) return;
-            */
-
-
+            if (Player.MaxGp == 0) return; // We are not a Gatherer.
+            String message = messageE.ToString();
+            if (message.Equals("The fish gets away...")) Trigger("You failed to catch a Fish!"); // Todo: Add support for languages
         }
     }
 }

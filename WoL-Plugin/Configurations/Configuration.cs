@@ -25,7 +25,7 @@ namespace WoLightning.Configurations
     public class Configuration : IPluginConfiguration, IDisposable
     {
         public DebugLevel DebugLevel { get; set; } = DebugLevel.None;
-        public int Version { get; set; } = 1000;
+        public int Version { get; set; } = 500;
         public string LastPresetName { get; set; } = "Default";
         public bool ActivateOnStart { get; set; } = false;
 
