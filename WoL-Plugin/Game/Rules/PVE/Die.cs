@@ -39,7 +39,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 
         private void Check(IFramework framework)
         {
-            if (Player == null) { Player = Plugin.ClientState.LocalPlayer; return; }
+            Player = Plugin.ClientState.LocalPlayer;
+            if (Player == null) { return; }
 
             if (Player.IsDead && !IsTriggered) //Player died and Shock has not been triggered yet
             {
