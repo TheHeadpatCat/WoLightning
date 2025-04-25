@@ -35,7 +35,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         virtual public bool IsLocked { get; set; }
 
         [NonSerialized] protected Plugin Plugin;
-        [NonSerialized] public Action<BaseRule> Triggered;
+        [NonSerialized] public Action<BaseRule,ShockOptions> Triggered;
         [NonSerialized] protected RuleUI RuleUI;
 
         [NonSerialized] protected List<int> DurationArray = [100, 300, 500, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -80,7 +80,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         virtual public void Trigger(string Text)
         {
             if (ShockOptions.hasCooldown() || !IsRunning) return;
-            Triggered?.Invoke(this);
+            Triggered?.Invoke(this,this.ShockOptions);
             if (Plugin.Configuration.ActivePreset.showTriggerNotifs) Plugin.sendNotif(Text);
             ShockOptions.startCooldown();
         }
@@ -89,7 +89,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         {
             if (ShockOptions.hasCooldown() || !IsRunning) return;
             if (!Plugin.Configuration.ActivePreset.isPlayerAllowedToTrigger(source)) return;
-            Triggered?.Invoke(this);
+            Triggered?.Invoke(this,this.ShockOptions);
             if (Plugin.Configuration.ActivePreset.showTriggerNotifs) Plugin.sendNotif(Text);
             ShockOptions.startCooldown();
         }
@@ -97,7 +97,16 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         virtual public void Trigger(string Text, bool noNotif)
         {
             if (ShockOptions.hasCooldown() || !IsRunning) return;
-            Triggered?.Invoke(this);
+            Triggered?.Invoke(this, this.ShockOptions);
+            ShockOptions.startCooldown();
+        }
+
+        virtual public void Trigger(string Text, int[] overrideOptions)
+        {
+            if (ShockOptions.hasCooldown() || !IsRunning) return;
+            if (overrideOptions.Length < 2) return;
+            Triggered?.Invoke(this, new ShockOptions(0, overrideOptions[0], overrideOptions[1]));
+            if (Plugin.Configuration.ActivePreset.showTriggerNotifs) Plugin.sendNotif(Text);
             ShockOptions.startCooldown();
         }
 

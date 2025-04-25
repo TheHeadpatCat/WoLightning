@@ -199,7 +199,7 @@ namespace WoLightning.Clients.Pishock
 
         */
 
-        public async void sendRequest(BaseRule Rule)
+        public async void sendRequest(BaseRule Rule, ShockOptions Options)
         {
 
             #region Validation
@@ -222,6 +222,11 @@ namespace WoLightning.Clients.Pishock
                 return;
             }
             #endregion
+            if (Rule.ShockOptions.Shockers.Count == 0)
+            {
+                Plugin.Log(" -> No Shockers assigned, discarding!");
+                return;
+            }
 
 
             List<Shocker> saveCopy = Rule.ShockOptions.Shockers;
@@ -236,8 +241,8 @@ namespace WoLightning.Clients.Pishock
                         Name = "WoLPlugin",
                         shocker.Code,
                         Op = (int)Rule.ShockOptions.OpMode,
-                        Rule.ShockOptions.Intensity,
-                        Rule.ShockOptions.Duration,
+                        Options.Intensity,
+                        Options.Duration,
                     }),
                     Encoding.UTF8,
                     "application/json");
