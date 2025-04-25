@@ -206,8 +206,7 @@ public class ConfigWindow : Window, IDisposable
             ImGui.TextDisabled(" (?)");
             if (ImGui.IsItemHovered())
             {
-                ImGui.SetTooltip("Activating this will show little Notification" +
-                    "\nwhenever you trigger a Rule");
+                ImGui.SetTooltip("Activating this will show little Notification whenever you trigger a Rule");
             }
 
             /*bool showCooldownNotifs = Configuration.ActivePreset.showCooldownNotifs;
