@@ -15,6 +15,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         bool isModalShockerSelectorOpen = false;
 
         Vector4 ColorNameEnabled = new Vector4(0.5f, 1, 0.3f, 0.9f);
+        Vector4 ColorNameBlocked = new Vector4(1.0f, 0f, 0f, 0.9f);
         Vector4 ColorNameDisabled = new Vector4(1, 1, 1, 0.9f);
         Vector4 ColorDescription = new Vector4(0.7f, 0.7f, 0.7f, 0.8f);
 
@@ -65,8 +66,16 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
             ImGui.SameLine();
             ImGui.BeginGroup();
-            if (Rule.IsEnabled) ImGui.TextColored(ColorNameEnabled, "  " + Rule.Name + $"  [{Rule.ShockOptions.OpMode}]");
-            else ImGui.TextColored(ColorNameDisabled, "  " + Rule.Name);
+
+            if (Plugin.isFailsafeActive) {
+                ImGui.TextColored(ColorNameBlocked, "  " + Rule.Name + $" [Failsafe Active]");
+            }
+            else
+            {
+                if (Rule.IsEnabled && Rule.ShockOptions.Shockers.Count > 0) ImGui.TextColored(ColorNameEnabled, "  " + Rule.Name + $"  [{Rule.ShockOptions.OpMode}]");
+                else if (Rule.IsEnabled) ImGui.TextColored(ColorNameDisabled, "  " + Rule.Name + " [No Shockers]");
+                else ImGui.TextColored(ColorNameDisabled, "  " + Rule.Name);
+            }
             ImGui.TextColored(ColorDescription, $"  {Rule.Description}");
             if (Rule.Hint != null && Rule.Hint.Length > 0)
             {

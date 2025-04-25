@@ -353,6 +353,8 @@ public sealed class Plugin : IDalamudPlugin
     {
         isFailsafeActive = !isFailsafeActive;
         ClientPishock.cancelPendingRequests();
+        if (isFailsafeActive) ChatGui.Print("Failsafe is active!\nStopping all requests...");
+        else ChatGui.Print("Failsafe deactivated.");
     }
 
     private void OnOpenConfigFolder(string command, string args)

@@ -63,6 +63,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                     lastMaxHP = Player.MaxHp;
                     lastHP = lastMaxHP; // avoid false positives from synch and stuff
                     bufferFrames = 180; // give 3 seconds of buffering, for regens and stuff
+                    return;
                 }
 
                 if (lastHP > Player.CurrentHp)
@@ -70,7 +71,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                     int damageTaken = (int)(lastHP - Player.CurrentHp);
                     double difference = (double)damageTaken / lastMaxHP;
 
-                    Plugin.Log(" damage taken: " + damageTaken + " dif: " + (int)(difference * 100));
+                    //Plugin.Log(" damage taken: " + damageTaken + " dif: " + (int)(difference * 100));
                     if (minimumDamagePercent > difference * 100)
                     {
                         lastHP = Player.CurrentHp;
@@ -116,7 +117,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 {
                     ImGui.SetTooltip("Enabling this will cause the Options below to be proportional to the damage you take." +
                         "\nIf you take 50 percent of your MaxHP as damage, then 50 percent of the options below will be used." +
-                        "\nBasically, the harder you get hit, the more it will hurt.");
+                        "\nBasically, the harder you get hit, the closer it gets to the settings below.");
                 }
             }
             ImGui.SameLine();

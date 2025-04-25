@@ -166,6 +166,12 @@ public class MainWindow : Window, IDisposable
             Plugin.Configuration.loadPreset(Plugin.Configuration.PresetNames[presetIndex]);
         }
 
+
+        if (Plugin.isFailsafeActive)
+        {
+            ImGui.TextColored(new Vector4(1.0f, 0f, 0f, 0.9f), "Failsafe is active.\nType /red to disable it.");
+        }
+
         if (IsEnabled)
         {
             if (ImGui.Button("Stop Plugin", new Vector2(270, 40))) // Todo: Color coding

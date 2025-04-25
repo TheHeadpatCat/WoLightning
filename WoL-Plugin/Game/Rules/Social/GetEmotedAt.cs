@@ -12,7 +12,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
     public class GetEmotedAt : BaseRule
     {
         override public string Name { get; } = "Get Emoted at";
-        override public string Description { get; } = "Triggers whenever a specific player sends a specific emote to you.";
+        override public string Description { get; } = "Triggers whenever a player sends a specific emote to you.";
         override public string Hint { get; } = "The sending player must not be Blacklisted.\nIf the Whitelist is active, the sending player has to be Whitelisted.";
         override public RuleCategory Category { get; } = RuleCategory.Social;
         override public bool hasExtraButton { get; } = true;
