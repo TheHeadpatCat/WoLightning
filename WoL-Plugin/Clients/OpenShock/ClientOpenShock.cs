@@ -161,9 +161,16 @@ namespace WoLightning.Clients.OpenShock
         public async void info(string ShareCode)
         {
 
+            Shocker? shocker = Plugin.Authentification.PishockShockers.Find(shocker => shocker.Code == ShareCode);
+            if (ShareCode.Length < 6)
+            {
+                Plugin.Error("Invalid Sharecode!");
+                shocker.Status = ShockerStatus.DoesntExist;
+                return;
+            }
             Plugin.Log($"Requesting Information for {ShareCode.Substring(0, 3)}[..]");
 
-            Shocker? shocker = Plugin.Authentification.PishockShockers.Find(shocker => shocker.Code == ShareCode);
+            
             if (shocker == null)
             {
                 Plugin.Log(" -> Aborted as the Shocker couldnt be found!");
@@ -237,6 +244,12 @@ namespace WoLightning.Clients.OpenShock
 
             foreach (var shocker in Plugin.Authentification.PishockShockers)
             {
+                if (shocker.Code.Length < 6)
+                {
+                    Plugin.Error("Invalid Sharecode!");
+                    shocker.Status = ShockerStatus.DoesntExist;
+                    return;
+                }
                 Plugin.Log($"Requesting Information for {shocker.Code.Substring(0, 3)}[..]");
                 shocker.Status = ShockerStatus.Unchecked;
                 using StringContent jsonContent = new(

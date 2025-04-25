@@ -285,8 +285,8 @@ namespace WoLightning.Clients.Pishock
                     Username = Plugin.Authentification.PishockName,
                     Name = "WoLPlugin",
                     shocker.Code,
-                    Intensity = 35,
-                    Duration = 3,
+                    Intensity = 20,
+                    Duration = 2,
                     Apikey = Plugin.Authentification.PishockApiKey,
                     Op = 1,
                 }),
@@ -392,6 +392,12 @@ namespace WoLightning.Clients.Pishock
 
             foreach (var shocker in Plugin.Authentification.PishockShockers)
             {
+                if (shocker.Code.Length < 6)
+                {
+                    Plugin.Error("Invalid Sharecode!");
+                    shocker.Status = ShockerStatus.DoesntExist;
+                    return;
+                }
                 Plugin.Log($"Requesting Information for {shocker.Code.Substring(0, 3)}[..]");
                 shocker.Status = ShockerStatus.Unchecked;
                 using StringContent jsonContent = new(

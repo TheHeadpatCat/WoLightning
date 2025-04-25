@@ -1,6 +1,7 @@
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using System;
+using System.Data;
 using System.Numerics;
 using WoLightning.Clients.Webserver;
 using WoLightning.Util;
@@ -21,6 +22,7 @@ public class MainWindow : Window, IDisposable
     private TimerPlus eulaTimer = new TimerPlus();
 
     private bool isPishockMenuOpen = true;
+    private bool isShareCodeEntered = false;
 
     public bool IsEnabled = false;
 
@@ -241,7 +243,7 @@ public class MainWindow : Window, IDisposable
         ImGui.Spacing();
         var PishockCodeField = Plugin.Authentification.PishockShareCode;
         ImGui.SetNextItemWidth(ImGui.GetWindowWidth() - 60);
-        if (ImGui.InputTextWithHint("##PishockSharecode", "Sharecode from your Shocker", ref PishockCodeField, 256,ImGuiInputTextFlags.EnterReturnsTrue))
+        if (ImGui.InputTextWithHint("##PishockSharecode", "Sharecode from your Shocker", ref PishockCodeField, 256, ImGuiInputTextFlags.EnterReturnsTrue))
         {
             if (PishockCodeField.StartsWith("https://pishock.com/#/Control?sharecode="))
             {
@@ -249,8 +251,17 @@ public class MainWindow : Window, IDisposable
                 if(parts.Length >= 2) PishockCodeField = PishockCodeField.Split("https://pishock.com/#/Control?sharecode=")[1];
             }
             Plugin.Authentification.PishockShareCode = PishockCodeField.Trim();
+            if(PishockCodeField.Length > 6) isShareCodeEntered = true;
+            else isShareCodeEntered = false;
         }
+
+        if(!isShareCodeEntered && PishockCodeField.Length > 6)
+        {
+            ImGui.SetTooltip("Press \"Enter\" to Confirm.");
+        }
+
         ImGui.SameLine();
+        if (!isShareCodeEntered) ImGui.BeginDisabled();
         if (ImGui.Button("+ Add##registerShocker"))
         {
             try
@@ -260,7 +271,10 @@ public class MainWindow : Window, IDisposable
                 Plugin.ClientPishock.info(Plugin.Authentification.PishockShareCode);
             }
             catch(Exception ex) { Plugin.Error(ex.StackTrace); }
+            Plugin.Authentification.PishockShareCode = "";
+            isShareCodeEntered = false;
         }
+        if (!isShareCodeEntered) ImGui.EndDisabled();
         int x = 0;
 
 
