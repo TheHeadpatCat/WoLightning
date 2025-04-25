@@ -53,6 +53,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         }
         private void Check(XivChatType type, int timestamp, ref SeString senderE, ref SeString messageE, ref bool isHandled)
         {
+            try { 
+            if(Plugin.ClientState.LocalPlayer == null) return;
             //check for chat type limitation
             if (Plugin.Configuration.ActivePreset.LimitChats && !Plugin.Configuration.ActivePreset.Chats.Contains(type)) return;
 
@@ -73,6 +75,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                 }
                 if (!found) Trigger($"You forgot to say a Enforced Word!");
             }
+            }
+            catch (Exception e) { Plugin.Error(e.StackTrace); }
         }
 
         public override void DrawAdvancedOptions()

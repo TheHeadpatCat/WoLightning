@@ -48,10 +48,14 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
         public void Check(IPlayerCharacter player, ushort emoteId)
         {
+            try { 
+            if(Plugin.ClientState.LocalPlayer == null) return;
             if (!TriggeringEmotes.Contains(emoteId)) return; // Emote isnt listed
             if (player.ObjectKind != Dalamud.Game.ClientState.Objects.Enums.ObjectKind.Player) return; // The Sender wasnt a player
             Player sendingPlayer = new Player(player.Name.ToString(), (int)player.HomeWorld.RowId);
             Trigger(sendingPlayer + " has used Emote " + emoteId + " on you!", sendingPlayer);
+            }
+            catch (Exception e) { Plugin.Error(e.StackTrace); }
         }
 
         public override void DrawExtraButton()

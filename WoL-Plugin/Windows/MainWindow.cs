@@ -243,15 +243,23 @@ public class MainWindow : Window, IDisposable
         ImGui.SetNextItemWidth(ImGui.GetWindowWidth() - 60);
         if (ImGui.InputTextWithHint("##PishockSharecode", "Sharecode from your Shocker", ref PishockCodeField, 256,ImGuiInputTextFlags.EnterReturnsTrue))
         {
-            if (PishockCodeField.StartsWith("https://pishock.com/#/Control?sharecode=")) PishockCodeField = PishockCodeField.Split("https://pishock.com/#/Control?sharecode=")[1];
+            if (PishockCodeField.StartsWith("https://pishock.com/#/Control?sharecode="))
+            {
+                var parts = PishockCodeField.Split("https://pishock.com/#/Control?sharecode=");
+                if(parts.Length >= 2) PishockCodeField = PishockCodeField.Split("https://pishock.com/#/Control?sharecode=")[1];
+            }
             Plugin.Authentification.PishockShareCode = PishockCodeField.Trim();
         }
         ImGui.SameLine();
         if (ImGui.Button("+ Add##registerShocker"))
         {
-            Plugin.Authentification.PishockShareCode = PishockCodeField.Trim();
-            Plugin.Authentification.PishockShockers.Add(new Shocker(ShockerType.Pishock, $"Shocker{Plugin.Authentification.PishockShockers.Count}", Plugin.Authentification.PishockShareCode));
-            Plugin.ClientPishock.info(Plugin.Authentification.PishockShareCode);
+            try
+            {
+                Plugin.Authentification.PishockShareCode = PishockCodeField.Trim();
+                Plugin.Authentification.PishockShockers.Add(new Shocker(ShockerType.Pishock, $"Shocker{Plugin.Authentification.PishockShockers.Count}", Plugin.Authentification.PishockShareCode));
+                Plugin.ClientPishock.info(Plugin.Authentification.PishockShareCode);
+            }
+            catch(Exception ex) { Plugin.Error(ex.StackTrace); }
         }
         int x = 0;
 

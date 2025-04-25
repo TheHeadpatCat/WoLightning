@@ -42,10 +42,15 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 
         private void Check(ref SeString messageE, ref QuestToastOptions options, ref bool isHandled)
         {
-            if (Player == null) { Player = Plugin.ClientState.LocalPlayer; return; }
+            try { 
+            Player = Plugin.ClientState.LocalPlayer;
+            if (Player == null) { return; }
             if (Player.MaxGp == 0) return; // We are not a Gatherer.
+            if(messageE == null || messageE.ToString() == null) { return; }
             String message = messageE.ToString();
             if (message.Contains(Plugin.LanguageStrings.FishEscapedTrigger())) Trigger("You failed to catch a Fish!");
+            }
+            catch (Exception e) { Plugin.Error(e.StackTrace); }
         }
     }
 }

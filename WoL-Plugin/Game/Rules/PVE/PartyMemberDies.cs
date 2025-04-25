@@ -35,20 +35,24 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 
         private void Check(IFramework framework)
         {
-            if (Plugin.ClientState.LocalPlayer == null || Plugin.PartyList == null || Plugin.PartyList.Length == 0) { return; }
-
-            int i = -1;
-            foreach (var Player in Plugin.PartyList)
+            try
             {
-                i++;
-                if (Player == null) continue;
-                var PlayerObject = Player.GameObject;
-                if (PlayerObject == null) continue;
+                if (Plugin.ClientState.LocalPlayer == null || Plugin.PartyList == null || Plugin.PartyList.Length == 0) { return; }
 
-                if (PlayerObject.IsDead && !DeadPlayerIndex[i]) { DeadPlayerIndex[i] = true; Trigger("A partymember has died!"); }
-                if (!PlayerObject.IsDead && DeadPlayerIndex[i]) { DeadPlayerIndex[i] = false; }
+                int i = -1;
+                foreach (var Player in Plugin.PartyList)
+                {
+                    i++;
+                    if (Player == null) continue;
+                    var PlayerObject = Player.GameObject;
+                    if (PlayerObject == null) continue;
+
+                    if (PlayerObject.IsDead && !DeadPlayerIndex[i]) { DeadPlayerIndex[i] = true; Trigger("A partymember has died!"); }
+                    if (!PlayerObject.IsDead && DeadPlayerIndex[i]) { DeadPlayerIndex[i] = false; }
+                }
             }
-        }
+            catch (Exception e) { Plugin.Error(e.StackTrace); }
+}
 
     }
-}
+    } 

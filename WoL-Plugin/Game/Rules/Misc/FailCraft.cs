@@ -42,10 +42,13 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 
         private void Check(ref SeString messageE, ref QuestToastOptions options, ref bool isHandled)
         {
+            try { 
             if (Player == null) { Player = Plugin.ClientState.LocalPlayer; return; }
             if (Player.MaxCp == 0) return; // We are not a Crafter.
             String message = messageE.ToString();
             if (message.Contains(Plugin.LanguageStrings.FailCraftTrigger())) Trigger("You have failed a Craft!");
+            }
+            catch (Exception e) { Plugin.Error(e.StackTrace); }
 
         }
     }

@@ -37,20 +37,24 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 
         private void Check(IFramework framework)
         {
-            if (Plugin.ClientState.LocalPlayer == null || Plugin.PartyList == null || Plugin.PartyList.Length == 0) { return; }
-
-            int i = -1;
-            foreach (var Player in Plugin.PartyList)
+            try
             {
-                i++;
-                if (Player == null) continue;
-                var PlayerObject = Player.GameObject;
-                if (PlayerObject == null) continue;
+                if (Plugin.ClientState.LocalPlayer == null || Plugin.PartyList == null || Plugin.PartyList.Length == 0) { return; }
 
-                if (PlayerObject.IsDead && !DeadPlayerIndex[i]) { DeadPlayerIndex[i] = true; } //player died
-                if (!PlayerObject.IsDead && DeadPlayerIndex[i]) { DeadPlayerIndex[i] = false; isTriggered = false; } //player got revived - somehow
-                if (!isTriggered && DeadPlayerIndex.All((x) => x == true)) { Trigger("The party is wiped!"); isTriggered = true; } //everyone is dead and we havent triggered the shock
+                int i = -1;
+                foreach (var Player in Plugin.PartyList)
+                {
+                    i++;
+                    if (Player == null) continue;
+                    var PlayerObject = Player.GameObject;
+                    if (PlayerObject == null) continue;
+
+                    if (PlayerObject.IsDead && !DeadPlayerIndex[i]) { DeadPlayerIndex[i] = true; } //player died
+                    if (!PlayerObject.IsDead && DeadPlayerIndex[i]) { DeadPlayerIndex[i] = false; isTriggered = false; } //player got revived - somehow
+                    if (!isTriggered && DeadPlayerIndex.All((x) => x == true)) { Trigger("The party is wiped!"); isTriggered = true; } //everyone is dead and we havent triggered the shock
+                }
             }
+            catch (Exception e) { Plugin.Error(e.StackTrace); }
         }
 
     }

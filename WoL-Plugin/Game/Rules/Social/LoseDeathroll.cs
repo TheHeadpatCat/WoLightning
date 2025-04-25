@@ -1,5 +1,6 @@
 ﻿using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
+using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
@@ -33,6 +34,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         }
         private void Check(XivChatType type, int timestamp, ref SeString senderE, ref SeString messageE, ref bool isHandled)
         {
+            try { 
+            if (Plugin.ClientState.LocalPlayer == null) return;
             if ((int)type == 2122 && messageE.Payloads.Find(pay => pay.Type == PayloadType.Icon) != null) // Deathroll channel and Icon found
             {
                 string message = messageE.ToString();
@@ -51,6 +54,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     }
                 }
             }
+            }
+            catch (Exception e) { Plugin.Error(e.StackTrace); }
         }
     }
 }

@@ -308,13 +308,20 @@ namespace WoLightning.Clients.Pishock
 
         public async void info(string ShareCode)
         {
+            Shocker? shocker = Plugin.Authentification.PishockShockers.Find(shocker => shocker.Code == ShareCode);
+
+            if (ShareCode.Length < 6)
+            {
+                Plugin.Error("Invalid Sharecode!");
+                shocker.Status = ShockerStatus.DoesntExist;
+                return;
+            }
 
             Plugin.Log($"Requesting Information for {ShareCode.Substring(0, 3)}[..]");
-
-            Shocker? shocker = Plugin.Authentification.PishockShockers.Find(shocker => shocker.Code == ShareCode);
             if (shocker == null)
             {
                 Plugin.Log(" -> Aborted as the Shocker couldnt be found!");
+                shocker.Status = ShockerStatus.DoesntExist;
                 return;
             }
 
