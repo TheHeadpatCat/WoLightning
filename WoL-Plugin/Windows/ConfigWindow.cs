@@ -210,7 +210,7 @@ public class ConfigWindow : Window, IDisposable
                     "\nwhenever you trigger a Rule");
             }
 
-            bool showCooldownNotifs = Configuration.ActivePreset.showCooldownNotifs;
+            /*bool showCooldownNotifs = Configuration.ActivePreset.showCooldownNotifs;
             if (ImGui.Checkbox("Show Cooldown Notifications", ref showCooldownNotifs))
             {
                 Configuration.ActivePreset.showCooldownNotifs = showCooldownNotifs;
@@ -223,6 +223,7 @@ public class ConfigWindow : Window, IDisposable
                 ImGui.SetTooltip("Activating this will show little Notification" +
                 "\nthat will tell you how much time is left until that trigger can activate again.");
             }
+            */
 
             bool limitChats = Configuration.ActivePreset.LimitChats;
             if (ImGui.Checkbox("Only listen for messages on specific Chat Channels.", ref limitChats))

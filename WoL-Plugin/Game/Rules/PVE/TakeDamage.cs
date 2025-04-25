@@ -85,7 +85,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                         
                         if (opts[0] <= 0) opts[0] = 1;
                         if (opts[1] <= 0) opts[1] = 100;
-                        Trigger("You took damage!", opts);
+                        Trigger("You took damage!", null, opts);
                     }
                 }
                 lastHP = Player.CurrentHp;
