@@ -32,7 +32,7 @@ public class ConfigWindow : Window, IDisposable
     private Player? SelectedPlayer;
     private String SelectedPlayerName = "None";
 
-    public ConfigWindow(Plugin plugin) : base($"Warrior of Lightning Configuration##configmain")
+    public ConfigWindow(Plugin plugin) : base($"Warrior of Lightning Configuration - v{Plugin.currentVersionString}##configmain")
     {
         Flags = ImGuiWindowFlags.AlwaysUseWindowPadding;
 
