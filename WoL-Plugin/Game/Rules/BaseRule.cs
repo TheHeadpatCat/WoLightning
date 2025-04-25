@@ -77,43 +77,21 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             Plugin.Log(Name + ".Stop() is not Implemented");
         }
 
-        virtual public void Trigger(string Text)
+        virtual public void Trigger(string Text){Trigger(Text, null, null, null);}
+        virtual public void Trigger(string Text, Player? source){Trigger(Text, source, null, null);}
+        virtual public void Trigger(string Text, Player? source, int[]? overrideOptions){Trigger(Text, source, overrideOptions, null);}
+
+        virtual public void Trigger(string Text, Player? source, int[]? overrideOptions, bool? noNotification)
         {
             if (ShockOptions.hasCooldown() || !IsRunning || Plugin.isFailsafeActive) return;
-            Triggered?.Invoke(this,this.ShockOptions);
-            if (Plugin.Configuration.ActivePreset.showTriggerNotifs) Plugin.sendNotif(Text);
+            if (source != null && !Plugin.Configuration.ActivePreset.isPlayerAllowedToTrigger(source)) return;
+
+            if(overrideOptions == null) Triggered?.Invoke(this, this.ShockOptions);
+            else Triggered?.Invoke(this, new ShockOptions(0, overrideOptions[0], overrideOptions[1]));
+
+            if (noNotification != null && noNotification == false && Plugin.Configuration.ActivePreset.showTriggerNotifs) Plugin.sendNotif(Text);
+            
             ShockOptions.startCooldown();
-        }
-
-        virtual public void Trigger(string Text, Player source)
-        {
-            if (ShockOptions.hasCooldown() || !IsRunning || Plugin.isFailsafeActive) return;
-            if (!Plugin.Configuration.ActivePreset.isPlayerAllowedToTrigger(source)) return;
-            Triggered?.Invoke(this,this.ShockOptions);
-            if (Plugin.Configuration.ActivePreset.showTriggerNotifs) Plugin.sendNotif(Text);
-            ShockOptions.startCooldown();
-        }
-
-        virtual public void Trigger(string Text, bool noNotif)
-        {
-            if (ShockOptions.hasCooldown() || !IsRunning || Plugin.isFailsafeActive) return;
-            Triggered?.Invoke(this, this.ShockOptions);
-            ShockOptions.startCooldown();
-        }
-
-        virtual public void Trigger(string Text, int[] overrideOptions)
-        {
-            if (ShockOptions.hasCooldown() || !IsRunning || Plugin.isFailsafeActive) return;
-            if (overrideOptions.Length < 2) return;
-            Triggered?.Invoke(this, new ShockOptions(0, overrideOptions[0], overrideOptions[1]));
-            if (Plugin.Configuration.ActivePreset.showTriggerNotifs) Plugin.sendNotif(Text);
-            ShockOptions.startCooldown();
-        }
-
-        virtual public void Trigger(string Text, Player source, int[] overrideOptions, bool noNotification)
-        {
-            if (ShockOptions.hasCooldown() || !IsRunning) return;
-
         }
 
         virtual public void Draw()
