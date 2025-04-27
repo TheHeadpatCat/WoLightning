@@ -31,6 +31,7 @@ public sealed class Plugin : IDalamudPlugin
     // General stuff
     private const string CommandName = "/wolightning";
     private const string CommandNameAlias = "/wol";
+    private const string CommandOpenConfig = "/wolc";
     private const string Failsafe = "/red";
     private const string OpenConfigFolder = "/wolfolder";
 
@@ -143,6 +144,10 @@ public sealed class Plugin : IDalamudPlugin
         {
             HelpMessage = "Alias for /wolighting."
         });
+        CommandManager.AddHandler(CommandOpenConfig, new CommandInfo(OnCommandConfiguration)
+        {
+            HelpMessage = "Opens the Configuration window."
+        });
         CommandManager.AddHandler(Failsafe, new CommandInfo(OnFailsafe)
         {
             HelpMessage = "Stops the plugin."
@@ -164,6 +169,8 @@ public sealed class Plugin : IDalamudPlugin
         ClientState.Logout += onLogout;
         PluginLog.Verbose("Finished initializing Plugin.");
     }
+
+    
 
     private void onUpdate(IFramework framework)
     {
@@ -349,6 +356,10 @@ public sealed class Plugin : IDalamudPlugin
     {
         OnCommand(command, args);
     }
+    private void OnCommandConfiguration(string command, string arguments)
+    {
+        ToggleConfigUI();
+    }
     private void OnFailsafe(string command, string args)
     {
         isFailsafeActive = !isFailsafeActive;
@@ -356,6 +367,7 @@ public sealed class Plugin : IDalamudPlugin
         if (isFailsafeActive) ChatGui.Print("Failsafe is active!\nStopping all requests...");
         else ChatGui.Print("Failsafe deactivated.");
     }
+
 
     private void OnOpenConfigFolder(string command, string args)
     {

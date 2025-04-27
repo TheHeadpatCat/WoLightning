@@ -12,7 +12,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
         override public RuleCategory Category { get; } = RuleCategory.PVE;
 
         [JsonIgnore] IPlayerCharacter Player;
-        [JsonIgnore] int lastVulnUpStacks = 0, lastDamageDownStacks = 0;
+        [JsonIgnore] ushort lastVulnUpStacks = 0, lastDamageDownStacks = 0;
 
         [JsonConstructor]
         public FailMechanic() { }
@@ -52,25 +52,29 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 
                     // Yes. We have to check for the IconId.
                     // The StatusId is different for different expansions, while the Name is different through languages.
-                    if (Status.GameData.Value.Icon >= 17101 && Status.GameData.Value.Icon <= 17116) // Vuln Up
+                    var icon = Status.GameData.Value.Icon;
+                    var amount = Status.Param;
+
+                    if (icon >= 217101 && icon <= 217116) // Vuln Up
                     {
-                        var amount = Status.Param;
                         if (amount > lastVulnUpStacks) Trigger("You have failed a Mechanic!");
                         lastVulnUpStacks = amount;
                         foundVuln = true;
+                        continue;
                     }
 
-                    if (Status.GameData.Value.Icon >= 18441 && Status.GameData.Value.Icon <= 18456) // Damage Down
+                    if (icon >= 218441 && icon <= 218456) // Damage Down
                     {
-                        var amount = Status.Param;
                         if (amount > lastDamageDownStacks) Trigger("You have failed a Mechanic!");
                         lastDamageDownStacks = amount;
                         foundDamage = true;
+                        continue;
                     }
 
-                    if (!foundVuln) lastVulnUpStacks = 0;
-                    if (!foundDamage) lastDamageDownStacks = 0;
+                   
                 }
+                if (!foundVuln) lastVulnUpStacks = 0;
+                if (!foundDamage) lastDamageDownStacks = 0;
             }
             catch (Exception ex)
             {

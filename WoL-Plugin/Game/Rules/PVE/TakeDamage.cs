@@ -58,7 +58,14 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                     return;
                 }
 
-                if (lastMaxHP != Player.MaxHp)
+                if (lastMaxHP != Player.MaxHp && Player.StatusFlags != Dalamud.Game.ClientState.Objects.Enums.StatusFlags.InCombat) // out of combat maxhp increase
+                {
+                    lastMaxHP = Player.MaxHp;
+                    lastHP = lastMaxHP; // avoid false positives from synch and stuff
+                    bufferFrames = 600; // give 10 seconds of buffering, for regens and stuff
+                    return;
+                }
+                else if (lastMaxHP != Player.MaxHp) // in combat maxhp increase
                 {
                     lastMaxHP = Player.MaxHp;
                     lastHP = lastMaxHP; // avoid false positives from synch and stuff
@@ -82,7 +89,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                     else
                     {
                         int[] opts = { (int)(ShockOptions.Intensity * difference), (int)(ShockOptions.Duration * difference) };
-                        
+
                         if (opts[0] <= 0) opts[0] = 1;
                         if (opts[1] <= 0) opts[1] = 100;
                         Trigger("You took damage!", null, opts);
