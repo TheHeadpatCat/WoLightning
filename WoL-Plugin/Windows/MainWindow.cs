@@ -248,7 +248,7 @@ public class MainWindow : Window, IDisposable
         ImGui.Separator();
         ImGui.Spacing();
         var PishockCodeField = Plugin.Authentification.PishockShareCode;
-        ImGui.SetNextItemWidth(ImGui.GetWindowWidth() - 60);
+        ImGui.SetNextItemWidth(ImGui.GetWindowWidth() - 15);
         if (ImGui.InputTextWithHint("##PishockSharecode", "Sharecode from your Shocker", ref PishockCodeField, 256, ImGuiInputTextFlags.EnterReturnsTrue))
         {
             if (PishockCodeField.StartsWith("https://pishock.com/#/Control?sharecode="))
@@ -259,6 +259,19 @@ public class MainWindow : Window, IDisposable
             Plugin.Authentification.PishockShareCode = PishockCodeField.Trim();
             if(PishockCodeField.Length > 6) isShareCodeEntered = true;
             else isShareCodeEntered = false;
+
+            if (isShareCodeEntered)
+            {
+                try
+                {
+                    Plugin.Authentification.PishockShareCode = PishockCodeField.Trim();
+                    Plugin.Authentification.PishockShockers.Add(new Shocker(ShockerType.Pishock, $"Shocker{Plugin.Authentification.PishockShockers.Count}", Plugin.Authentification.PishockShareCode));
+                    Plugin.ClientPishock.info(Plugin.Authentification.PishockShareCode);
+                }
+                catch (Exception ex) { Plugin.Error(ex.StackTrace); }
+                Plugin.Authentification.PishockShareCode = "";
+                isShareCodeEntered = false;
+            }
         }
 
         if(!isShareCodeEntered && PishockCodeField.Length > 6)
@@ -266,6 +279,7 @@ public class MainWindow : Window, IDisposable
             ImGui.SetTooltip("Press \"Enter\" to Confirm.");
         }
 
+        /*
         ImGui.SameLine();
         if (!isShareCodeEntered) ImGui.BeginDisabled();
         if (ImGui.Button("+ Add##registerShocker"))
@@ -281,9 +295,9 @@ public class MainWindow : Window, IDisposable
             isShareCodeEntered = false;
         }
         if (!isShareCodeEntered) ImGui.EndDisabled();
+        */
+
         int x = 0;
-
-
         ImGui.Text("Current Shockers:");
         while (Plugin.Authentification.PishockShockers.Count > x)
         {
