@@ -39,7 +39,7 @@ public class ConfigWindow : Window, IDisposable
 
         SizeConstraints = new WindowSizeConstraints
         {
-            MinimumSize = new Vector2(580, 690),
+            MinimumSize = new Vector2(580, 650),
             MaximumSize = new Vector2(2000, 2000)
         };
         Plugin = plugin;
@@ -136,10 +136,10 @@ public class ConfigWindow : Window, IDisposable
         }
 
 
-        ImGui.SetNextWindowPos(new Vector2(ImGui.GetWindowPos().X,ImGui.GetWindowPos().Y + ImGui.GetWindowHeight() - 40));
-        ImGui.SetNextWindowSize(new Vector2(ImGui.GetWindowWidth(), 40));
+        ImGui.SetNextWindowPos(new Vector2(ImGui.GetWindowPos().X,ImGui.GetWindowPos().Y + ImGui.GetWindowHeight()));
+        ImGui.SetNextWindowSize(new Vector2(ImGui.GetWindowWidth(), 30));
         ImGui.PushStyleColor(ImGuiCol.ChildBg, new Vector4(0.05f, 0.05f, 0.05f, 0.95f));
-        ImGui.Begin("##DiscordFooter", ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoSavedSettings | ImGuiWindowFlags.ChildWindow);
+        ImGui.Begin("##DiscordFooter", ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoSavedSettings);
         ImGui.Text("Found a issue or got a feature request?");
         ImGui.SameLine();
         if (ImGui.Button("Join the Discord", new Vector2(130, 25)))
