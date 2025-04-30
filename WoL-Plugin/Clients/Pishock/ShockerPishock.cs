@@ -13,6 +13,7 @@ namespace WoLightning.WoL_Plugin.Clients.Pishock
         public bool isPaused { get; set; } = false;
         public bool isPersonal { get; set; } = true;
         public int shareId { get; set; }
+        public string shareCode { get; set; }
         public string username { get; set; } = "";
         public ShockerPishock(string name, int clientId, int shockerId) : base(ShockerType.Pishock, name)
         {

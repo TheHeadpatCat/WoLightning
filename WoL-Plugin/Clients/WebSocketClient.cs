@@ -79,6 +79,7 @@ namespace WoLightning.WoL_Plugin.Clients
             {
                 WebSocketReceiveResult result = await Client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
                 string receivedMessage = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
+                Plugin.Log(receivedMessage);
                 Received?.Invoke(receivedMessage);
                 if (Client.State == WebSocketState.Open) Receive();
                 else if (Client.State == WebSocketState.CloseReceived || Client.State == WebSocketState.Closed) return; Connect();

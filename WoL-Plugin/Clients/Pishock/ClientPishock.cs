@@ -81,7 +81,7 @@ namespace WoLightning.Clients.Pishock
 
             Plugin.Authentification.PishockShockers.Clear();
             await RequestPersonalDevices();
-            await RequestSharedDevices();
+            //await RequestSharedDevices();
 
             if (Status == ConnectionStatusPishock.ConnectedNoInfo)
             {
@@ -261,10 +261,11 @@ namespace WoLightning.Clients.Pishock
                         {
                             Plugin.Log(response);
                             if(name.Equals(Plugin.Authentification.PishockName))continue;
-                            ShockerPishock shocker = new ShockerPishock(response.shockerName, response.clientId, response.shareId);
+                            ShockerPishock shocker = new ShockerPishock(response.shockerName, response.clientId, response.shockerId);
                             shocker.isPersonal = false;
                             shocker.username = name;
                             shocker.shareId = response.shareId;
+                            shocker.shareCode = response.shareCode;
                             Plugin.Authentification.PishockShockers.Add(shocker);
                         }
                     }
@@ -307,7 +308,7 @@ namespace WoLightning.Clients.Pishock
             }
             #endregion
 
-            string sendString = CommandPublish.Generate(Options);
+            string sendString = CommandPublish.Generate(Options, Plugin, UserID);
             await Client.Send(sendString);
         }
 

@@ -11,16 +11,18 @@ namespace WoLightning.WoL_Plugin.Clients.Pishock
     internal static class CommandPublish
     {
 
-        public static string Generate(ShockOptions Options)
+        public static string Generate(ShockOptions Options, Plugin Plugin, string UserId)
         {
             Command[] commands = new Command[Options.ShockersPishock.Count];
 
             int x = 0;
             foreach (var shocker in Options.ShockersPishock)
             {
-                commands[x] = new Command(shocker, Options);
+                var cmd =  new Command(shocker, Options, UserId);
+                Plugin.Log(cmd);
+                commands[x] = cmd;
             }
-
+            
             return JsonSerializer.Serialize(new { Operation = "PUBLISH", PublishCommands = commands });
         }
     }
@@ -32,22 +34,39 @@ namespace WoLightning.WoL_Plugin.Clients.Pishock
         // Using actual var names from Pishock API
         public string Target { get; set; } //Client ID
         public object Body { get; set; } // All targeted Shockers
-        public Command(ShockerPishock Shocker, ShockOptions Options)
+        public Command(ShockerPishock Shocker, ShockOptions Options, string UserId)
         {
-            this.Target = "c" + Shocker.clientId + "-ops"; 
-            this.Body = new
+            string type;
+            if (Shocker.isPersonal)
             {
-                id = Shocker.shockerId,
-                m = Options.getOpModePishock(),
-                i = Options.Intensity,
-                d = Options.Duration,
-                r = false,
-                l = new
+                this.Target = "c" + Shocker.clientId + "-ops";
+                type = "api";
+            }
+            else
+            {
+                this.Target = "c" + Shocker.clientId + "-sops-" + Shocker.shareCode;
+                type = "sc";
+            }
+            
+            
+                this.Body = new
                 {
-                    ty = "api",
-                    o = "WoLightning"
-                }
-            };
+                    id = Shocker.shockerId,
+                    m = Options.getOpModePishock(),
+                    i = Options.Intensity,
+                    d = Options.Duration,
+                    r = false,
+                    l = new
+                    {
+                        ty = "api",
+                        o = "WoLightning"
+                    }
+                };
+        }
+
+        public override string ToString()
+        {
+            return Target + " " + Body.ToString();
         }
     }
 }
