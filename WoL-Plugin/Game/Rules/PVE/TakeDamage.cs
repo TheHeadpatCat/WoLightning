@@ -10,7 +10,7 @@ using static FFXIVClientStructs.FFXIV.Client.Graphics.Kernel.VertexShader;
 namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 {
     [Serializable]
-    public class TakeDamage : BaseRule
+    public class TakeDamage : RuleBase
     {
         override public string Name { get; } = "Take Damage";
         override public string Description { get; } = "Triggers whenever you Take Damage for any reason.";

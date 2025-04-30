@@ -9,7 +9,7 @@ using WoLightning.Util.Types;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Social
 {
-    public class GetEmotedAt : BaseRule
+    public class GetEmotedAt : RuleBase
     {
         override public string Name { get; } = "Get Emoted at";
         override public string Description { get; } = "Triggers whenever a player sends a specific emote to you.";

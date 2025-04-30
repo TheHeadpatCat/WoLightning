@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Reflection;
 using WoLightning.WoL_Plugin.Game.Rules;
 using WoLightning.WoL_Plugin.Game.Rules.Misc;
@@ -33,7 +34,7 @@ namespace WoLightning.Util.Types
 
         public bool LimitChats { get; set; } = false;
         public List<XivChatType> Chats { get; set; } = new();
-        [JsonIgnore] public List<BaseRule> Rules { get; set; } = new List<BaseRule>();
+        [JsonIgnore] public List<RuleBase> Rules { get; set; } = new List<RuleBase>();
         [JsonIgnore] private Plugin Plugin;
 
 
@@ -129,14 +130,14 @@ namespace WoLightning.Util.Types
 
             foreach (PropertyInfo property in this.GetType().GetProperties())
             {
-                if (property.PropertyType.BaseType == typeof(BaseRule))
+                if (property.PropertyType.BaseType == typeof(RuleBase))
                 {
                     try
                     {
-                        if (Rules.Contains((BaseRule)property.GetValue(this, null)!)) continue;
-                        BaseRule r = (BaseRule)property.GetValue(this, null)!;
+                        if (Rules.Contains((RuleBase)property.GetValue(this, null)!)) continue;
+                        RuleBase r = (RuleBase)property.GetValue(this, null)!;
                         Rules.Add(r);
-                        r.Triggered += Plugin.ClientPishock.sendRequest;
+                        r.Triggered += Plugin.ClientPishock.SendRequest;
                         //r.Triggered += Plugin.ClientOpenShock.sendRequest; Todo: implement
                     }
                     catch (Exception ex)
@@ -148,14 +149,38 @@ namespace WoLightning.Util.Types
             }
         }
 
+        public void ValidateShockers()
+        {
+            if (Plugin == null || Plugin.Authentification == null || Plugin.ClientPishock.Status != Clients.Pishock.ClientPishock.ConnectionStatusPishock.Connected) return;
+            
+            foreach (PropertyInfo property in this.GetType().GetProperties())
+            {
+                if (property.PropertyType.BaseType == typeof(RuleBase))
+                {
+                    try
+                    {
+                        if (Rules.Contains((RuleBase)property.GetValue(this, null)!)) continue;
+                        RuleBase r = (RuleBase)property.GetValue(this, null)!;
+                        r.ShockOptions.ShockersPishock.RemoveAll((shocker) => !Plugin.Authentification.PishockShockers.Contains(shocker));
+                    }
+                    catch (Exception ex)
+                    {
+                        Plugin.Error(ex.StackTrace);
+                        Plugin.Error("Failed to Load Rule");
+                    }
+                }
+            }
+            Plugin.Configuration.saveCurrentPreset();
+        }
+
         public void Dispose()
         {
             try
             {
-                foreach (BaseRule rule in Rules)
+                foreach (RuleBase rule in Rules)
                 {
                     rule.Stop();
-                    rule.Triggered -= Plugin.ClientPishock.sendRequest;
+                    rule.Triggered -= Plugin.ClientPishock.SendRequest;
                     //rule.Triggered -= Plugin.ClientOpenShock.sendRequest; Todo: implement
                 }
             }

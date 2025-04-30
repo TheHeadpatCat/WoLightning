@@ -8,7 +8,7 @@ using WoLightning.Util.Types;
 namespace WoLightning.WoL_Plugin.Game.Rules.Social
 {
     [Serializable]
-    public class SitOnFurniture : BaseRule
+    public class SitOnFurniture : RuleBase
     {
         override public string Name { get; } = "Sit on Furniture";
         override public string Description { get; } = "Triggers whenever you try to do /sit on a chair or similiar.";

@@ -11,7 +11,7 @@ using System.Text.Json.Serialization;
 namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 {
     [Serializable]
-    public class FishEscaped : BaseRule
+    public class FishEscaped : RuleBase
     {
         override public string Name { get; } = "Fail to catch a Fish";
         override public string Description { get; } = "Triggers whenever a Fish escapes your Rod.";

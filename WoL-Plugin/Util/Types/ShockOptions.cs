@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using WoLightning.WoL_Plugin.Clients;
+using WoLightning.WoL_Plugin.Clients.Pishock;
 
 namespace WoLightning.Util.Types
 {
@@ -18,18 +20,31 @@ namespace WoLightning.Util.Types
         Hours = 36000000,
     }
 
+    public enum WarningMode
+    {
+        None = 0,
+        Short = 1,
+        Medium = 2,
+        Long = 3,
+        Random = 4
+    }
+
     [Serializable]
     public class ShockOptions
     {
 
         public bool isEnabled { get; set; } = false;
-        public List<Shocker> Shockers { get; set; } = new(); // List of all Shockers to execute on
+
+        public List<ShockerPishock> ShockersPishock { get; set; } = new();
+        //public List<ShockerBase> Shockers { get; set; } = new(); // List of all Shockers to execute on
 
         public OpMode OpMode { get; set; } = OpMode.Shock;
         public int Intensity { get; set; } = 1;
         public int Duration { get; set; } = 1;
         public int Cooldown { get; set; } = 0;
         public CooldownModifier modifier { get; set; } = CooldownModifier.Seconds;
+
+        public WarningMode WarningMode { get; set; } = WarningMode.None;
 
 
         // Randomization
@@ -83,14 +98,14 @@ namespace WoLightning.Util.Types
 
         public bool CanExecute()
         {
-            return isEnabled && Shockers.Count > 0;
+            return isEnabled && ShockersPishock.Count > 0;
         }
 
 
 
         public override string ToString()
         {
-            return $"[ShockOptions] Mode:{OpMode} {Intensity}%|{Duration}s Cooldown:{Cooldown * (int)modifier}ms Applied to {Shockers.Count} Shockers.";
+            return $"[ShockOptions] Mode:{OpMode} {Intensity}%|{Duration}s Cooldown:{Cooldown * (int)modifier}ms Applied to {ShockersPishock.Count} Shockers.";
         }
 
         public int[] toSimpleArray()
@@ -99,6 +114,20 @@ namespace WoLightning.Util.Types
         }
 
         #region Util
+
+
+        public string getOpModePishock()
+        {
+            switch (OpMode)
+            {
+                case OpMode.Shock: return "s";
+                case OpMode.Vibrate: return "v";
+                case OpMode.Beep: return "b";
+                default: return "e";
+
+            }
+        }
+
         public string durationString()
         {
             string output = "";
@@ -109,14 +138,14 @@ namespace WoLightning.Util.Types
         public string getShockerNames()
         {
             string output = "";
-            foreach (var shocker in Shockers) output += shocker.Name + ", ";
+            foreach (var shocker in ShockersPishock) output += shocker.name + ", ";
             return output;
         }
 
         public string getShockerNamesNewLine()
         {
             string output = "";
-            foreach (var shocker in Shockers) output += shocker.Name + "\n";
+            foreach (var shocker in ShockersPishock) output += shocker.name + "\n";
             return output;
         }
 

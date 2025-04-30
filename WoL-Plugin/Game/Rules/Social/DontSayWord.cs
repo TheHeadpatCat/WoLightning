@@ -10,7 +10,7 @@ using WoLightning.WoL_Plugin.Util.Types;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Social
 {
-    public class DontSayWord : BaseRule
+    public class DontSayWord : RuleBase
     {
         public override string Name { get; } = "Forget to say a Enforced Word";
 

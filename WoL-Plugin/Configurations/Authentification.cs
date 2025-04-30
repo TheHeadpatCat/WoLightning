@@ -10,6 +10,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using WoLightning.Util.Types;
+using WoLightning.WoL_Plugin.Clients.Pishock;
 
 namespace WoLightning.Configurations
 {
@@ -30,14 +31,14 @@ namespace WoLightning.Configurations
 
         // Pishock things
         public string PishockName { get; set; } = string.Empty;
-        public string PishockShareCode { get; set; } = string.Empty;
-        public List<Shocker> PishockShockers { get; set; } = [];
         public string PishockApiKey { get; set; } = string.Empty;
+        public string PishockShareCode { get; set; } = string.Empty;
+        [JsonIgnore] public List<ShockerPishock> PishockShockers { get; set; } = [];
 
         // OpenShock things
         public string OpenShockURL { get; set; } = "";
         public string OpenShockApiKey { get; set; } = string.Empty;
-        public List<Shocker> OpenShockShockers { get; set; } = [];
+        //public List<ShockerOpenShock> OpenShockShockers { get; set; } = [];
 
         public string DevKey { get; set; } = string.Empty;
 
@@ -132,7 +133,7 @@ namespace WoLightning.Configurations
 
         public int GetShockerCount()
         {
-            return PishockShockers.Count + OpenShockShockers.Count;
+            return PishockShockers.Count;
         }
 
     }

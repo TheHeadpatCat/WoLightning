@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 {
     [Serializable]
-    public class PartyWipes : BaseRule
+    public class PartyWipes : RuleBase
     {
         override public string Name { get; } = "Party wipe";
         override public string Description { get; } = "Triggers whenever ´the entire Party dies.";

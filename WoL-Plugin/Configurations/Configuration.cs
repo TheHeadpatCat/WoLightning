@@ -142,6 +142,7 @@ namespace WoLightning.Configurations
             LastPresetName = ActivePreset.Name;
             ActivePreset.Initialize(plugin);
             ActivePreset.resetInvalidTriggers();
+            ActivePreset.ValidateShockers();
 
             PresetChanged?.Invoke(ActivePreset, ActivePresetIndex);
             plugin.Log(" -> Done.");

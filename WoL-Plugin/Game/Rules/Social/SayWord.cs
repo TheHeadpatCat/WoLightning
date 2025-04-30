@@ -11,7 +11,7 @@ using WoLightning.WoL_Plugin.Util.Types;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Social
 {
-    public class SayWord : BaseRule
+    public class SayWord : RuleBase
     {
         public override string Name { get; } = "Say a Banned Word";
 

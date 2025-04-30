@@ -11,7 +11,7 @@ using WoLightning.Util.Types;
 namespace WoLightning.WoL_Plugin.Game.Rules.Social
 {
     [Serializable]
-    public class DoEmoteTo : BaseRule
+    public class DoEmoteTo : RuleBase
     {
         override public string Name { get; } = "Do a Emote to someone";
         override public string Description { get; } = "Triggers whenever you do a specific Emote, while having a player targeted.";

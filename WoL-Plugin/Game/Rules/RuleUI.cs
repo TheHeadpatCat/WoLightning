@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Numerics;
 using WoLightning.Util;
 using WoLightning.Util.Types;
+using WoLightning.WoL_Plugin.Clients;
 
 namespace WoLightning.WoL_Plugin.Game.Rules
 {
     public class RuleUI
     {
         Plugin Plugin;
-        BaseRule Rule;
+        RuleBase Rule;
         // UI
         bool isOptionsOpen = false;
         bool isModalShockerSelectorOpen = false;
@@ -22,7 +23,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         List<int> durationArray = [100, 300, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         List<CooldownModifier> modifierArray = [CooldownModifier.Miliseconds, CooldownModifier.Seconds, CooldownModifier.Minutes, CooldownModifier.Hours];
 
-        public RuleUI(Plugin Plugin, BaseRule RuleParent)
+        public RuleUI(Plugin Plugin, RuleBase RuleParent)
         {
             this.Plugin = Plugin;
             this.Rule = RuleParent;
@@ -72,7 +73,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             }
             else
             {
-                if (Rule.IsEnabled && Rule.ShockOptions.Shockers.Count > 0) ImGui.TextColored(ColorNameEnabled, "  " + Rule.Name + $"  [{Rule.ShockOptions.OpMode}]");
+                if (Rule.IsEnabled && Rule.ShockOptions.ShockersPishock.Count > 0) ImGui.TextColored(ColorNameEnabled, "  " + Rule.Name + $"  [{Rule.ShockOptions.OpMode}]");
                 else if (Rule.IsEnabled) ImGui.TextColored(ColorNameDisabled, "  " + Rule.Name + " [No Shockers]");
                 else ImGui.TextColored(ColorNameDisabled, "  " + Rule.Name);
             }
@@ -157,7 +158,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
         protected void DrawShockerSelector()
         {
-            if (ImGui.Button($"Assigned {Rule.ShockOptions.Shockers.Count} Shockers##assignedShockers" + Rule.Name, new Vector2(150, 25)))
+            if (ImGui.Button($"Assigned {Rule.ShockOptions.ShockersPishock.Count} Shockers##assignedShockers" + Rule.Name, new Vector2(150, 25)))
             {
                 isModalShockerSelectorOpen = true;
                 ImGui.OpenPopup("Select Shockers##ShockerSelect" + Rule.Name);
@@ -173,10 +174,11 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             if (ImGui.BeginPopupModal("Select Shockers##ShockerSelect" + Rule.Name, ref isModalShockerSelectorOpen,
             ImGuiWindowFlags.NoResize | ImGuiWindowFlags.Popup))
             {
-                if (Plugin.Authentification.GetShockerCount() == 0)
+                if (Plugin.Authentification.GetShockerCount() == 0 || Plugin.ClientPishock.Status != WoLightning.Clients.Pishock.ClientPishock.ConnectionStatusPishock.Connected)
                 {
-                    ImGui.TextWrapped("It seems you havent added any Shockers yet!\n" +
-                        "Please add them through the \"Account Settings\" in the main window.");
+                    ImGui.TextWrapped("The Shockers are still being loaded!" +
+                        "\nIf this doesn't change, please make sure that your" +
+                        "\nAccount Settings are properly set up!");
                     if (ImGui.Button($"Okay##okayShockerSelectorAbort", new Vector2(ImGui.GetWindowSize().X / 2, 25)))
                     {
                         ImGui.CloseCurrentPopup();
@@ -185,21 +187,30 @@ namespace WoLightning.WoL_Plugin.Game.Rules
                     return;
                 }
 
-                //todo: make shocker selector
+                
 
                 ImGui.Text("Please select all shockers that should activate for this trigger:");
                 foreach (var shocker in Plugin.Authentification.PishockShockers)
                 {
-                    bool isEnabled = Rule.ShockOptions.Shockers.Find(sh => sh.Code == shocker.Code) != null;
+                    bool isEnabled = Rule.ShockOptions.ShockersPishock.Find(sh => sh.getInternalId() == shocker.getInternalId()) != null;
 
-                    if (ImGui.Checkbox($"##shockerbox{shocker.Code}", ref isEnabled))
+                    if (ImGui.Checkbox($"##shockerbox{shocker.getInternalId()}", ref isEnabled))
                     { // this could probably be solved more elegantly
-                        if (isEnabled) Rule.ShockOptions.Shockers.Add(shocker);
-                        else Rule.ShockOptions.Shockers.RemoveAt(Rule.ShockOptions.Shockers.FindIndex(sh => sh.Code == shocker.Code));
+                        if (isEnabled) Rule.ShockOptions.ShockersPishock.Add(shocker);
+                        else Rule.ShockOptions.ShockersPishock.RemoveAt(Rule.ShockOptions.ShockersPishock.FindIndex(sh => sh.getInternalId() == shocker.getInternalId()));
                     }
                     ImGui.SameLine();
-                    if (shocker.Status == ShockerStatus.Online) ImGui.TextColored(ColorNameEnabled, shocker.Name);
-                    else ImGui.TextColored(ColorNameDisabled, shocker.Name);
+                    if (!shocker.isPersonal)
+                    {
+                        ImGui.BeginGroup();
+                        ImGui.Text(shocker.username);
+                        if (!shocker.isPaused) ImGui.TextColored(ColorNameEnabled, shocker.name);
+                        else ImGui.TextColored(ColorNameDisabled, "[Paused] " + shocker.name);
+                        ImGui.EndGroup();
+                        continue;
+                    }
+                    if (!shocker.isPaused) ImGui.TextColored(ColorNameEnabled, shocker.name);
+                    else ImGui.TextColored(ColorNameDisabled,"[Paused] " + shocker.name);
                 }
 
                 ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 2 - 170, ImGui.GetWindowSize().Y - 35));
@@ -211,7 +222,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
                 ImGui.SameLine();
                 if (ImGui.Button($"Reset##resetall{Rule.Name}", new Vector2(ImGui.GetWindowSize().X / 8, 25)))
                 {
-                    Rule.ShockOptions.Shockers.Clear();
+                    Rule.ShockOptions.ShockersPishock.Clear();
                 }
                 ImGui.EndGroup();
 

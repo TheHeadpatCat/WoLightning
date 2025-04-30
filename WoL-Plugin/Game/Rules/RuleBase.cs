@@ -18,7 +18,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
     }
 
     [Serializable]
-    abstract public class BaseRule : IDisposable
+    abstract public class RuleBase : IDisposable
     {
         [JsonIgnore] abstract public string Name { get; }
         [JsonIgnore] abstract public string Description { get; }
@@ -35,7 +35,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         virtual public bool IsLocked { get; set; }
 
         [NonSerialized] protected Plugin Plugin;
-        [NonSerialized] public Action<BaseRule,ShockOptions> Triggered;
+        [NonSerialized] public Action<ShockOptions> Triggered;
         [NonSerialized] protected RuleUI RuleUI;
 
         [NonSerialized] protected List<int> DurationArray = [100, 300, 500, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -43,12 +43,12 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
 
         [JsonConstructor]
-        protected BaseRule()
+        protected RuleBase()
         {
 
         }
 
-        protected BaseRule(Plugin plugin)
+        protected RuleBase(Plugin plugin)
         {
             setPlugin(plugin);
         }
@@ -86,8 +86,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             if (ShockOptions.hasCooldown() || !IsRunning || Plugin.isFailsafeActive) return;
             if (source != null && !Plugin.Configuration.ActivePreset.isPlayerAllowedToTrigger(source)) return;
 
-            if(overrideOptions == null) Triggered?.Invoke(this, this.ShockOptions);
-            else Triggered?.Invoke(this, new ShockOptions(0, overrideOptions[0], overrideOptions[1]));
+            if(overrideOptions == null) Triggered?.Invoke(this.ShockOptions);
+            else Triggered?.Invoke(new ShockOptions(0, overrideOptions[0], overrideOptions[1]));
 
             if ((noNotification == null || noNotification == false) && Plugin.Configuration.ActivePreset.showTriggerNotifs) Plugin.sendNotif(Text);
             

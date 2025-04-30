@@ -9,7 +9,7 @@ using System.Text.Json.Serialization;
 namespace WoLightning.WoL_Plugin.Game.Rules.Social
 {
     [Serializable]
-    public class DoEmote : BaseRule
+    public class DoEmote : RuleBase
     {
         override public string Name { get; } = "Do a Emote";
         override public string Description { get; } = "Triggers whenever you do a specific Emote.";

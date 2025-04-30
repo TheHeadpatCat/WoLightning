@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Social
 {
-    public class LoseDeathroll : BaseRule
+    public class LoseDeathroll : RuleBase
     {
         override public string Name { get; } = "Lose a Deathroll";
         override public string Description { get; } = "Triggers whenever you lose a Deathroll";

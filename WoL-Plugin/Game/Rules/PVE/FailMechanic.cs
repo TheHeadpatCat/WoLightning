@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 {
     [Serializable]
-    public class FailMechanic : BaseRule
+    public class FailMechanic : RuleBase
     {
         override public string Name { get; } = "Fail Mechanic";
         override public string Description { get; } = "Triggers whenever you get a [Vulnerability Up] or [Damage Down]";

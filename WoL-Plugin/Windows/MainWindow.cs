@@ -6,6 +6,8 @@ using System.Numerics;
 using WoLightning.Clients.Webserver;
 using WoLightning.Util;
 using WoLightning.Util.Types;
+using WoLightning.WoL_Plugin.Clients;
+using WoLightning.WoL_Plugin.Clients.Pishock;
 using static WoLightning.Clients.Pishock.ClientPishock;
 
 namespace WoLightning.Windows;
@@ -14,15 +16,17 @@ public class MainWindow : Window, IDisposable
 {
     private Plugin Plugin;
     private int presetIndex = 0;
-    private Vector4 activeColor = new Vector4(0, 1, 0, 1);
-    private Vector4 deactivatedColor = new Vector4(1, 0, 0, 1);
-    private string resetKeyInput = string.Empty;
+
+    private static Vector4 ColorGreen = new(0, 1, 0, 1);
+    private static Vector4 ColorRed = new(1, 0, 0, 1);
+    private static Vector4 ColorGray = new(0.7f, 0.7f, 0.7f, 1);
+
+    private float WindowWidth = 0;
 
     private bool isEulaModalActive = false;
     private TimerPlus eulaTimer = new TimerPlus();
 
     private bool isPishockMenuOpen = true;
-    private bool isShareCodeEntered = false;
 
     public bool IsEnabled = false;
 
@@ -55,7 +59,7 @@ public class MainWindow : Window, IDisposable
 
     public override async void Draw()
     {
-
+        WindowWidth = ImGui.GetWindowWidth();
         try
         {
             DrawShockerAPI();
@@ -96,16 +100,23 @@ public class MainWindow : Window, IDisposable
         switch (Plugin.ClientPishock.Status)
         {
             case ConnectionStatusPishock.NotStarted:
-                ImGui.TextColored(new Vector4(0.7f, 0.7f, 0.7f, 1), "No Userdata."); break;
+                ImGui.TextColored(ColorGray, "No Userdata."); break;
 
             case ConnectionStatusPishock.Connecting:
-                ImGui.TextColored(new Vector4(0.7f, 0.7f, 0.7f, 1), "Connecting..."); break;
+                ImGui.TextColored(ColorGray, "Connecting..."); break;
+            case ConnectionStatusPishock.ConnectedNoInfo:
+                ImGui.TextColored(ColorGray, "Getting Information..."); break;
 
+
+            case ConnectionStatusPishock.InvalidUserdata:
+                ImGui.TextColored(ColorRed, "Invalid Userdata!"); break;
             case ConnectionStatusPishock.Unavailable:
-                ImGui.TextColored(new Vector4(1, 0, 0, 1), "Unable to Connect!"); break;
+                ImGui.TextColored(ColorRed, "Unable to Connect!"); break;
+            case ConnectionStatusPishock.FatalError:
+                ImGui.TextColored(ColorRed, "Fatal Error!"); break;
 
             case ConnectionStatusPishock.Connected:
-                ImGui.TextColored(new Vector4(0, 1, 0, 1), $"Connected!"); break;
+                ImGui.TextColored(ColorGreen, $"Connected!"); break;
         }
     }
     private async void DrawWebserverAPI()
@@ -160,7 +171,7 @@ public class MainWindow : Window, IDisposable
         //if (Plugin.Authentification.isDisallowed) ImGui.BeginDisabled();
         presetIndex = Plugin.Configuration.ActivePresetIndex;
         if (presetIndex == -1) Plugin.Configuration.Save();
-        ImGui.SetNextItemWidth(ImGui.GetWindowWidth() - 15);
+        ImGui.SetNextItemWidth(WindowWidth - 15);
         if (ImGui.Combo("", ref presetIndex, [.. Plugin.Configuration.PresetNames], Plugin.Configuration.Presets.Count, 6))
         {
             Plugin.Configuration.loadPreset(Plugin.Configuration.PresetNames[presetIndex]);
@@ -169,7 +180,7 @@ public class MainWindow : Window, IDisposable
 
         if (Plugin.isFailsafeActive)
         {
-            ImGui.TextColored(new Vector4(1.0f, 0f, 0f, 0.9f), "Failsafe is active.\nType /red to disable it.");
+            ImGui.TextColored(ColorRed, "Failsafe is active.\nType /red to disable it.");
         }
 
         if (IsEnabled)
@@ -218,7 +229,7 @@ public class MainWindow : Window, IDisposable
 
     private async void DrawAccountPanel()
     {
-        ImGui.SetNextItemWidth(ImGui.GetWindowWidth() - 15);
+        ImGui.SetNextItemWidth(WindowWidth - 15);
         if (ImGui.CollapsingHeader("Account & Shockers", ImGuiTreeNodeFlags.CollapsingHeader))
         {
             if (ImGui.RadioButton("Pishock", isPishockMenuOpen)) isPishockMenuOpen = true;
@@ -233,117 +244,64 @@ public class MainWindow : Window, IDisposable
 
     private async void DrawPishockAccount()
     {
-        ImGui.SetNextItemWidth(ImGui.GetWindowWidth() - 15);
+        ImGui.SetNextItemWidth(WindowWidth - 15);
         //if (Plugin.Authentification.isDisallowed) ImGui.BeginDisabled();
         var PishockNameField = Plugin.Authentification.PishockName;
         if (ImGui.InputTextWithHint("##PishockUsername", "Pishock Username", ref PishockNameField, 24))
             Plugin.Authentification.PishockName = PishockNameField;
-        ImGui.SetNextItemWidth(ImGui.GetWindowWidth() - 15);
+        ImGui.SetNextItemWidth(WindowWidth - 15);
         var PishockApiField = Plugin.Authentification.PishockApiKey;
         if (ImGui.InputTextWithHint("##PishockAPIKey", "API Key from \"Account\"", ref PishockApiField, 64, ImGuiInputTextFlags.Password))
             Plugin.Authentification.PishockApiKey = PishockApiField;
 
+        if (ImGui.Button("Save & Connect", new Vector2(ImGui.GetWindowSize().X - 15, 25)))
+        {
+            Plugin.Authentification.Save();
+            Plugin.ClientPishock.Setup();
+            Plugin.validateShockerAssignments();
+        }
 
         ImGui.Spacing();
         ImGui.Separator();
         ImGui.Spacing();
-        var PishockCodeField = Plugin.Authentification.PishockShareCode;
-        ImGui.SetNextItemWidth(ImGui.GetWindowWidth() - 15);
-        if (ImGui.InputTextWithHint("##PishockSharecode", "Sharecode from your Shocker", ref PishockCodeField, 256, ImGuiInputTextFlags.EnterReturnsTrue))
-        {
-            if (PishockCodeField.StartsWith("https://pishock.com/#/Control?sharecode="))
-            {
-                var parts = PishockCodeField.Split("https://pishock.com/#/Control?sharecode=");
-                if(parts.Length >= 2) PishockCodeField = PishockCodeField.Split("https://pishock.com/#/Control?sharecode=")[1];
-            }
-            Plugin.Authentification.PishockShareCode = PishockCodeField.Trim();
-            if(PishockCodeField.Length > 6) isShareCodeEntered = true;
-            else isShareCodeEntered = false;
 
-            if (isShareCodeEntered)
-            {
-                try
-                {
-                    Plugin.Authentification.PishockShareCode = PishockCodeField.Trim();
-                    Plugin.Authentification.PishockShockers.Add(new Shocker(ShockerType.Pishock, $"Shocker{Plugin.Authentification.PishockShockers.Count}", Plugin.Authentification.PishockShareCode));
-                    Plugin.ClientPishock.info(Plugin.Authentification.PishockShareCode);
-                }
-                catch (Exception ex) { Plugin.Error(ex.StackTrace); }
-                Plugin.Authentification.PishockShareCode = "";
-                isShareCodeEntered = false;
-            }
-        }
-
-        if(!isShareCodeEntered && PishockCodeField.Length > 6)
+        if (Plugin.ClientPishock.Status == ConnectionStatusPishock.ConnectedNoInfo || Plugin.ClientPishock.Status == ConnectionStatusPishock.Connecting)
         {
-            ImGui.SetTooltip("Press \"Enter\" to Confirm.");
+            ImGui.Text("Getting Shocker Information...");
+            return;
         }
-
-        /*
-        ImGui.SameLine();
-        if (!isShareCodeEntered) ImGui.BeginDisabled();
-        if (ImGui.Button("+ Add##registerShocker"))
-        {
-            try
-            {
-                Plugin.Authentification.PishockShareCode = PishockCodeField.Trim();
-                Plugin.Authentification.PishockShockers.Add(new Shocker(ShockerType.Pishock, $"Shocker{Plugin.Authentification.PishockShockers.Count}", Plugin.Authentification.PishockShareCode));
-                Plugin.ClientPishock.info(Plugin.Authentification.PishockShareCode);
-            }
-            catch(Exception ex) { Plugin.Error(ex.StackTrace); }
-            Plugin.Authentification.PishockShareCode = "";
-            isShareCodeEntered = false;
-        }
-        if (!isShareCodeEntered) ImGui.EndDisabled();
-        */
 
         int x = 0;
-        ImGui.Text("Current Shockers:");
+        ImGui.Text("Available Shockers:");
         while (Plugin.Authentification.PishockShockers.Count > x)
         {
-            Shocker target = Plugin.Authentification.PishockShockers[x];
-            string tName = target.Name;
-            ImGui.SetNextItemWidth(205);
+            ShockerPishock target = Plugin.Authentification.PishockShockers[x];
+            string tName = target.name;
 
-            ImGui.Text("Status: ");
-            ImGui.SameLine();
-            switch (target.Status)
+
+            if (ImGui.Button("Test##TestShocker" + target.getInternalId()))
             {
-                case ShockerStatus.Unchecked: ImGui.TextColored(new Vector4(0.7f, 0.7f, 0.7f, 0.7f), "Requesting Data..."); break;
-                case ShockerStatus.InvalidUser: ImGui.TextColored(new Vector4(1, 0, 0, 1), "Invalid Userdata"); break;
-
-                case ShockerStatus.Online: ImGui.TextColored(new Vector4(0, 1, 0, 1), "Online!"); break;
-                case ShockerStatus.Paused: ImGui.TextColored(new Vector4(0.7f, 0.7f, 0.7f, 0.7f), "Paused"); break;
-                case ShockerStatus.Offline: ImGui.TextColored(new Vector4(0.7f, 0.7f, 0.7f, 0.7f), "Offline"); break;
-
-                case ShockerStatus.NotAuthorized: ImGui.TextColored(new Vector4(1, 0, 0, 1), "Not Authorized!"); break;
-                case ShockerStatus.DoesntExist: ImGui.TextColored(new Vector4(1, 0, 0, 1), "Invalid Sharecode!"); break;
-                case ShockerStatus.AlreadyUsed: ImGui.TextColored(new Vector4(1, 0, 0, 1), "Sharecode is already used!"); break;
-
-                default:
-                    ImGui.TextColored(new Vector4(0.7f, 0, 0, 1), "Unknown Response"); break;
-
+                ShockOptions temp = new ShockOptions(1, 35, 1);
+                temp.ShockersPishock.Add(target);
+                Plugin.ClientPishock.SendRequest(temp);
             }
-            ImGui.Text(target.Name);
-
             ImGui.SameLine();
-            if (ImGui.Button($"Remove##remove{target.Code}"))
+            if (!target.isPersonal)
             {
-                Plugin.Authentification.PishockShockers.Remove(target);
+                ImGui.BeginGroup();
+                ImGui.Text(target.username);
+                if (target.isPaused) ImGui.TextColored(ColorGray, "[Paused] " + target.name);
+                else ImGui.TextColored(ColorGreen, target.name);
+                ImGui.EndGroup();
+                ImGui.Separator();
+                x++;
+                continue;
             }
+
+            if (target.isPaused) ImGui.TextColored(ColorGray, "[Paused] " + target.name);
+            else ImGui.TextColored(ColorGreen, target.name);
             ImGui.Separator();
             x++;
-        }
-
-
-        //if (Plugin.Authentification.isDisallowed) ImGui.EndDisabled();
-
-        if (ImGui.Button("Save & Test", new Vector2(ImGui.GetWindowSize().X - 15, 25)))
-        {
-            Plugin.Authentification.Save();
-            Plugin.ClientPishock.testAll();
-            Plugin.validateShockerAssignments();
-            //Plugin.WebClient.sendPishockTestAll();
         }
     }
     private async void DrawOpenShockAccount()

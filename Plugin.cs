@@ -20,6 +20,8 @@ using WoLightning.Game;
 using WoLightning.Util;
 using WoLightning.Util.Types;
 using WoLightning.Windows;
+using WoLightning.WoL_Plugin.Clients;
+using WoLightning.WoL_Plugin.Clients.Pishock;
 using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning;
@@ -257,8 +259,8 @@ public sealed class Plugin : IDalamudPlugin
             LocalPlayer.Key = Authentification.ServerKey;
 
 
-            ClientWebserver.Connect();
-            ClientPishock.createHttpClient();
+            //ClientWebserver.Connect();
+            ClientPishock.Setup();
             //ClientOpenShock.createHttpClient();
 
             EmoteReaderHooks = new EmoteReaderHooks(this);
@@ -310,7 +312,8 @@ public sealed class Plugin : IDalamudPlugin
 
     public void validateShockerAssignments() // Goes through all Triggers and finds Shockers that are no longer saved - then deletes them.
     {
-        List<Shocker> shockers = Authentification.PishockShockers;
+        /*
+        List<ShockerPishock> shockers = Authentification.PishockShockers;
 
         foreach (var property in typeof(Preset).GetProperties())
         {
@@ -329,7 +332,7 @@ public sealed class Plugin : IDalamudPlugin
 
                 bool[] marked = new bool[t.Shockers.Count];
                 int i = 0;
-                foreach (Shocker sh in t.Shockers)
+                foreach (ShockerPishock sh in t.Shockers)
                 {
                     Log(sh);
                     if (shockers.Find(sh2 => sh.Code == sh2.Code) == null) marked[i] = true;
@@ -345,6 +348,7 @@ public sealed class Plugin : IDalamudPlugin
             }
         }
         Configuration.Save();
+        */
     }
 
 
@@ -363,7 +367,6 @@ public sealed class Plugin : IDalamudPlugin
     private void OnFailsafe(string command, string args)
     {
         isFailsafeActive = !isFailsafeActive;
-        ClientPishock.cancelPendingRequests();
         if (isFailsafeActive) ChatGui.Print("Failsafe is active!\nStopping all requests...");
         else ChatGui.Print("Failsafe deactivated.");
     }

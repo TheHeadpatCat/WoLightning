@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 {
     [Serializable]
-    public class Die : BaseRule
+    public class Die : RuleBase
     {
         override public string Name { get; } = "Die";
         override public string Description { get; } = "Triggers whenever you Die for whatever reason.";

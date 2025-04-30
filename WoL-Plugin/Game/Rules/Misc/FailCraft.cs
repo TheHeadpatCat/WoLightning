@@ -11,7 +11,7 @@ using System.Text.Json.Serialization;
 namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 {
     [Serializable]
-    public class FailCraft : BaseRule
+    public class FailCraft : RuleBase
     {
         override public string Name { get; } = "Fail a Craft";
         override public string Description { get; } = "Triggers whenever you fail a Crafting Recipe.";

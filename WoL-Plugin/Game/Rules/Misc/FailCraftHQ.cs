@@ -11,7 +11,7 @@ using System.Text.Json.Serialization;
 namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 {
     [Serializable]
-    public class FailCraftHQ : BaseRule
+    public class FailCraftHQ : RuleBase
     {
         override public string Name { get; } = "Fail a HQ Craft";
         override public string Description { get; } = "Triggers whenever you fail to craft a HQ Item when it would have been possible.";

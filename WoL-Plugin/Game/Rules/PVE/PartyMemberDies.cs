@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 {
     [Serializable]
-    public class PartyMemberDies : BaseRule
+    public class PartyMemberDies : RuleBase
     {
         override public string Name { get; } = "Partymember dies";
         override public string Description { get; } = "Triggers whenever a partymember dies for whatever reason.";
