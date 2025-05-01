@@ -9,7 +9,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
     public class PartyWipes : RuleBase
     {
         override public string Name { get; } = "Party wipe";
-        override public string Description { get; } = "Triggers whenever ´the entire Party dies.";
+        override public string Description { get; } = "Triggers whenever the entire Party dies.";
         override public RuleCategory Category { get; } = RuleCategory.PVE;
 
         [JsonIgnore] bool[] DeadPlayerIndex = [false, false, false, false, false, false, false, false]; //how do i polyfill
