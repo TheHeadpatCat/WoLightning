@@ -83,7 +83,6 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
         virtual public void Trigger(string Text, Player? source, int[]? overrideOptions, bool? noNotification)
         {
-            Plugin.Log(ShockOptions.cooldownLeft());
             if (ShockOptions.hasCooldown() || !IsRunning || Plugin.isFailsafeActive) return;
             if (source != null && !Plugin.Configuration.ActivePreset.isPlayerAllowedToTrigger(source)) return;
 
@@ -91,11 +90,12 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             else Triggered?.Invoke(new ShockOptions(0, overrideOptions[0], overrideOptions[1]));
 
             if ((noNotification == null || noNotification == false) && Plugin.Configuration.ActivePreset.showTriggerNotifs) Plugin.NotificationHandler.send(Text);
+
             
             ShockOptions.startCooldown();
-            if(Plugin.Configuration.ActivePreset.showCooldownNotifs && ShockOptions.Cooldown > 0)
+            if (Plugin.Configuration.ActivePreset.showCooldownNotifs && ShockOptions.Cooldown > 0)
             {
-
+                Plugin.NotificationHandler.send($"{Name} Cooldown", null, Dalamud.Interface.ImGuiNotification.NotificationType.Info, new TimeSpan(0, 0, ShockOptions.cooldownLeft() + 1));
             }
         }
 

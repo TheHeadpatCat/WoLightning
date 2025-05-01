@@ -179,7 +179,7 @@ namespace WoLightning.Util.Types
             return CooldownTimer.TimeLeft > 0;
         }
 
-        public double cooldownLeft()
+        public int cooldownLeft()
         {
             return CooldownTimer.TimeLeftSeconds;
         }

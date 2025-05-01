@@ -14,6 +14,7 @@ namespace WoLightning.WoL_Plugin.Util
     {
         private Plugin Plugin;
         private readonly List<Notification> QueuedNotifications = new();
+        private readonly static int MaxQueuedNotifications = 7;
 
         private readonly static TimeSpan Duration = new(0, 0, 7);
         private readonly static String Title = "Warrior of Lightning";
@@ -35,33 +36,19 @@ namespace WoLightning.WoL_Plugin.Util
 
         ~NotificationHandler() { RateLimiter.Stop(); RateLimiter.Elapsed -= LowerLimit; RateLimiter.Dispose(); }
 
-        public void send(string content)
+        
+        public void send(string content, string? title, NotificationType? type, TimeSpan? duration)
         {
-            QueuedNotifications.Add(createTemplate(content));
+            if(QueuedNotifications.Count < MaxQueuedNotifications) QueuedNotifications.Add(createTemplate(content, title, type, duration));
             Update();
         }
+        public void send(string content) { send(content, null, null, null); }
+        public void send(string content, NotificationType? type) { send(content, null, type, null); }
+        public void send(string content, string? title) { send(content, title, null, null); }
+        public void send(string content, TimeSpan duration) { send(content, null, null, duration); }
 
-        public void send(string content, NotificationType? type)
-        {
-            QueuedNotifications.Add(createTemplate(content,null,type));
-            Update();
-        }
 
-        public void send(string content, string? title)
-        {
-            QueuedNotifications.Add(createTemplate(content,title));
-            Update();
-        }
 
-        public void send(string content, string? title, NotificationType? type)
-        {
-            QueuedNotifications.Add(createTemplate(content, title, type));
-            Update();
-        }
-
-        private Notification createTemplate(string content) { return createTemplate(content,null,null,null); }
-        private Notification createTemplate(string content,string? title) { return createTemplate(content, title, null, null); }
-        private Notification createTemplate(string content,string? title, NotificationType? type) { return createTemplate(content, title, type, null); }
         private Notification createTemplate(string content, string? title, NotificationType? type, TimeSpan? duration)
         {
             if (title == null) title = Title;
@@ -76,6 +63,11 @@ namespace WoLightning.WoL_Plugin.Util
             };
             return result;
         }
+        private Notification createTemplate(string content) { return createTemplate(content, null, null, null); }
+        private Notification createTemplate(string content, string? title) { return createTemplate(content, title, null, null); }
+        private Notification createTemplate(string content, string? title, NotificationType? type) { return createTemplate(content, title, type, null); }
+
+
 
         private void Update()
         {
