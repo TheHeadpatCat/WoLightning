@@ -258,7 +258,6 @@ public class MainWindow : Window, IDisposable
         {
             Plugin.Authentification.Save();
             Plugin.ClientPishock.Setup();
-            Plugin.validateShockerAssignments();
         }
 
         ImGui.Spacing();

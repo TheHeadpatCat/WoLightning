@@ -82,6 +82,7 @@ public sealed class Plugin : IDalamudPlugin
     public Configuration? Configuration { get; set; }
     public GameEmotes? GameEmotes { get; set; }
     public LanguageStrings? LanguageStrings { get; set; }
+    public NotificationHandler? NotificationHandler { get; set; }
 
     public Plugin(
         IDalamudPluginInterface pluginInterface,
@@ -125,13 +126,15 @@ public sealed class Plugin : IDalamudPlugin
 
 
         
-        LanguageStrings languageStrings = new LanguageStrings(this);
+        LanguageStrings = new(this);
+        NotificationHandler = new(this);
+        
 
         // Brio @Brio/Resources/GameDataProvider.cs#L27
-        GameEmotes = new GameEmotes(this, dataManager.GetExcelSheet<Emote>()!.ToDictionary(x => x.RowId, x => x).AsReadOnly());
+        GameEmotes = new(this, dataManager.GetExcelSheet<Emote>()!.ToDictionary(x => x.RowId, x => x).AsReadOnly());
 
-        MainWindow = new MainWindow(this);
-        ConfigWindow = new ConfigWindow(this);
+        MainWindow = new(this);
+        ConfigWindow = new(this);
 
 
         WindowSystem.AddWindow(BufferWindow);
@@ -236,7 +239,7 @@ public sealed class Plugin : IDalamudPlugin
             {
                 Configuration = new Configuration();
                 Configuration.Save();
-                sendNotif("Your Configuration has been reset due to an error!");
+                NotificationHandler.send("Your Configuration has been reset due to an error!");
                 Log(e);
             }
 
@@ -246,13 +249,13 @@ public sealed class Plugin : IDalamudPlugin
                 if (Authentification.Version < new Authentification().Version)
                 {
                     Authentification = new Authentification(ConfigurationDirectoryPath, true);
-                    sendNotif("Your Authentification has been reset due to a version upgrade!");
+                    NotificationHandler.send("Your Authentification has been reset due to a version upgrade!");
                 }
             }
             catch (Exception e)
             {
                 Authentification = new Authentification(ConfigurationDirectoryPath, true);
-                sendNotif("Your Authentification has been reset due to an error!");
+                NotificationHandler.send("Your Authentification has been reset due to an error!");
                 Log(e);
             }
 
@@ -309,48 +312,6 @@ public sealed class Plugin : IDalamudPlugin
         CommandManager.RemoveHandler(Failsafe);
         CommandManager.RemoveHandler(OpenConfigFolder);
     }
-
-    public void validateShockerAssignments() // Goes through all Triggers and finds Shockers that are no longer saved - then deletes them.
-    {
-        /*
-        List<ShockerPishock> shockers = Authentification.PishockShockers;
-
-        foreach (var property in typeof(Preset).GetProperties())
-        {
-            //Log($"{property.Name} - {property.PropertyType}");
-            if (property.PropertyType == typeof(ShockOptions))
-            {
-                object? obj = property.GetValue(Configuration.ActivePreset);
-                if (obj == null) continue;
-                ShockOptions t = (ShockOptions)obj;
-
-                if (shockers.Count == 0)
-                {
-                    t.Shockers.Clear();
-                    continue;
-                }
-
-                bool[] marked = new bool[t.Shockers.Count];
-                int i = 0;
-                foreach (ShockerPishock sh in t.Shockers)
-                {
-                    Log(sh);
-                    if (shockers.Find(sh2 => sh.Code == sh2.Code) == null) marked[i] = true;
-                    i++;
-                }
-                i = 0;
-                foreach (bool del in marked)
-                {
-
-                    if (del) t.Shockers.RemoveAt(i);
-                    i++;
-                }
-            }
-        }
-        Configuration.Save();
-        */
-    }
-
 
     private void OnCommand(string command, string args)
     {
@@ -437,40 +398,4 @@ public sealed class Plugin : IDalamudPlugin
     }
     #endregion
 
-
-    // Todo: Move all of these into a seperate Class
-    public Notification getNotifTemp()
-    {
-        Notification result = new Notification();
-        result.InitialDuration = new TimeSpan(0, 0, 7);
-        result.Title = "Warrior of Lighting";
-        result.Type = NotificationType.Warning;
-        return result;
-    }
-
-    public void sendNotif(string content)
-    {
-        Log(content);
-        Notification result = new Notification();
-        result.InitialDuration = new TimeSpan(0, 0, 7);
-        result.Title = "Warrior of Lighting";
-        result.Type = NotificationType.Warning;
-        result.Content = content;
-        NotificationManager.AddNotification(result);
-    }
-
-
-
-
 }
-
-
-/*
- * Random Notes
- * Add Positionals as a trigger?
- * 
- * 
- * 
- * 
- * 
- */

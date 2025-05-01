@@ -108,7 +108,7 @@ namespace WoLightning.Configurations
             }
             catch (Exception e)
             {
-                plugin.sendNotif("Failed to save Presets!");
+                plugin.NotificationHandler.send("Failed to save Presets!");
                 plugin.Error("Failed to save Presets!", e);
                 plugin.Log(e.ToString());
             }
@@ -120,7 +120,7 @@ namespace WoLightning.Configurations
             }
             catch (Exception e) // scuffed crash protection - if this happens we got a serious issue.
             {
-                plugin.sendNotif("Failed to save Configuration!");
+                plugin.NotificationHandler.send("Failed to save Configuration!");
                 plugin.Error("Failed to save Configuration!", e);
                 plugin.Log(e.ToString());
             }

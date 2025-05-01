@@ -183,11 +183,9 @@ namespace WoLightning.Util.Types
         {
             return CooldownTimer.TimeLeftSeconds;
         }
-        public void startCooldown(Plugin Plugin)
+        public void startCooldown()
         {
-            double CooldownTime = Cooldown * (int)modifier + Duration * 100 + 1000;
-            //Plugin.Log("CD " + Cooldown + " * " + (int)modifier + " + " + Duration + " * 100 + 500 = " + CooldownTime);
-
+            double CooldownTime = Cooldown * (int)modifier + Duration * 1000 + 1000;
             CooldownTimer.Start(CooldownTime);
         }
         #endregion

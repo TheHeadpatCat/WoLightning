@@ -90,11 +90,13 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             if(overrideOptions == null) Triggered?.Invoke(this.ShockOptions);
             else Triggered?.Invoke(new ShockOptions(0, overrideOptions[0], overrideOptions[1]));
 
-            if ((noNotification == null || noNotification == false) && Plugin.Configuration.ActivePreset.showTriggerNotifs) Plugin.sendNotif(Text);
+            if ((noNotification == null || noNotification == false) && Plugin.Configuration.ActivePreset.showTriggerNotifs) Plugin.NotificationHandler.send(Text);
             
-            ShockOptions.startCooldown(Plugin);
-            
-            //if(Plugin.Configuration.ActivePreset.showCooldownNotifs && ShockOptions.Cooldown > 0) 
+            ShockOptions.startCooldown();
+            if(Plugin.Configuration.ActivePreset.showCooldownNotifs && ShockOptions.Cooldown > 0)
+            {
+
+            }
         }
 
         virtual public void Draw()
