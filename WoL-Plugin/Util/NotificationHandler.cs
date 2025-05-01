@@ -60,6 +60,7 @@ namespace WoLightning.WoL_Plugin.Util
                 Title = title,
                 Type = (NotificationType)type,
                 InitialDuration = (TimeSpan)duration,
+                UserDismissable = true,
             };
             return result;
         }
