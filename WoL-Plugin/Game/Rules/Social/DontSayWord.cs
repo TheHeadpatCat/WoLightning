@@ -81,7 +81,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
         public override void DrawAdvancedOptions()
         {
-            ImGui.Text("Not saying any Word from this list, will trigger the \"Forget to say Enforced Word\" Rule!");
+            ImGui.Text("Not saying atleast one Word from this list, will trigger the \"Forget to say Enforced Word\" Rule!");
 
             ImGui.SetNextItemWidth(ImGui.GetWindowWidth() - 230);
             if (ImGui.InputTextWithHint("##EnforcedWordInput", "Click on a entry to edit it.", ref Input, 48))
