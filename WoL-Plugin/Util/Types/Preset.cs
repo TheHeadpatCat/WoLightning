@@ -151,6 +151,7 @@ namespace WoLightning.Util.Types
 
         public void ValidateShockers()
         {
+            Plugin.Log("Validate Shockers got called.");
             if (Plugin == null || Plugin.Authentification == null || Plugin.ClientPishock.Status != Clients.Pishock.ClientPishock.ConnectionStatusPishock.Connected) return;
             
             foreach (PropertyInfo property in this.GetType().GetProperties())
@@ -159,9 +160,11 @@ namespace WoLightning.Util.Types
                 {
                     try
                     {
-                        if (Rules.Contains((RuleBase)property.GetValue(this, null)!)) continue;
+                        
+                        //if (Rules.Contains((RuleBase)property.GetValue(this, null)!)) continue;
                         RuleBase r = (RuleBase)property.GetValue(this, null)!;
-                        r.ShockOptions.ShockersPishock.RemoveAll((shocker) => !Plugin.Authentification.PishockShockers.Contains(shocker));
+                        int i = r.ShockOptions.ShockersPishock.RemoveAll((shocker) => !Plugin.Authentification.PishockShockers.Contains(shocker));
+                        Plugin.Log("Removed " + i + " Invalid Shockers from " + r.Name);
                     }
                     catch (Exception ex)
                     {

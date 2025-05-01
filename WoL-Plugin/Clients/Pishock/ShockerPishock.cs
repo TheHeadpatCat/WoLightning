@@ -31,6 +31,16 @@ namespace WoLightning.WoL_Plugin.Clients.Pishock
             return "[ShockerPishock] Name: " + name + " ShockerId: " + shockerId + " ClientId: " + clientId;
         }
 
+        public override bool Equals(object? obj)
+        {
+            if(obj == null) return false;
+            if(obj is ShockerPishock)
+            {
+                ShockerPishock other = (ShockerPishock)obj;
+                return clientId == other.clientId && shockerId == other.shockerId && shareId == other.shareId && shareCode == other.shareCode;
+            }
+            return false;
+        }
 
     }
 }

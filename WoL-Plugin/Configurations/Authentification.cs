@@ -33,7 +33,7 @@ namespace WoLightning.Configurations
         public string PishockName { get; set; } = string.Empty;
         public string PishockApiKey { get; set; } = string.Empty;
         public string PishockShareCode { get; set; } = string.Empty;
-        [JsonIgnore] public List<ShockerPishock> PishockShockers { get; set; } = [];
+        [JsonIgnore] public List<ShockerPishock> PishockShockers { get; set; } = new();
 
         // OpenShock things
         public string OpenShockURL { get; set; } = "";

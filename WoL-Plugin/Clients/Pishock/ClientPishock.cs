@@ -59,6 +59,16 @@ namespace WoLightning.Clients.Pishock
             await SetupAllData();
         }
 
+        public void Test()
+        {
+            //09:40:39.681 | VRB | [WoLightning] [SharedResponse] ShockerName: Hurty shareCode: 29D316F52E1 shockerId: 7433 clientId: 5386 canVibrate: True
+
+            string[] target = ["c5386-sops-29D316F52E1"];
+
+            string sendString = System.Text.Json.JsonSerializer.Serialize(new { Operation = "UNSUBSCRIBE", Targets = target });
+            Client.Send(sendString);
+        }
+
         public async Task CreateSocket()
         {
             if (Client != null || Plugin == null || Plugin.Authentification == null) return;
@@ -81,7 +91,7 @@ namespace WoLightning.Clients.Pishock
 
             Plugin.Authentification.PishockShockers.Clear();
             await RequestPersonalDevices();
-            //await RequestSharedDevices();
+            await RequestSharedDevices();
 
             if (Status == ConnectionStatusPishock.ConnectedNoInfo)
             {
@@ -129,7 +139,7 @@ namespace WoLightning.Clients.Pishock
                 Status = ConnectionStatusPishock.FatalError;
                 return;
             }
-            Plugin.Log(UserID);
+            Plugin.Log("UserID: " + UserID);
             if (UserID.Length > 0) Status = ConnectionStatusPishock.ConnectedNoInfo;
             else Status = ConnectionStatusPishock.InvalidUserdata;
         }
@@ -230,7 +240,6 @@ namespace WoLightning.Clients.Pishock
                 URL += $"&shareIds={shareCode}";
             }
 
-            Plugin.Log("RequestURL: " + URL);
             Result = await HttpClient.GetAsync(URL);
             if (Result.StatusCode != HttpStatusCode.OK)
             {
@@ -281,6 +290,8 @@ namespace WoLightning.Clients.Pishock
         public async void SendRequest(ShockOptions Options)
         {
 
+            if(Client == null || Status != ConnectionStatusPishock.Connected) return;
+
             #region Validation
             if (Plugin.Authentification.PishockName.Length < 3
                 || Plugin.Authentification.PishockApiKey.Length < 16)
@@ -309,6 +320,8 @@ namespace WoLightning.Clients.Pishock
             #endregion
 
             string sendString = CommandPublish.Generate(Options, Plugin, UserID);
+            Plugin.Log("Sending Pishock Request: ");
+            Plugin.Log(sendString);
             await Client.Send(sendString);
         }
 

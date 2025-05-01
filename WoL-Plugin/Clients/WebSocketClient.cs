@@ -35,6 +35,7 @@ namespace WoLightning.WoL_Plugin.Clients
         public void Dispose()
         {
             UpholdConnection = false;
+            FailedAttempts = 99;
             Client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client closed", CancellationToken.None).GetAwaiter().GetResult();
             Client = null;
         }
@@ -77,6 +78,7 @@ namespace WoLightning.WoL_Plugin.Clients
         {
             try
             {
+                if (Client == null || Client.State != WebSocketState.Open) return;
                 WebSocketReceiveResult result = await Client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
                 string receivedMessage = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
                 Plugin.Log(receivedMessage);
