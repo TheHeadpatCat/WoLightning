@@ -40,7 +40,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
             try
             {
                 Player = Plugin.ClientState.LocalPlayer;
-                if (Player == null || Player.StatusFlags != Dalamud.Game.ClientState.Objects.Enums.StatusFlags.InCombat ) { return; }
+                if (Player == null || !Player.StatusFlags.HasFlag(Dalamud.Game.ClientState.Objects.Enums.StatusFlags.InCombat)) { return; }
 
                 var Statuses = Player.StatusList;
                 if (Statuses == null || Statuses.Length == 0) { lastVulnUpStacks = 0; lastDamageDownStacks = 0; return; }

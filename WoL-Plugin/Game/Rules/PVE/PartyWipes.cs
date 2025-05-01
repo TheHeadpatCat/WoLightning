@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Text.Json.Serialization;
+using WoLightning.Util.Types;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 {
@@ -39,7 +40,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
         {
             try
             {
-                if (Plugin.ClientState.LocalPlayer == null || Plugin.PartyList == null || Plugin.PartyList.Length == 0) { return; }
+                if (Plugin.ClientState.LocalPlayer == null || Plugin.PartyList == null || Plugin.PartyList.Length == 0 || !Plugin.ClientState.LocalPlayer.StatusFlags.HasFlag(Dalamud.Game.ClientState.Objects.Enums.StatusFlags.InCombat)) { return; }
 
                 int i = -1;
                 foreach (var Player in Plugin.PartyList)

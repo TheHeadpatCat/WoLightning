@@ -58,7 +58,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                     return;
                 }
 
-                if (lastMaxHP != Player.MaxHp && Player.StatusFlags != Dalamud.Game.ClientState.Objects.Enums.StatusFlags.InCombat) // out of combat maxhp increase
+                if (lastMaxHP != Player.MaxHp && !Player.StatusFlags.HasFlag(Dalamud.Game.ClientState.Objects.Enums.StatusFlags.InCombat)) // out of combat maxhp increase
                 {
                     lastMaxHP = Player.MaxHp;
                     lastHP = lastMaxHP; // avoid false positives from synch and stuff
