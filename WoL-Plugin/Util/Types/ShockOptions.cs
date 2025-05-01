@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using WoLightning.WoL_Plugin.Clients;
 using WoLightning.WoL_Plugin.Clients.Pishock;
 
@@ -79,6 +80,27 @@ namespace WoLightning.Util.Types
             CooldownTimer.AutoReset = false;
         }
 
+        [JsonConstructor]
+        public ShockOptions(bool isEnabled, List<ShockerPishock> shockersPishock, OpMode opMode, int intensity, int duration, double cooldown, CooldownModifier modifier, WarningMode warningMode, bool isIntensityRandomized, int randomizeIntensityMin, bool isDurationRandomized, int randomizeDurationMin, bool isModalOpen, bool isOptionsOpen, TimerPlus cooldownTimer, bool hasBeenReset)
+        {
+            this.isEnabled = isEnabled;
+            ShockersPishock = shockersPishock;
+            OpMode = opMode;
+            Intensity = intensity;
+            Duration = duration;
+            Cooldown = cooldown;
+            this.modifier = modifier;
+            WarningMode = warningMode;
+            this.isIntensityRandomized = isIntensityRandomized;
+            RandomizeIntensityMin = randomizeIntensityMin;
+            this.isDurationRandomized = isDurationRandomized;
+            RandomizeDurationMin = randomizeDurationMin;
+            this.isModalOpen = isModalOpen;
+            this.isOptionsOpen = isOptionsOpen;
+            CooldownTimer = cooldownTimer;
+            this.hasBeenReset = hasBeenReset;
+        }
+
         public bool Validate()
         {
             if ((int)OpMode < 0 || (int)OpMode > 2) return false;                       // Check for correct OpMode
@@ -86,6 +108,7 @@ namespace WoLightning.Util.Types
             if (Intensity > 100) Intensity = 100;                                     // Clamp Intensity Max
             if (Duration < 1) Duration = 1;                                          // Clamp Duration Min
             if (Duration > 10 && Duration != 100 && Duration != 300) Duration = 10; //Clamp Duration Max
+            if (modifier != CooldownModifier.Miliseconds && modifier != CooldownModifier.Seconds && modifier != CooldownModifier.Minutes && modifier != CooldownModifier.Hours) modifier = CooldownModifier.Seconds;
             return true;
         }
         public bool IsEnabled()
@@ -162,7 +185,7 @@ namespace WoLightning.Util.Types
         }
         public void startCooldown(Plugin Plugin)
         {
-            double CooldownTime = Cooldown * (int)modifier + Duration * 100 + 750;
+            double CooldownTime = Cooldown * (int)modifier + Duration * 100 + 1000;
             //Plugin.Log("CD " + Cooldown + " * " + (int)modifier + " + " + Duration + " * 100 + 500 = " + CooldownTime);
 
             CooldownTimer.Start(CooldownTime);

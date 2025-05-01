@@ -137,6 +137,7 @@ namespace WoLightning.Util.Types
                         if (Rules.Contains((RuleBase)property.GetValue(this, null)!)) continue;
                         RuleBase r = (RuleBase)property.GetValue(this, null)!;
                         Rules.Add(r);
+                        r.ShockOptions.Validate();
                         r.Triggered += Plugin.ClientPishock.SendRequest;
                         //r.Triggered += Plugin.ClientOpenShock.sendRequest; Todo: implement
                     }

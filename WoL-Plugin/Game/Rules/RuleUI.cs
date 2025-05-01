@@ -146,7 +146,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             ImGui.SameLine();
             int modifierIndex = modifierArray.IndexOf(Rule.ShockOptions.modifier);
             ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 4f - 30);
-            if (ImGui.Combo("##TimeModifier", ref modifierIndex, ["Miliseconds", "Seconds", "Minutes", "Hours"], 4, 4))
+            if (ImGui.Combo("##TimeModifier" + Rule.Name, ref modifierIndex, ["Miliseconds", "Seconds", "Minutes", "Hours"], 4, 4))
             {
                 Rule.ShockOptions.modifier = modifierArray[modifierIndex];
                 changed = true;
