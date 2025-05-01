@@ -48,7 +48,7 @@ namespace WoLightning.WoL_Plugin.Clients
             if (Client.State == WebSocketState.Open) return;
             try
             {
-                Plugin.Log($"[WebSocket] Connecting to {Uri}...");
+                Plugin.Log($"[WebSocket] Connecting to {Uri.ToString().Substring(0,20)}...");
                 await Client.ConnectAsync(Uri, CancellationToken.None);
                 Plugin.Log($"[WebSocket] Successfully Connected!");
                 FailedAttempts = 0;

@@ -58,7 +58,7 @@ namespace WoLightning.Configurations
                 {
                     string p = File.ReadAllText(file);
                     Preset tPreset;
-                    plugin.Log("Deserialzing " + file);
+                    //plugin.Log("Deserialzing " + file);
                     try
                     {
                         tPreset = DeserializePreset(p);
