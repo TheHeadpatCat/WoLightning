@@ -222,9 +222,7 @@ namespace WoLightning.Clients.Pishock
                         Tpart = Tpart.Replace("]", "");
 
                         string name = Tpart.Split("\"")[1];
-                        Plugin.Log(name);
                         string[] shareIds = Tpart.Split(":")[1].Split(",");
-                        Plugin.Log(shareIds);
                         foreach(string shareid in shareIds)
                         {
                             ShareIds.Add(shareid);
