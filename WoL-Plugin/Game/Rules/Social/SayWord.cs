@@ -69,7 +69,6 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     {
                         if (bannedWord.Compare(word))
                         {
-                            Plugin.Log("Found");
                             Trigger($"You have said {bannedWord}!");
                         }
                     }
