@@ -326,11 +326,32 @@ namespace WoLightning.Clients.Pishock
             }
             #endregion
 
-            string sendString = CommandPublish.Generate(Options, Plugin, UserID);
-            Plugin.Log("Sending Pishock Request: ");
-            Plugin.Log(sendString);
-            await Client.Send(sendString);
+            if(Options.WarningMode != WarningMode.None)
+            {
+                ShockOptions warningOptions = new ShockOptions(Options);
+                warningOptions.OpMode = OpMode.Vibrate;
+                warningOptions.Intensity = 55;
+                warningOptions.Duration = 1;
+                string sendWarning = CommandPublish.Generate(warningOptions, Plugin, UserID, true);
+                await Client.Send(sendWarning);
+                Plugin.Log("Warning sent!");
+                int delay;
+                switch (Options.WarningMode)
+                {
+                    case WarningMode.Short: delay = new Random().Next(3000, 5000); break;
+                    case WarningMode.Medium: delay = new Random().Next(7000, 12000); break;
+                    case WarningMode.Long: delay = new Random().Next(12000, 27000); break;
+                    default: delay = 2000; break;
+                }
+                await Task.Delay(delay);
+            }
+
+            string sendCommand = CommandPublish.Generate(Options, Plugin, UserID, null);
+            await Client.Send(sendCommand);
+            Plugin.Log("Command sent!");
         }
+
+
 
 
     }

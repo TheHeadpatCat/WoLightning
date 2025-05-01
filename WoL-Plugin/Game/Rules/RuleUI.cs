@@ -124,7 +124,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             ImGui.SameLine();
             ImGui.BeginGroup();
             ImGui.Text("    Intensity");
-            ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 1.85f - 30);
+            ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 2.50f - 30);
             int Intensity = Rule.ShockOptions.Intensity;
             if (ImGui.SliderInt("##IntensitySelect" + Rule.Name, ref Intensity, 1, 100))
             {
@@ -132,6 +132,28 @@ namespace WoLightning.WoL_Plugin.Game.Rules
                 changed = true;
             }
             ImGui.EndGroup();
+
+            ImGui.SameLine();
+            ImGui.BeginGroup();
+            ImGui.Text("    Warning Mode");
+            ImGui.SameLine();
+            ImGui.TextDisabled("(?)");
+            if (ImGui.IsItemHovered()) { 
+                ImGui.SetTooltip("Sends out a 1 second Vibration before the actual command." +
+                "\nHigher settings have a longer waiting time between the Warning and Command." +
+                "\nShort is between 1-3 seconds." +
+                "\nMedium is between 5-10 seconds." +
+                "\nLong is between 10-25 seconds."); 
+            }
+            ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 5 - 30);
+            int warning = (int)Rule.ShockOptions.WarningMode;
+            if (ImGui.Combo("##WarningMode" + Rule.Name, ref warning, ["None", "Short", "Medium", "Long"],4))
+            {
+                Rule.ShockOptions.WarningMode = (WarningMode)warning;
+                changed = true;
+            }
+            ImGui.EndGroup();
+
         }
 
         protected void DrawOptionsCooldown(ref bool changed)

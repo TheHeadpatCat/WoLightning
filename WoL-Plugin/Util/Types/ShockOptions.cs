@@ -100,6 +100,25 @@ namespace WoLightning.Util.Types
             CooldownTimer = cooldownTimer;
             this.hasBeenReset = hasBeenReset;
         }
+        public ShockOptions(ShockOptions other)
+        {
+            this.isEnabled = other.isEnabled;
+            ShockersPishock = other.ShockersPishock;
+            OpMode = other.OpMode;
+            Intensity = other.Intensity;
+            Duration = other.Duration;
+            Cooldown = other.Cooldown;
+            this.modifier = other.modifier;
+            WarningMode = other.WarningMode;
+            this.isIntensityRandomized = other.isIntensityRandomized;
+            RandomizeIntensityMin = other.RandomizeIntensityMin;
+            this.isDurationRandomized = other.isDurationRandomized;
+            RandomizeDurationMin = other.RandomizeDurationMin;
+            this.isModalOpen = other.isModalOpen;
+            this.isOptionsOpen = other.isOptionsOpen;
+            CooldownTimer = other.CooldownTimer;
+            this.hasBeenReset = other.hasBeenReset;
+        }
 
         public bool Validate()
         {

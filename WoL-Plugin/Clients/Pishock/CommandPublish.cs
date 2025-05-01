@@ -11,8 +11,7 @@ namespace WoLightning.WoL_Plugin.Clients.Pishock
 {
     internal static class CommandPublish
     {
-
-        public static string Generate(ShockOptions Options, Plugin Plugin, string UserId)
+        public static string Generate(ShockOptions Options, Plugin Plugin, string UserId, bool? isWarning)
         {
             List<Command> commands = new();
             List<string> targets = new();
@@ -21,19 +20,12 @@ namespace WoLightning.WoL_Plugin.Clients.Pishock
             foreach (var shocker in Options.ShockersPishock)
             {
                 Plugin.Log(shocker);
-                var cmd =  new Command(shocker, Options, UserId);
+                var cmd =  new Command(shocker, Options, UserId, isWarning);
                 string target;
                 if (shocker.isPersonal) target = "c" + shocker.clientId + "-ops";
                 else target = "c" + shocker.clientId + "-sops-" + shocker.shareCode;
-                Plugin.Log(cmd);
                 commands.Add(cmd);
                 targets.Add(target);
-            }
-
-            Plugin.Log("Commands:");
-            foreach (var cmd in commands)
-            {
-                Plugin.Log(cmd);
             }
 
             return JsonSerializer.Serialize(new { Operation = "PUBLISH", PublishCommands = commands.ToArray() });
@@ -47,17 +39,12 @@ namespace WoLightning.WoL_Plugin.Clients.Pishock
         // Using actual var names from Pishock API
         public string Target { get; set; } //Client ID
         public object Body { get; set; } // All targeted Shockers
-        public Command(ShockerPishock Shocker, ShockOptions Options, string UserId)
+        public Command(ShockerPishock Shocker, ShockOptions Options, string UserId, bool? isWarning)
         {
-            string type;
-            if (Shocker.isPersonal)
-            {
-                this.Target = "c" + Shocker.clientId + "-ops";
-            }
-            else
-            {
-                this.Target = "c" + Shocker.clientId + "-sops-" + Shocker.shareCode;
-            }
+            if (Shocker.isPersonal) this.Target = "c" + Shocker.clientId + "-ops";
+            else this.Target = "c" + Shocker.clientId + "-sops-" + Shocker.shareCode;
+
+            bool isWarningT = isWarning != null && (bool)isWarning;
 
             this.Body = new
             {
@@ -69,6 +56,7 @@ namespace WoLightning.WoL_Plugin.Clients.Pishock
                 l = new
                 {
                         u = int.Parse(UserId),
+                        w = isWarningT,
                         ty = "api",
                         o = "WoLightning"
                     }
