@@ -148,7 +148,7 @@ namespace WoLightning.Clients.Pishock
         {
             string username = Plugin.Authentification.PishockName, apikey = Plugin.Authentification.PishockApiKey;
 
-            Plugin.Log("Requestion Pishock Shocker Information...");
+            Plugin.Log("Requesting Pishock Shocker Information...");
 
             HttpClient HttpClient = new();
             var Result = await HttpClient.GetAsync($"https://ps.pishock.com/PiShock/GetUserDevices?UserId={UserID}&Token={apikey}&api=true");
@@ -158,6 +158,8 @@ namespace WoLightning.Clients.Pishock
                 Status = ConnectionStatusPishock.Unavailable;
                 return;
             }
+
+            Plugin.Log(" -> Received Shocker Information!");
 
             using (var reader = new StreamReader(Result.Content.ReadAsStream()))
             {
@@ -170,7 +172,10 @@ namespace WoLightning.Clients.Pishock
                     {
                         foreach (var shocker in response.shockers)
                         {
-                            Plugin.Authentification.PishockShockers.Add(new ShockerPishock(shocker.name, response.clientId, shocker.shockerId));
+                            ShockerPishock t = new ShockerPishock(shocker.name, response.clientId, shocker.shockerId);
+                            Plugin.Log(t);
+                            Plugin.Authentification.PishockShockers.Add(t);
+                            
                         }
                     }
                 }
@@ -185,7 +190,7 @@ namespace WoLightning.Clients.Pishock
         {
             string username = Plugin.Authentification.PishockName, apikey = Plugin.Authentification.PishockApiKey;
 
-            Plugin.Log("Requestion Pishock ShareCode Information...");
+            Plugin.Log("Requesting Pishock ShareID Information...");
 
             HttpClient HttpClient = new();
             var Result = await HttpClient.GetAsync($"https://ps.pishock.com/PiShock/GetShareCodesByOwner?UserId={UserID}&Token={apikey}&api=true");
@@ -195,17 +200,19 @@ namespace WoLightning.Clients.Pishock
                 Status = ConnectionStatusPishock.Unavailable;
                 return;
             }
+            Plugin.Log(" -> Received ShareID Information!");
 
-            List<string> ShareCodes = new List<string>();
+            List<string> ShareIds = new List<string>();
 
             using (var reader = new StreamReader(Result.Content.ReadAsStream()))
             {
                 try
                 {
                     string message = reader.ReadToEnd();
+                    Plugin.Log(message);
                     if (message == null || message.Length == 0) return;
                     string[] parts = message.Split("],");
-                    if (parts.Length <= 1) return;
+                    if (parts.Length < 1) return;
                     foreach(string part in parts)
                     {
                         string Tpart = part;
@@ -215,11 +222,13 @@ namespace WoLightning.Clients.Pishock
                         Tpart = Tpart.Replace("]", "");
 
                         string name = Tpart.Split("\"")[1];
-
-                        string[] shareCodes = Tpart.Split(":")[1].Split(",");
-                        foreach(string shareCode in shareCodes)
+                        Plugin.Log(name);
+                        string[] shareIds = Tpart.Split(":")[1].Split(",");
+                        Plugin.Log(shareIds);
+                        foreach(string shareid in shareIds)
                         {
-                            ShareCodes.Add(shareCode);
+                            ShareIds.Add(shareid);
+                            Plugin.Log("Shareid: " +  shareid);
                         }
                     }
                 }
@@ -230,14 +239,14 @@ namespace WoLightning.Clients.Pishock
                 }
             }
             // Got All Sharecodes - request Information now
-            if (ShareCodes.Count == 0) return;
+            if (ShareIds.Count == 0) return;
 
             Plugin.Log("Sharecodes received. Requesting Shocker Information...");
 
             string URL = $"https://ps.pishock.com/PiShock/GetShockersByShareIds?UserId={UserID}&Token={apikey}&api=true";
-            foreach(string shareCode in ShareCodes)
+            foreach(string shareId in ShareIds)
             {
-                URL += $"&shareIds={shareCode}";
+                URL += $"&shareIds={shareId}";
             }
 
             Result = await HttpClient.GetAsync(URL);
@@ -269,7 +278,7 @@ namespace WoLightning.Clients.Pishock
                         foreach (SharedResponse response in test)
                         {
                             Plugin.Log(response);
-                            if(name.Equals(Plugin.Authentification.PishockName))continue;
+                            if(name.ToLower().Equals(Plugin.Authentification.PishockName.ToLower()))continue;
                             ShockerPishock shocker = new ShockerPishock(response.shockerName, response.clientId, response.shockerId);
                             shocker.isPersonal = false;
                             shocker.username = name;

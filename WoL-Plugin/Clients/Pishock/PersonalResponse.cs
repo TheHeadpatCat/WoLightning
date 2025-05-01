@@ -67,7 +67,7 @@ namespace WoLightning.WoL_Plugin.Clients.Pishock
             this.shareCode = shareCode;
         }
 
-        public override string ToString() { return "[SharedResponse] ShockerName: " + shockerName + " shareCode: " + shareCode + " shockerId: " + shockerId + " clientId: " + clientId + " canVibrate: " + canVibrate; }
+        public override string ToString() { return "[SharedResponse] ShockerName: " + shockerName + " shareCode: " + shareCode.Substring(0,3) + "[...] shockerId: " + shockerId + " clientId: " + clientId + " canVibrate: " + canVibrate; }
     }
 
     [Serializable]
