@@ -14,10 +14,10 @@ namespace WoLightning.Util.Types
 
     public enum CooldownModifier
     {
-        Miliseconds = 1000,
-        Seconds = 10000,
-        Minutes = 600000,
-        Hours = 36000000,
+        Miliseconds = 100,
+        Seconds = 1000,
+        Minutes = 60000,
+        Hours = 3600000,
     }
 
     public enum WarningMode
@@ -41,7 +41,7 @@ namespace WoLightning.Util.Types
         public OpMode OpMode { get; set; } = OpMode.Shock;
         public int Intensity { get; set; } = 1;
         public int Duration { get; set; } = 1;
-        public int Cooldown { get; set; } = 0;
+        public double Cooldown { get; set; } = 0;
         public CooldownModifier modifier { get; set; } = CooldownModifier.Seconds;
 
         public WarningMode WarningMode { get; set; } = WarningMode.None;
@@ -63,7 +63,6 @@ namespace WoLightning.Util.Types
         public ShockOptions()
         {
             CooldownTimer.AutoReset = false;
-            CooldownTimer.Stop();
         }
         public ShockOptions(int Mode, int Intensity, int Duration)
         {
@@ -71,7 +70,6 @@ namespace WoLightning.Util.Types
             this.Intensity = Intensity;
             this.Duration = Duration;
             CooldownTimer.AutoReset = false;
-            CooldownTimer.Stop();
         }
         public ShockOptions(int[] Settings)
         {
@@ -79,7 +77,6 @@ namespace WoLightning.Util.Types
             this.Intensity = Settings[1];
             this.Duration = Settings[2];
             CooldownTimer.AutoReset = false;
-            CooldownTimer.Stop();
         }
 
         public bool Validate()
@@ -158,15 +155,17 @@ namespace WoLightning.Util.Types
         {
             return CooldownTimer.TimeLeft > 0;
         }
-        public void startCooldown()
+
+        public double cooldownLeft()
         {
-            if (Cooldown <= 0) return; // dont start a cooldown if the trigger doesnt even use them
+            return CooldownTimer.TimeLeftSeconds;
+        }
+        public void startCooldown(Plugin Plugin)
+        {
+            double CooldownTime = Cooldown * (int)modifier + Duration * 100 + 750;
+            //Plugin.Log("CD " + Cooldown + " * " + (int)modifier + " + " + Duration + " * 100 + 500 = " + CooldownTime);
 
-            CooldownTimer.Stop(); // failsafe for false positives
-
-            if (Duration > 10) CooldownTimer.Interval = Cooldown * 1000 * (int)modifier + 1;
-            else CooldownTimer.Interval = Cooldown * 1000 + Duration * 1000 * (int)modifier + 1; // the +1 at the end is a safety net
-            CooldownTimer.Start();
+            CooldownTimer.Start(CooldownTime);
         }
         #endregion
 

@@ -136,7 +136,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
         protected void DrawOptionsCooldown(ref bool changed)
         {
-            int Cooldown = Rule.ShockOptions.Cooldown;
+            int Cooldown = (int)Rule.ShockOptions.Cooldown;
             ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 1.25f - 100);
             if (ImGui.SliderInt("##CooldownSelect" + Rule.Name, ref Cooldown, 0, 300))
             {

@@ -18,12 +18,20 @@ namespace WoLightning.Util
         }
 
         public double TimeLeft => (m_dueTime - DateTime.Now).TotalMilliseconds;
+        public int TimeLeftSeconds => (m_dueTime - DateTime.Now).Seconds;
+
         public new void Start()
         {
             m_dueTime = DateTime.Now.AddMilliseconds(Interval);
             base.Start();
         }
 
+        public void Start(double milliseconds)
+        {
+            Interval = milliseconds;
+            m_dueTime = DateTime.Now.AddMilliseconds(Interval);
+            base.Start();
+        }
 
 
         // todo - finish
@@ -44,7 +52,10 @@ namespace WoLightning.Util
         private void ElapsedAction(object? sender, ElapsedEventArgs? e)
         {
             if (AutoReset)
+            {
                 m_dueTime = DateTime.Now.AddMilliseconds(Interval);
+            }
+            else Stop();
         }
 
         public void Refresh()

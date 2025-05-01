@@ -83,6 +83,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
         virtual public void Trigger(string Text, Player? source, int[]? overrideOptions, bool? noNotification)
         {
+            Plugin.Log(ShockOptions.cooldownLeft());
             if (ShockOptions.hasCooldown() || !IsRunning || Plugin.isFailsafeActive) return;
             if (source != null && !Plugin.Configuration.ActivePreset.isPlayerAllowedToTrigger(source)) return;
 
@@ -91,7 +92,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
             if ((noNotification == null || noNotification == false) && Plugin.Configuration.ActivePreset.showTriggerNotifs) Plugin.sendNotif(Text);
             
-            ShockOptions.startCooldown();
+            ShockOptions.startCooldown(Plugin);
+            
             //if(Plugin.Configuration.ActivePreset.showCooldownNotifs && ShockOptions.Cooldown > 0) 
         }
 
