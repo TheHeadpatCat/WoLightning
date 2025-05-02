@@ -10,6 +10,8 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using WoLightning.Util.Types;
+using WoLightning.WoL_Plugin.Clients;
+using WoLightning.WoL_Plugin.Clients.OpenShock;
 using WoLightning.WoL_Plugin.Clients.Pishock;
 
 namespace WoLightning.Configurations
@@ -27,20 +29,20 @@ namespace WoLightning.Configurations
         public bool acceptedEula { get; set; } = false;
         public string ServerKey { get; set; } = string.Empty; // TODO: Move to own .json file to lower chance of loss
         private string Hash { get; set; }
+        public string DevKey { get; set; } = string.Empty;
 
 
         // Pishock things
         public string PishockName { get; set; } = string.Empty;
         public string PishockApiKey { get; set; } = string.Empty;
-        public string PishockShareCode { get; set; } = string.Empty;
         [JsonIgnore] public List<ShockerPishock> PishockShockers { get; set; } = new();
 
         // OpenShock things
-        public string OpenShockURL { get; set; } = "";
+        public string OpenShockURL { get; set; } = "https://api.openshock.app";
         public string OpenShockApiKey { get; set; } = string.Empty;
-        //public List<ShockerOpenShock> OpenShockShockers { get; set; } = [];
+        [JsonIgnore] public List<ShockerOpenShock> OpenShockShockers { get; set; } = new();
 
-        public string DevKey { get; set; } = string.Empty;
+        
 
 
         public Authentification() { }
@@ -110,6 +112,7 @@ namespace WoLightning.Configurations
 
         public void Save()
         {
+            if (OpenShockURL.Length < 3) OpenShockURL = "https://api.openshock.app";
             File.WriteAllText(ConfigurationDirectoryPath + "Authentification.json", SerializeAuthentification(this));
         }
         public void Dispose()
@@ -133,7 +136,15 @@ namespace WoLightning.Configurations
 
         public int GetShockerCount()
         {
-            return PishockShockers.Count;
+            return PishockShockers.Count + OpenShockShockers.Count;
+        }
+
+        public List<ShockerBase> GetShockers()
+        {
+            List<ShockerBase> shockers = new();
+            shockers.AddRange(PishockShockers);
+            shockers.AddRange(OpenShockShockers);
+            return shockers;
         }
 
     }

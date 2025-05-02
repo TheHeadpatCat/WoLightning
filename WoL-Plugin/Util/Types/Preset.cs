@@ -139,7 +139,7 @@ namespace WoLightning.Util.Types
                         Rules.Add(r);
                         r.ShockOptions.Validate();
                         r.Triggered += Plugin.ClientPishock.SendRequest;
-                        //r.Triggered += Plugin.ClientOpenShock.sendRequest; Todo: implement
+                        r.Triggered += Plugin.ClientOpenShock.SendRequest;
                     }
                     catch (Exception ex)
                     {

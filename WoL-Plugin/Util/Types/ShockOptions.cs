@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using WoLightning.WoL_Plugin.Clients;
+using WoLightning.WoL_Plugin.Clients.OpenShock;
 using WoLightning.WoL_Plugin.Clients.Pishock;
 
 namespace WoLightning.Util.Types
@@ -37,7 +38,7 @@ namespace WoLightning.Util.Types
         public bool isEnabled { get; set; } = false;
 
         public List<ShockerPishock> ShockersPishock { get; set; } = new();
-        //public List<ShockerBase> Shockers { get; set; } = new(); // List of all Shockers to execute on
+        public List<ShockerOpenShock> ShockersOpenShock { get; set; } = new();
 
         public OpMode OpMode { get; set; } = OpMode.Shock;
         public int Intensity { get; set; } = 1;
@@ -165,6 +166,38 @@ namespace WoLightning.Util.Types
                 default: return "e";
 
             }
+        }
+
+        public string getOpModeOpenShock()
+        {
+            switch (OpMode)
+            {
+                case OpMode.Shock: return "shock";
+                case OpMode.Vibrate: return "vibrate";
+                case OpMode.Beep: return "beep";
+                default: return "unknown";
+
+            }
+        }
+
+        public int getShockerCount()
+        {
+            return ShockersPishock.Count + ShockersOpenShock.Count;
+        }
+
+        public List<ShockerBase> GetShockers()
+        {
+            List<ShockerBase> shockers = new();
+            shockers.AddRange(ShockersPishock);
+            shockers.AddRange(ShockersOpenShock);
+            return shockers;
+        }
+
+        public int getDurationOpenShock()
+        {
+            int output = Duration;
+            if(output > 100) return output;
+            return output * 1000;
         }
 
         public string durationString()

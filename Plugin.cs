@@ -20,8 +20,6 @@ using WoLightning.Game;
 using WoLightning.Util;
 using WoLightning.Util.Types;
 using WoLightning.Windows;
-using WoLightning.WoL_Plugin.Clients;
-using WoLightning.WoL_Plugin.Clients.Pishock;
 using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning;
@@ -264,7 +262,7 @@ public sealed class Plugin : IDalamudPlugin
 
             //ClientWebserver.Connect();
             ClientPishock.Setup();
-            //ClientOpenShock.createHttpClient();
+            ClientOpenShock.Setup();
 
             EmoteReaderHooks = new EmoteReaderHooks(this);
 
@@ -303,9 +301,13 @@ public sealed class Plugin : IDalamudPlugin
 
         EmoteReaderHooks?.Dispose();
         ClientWebserver?.Dispose();
+        ClientPishock?.Dispose();
+        ClientOpenShock?.Dispose();
 
         Configuration?.Dispose();
         Authentification?.Dispose();
+
+
 
         CommandManager.RemoveHandler(CommandName);
         CommandManager.RemoveHandler(CommandNameAlias);

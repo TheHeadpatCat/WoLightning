@@ -61,12 +61,7 @@ namespace WoLightning.Clients.Pishock
 
         public void Test()
         {
-            //09:40:39.681 | VRB | [WoLightning] [SharedResponse] ShockerName: Hurty shareCode: 29D316F52E1 shockerId: 7433 clientId: 5386 canVibrate: True
-
-            string[] target = ["c5386-sops-29D316F52E1"];
-
-            string sendString = System.Text.Json.JsonSerializer.Serialize(new { Operation = "UNSUBSCRIBE", Targets = target });
-            Client.Send(sendString);
+            
         }
 
         public async Task CreateSocket()
@@ -167,7 +162,7 @@ namespace WoLightning.Clients.Pishock
                 {
                     string message = reader.ReadToEnd();
                     if (message == null || message.Length == 0) return;
-                    PersonalResponse[] test = JsonConvert.DeserializeObject<PersonalResponse[]>(message)!;
+                    Response[] test = JsonConvert.DeserializeObject<Response[]>(message)!;
                     foreach (var response in test)
                     {
                         foreach (var shocker in response.shockers)

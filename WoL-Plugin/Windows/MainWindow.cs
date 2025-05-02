@@ -7,7 +7,9 @@ using WoLightning.Clients.Webserver;
 using WoLightning.Util;
 using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Clients;
+using WoLightning.WoL_Plugin.Clients.OpenShock;
 using WoLightning.WoL_Plugin.Clients.Pishock;
+using static WoLightning.Clients.OpenShock.ClientOpenShock;
 using static WoLightning.Clients.Pishock.ClientPishock;
 
 namespace WoLightning.Windows;
@@ -254,7 +256,7 @@ public class MainWindow : Window, IDisposable
         if (ImGui.InputTextWithHint("##PishockAPIKey", "API Key from \"Account\"", ref PishockApiField, 64, ImGuiInputTextFlags.Password))
             Plugin.Authentification.PishockApiKey = PishockApiField;
 
-        if (ImGui.Button("Save & Connect", new Vector2(ImGui.GetWindowSize().X - 15, 25)))
+        if (ImGui.Button("Save & Connect##SavePishock", new Vector2(ImGui.GetWindowSize().X - 15, 25)))
         {
             Plugin.Authentification.Save();
             Plugin.ClientPishock.Setup();
@@ -305,7 +307,52 @@ public class MainWindow : Window, IDisposable
     }
     private async void DrawOpenShockAccount()
     {
-        ImGui.Text("Coming Soon! (i hope)");
+        ImGui.SetNextItemWidth(WindowWidth - 15);
+        //if (Plugin.Authentification.isDisallowed) ImGui.BeginDisabled();
+        var OpenShockURLField = Plugin.Authentification.OpenShockURL;
+        if (ImGui.InputTextWithHint("##OpenShockUrl", "OpenShock URL", ref OpenShockURLField, 64))
+            Plugin.Authentification.OpenShockURL = OpenShockURLField;
+        ImGui.SetNextItemWidth(WindowWidth - 15);
+        var OpenShockApiField = Plugin.Authentification.OpenShockApiKey;
+        if (ImGui.InputTextWithHint("##OpenShockApiField", "API Key from \"Account\"", ref OpenShockApiField, 96, ImGuiInputTextFlags.Password))
+            Plugin.Authentification.OpenShockApiKey = OpenShockApiField;
+
+        if (ImGui.Button("Save & Connect##SaveOpenShock", new Vector2(ImGui.GetWindowSize().X - 15, 25)))
+        {
+            Plugin.Authentification.Save();
+            Plugin.ClientOpenShock.Setup();
+        }
+
+        ImGui.Spacing();
+        ImGui.Separator();
+        ImGui.Spacing();
+
+        if (Plugin.ClientOpenShock.Status == ConnectionStatusOpenShock.ConnectedNoInfo || Plugin.ClientOpenShock.Status == ConnectionStatusOpenShock.Connecting)
+        {
+            ImGui.Text("Getting Shocker Information...");
+            return;
+        }
+
+        int x = 0;
+        ImGui.Text("Available Shockers:");
+        while (Plugin.Authentification.OpenShockShockers.Count > x)
+        {
+            ShockerOpenShock target = Plugin.Authentification.OpenShockShockers[x];
+            string tName = target.name;
+
+
+            if (ImGui.Button("Test##TestShocker" + target.getInternalId()))
+            {
+                ShockOptions temp = new ShockOptions(1, 35, 1);
+                temp.ShockersOpenShock.Add(target);
+                Plugin.ClientOpenShock.SendRequest(temp);
+            }
+            ImGui.SameLine();
+            if (target.isPaused) ImGui.TextColored(ColorGray, "[Paused] " + target.name);
+            else ImGui.TextColored(ColorGreen, target.name);
+            ImGui.Separator();
+            x++;
+        }
     }
 
     private async void DrawEulaWindow()

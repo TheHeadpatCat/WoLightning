@@ -9,7 +9,7 @@ using System.Xml.Linq;
 namespace WoLightning.WoL_Plugin.Clients.Pishock
 {
     [Serializable]
-    internal class PersonalResponse
+    internal class Response
     {
         public int clientId {  get; set; }
         public string name { get; set; }
@@ -18,7 +18,7 @@ namespace WoLightning.WoL_Plugin.Clients.Pishock
         public ResponseShocker[] shockers { get; set; }
 
         [JsonConstructor]
-        public PersonalResponse(int clientId, string name, int userId, string username, ResponseShocker[] shockers)
+        public Response(int clientId, string name, int userId, string username, ResponseShocker[] shockers)
         {
             this.clientId = clientId;
             this.name = name;
