@@ -35,8 +35,8 @@ public sealed class Plugin : IDalamudPlugin
     private const string Failsafe = "/red";
     private const string OpenConfigFolder = "/wolfolder";
 
-    public const int currentVersion = 515;
-    public const String currentVersionString = "0.5.1.5";
+    public const int currentVersion = 520;
+    public const String currentVersionString = "0.5.2.0";
     public const int configurationVersion = 501;
     public const string randomKey = "Currently Unused";
 
