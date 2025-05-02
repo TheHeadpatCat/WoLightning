@@ -86,19 +86,12 @@ public class MainWindow : Window, IDisposable
 
     private async void DrawShockerAPI()
     {
+        ImGui.BeginGroup();
         ImGui.Text("Pishock API");
 
         ImGui.SameLine();
-        ImGui.TextDisabled(" (?)");
+        ImGui.TextDisabled(" (?)       ");
         if (ImGui.IsItemHovered()) { ImGui.SetTooltip("This is where your Shocks get sent to, if you are using a Pishock Account.\nIf you are not connected to it, you cannot receive shocks."); }
-
-        ImGui.SameLine();
-        ImGui.Text("    | OpenShock API");
-        ImGui.SameLine();
-        ImGui.TextDisabled(" (?)");
-        if (ImGui.IsItemHovered()) { ImGui.SetTooltip("This is the Server that Shocks get sent to if you are using a OpenShock Account.\nIf you are not connected to it, you cannot receive shocks."); }
-
-
         switch (Plugin.ClientPishock.Status)
         {
             case ConnectionStatusPishock.NotStarted:
@@ -120,6 +113,42 @@ public class MainWindow : Window, IDisposable
             case ConnectionStatusPishock.Connected:
                 ImGui.TextColored(ColorGreen, $"Connected!"); break;
         }
+        ImGui.EndGroup();
+
+        ImGui.SameLine();
+
+        ImGui.BeginGroup();
+        ImGui.Text("OpenShock API");
+        ImGui.SameLine();
+        ImGui.TextDisabled(" (?)");
+        if (ImGui.IsItemHovered()) { ImGui.SetTooltip("This is the Server that Shocks get sent to if you are using a OpenShock Account.\nIf you are not connected to it, you cannot receive shocks."); }
+
+        switch (Plugin.ClientOpenShock.Status)
+        {
+            case ConnectionStatusOpenShock.NotStarted:
+                ImGui.TextColored(ColorGray, "No Userdata."); break;
+
+            case ConnectionStatusOpenShock.Connecting:
+                ImGui.TextColored(ColorGray, "Connecting..."); break;
+            case ConnectionStatusOpenShock.ConnectedNoInfo:
+                ImGui.TextColored(ColorGray, "Getting Information..."); break;
+
+
+            case ConnectionStatusOpenShock.InvalidUserdata:
+                ImGui.TextColored(ColorRed, "Invalid Userdata!"); break;
+            case ConnectionStatusOpenShock.Unavailable:
+                ImGui.TextColored(ColorRed, "Unable to Connect!"); break;
+            case ConnectionStatusOpenShock.FatalError:
+                ImGui.TextColored(ColorRed, "Fatal Error!"); break;
+
+            case ConnectionStatusOpenShock.Connected:
+                ImGui.TextColored(ColorGreen, $"Connected!"); break;
+        }
+
+        ImGui.EndGroup();
+        
+
+
     }
     private async void DrawWebserverAPI()
     {
