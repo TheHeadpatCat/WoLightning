@@ -4,10 +4,12 @@ using Dalamud.Game.Text;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using WoLightning.Configurations;
 using WoLightning.Util.Types;
+using WoLightning.WoL_Plugin.Game.Rules;
 
 
 
@@ -31,6 +33,13 @@ public class ConfigWindow : Window, IDisposable
 
     private Player? SelectedPlayer;
     private String SelectedPlayerName = "None";
+
+    private List<RuleBase> RulesGeneral = new();
+    private List<RuleBase> RulesMaster = new();
+    private List<RuleBase> RulesMisc = new();
+    private List<RuleBase> RulesPVE = new();
+    private List<RuleBase> RulesPVP = new();
+    private List<RuleBase> RulesSocial = new();
 
     public ConfigWindow(Plugin plugin) : base($"Warrior of Lightning Configuration - v{Plugin.currentVersionString}##configmain")
     {
@@ -72,6 +81,26 @@ public class ConfigWindow : Window, IDisposable
         ActivePreset = Configuration.ActivePreset;
         ActivePresetIndex = Configuration.ActivePresetIndex;
         Configuration.PresetChanged += onPresetChanged;
+
+        RulesGeneral.Clear();
+        RulesMaster.Clear();
+        RulesMisc.Clear();
+        RulesPVE.Clear();
+        RulesPVP.Clear();
+        RulesSocial.Clear();
+        foreach (RuleBase Rule in ActivePreset.Rules)
+        {
+            switch (Rule.Category)
+            {
+                case RuleCategory.General: RulesGeneral.Add(Rule); break;
+                case RuleCategory.Master: RulesMaster.Add(Rule); break;
+                case RuleCategory.Misc: RulesMisc.Add(Rule); break;
+                case RuleCategory.PVE: RulesPVE.Add(Rule); break;
+                case RuleCategory.PVP: RulesPVP.Add(Rule); break;
+                case RuleCategory.Social: RulesSocial.Add(Rule); break;
+            }
+        }
+
     }
 
     public override void PreDraw()
@@ -258,13 +287,10 @@ public class ConfigWindow : Window, IDisposable
     {
         if (ImGui.BeginTabItem("Social"))
         {
-            ActivePreset.DoEmote.Draw();
-            ActivePreset.DoEmoteTo.Draw();
-            ActivePreset.GetEmotedAt.Draw();
-            ActivePreset.SayWord.Draw();
-            ActivePreset.DontSayWord.Draw();
-            ActivePreset.LoseDeathroll.Draw();
-
+            foreach (var Rule in RulesSocial)
+            {
+                Rule.Draw();
+            }
             ImGui.EndTabItem();
         }
     }
@@ -273,13 +299,10 @@ public class ConfigWindow : Window, IDisposable
     {
         if (ImGui.BeginTabItem("Combat"))
         {
-            ActivePreset.Die.Draw();
-            ActivePreset.FailMechanic.Draw();
-            //ActivePreset.HealPlayer.Draw();
-            ActivePreset.PartyMemberDies.Draw();
-            ActivePreset.PartyWipes.Draw();
-            ActivePreset.TakeDamage.Draw();
-            //ActivePreset.UseSkill.Draw();
+            foreach (var Rule in RulesPVE)
+            {
+                Rule.Draw();
+            }
 
             ImGui.EndTabItem();
         }
@@ -289,7 +312,10 @@ public class ConfigWindow : Window, IDisposable
     {
         if (ImGui.BeginTabItem("PVP"))
         {
-
+            foreach (var Rule in RulesPVP)
+            {
+                Rule.Draw();
+            }
 
             ImGui.EndTabItem();
         }
@@ -299,9 +325,10 @@ public class ConfigWindow : Window, IDisposable
     {
         if (ImGui.BeginTabItem("Misc"))
         {
-            ActivePreset.SitOnFurniture.Draw();
-            ActivePreset.FailCraft.Draw();
-            ActivePreset.FishEscaped.Draw();
+            foreach (var Rule in RulesMisc)
+            {
+                Rule.Draw();
+            }
 
             ImGui.EndTabItem();
         }

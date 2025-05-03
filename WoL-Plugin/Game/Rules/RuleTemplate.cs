@@ -41,14 +41,10 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         If you need any extra variables, you can either add them as public with { get; set; } to make the get saved,
         or have them private with [JsonIgnore] to make sure they do not save.
 
-        Step 5: (This step will soon be obsolete)
-        Once all of this is done, you only need to add your Rule to the Preset.cs file and the ConfigWindow.
+        Step 5: 
+        Once all of this is done, you only need to add your Rule to the Preset.cs file.
         
         Head to Util/Types/Preset and add a property with your new Rule. The format should be obvious from the other ones.
-        Add it in the Initialize() function as well, and pass it the Plugin with .setPlugin()
-        
-        And finally, head over to Windows/ConfigWindow and add ActivePreset.YourRule.Draw() to the correct Category.
-
 
         Once you have done all of this, your Rule should show up in that Category of the Configuration Window ingame.
         Enable it and give it a try if it properly works!
@@ -56,12 +52,10 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 
         */
 
-
-
         override public string Name { get; } = "Do something Wrong"; // Needs to be set.
         override public string Description { get; } = "Triggers whenever you do something that was defined."; // Needs to be set.
         override public string Hint { get; } = "If this is set, a small (?) will appear and show this Text on hover."; // May be removed.
-        override public RuleCategory Category { get; } = RuleCategory.General; // Needs to be set. But doesn't actually do anything yet. (This will be used to place your Rule in the correct Configuration Window Tab)
+        override public RuleCategory Category { get; } = RuleCategory.Misc; // Needs to be set. This will dictate on which Tab of the ConfigWindow your Rule shows up. (General, PvP and Master do not work currently.)
 
         [JsonIgnore] IPlayerCharacter Player; // A Property that should not be saved. In this case, a reference to the Local Player Character, retrieved from Plugin.ClientState.
         public string SomeDataThatNeedsToBeSaved { get; set; } = "Default Data"; // A Property that will be saved. It also has got some default data. Once this data gets changed in anything, the default data is ignored.

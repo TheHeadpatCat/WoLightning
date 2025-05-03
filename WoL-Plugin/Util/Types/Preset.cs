@@ -39,94 +39,34 @@ namespace WoLightning.Util.Types
 
 
         // Social Triggers
-        public DoEmote DoEmote { get; set; }
-        public DoEmoteTo DoEmoteTo { get; set; }
-        public GetEmotedAt GetEmotedAt { get; set; }
-        public SayWord SayWord { get; set; }
-        public DontSayWord DontSayWord { get; set; }
-        public LoseDeathroll LoseDeathroll { get; set; }
+        public DoEmote DoEmote { get; set; } = new();
+        public DoEmoteTo DoEmoteTo { get; set; } = new();
+        public GetEmotedAt GetEmotedAt { get; set; } = new();
+        public SayWord SayWord { get; set; } = new();
+        public DontSayWord DontSayWord { get; set; } = new();
+        public LoseDeathroll LoseDeathroll { get; set; } = new();
 
         // PVE Triggers
-        public Die Die { get; set; }
-        public FailMechanic FailMechanic { get; set; }
+        public Die Die { get; set; } = new();
+        public FailMechanic FailMechanic { get; set; } = new();
         //public HealPlayer HealPlayer { get; set; }
-        public PartyMemberDies PartyMemberDies { get; set; }
-        public PartyWipes PartyWipes { get; set; }
-        public TakeDamage TakeDamage { get; set; }
+        public PartyMemberDies PartyMemberDies { get; set; } = new();
+        public PartyWipes PartyWipes { get; set; } = new();
+        public TakeDamage TakeDamage { get; set; } = new();
         //public UseSkill UseSkill { get; set; }
 
         // PVP Triggers
 
 
         // Misc Triggers
-        public SitOnFurniture SitOnFurniture { get; set; }
-        public FailCraft FailCraft { get; set; }
-        public FishEscaped FishEscaped { get; set; }
-
+        public SitOnFurniture SitOnFurniture { get; set; } = new();
+        public FailCraft FailCraft { get; set; } = new();
+        public FishEscaped FishEscaped { get; set; } = new();
+            
         public void Initialize(Plugin Plugin)
         {
             this.Plugin = Plugin;
             Plugin.Log(3,"Initializing Preset - " + Name);
-
-            // I have not found a better way to do this. I know this is terrible and probably a design issue.
-            // Reflection has its own issues
-
-            // Social
-            DoEmote ??= new(Plugin);
-            DoEmote.setPlugin(Plugin);
-
-            DoEmoteTo ??= new(Plugin);
-            DoEmoteTo.setPlugin(Plugin);
-
-            GetEmotedAt ??= new(Plugin);
-            GetEmotedAt.setPlugin(Plugin);
-
-            SayWord ??= new(Plugin);
-            SayWord.setPlugin(Plugin);
-
-            DontSayWord ??= new(Plugin);
-            DontSayWord.setPlugin(Plugin);
-
-            LoseDeathroll ??= new(Plugin);
-            LoseDeathroll.setPlugin(Plugin);
-
-            // PVE
-
-            Die ??= new(Plugin);
-            Die.setPlugin(Plugin);
-
-            FailMechanic ??= new(Plugin);
-            FailMechanic.setPlugin(Plugin);
-
-            //HealPlayer ??= new(Plugin);
-            //HealPlayer.setPlugin(Plugin);
-
-            PartyMemberDies ??= new(Plugin);
-            PartyMemberDies.setPlugin(Plugin);
-
-            PartyWipes ??= new(Plugin);
-            PartyWipes.setPlugin(Plugin);
-
-            TakeDamage ??= new(Plugin);
-            TakeDamage.setPlugin(Plugin);
-
-            //UseSkill ??= new(Plugin);
-            //UseSkill.setPlugin(Plugin);
-
-            // PVP
-
-
-            // Misc
-
-            SitOnFurniture ??= new(Plugin);
-            SitOnFurniture.setPlugin(Plugin);
-
-            FailCraft ??= new(Plugin);
-            FailCraft.setPlugin(Plugin);
-
-            FishEscaped ??= new(Plugin);
-            FishEscaped.setPlugin(Plugin);
-
 
             foreach (PropertyInfo property in this.GetType().GetProperties())
             {
@@ -136,6 +76,7 @@ namespace WoLightning.Util.Types
                     {
                         if (Rules.Contains((RuleBase)property.GetValue(this, null)!)) continue;
                         RuleBase r = (RuleBase)property.GetValue(this, null)!;
+                        r.setPlugin(Plugin);
                         Rules.Add(r);
                         r.ShockOptions.Validate();
                         r.Triggered += Plugin.ClientPishock.SendRequest;

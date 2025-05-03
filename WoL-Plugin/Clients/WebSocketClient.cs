@@ -83,8 +83,8 @@ namespace WoLightning.WoL_Plugin.Clients
                 {
                     UpholdConnection = false;
                     FailedAttempts = 99;
-                    await Client?.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client closed", CancellationToken.None);
-                    Client?.Dispose();
+                    if(Client.State == WebSocketState.Open) await Client?.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client closed", CancellationToken.None);
+                    Client.Dispose();
                     Client = null;
                 }
 
@@ -103,8 +103,8 @@ namespace WoLightning.WoL_Plugin.Clients
             }
             catch(Exception ex)
             {
-                Plugin.Error(ex.Message);
-                Plugin.Error("Failed  to Setup WebSocket");
+                Plugin.Log(1,ex.Message);
+                Plugin.Log(1,"Failed  to Setup WebSocket");
             }
         }
 
@@ -122,8 +122,8 @@ namespace WoLightning.WoL_Plugin.Clients
                 Receive();
             }
             catch (Exception ex) {
-                Plugin.Error(ex.Message);
-                Plugin.Error("Websocket failed to Connect.\nRetrying in 10 seconds.");
+                Plugin.Log(1, ex.Message);
+                Plugin.Log(1, "Websocket failed to Connect.\nRetrying in 10 seconds.");
                 FailedAttempts++;
                 Task.Delay(10000).Wait();
                 await Connect();
