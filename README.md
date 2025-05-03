@@ -5,8 +5,6 @@
 
 ![Plugin Icon](etc/iconSmall.png)
 
-You have to use the [XIVQuicklauncher](https://goatcorp.github.io/) with Dalamud enabled for this to work.
-
 If any problems or Questions or even suggestions come up, you can send those in our Discord Server!  
 https://discord.gg/hMyWcZyhRa  
 Or if you want to be fancy, open a Issue. That also works.  
@@ -44,6 +42,8 @@ Or if you want to be fancy, open a Issue. That also works.
   
   
 ## Installation:  
+  
+You have to use the [XIVQuicklauncher](https://goatcorp.github.io/) with Dalamud enabled for this to work.  
   
 Ingame, open the Dalamud Settings, navigate to the "Experimental" Tab and scroll down.  
 There you find "Custom Plugin Repositories" - Important do not mix this up with "Dev Plugins" at the top!  
