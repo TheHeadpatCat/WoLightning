@@ -43,8 +43,8 @@ namespace WoLightning.Game
         public NetworkWatcher(Plugin plugin)
         {
             Plugin = plugin;
-            Plugin.Log("NetworkWatchter Constructor Called");
-            Plugin.Log("constructor Finished");
+            Plugin.Log(3,"NetworkWatchter Constructor Called");
+            Plugin.Log(3,"constructor Finished");
             //sittingOnChairTimer.Elapsed += checkSittingOnChair;
         }
 

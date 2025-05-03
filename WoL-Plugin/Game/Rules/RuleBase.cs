@@ -69,12 +69,12 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
         virtual public void Start()
         {
-            Plugin.Log(Name + ".Start() is not Implemented");
+            Plugin.Log(2,Name + ".Start() is not Implemented");
         }
 
         virtual public void Stop()
         {
-            Plugin.Log(Name + ".Stop() is not Implemented");
+            Plugin.Log(2,Name + ".Stop() is not Implemented");
         }
 
         virtual public void Trigger(string Text){Trigger(Text, null, null, null);}

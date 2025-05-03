@@ -81,7 +81,11 @@ namespace WoLightning.WoL_Plugin.Clients
             {
                 if (Client != null)
                 {
-                    Dispose();
+                    UpholdConnection = false;
+                    FailedAttempts = 99;
+                    await Client?.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client closed", CancellationToken.None);
+                    Client?.Dispose();
+                    Client = null;
                 }
 
                 Client = new ClientWebSocket();
@@ -111,9 +115,9 @@ namespace WoLightning.WoL_Plugin.Clients
             if (Client.State == WebSocketState.Open) return;
             try
             {
-                Plugin.Log($"[WebSocket] Connecting to {Uri.ToString().Substring(0,8)}...");
+                Plugin.Log(2,$"[WebSocket] Connecting to {Uri.ToString().Substring(0,8)}...");
                 await Client.ConnectAsync(Uri, CancellationToken.None);
-                Plugin.Log($"[WebSocket] Successfully Connected to {Uri.ToString().Substring(0,8)}!");
+                Plugin.Log(2,$"[WebSocket] Successfully Connected to {Uri.ToString().Substring(0,8)}!");
                 FailedAttempts = 0;
                 Receive();
             }
@@ -132,7 +136,7 @@ namespace WoLightning.WoL_Plugin.Clients
             {
                 if (Client == null || Client.State != WebSocketState.Open)
                 {
-                    Plugin.Log("WebSocket Request was sent, but Client was Disposed - Resetting Connection.");
+                    Plugin.Log(2,"WebSocket Request was sent, but Client was Disposed - Resetting Connection.");
                     await Setup();
                     await Send(message);
                     return;
@@ -151,7 +155,7 @@ namespace WoLightning.WoL_Plugin.Clients
                 if (Client == null || Client.State != WebSocketState.Open) return;
                 WebSocketReceiveResult result = await Client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
                 string receivedMessage = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
-                if(!receivedMessage.Contains("Ping"))Plugin.Log(receivedMessage);
+                if(!receivedMessage.Contains("Ping"))Plugin.Log(3,"Received Message: " + receivedMessage);
                 Received?.Invoke(receivedMessage);
                 if (Client.State == WebSocketState.Open) Receive();
                 else if (UpholdConnection && (Client.State == WebSocketState.CloseReceived || Client.State == WebSocketState.Closed)) return; await Connect();

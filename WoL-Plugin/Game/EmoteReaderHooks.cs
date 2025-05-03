@@ -21,7 +21,7 @@ namespace WoLightning.Game
 
         public bool IsValid = false;
 
-        internal bool log = true;
+        internal bool log = false;
 
         public EmoteReaderHooks(Plugin plugin)
         {
@@ -30,7 +30,7 @@ namespace WoLightning.Game
             {
                 hookEmote = Plugin.GameInteropProvider.HookFromSignature<OnEmoteFuncDelegate>("E8 ?? ?? ?? ?? 48 8D 8B ?? ?? ?? ?? 4C 89 74 24", OnEmoteDetour);
                 hookEmote.Enable();
-                Plugin.Log("Started EmoteReaderHook!");
+                Plugin.Log(3,"Started EmoteReaderHook!");
                 IsValid = true;
             }
             catch (Exception ex)

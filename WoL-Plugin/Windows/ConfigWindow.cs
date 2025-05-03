@@ -48,7 +48,7 @@ public class ConfigWindow : Window, IDisposable
 
     private void onPresetChanged(Preset preset, int index)
     {
-        Plugin.Log("onPresetChaged() - " + index);
+        Plugin.Log(2,"onPresetChaged() - " + index);
         ActivePreset = preset;
         ActivePresetIndex = index;
     }
@@ -65,7 +65,7 @@ public class ConfigWindow : Window, IDisposable
 
     public void SetConfiguration(Configuration? conf)
     {
-        Plugin.Log("SetConfiguration() is called");
+        Plugin.Log(2,"SetConfiguration() is called");
         if (Configuration != null) Configuration.PresetChanged -= onPresetChanged;
         Configuration = conf;
         Configuration!.Save();
@@ -83,8 +83,8 @@ public class ConfigWindow : Window, IDisposable
     {
         if (Configuration == null || ActivePresetIndex == -1)
         {
-            if (Configuration == null) Plugin.Log("Configuration is null");
-            if (ActivePresetIndex == -1) Plugin.Log("Active Preset hasnt been picked");
+            if (Configuration == null) Plugin.Log(2,"Configuration is null");
+            if (ActivePresetIndex == -1) Plugin.Log(2,"Active Preset hasnt been picked");
             return;
         }
 
@@ -122,15 +122,7 @@ public class ConfigWindow : Window, IDisposable
                 }
             }
 
-            /*
-            DrawDefaultTriggerTab();
-            //if (Configuration.ActivePreset.SayBadWord.IsEnabled()) DrawBadWordList();
-            //if (Configuration.ActivePreset.DontSayWord.IsEnabled()) DrawEnforcedWordList();
-            DrawCustomTriggerTab();
-            DrawPermissionsTab();
-            //DrawCommandTab(); todo not implemented
-            */
-            if (Configuration.DebugLevel == DebugLevel.All) DrawDebugTab();
+            if (Configuration.DebugLevel == DebugLevel.Dev) DrawDebugTab();
 
             ImGui.EndTabBar();
         }
@@ -152,18 +144,12 @@ public class ConfigWindow : Window, IDisposable
                     UseShellExecute = true
                 });
             }
-            catch (Exception e) { Plugin.Log(e); }
+            catch (Exception e) { Plugin.Log(1,e); }
         }
         ImGui.End();
         ImGui.PopStyleColor();
        
     }
-
-    private Vector2 ImVec2(object x, object value)
-    {
-        throw new NotImplementedException();
-    }
-
     private void DrawHeader()
     {
         DrawPresetHeader();
@@ -244,6 +230,20 @@ public class ConfigWindow : Window, IDisposable
             }
 
             if (limitChats) DrawCustomChats();
+
+
+            int debugLevelIndex = (int)Configuration.DebugLevel;
+            if (ImGui.Combo("Debug Level", ref debugLevelIndex, ["None","Info","Debug","Verbose","Dev"],5))
+            {
+                Configuration.ActivePreset.showTriggerNotifs = showTriggerNotifs;
+                Configuration.Save();
+            }
+            ImGui.SameLine();
+            ImGui.TextDisabled(" (?)");
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.SetTooltip("This sets at which level the Plugin logs things.\nIt's a good idea not to touch this.\nIf you are having performance issues, you can set it to \"None\", but your Log.txt file will be useless for finding Bugs.\nThis setting will reset after every update.");
+            }
 
 
             ImGui.EndTabItem();

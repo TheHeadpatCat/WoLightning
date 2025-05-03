@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection.Emit;
 using WoLightning.Clients.OpenShock;
 using WoLightning.Clients.Pishock;
 using WoLightning.Clients.Webserver;
@@ -182,7 +183,7 @@ public sealed class Plugin : IDalamudPlugin
 
     private void onLogin()
     {
-        Log("Running onLogin()");
+        Log(3,"Running onLogin()");
         try
         {
 
@@ -191,7 +192,7 @@ public sealed class Plugin : IDalamudPlugin
 
             if (!File.Exists(PluginInterface.GetPluginConfigDirectory() + "\\version")) // Either new installation or old data - either way, purge.
             {
-                Log("Missing Version file - purging folder.");
+                Log(1,"Missing Version file - purging folder.");
                 foreach(var dir in Directory.EnumerateDirectories(PluginInterface.GetPluginConfigDirectory()))
                 {
                     Directory.Delete(dir, true);
@@ -200,17 +201,6 @@ public sealed class Plugin : IDalamudPlugin
             }
 
             int version = int.Parse(File.ReadAllText(PluginInterface.GetPluginConfigDirectory() + "\\version"));
-
-            if(version < currentVersion)
-            {
-
-                // Todo: Show new version stuff.
-
-                File.Delete(PluginInterface.GetPluginConfigDirectory() + "\\version");
-                File.WriteAllText(PluginInterface.GetPluginConfigDirectory() + "\\version", currentVersion + "");
-            }
-
-
 
             ConfigurationDirectoryPath = PluginInterface.GetPluginConfigDirectory() + "\\" + ClientState.LocalPlayer.Name;
             if (!Directory.Exists(ConfigurationDirectoryPath)) Directory.CreateDirectory(ConfigurationDirectoryPath);
@@ -238,7 +228,7 @@ public sealed class Plugin : IDalamudPlugin
                 Configuration = new Configuration();
                 Configuration.Save();
                 NotificationHandler.send("Your Configuration has been reset due to an error!");
-                Log(e);
+                Log(1,e);
             }
 
             try
@@ -254,7 +244,7 @@ public sealed class Plugin : IDalamudPlugin
             {
                 Authentification = new Authentification(ConfigurationDirectoryPath, true);
                 NotificationHandler.send("Your Authentification has been reset due to an error!");
-                Log(e);
+                Log(1, e);
             }
 
             LocalPlayer.Key = Authentification.ServerKey;
@@ -269,7 +259,16 @@ public sealed class Plugin : IDalamudPlugin
             ConfigWindow.SetConfiguration(Configuration);
             MainWindow.Initialize();
 
-            Log("The Game is running " + (ClientLanguage)GameConfig.System.GetUInt("Language") + " Language");
+            Log(3,"The Game is running " + (ClientLanguage)GameConfig.System.GetUInt("Language") + " Language");
+
+            if (version < currentVersion)
+            {
+                File.Delete(PluginInterface.GetPluginConfigDirectory() + "\\version");
+                File.WriteAllText(PluginInterface.GetPluginConfigDirectory() + "\\version", currentVersion + "");
+
+                if(Configuration.DebugLevel < DebugLevel.Verbose) Configuration.DebugLevel = DebugLevel.Verbose;
+            }
+
         }
         catch (Exception ex)
         {
@@ -344,58 +343,65 @@ public sealed class Plugin : IDalamudPlugin
     public void ToggleMainUI() => MainWindow.Toggle();
 
     #region Logging
-    public void Log(string message)
+    public void Log(DebugLevel level, string message)
     {
-        PluginLog.Verbose(message);
-        if(TextLog != null) TextLog.Log(message);
+        if (Configuration == null) return;
+        if (level > Configuration.DebugLevel) return;
+        switch (level)
+        {
+            case DebugLevel.Dev:
+                PluginLog.Verbose(message);
+                TextLog?.Log("[Dev] " + message);
+                break;
+
+            case DebugLevel.Verbose:
+                PluginLog.Verbose(message);
+                TextLog?.Log("[Verbose] " + message);
+                break;
+
+            case DebugLevel.Debug:
+                PluginLog.Debug(message);
+                TextLog?.Log("[Debug] " + message);
+                break;
+
+            case DebugLevel.Info:
+                PluginLog.Info(message);
+                TextLog?.Log("[Info] " + message);
+                break;
+
+            case DebugLevel.None: default: break;
+        }
     }
 
-    public void Log(Object obj)
+    public void Log(DebugLevel level, Object obj)
     {
-
-        if(obj.ToString() != null) PluginLog.Verbose(obj.ToString()!);
-        if (TextLog != null) TextLog.Log(obj);
+        string? message = obj.ToString();
+        if(message != null) Log(level, message);
     }
 
-    public void Log(string message, bool noText)
+    public void Log(int level, string message)
     {
-        PluginLog.Verbose(message);
+        Log((DebugLevel)level, message);
     }
 
-    public void Log(Object obj, bool noText)
+    public void Log(int level, Object obj)
     {
-
-        if(obj.ToString() != null) PluginLog.Verbose(obj.ToString()!);
+        string? message = obj.ToString();
+        if (message != null) Log(level, message);
     }
-
 
     public void Error(string message)
     {
-
         PluginLog.Error(message);
-        TextLog.Log("--- ERROR: \n" + message);
+        TextLog?.Log("====================" +
+                     "\n[ERROR] " + message + "" +
+                     "\n====================");
     }
 
-    public void Error(string message, Object obj)
+    public void Error(Object obj)
     {
-
-        PluginLog.Error(message);
-        if(obj.ToString() != null) PluginLog.Error(obj.ToString()!);
-        TextLog.Log("--- ERROR: \n" + message);
-        TextLog.Log(obj);
-    }
-
-    public void Error(string message, bool noText)
-    {
-
-        PluginLog.Error(message);
-    }
-
-    public void Error(string message, Object obj, bool noText)
-    {
-
-        PluginLog.Error(message);
-        if(obj.ToString() != null) PluginLog.Error(obj.ToString()!);
+        string? message = obj.ToString();
+        if (message != null) Error(message);
     }
     #endregion
 

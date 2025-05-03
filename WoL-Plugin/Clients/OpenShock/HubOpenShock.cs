@@ -54,7 +54,7 @@ namespace WoLightning.WoL_Plugin.Clients.OpenShock
             if (Plugin == null || Plugin.Authentification == null) return;
             string apikey = Plugin.Authentification.OpenShockApiKey, url = Plugin.Authentification.OpenShockURL;
 
-            Plugin.Log("Requesting OpenShock Device Shockers for " + DeviceId + "...");
+            Plugin.Log(3,"Requesting OpenShock Device Shockers for " + DeviceId + "...");
 
             HttpResponseMessage Result;
 
@@ -77,7 +77,7 @@ namespace WoLightning.WoL_Plugin.Clients.OpenShock
             {
                 Plugin.Error("Could not retrieve Device Shockers from " + DeviceId);
                 Status = ConnectionStatusOpenShockHub.Unavailable;
-                Plugin.Log(new StreamReader(Result.Content.ReadAsStream()).ReadToEnd());
+                Plugin.Log(1,new StreamReader(Result.Content.ReadAsStream()).ReadToEnd());
                 return;
             }
             try
@@ -87,13 +87,13 @@ namespace WoLightning.WoL_Plugin.Clients.OpenShock
                 {
                     string message = reader.ReadToEnd();
                     if (message == null || message.Length == 0) return;
-                    Plugin.Log(message);
+                    Plugin.Log(3,message);
                     ResponseDeviceShockers test = JsonConvert.DeserializeObject<ResponseDeviceShockers>(message)!;
-                    Plugin.Log(test);
+                    Plugin.Log(3,test);
                     foreach(var shocker in test.data)
                     {
                         ShockerOpenShock ShockerT = new(this,shocker.name, shocker.id, shocker.isPaused);
-                        Plugin.Log(ShockerT);
+                        Plugin.Log(3,ShockerT);
                         Plugin.Authentification.OpenShockShockers.Add(ShockerT);
                     }
                 }

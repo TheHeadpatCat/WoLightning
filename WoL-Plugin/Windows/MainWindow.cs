@@ -78,7 +78,8 @@ public class MainWindow : Window, IDisposable
         }
         catch (Exception e)
         {
-            Plugin.Error("Something went terribly wrong!", e);
+            Plugin.Log(0,"Something went terribly wrong!");
+            Plugin.Error(e);
         }
 
     }

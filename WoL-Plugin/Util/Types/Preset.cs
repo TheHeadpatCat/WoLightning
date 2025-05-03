@@ -66,7 +66,7 @@ namespace WoLightning.Util.Types
         public void Initialize(Plugin Plugin)
         {
             this.Plugin = Plugin;
-            Plugin.Log("Initializing Preset - " + Name);
+            Plugin.Log(3,"Initializing Preset - " + Name);
 
             // I have not found a better way to do this. I know this is terrible and probably a design issue.
             // Reflection has its own issues
@@ -160,11 +160,9 @@ namespace WoLightning.Util.Types
                 {
                     try
                     {
-                        
-                        //if (Rules.Contains((RuleBase)property.GetValue(this, null)!)) continue;
                         RuleBase r = (RuleBase)property.GetValue(this, null)!;
                         int i = r.ShockOptions.ShockersPishock.RemoveAll((shocker) => !Plugin.Authentification.PishockShockers.Contains(shocker));
-                        Plugin.Log("Removed " + i + " Invalid Shockers from " + r.Name);
+                        if(i > 0) Plugin.Log(2,"Removed " + i + " Invalid Shockers from " + r.Name);
                     }
                     catch (Exception ex)
                     {
@@ -184,7 +182,7 @@ namespace WoLightning.Util.Types
                 {
                     rule.Stop();
                     rule.Triggered -= Plugin.ClientPishock.SendRequest;
-                    //rule.Triggered -= Plugin.ClientOpenShock.sendRequest; Todo: implement
+                    rule.Triggered -= Plugin.ClientOpenShock.SendRequest;
                 }
             }
             catch (Exception ex)
@@ -201,7 +199,7 @@ namespace WoLightning.Util.Types
                 {
                     if (Rule.IsEnabled)
                     {
-                        Plugin.Log("Starting " + Rule.Name);
+                        Plugin.Log(3,"Starting " + Rule.Name);
                         Rule.Start();
                     }
                 }
@@ -214,7 +212,7 @@ namespace WoLightning.Util.Types
             {
                 foreach (var Rule in Rules)
                 {
-                    Plugin.Log("Stopping " + Rule.Name);
+                    Plugin.Log(3,"Stopping " + Rule.Name);
                     Rule.Stop();
                 }
             }

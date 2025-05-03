@@ -19,7 +19,7 @@ namespace WoLightning.WoL_Plugin.Clients.Pishock
             int x = 0;
             foreach (var shocker in Options.ShockersPishock)
             {
-                Plugin.Log(shocker);
+                Plugin.Log(3,shocker);
                 var cmd =  new Command(shocker, Options, UserId, isWarning);
                 string target;
                 if (shocker.isPersonal) target = "c" + shocker.clientId + "-ops";

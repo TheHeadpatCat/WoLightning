@@ -57,7 +57,7 @@ namespace WoLightning.Util
 
         public async void Log(string message)
         {
-            if (!validateFile()) return;
+            if (!isFileAvailable) return;
             DateTime now = DateTime.Now;
             try
             {
@@ -68,7 +68,7 @@ namespace WoLightning.Util
 
         public async void Log(object obj)
         {
-            if (!validateFile()) return;
+            if (!isFileAvailable) return;
 
             DateTime now = DateTime.Now;
             try

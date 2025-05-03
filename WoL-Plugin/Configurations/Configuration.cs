@@ -16,15 +16,16 @@ namespace WoLightning.Configurations
     public enum DebugLevel
     {
         None = 0,
-        Basic = 1,
-        Verbose = 2,
-        All = 3,
+        Info = 1,
+        Debug = 2,
+        Verbose = 3,
+        Dev = 4,
     }
 
     [Serializable]
     public class Configuration : IPluginConfiguration, IDisposable
     {
-        public DebugLevel DebugLevel { get; set; } = DebugLevel.None;
+        public DebugLevel DebugLevel { get; set; } = DebugLevel.Debug;
         public int Version { get; set; } = 500;
         public string LastPresetName { get; set; } = "Default";
         public bool ActivateOnStart { get; set; } = false;
@@ -46,7 +47,7 @@ namespace WoLightning.Configurations
             string f = "";
             if (File.Exists(ConfigurationDirectoryPath + "Config.json")) f = File.ReadAllText(ConfigurationDirectoryPath + "Config.json");
 
-            plugin.Log("Initializing Config...");
+            plugin.Log(3,"Initializing Config...");
 
             Configuration s = DeserializeConfig(f);
             foreach (PropertyInfo property in typeof(Configuration).GetProperties().Where(p => p.CanWrite)) property.SetValue(this, property.GetValue(s, null), null);
@@ -65,8 +66,8 @@ namespace WoLightning.Configurations
                     }
                     catch (Exception e)
                     {
-                        plugin.Log("Failed to deserialize Preset: " + file);
-                        plugin.Log(e);
+                        plugin.Log(1,"Failed to deserialize Preset: " + file);
+                        plugin.Log(1,e);
                         continue;
                     }
                     Presets.Add(tPreset);
@@ -74,7 +75,7 @@ namespace WoLightning.Configurations
             }
             if (Presets.Count == 0 || !loadPreset(LastPresetName))
             {
-                plugin.Log("No Presets found, or cannot load last preset - Creating Default.");
+                plugin.Log(1,"No Presets found, or cannot load last preset - Creating Default.");
                 ActivePreset = new Preset("Default", plugin.LocalPlayer.getFullName());
                 Presets.Add(ActivePreset);
                 loadPreset("Default");
@@ -94,7 +95,7 @@ namespace WoLightning.Configurations
         #region Save and Loading
         public void Save()
         {
-            plugin.Log("Configuration.Save() called");
+            plugin.Log(3,"Configuration.Save() called");
             try
             {
                 LastPresetName = ActivePreset.Name;
@@ -109,8 +110,8 @@ namespace WoLightning.Configurations
             catch (Exception e)
             {
                 plugin.NotificationHandler.send("Failed to save Presets!");
-                plugin.Error("Failed to save Presets!", e);
-                plugin.Log(e.ToString());
+                plugin.Log(1,"Failed to save Presets!");
+                plugin.Error(e);
             }
 
 
@@ -121,8 +122,8 @@ namespace WoLightning.Configurations
             catch (Exception e) // scuffed crash protection - if this happens we got a serious issue.
             {
                 plugin.NotificationHandler.send("Failed to save Configuration!");
-                plugin.Error("Failed to save Configuration!", e);
-                plugin.Log(e.ToString());
+                plugin.Log(1,"Failed to save Configuration!");
+                plugin.Error(e);
             }
         }
 
@@ -145,19 +146,19 @@ namespace WoLightning.Configurations
             ActivePreset.ValidateShockers();
 
             PresetChanged?.Invoke(ActivePreset, ActivePresetIndex);
-            plugin.Log(" -> Done.");
+            plugin.Log(3," -> Done.");
             return true;
         }
 
 
         public void saveCurrentPreset()
         {
-            plugin.Log("Saving preset: " + ActivePreset.Name);
+            plugin.Log(3,"Saving preset: " + ActivePreset.Name);
             File.WriteAllText($"{ConfigurationDirectoryPath}\\Presets\\{ActivePreset.Name}.json", SerializePreset(ActivePreset));
         }
         public void savePreset(Preset target)
         {
-            plugin.Log("Saving preset: " + target.Name);
+            plugin.Log(3,"Saving preset: " + target.Name);
             File.WriteAllText($"{ConfigurationDirectoryPath}\\Presets\\{target.Name}.json", SerializePreset(target));
         }
         public void savePreset(Preset target, bool isAlternative)
