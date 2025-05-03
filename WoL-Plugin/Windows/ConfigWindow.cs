@@ -232,10 +232,15 @@ public class ConfigWindow : Window, IDisposable
             if (limitChats) DrawCustomChats();
 
 
+            ImGui.Spacing();
+            ImGui.Separator();
+            ImGui.Spacing();
+
+            ImGui.SetNextItemWidth(130);
             int debugLevelIndex = (int)Configuration.DebugLevel;
             if (ImGui.Combo("Debug Level", ref debugLevelIndex, ["None","Info","Debug","Verbose","Dev"],5))
             {
-                Configuration.ActivePreset.showTriggerNotifs = showTriggerNotifs;
+                Configuration.DebugLevel = (DebugLevel)debugLevelIndex;
                 Configuration.Save();
             }
             ImGui.SameLine();
