@@ -359,7 +359,6 @@ public sealed class Plugin : IDalamudPlugin
 
     public void Log(string message, bool noText)
     {
-
         PluginLog.Verbose(message);
     }
 
