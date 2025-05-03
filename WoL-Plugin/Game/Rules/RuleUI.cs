@@ -76,8 +76,15 @@ namespace WoLightning.WoL_Plugin.Game.Rules
                 if (Rule.IsEnabled && Rule.ShockOptions.getShockerCount() > 0) ImGui.TextColored(ColorNameEnabled, "  " + Rule.Name + $"  [{Rule.ShockOptions.OpMode}]");
                 else if (Rule.IsEnabled) ImGui.TextColored(ColorNameDisabled, "  " + Rule.Name + " [No Shockers]");
                 else ImGui.TextColored(ColorNameDisabled, "  " + Rule.Name);
+                if (Rule.CreatorName != null)
+                {
+                    ImGui.SameLine();
+                    ImGui.TextColored(ColorDescription,$"    by {Rule.CreatorName}");
+                }
             }
+
             ImGui.TextColored(ColorDescription, $"  {Rule.Description}");
+            
             if (Rule.Hint != null && Rule.Hint.Length > 0)
             {
                 ImGui.SameLine();

@@ -26,6 +26,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         [JsonIgnore] abstract public RuleCategory Category { get; }
         [JsonIgnore] virtual public bool hasAdvancedOptions { get; } = false;
         [JsonIgnore] virtual public bool hasExtraButton { get; } = false;
+        [JsonIgnore] virtual public string CreatorName { get; }
 
         virtual public ShockOptions ShockOptions { get; set; }
 

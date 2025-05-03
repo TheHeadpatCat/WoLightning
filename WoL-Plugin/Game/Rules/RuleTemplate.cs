@@ -56,6 +56,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         override public string Description { get; } = "Triggers whenever you do something that was defined."; // Needs to be set.
         override public string Hint { get; } = "If this is set, a small (?) will appear and show this Text on hover."; // May be removed.
         override public RuleCategory Category { get; } = RuleCategory.Misc; // Needs to be set. This will dictate on which Tab of the ConfigWindow your Rule shows up. (General, PvP and Master do not work currently.)
+        override public string CreatorName { get; } = "Your Name Here"; // Please put some kind of identifier into this Spot. It will show up in the Rule to show that you did in fact make this, and i'd like you to get the credit you deserve.
 
         [JsonIgnore] IPlayerCharacter Player; // A Property that should not be saved. In this case, a reference to the Local Player Character, retrieved from Plugin.ClientState.
         public string SomeDataThatNeedsToBeSaved { get; set; } = "Default Data"; // A Property that will be saved. It also has got some default data. Once this data gets changed in anything, the default data is ignored.
