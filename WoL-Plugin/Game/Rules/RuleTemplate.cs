@@ -1,0 +1,114 @@
+﻿using Dalamud.Game.ClientState.Objects.SubKinds;
+using Dalamud.Game.Gui.Toast;
+using Dalamud.Game.Text.SeStringHandling;
+using Dalamud.Plugin.Services;
+using FFXIVClientStructs.FFXIV.Client.Game.Event;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using Lumina.Excel.Sheets;
+using System;
+using System.Text.Json.Serialization;
+
+namespace WoLightning.WoL_Plugin.Game.Rules.Misc
+{
+    [Serializable]
+    public class RuleTemplate : RuleBase
+    {
+
+        /*
+
+        This is a Template to create new Rules for the Plugin.
+
+        Step 1: Copy this Rule into the correct Category folder and rename the file & class to what you have to do to trigger it.
+        You can take a look at the other rules for examples on how to name it.
+        Do's:   DutyPops, UseSkill, DieToPlayer
+        Dont's: WhenDutyPops, IUseASkill, PlayerKillsYou
+
+        Step 2: Fill out all the Properties below. Some of the properties aren't fully used yet, but its still important to set them.
+        Some Properties like "Hint" can also be removed. In those cases, they will either be replaced by a default from RuleBase.cs or just not show up.
+
+        Step 3: Subscribe to any needed handlers in the Start() function and unsubscribe from them in the Stop() function.
+        You will always get access to the "Plugin" object, which sets up all the needed handlers. If it does not have the handler you need,
+        add it to the Plugin.cs file at the top.
+
+        Step 4: Now, you can write the Check() function. This function hosts all the logic of the Rule.
+        Basically, you write a bunch of things to check for one after another, and if the Rule gets triggered, you call the Trigger() function.
+        Trigger() always wants a string passed to it, which will show up as the Notification in the bottom right, if Notifications are enabled.
+
+        If you need any extra variables, you can either add them as public with { get; set; } to make the get saved,
+        or have them private with [JsonIgnore] to make sure they do not save.
+
+        Step 5: (This step will soon be obsolete)
+        Once all of this is done, you only need to add your Rule to the Preset.cs file and the ConfigWindow.
+        
+        Head to Util/Types/Preset and add a property with your new Rule. The format should be obvious from the other ones.
+        Add it in the Initialize() function as well, and pass it the Plugin with .setPlugin()
+        
+        And finally, head over to Windows/ConfigWindow and add ActivePreset.YourRule.Draw() to the correct Category.
+
+
+        Once you have done all of this, your Rule should show up in that Category of the Configuration Window ingame.
+        Enable it and give it a try if it properly works!
+        If you encounter issues, you can always try and use Plugin.Log(3, "Text) to debug any issues you might encounter.
+
+        */
+
+
+
+        override public string Name { get; } = "Do something Wrong"; // Needs to be set.
+        override public string Description { get; } = "Triggers whenever you do something that was defined."; // Needs to be set.
+        override public string Hint { get; } = "If this is set, a small (?) will appear and show this Text on hover."; // May be removed.
+        override public RuleCategory Category { get; } = RuleCategory.General; // Needs to be set. But doesn't actually do anything yet. (This will be used to place your Rule in the correct Configuration Window Tab)
+
+        [JsonIgnore] IPlayerCharacter Player; // A Property that should not be saved. In this case, a reference to the Local Player Character, retrieved from Plugin.ClientState.
+        public string SomeDataThatNeedsToBeSaved { get; set; } = "Default Data"; // A Property that will be saved. It also has got some default data. Once this data gets changed in anything, the default data is ignored.
+
+
+        [JsonConstructor]
+        public RuleTemplate() { }
+        public RuleTemplate(Plugin plugin) : base(plugin)
+        {
+        }
+
+        // Use this to setup your Rule. It will get called once the Rule is "enabled" (Checkmark is set) and the Plugin has been enabled.
+        // You can also be certain that the rest of the Plugin is fully setup by this point and everything is available.
+        override public void Start()
+        {
+            if (IsRunning) return;
+            IsRunning = true;
+
+            //Plugin.ToastGui.QuestToast += Check;   // Subscribing to some kind of Event to run our Check() on. If you do not subscribe to anything, your Check() will never get called.
+            // Your Check() function also needs to match the fields of the Event you subscribed to - in this example your Check would be "Check(ref SeString messageE, ref QuestToastOptions options, ref bool isHandled)"
+            Player = Plugin.ClientState.LocalPlayer; // Setting up our Player so we can use them on the Check() function.
+        }
+
+        override public void Stop()
+        {
+            if (!IsRunning) return;
+            IsRunning = false;
+            //Plugin.ToastGui.QuestToast -= Check;  // Make sure to unsubscribe from the Event. If you do not do this, your Check() will still get called even when the Rule or even the Plugin is disabled!
+        }
+
+        private void Check(string? someDataFromTheEvent)
+        {
+            // Every Check should be within a Try{} Catch{}, as they are getting called outside the normal loop.
+            // If you do not do this, and your Logic throws a error, the Plugin will crash.
+            try
+            {
+                if (Player == null) { Player = Plugin.ClientState.LocalPlayer; return; } // Double Checking that our Player Reference exists.
+
+                // Do some Logic in here to figure out if we should Trigger from this Event call or not.
+                if (someDataFromTheEvent != null && someDataFromTheEvent.Equals("A String that would trigger this Rule"))
+                {
+                    Trigger("You did something Wrong!");
+                }
+                else
+                {
+                    // Either Do nothing, or setup some other data.
+                }
+
+            }
+            catch (Exception e) { Plugin.Error(e.StackTrace); }
+
+        }
+    }
+}
