@@ -43,6 +43,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 if(LastPartySize != Plugin.PartyList.Length) // If someone leaves or enters the party, reset the index.
                 {
                     DeadPlayerIndex = [false, false, false, false, false, false, false, false]; //how do i polyfill
+                    LastPartySize = Plugin.PartyList.Length;
                 }
 
 
@@ -57,7 +58,6 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                     if (PlayerObject.IsDead && !DeadPlayerIndex[i]) { DeadPlayerIndex[i] = true; Trigger("A partymember has died!"); }
                     if (!PlayerObject.IsDead && DeadPlayerIndex[i]) { DeadPlayerIndex[i] = false; }
                 }
-                LastPartySize = Plugin.PartyList.Length;
             }
             catch (Exception e) { Plugin.Error(e.StackTrace); }
 }
