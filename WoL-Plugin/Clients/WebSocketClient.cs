@@ -128,6 +128,7 @@ namespace WoLightning.WoL_Plugin.Clients
 
                 if (Client.State == WebSocketState.Open) return;
                 if (Client.State == WebSocketState.Connecting) return;
+                if (ex.Message.Contains("already been started.")) return;
 
                 Task.Delay(10000).Wait();
                 await Connect();
