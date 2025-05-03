@@ -323,7 +323,7 @@ namespace WoLightning.Clients.Pishock
             
             if (Options.ShockersPishock.Count == 0)
             {
-                Plugin.Log(3, " -> No Shockers assigned, discarding!");
+                Plugin.Log(3, " -> No Pishock Shockers assigned, discarding!");
                 return;
             }
             #endregion

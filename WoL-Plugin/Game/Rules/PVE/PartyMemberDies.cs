@@ -12,6 +12,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
         override public RuleCategory Category { get; } = RuleCategory.PVE;
 
         [JsonIgnore] bool[] DeadPlayerIndex = [false, false, false, false, false, false, false, false]; //how do i polyfill
+        [JsonIgnore] int LastPartySize = 0;
 
         [JsonConstructor]
         public PartyMemberDies() { }
@@ -39,6 +40,12 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
             {
                 if (Plugin.ClientState.LocalPlayer == null || Plugin.PartyList == null || Plugin.PartyList.Length == 0) { return; }
 
+                if(LastPartySize != Plugin.PartyList.Length) // If someone leaves or enters the party, reset the index.
+                {
+                    DeadPlayerIndex = [false, false, false, false, false, false, false, false]; //how do i polyfill
+                }
+
+
                 int i = -1;
                 foreach (var Player in Plugin.PartyList)
                 {
@@ -50,6 +57,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                     if (PlayerObject.IsDead && !DeadPlayerIndex[i]) { DeadPlayerIndex[i] = true; Trigger("A partymember has died!"); }
                     if (!PlayerObject.IsDead && DeadPlayerIndex[i]) { DeadPlayerIndex[i] = false; }
                 }
+                LastPartySize = Plugin.PartyList.Length;
             }
             catch (Exception e) { Plugin.Error(e.StackTrace); }
 }
