@@ -1,6 +1,9 @@
 
 
+
 # A FFXIV Plugin that integrates PiShock devices into the Game.
+
+![Plugin Icon](etc/iconSmall.png)
 
 You have to use the [XIVQuicklauncher](https://goatcorp.github.io/) with Dalamud enabled for this to work.
 
