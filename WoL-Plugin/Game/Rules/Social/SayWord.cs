@@ -52,28 +52,38 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
             IsRunning = false;
             Plugin.ChatGui.ChatMessage -= Check;
         }
+
+        // All of the passed variables have to match with Plugin.ChatGui.ChatMessage - you can let this be generated for you if you are using Visual Studio or similiar
         private void Check(XivChatType type, int timestamp, ref SeString senderE, ref SeString messageE, ref bool isHandled)
         {
-            try { 
-            if (Plugin.ClientState.LocalPlayer == null) return;
-            //check for chat type limitation
-            if (Plugin.Configuration.ActivePreset.LimitChats && !Plugin.Configuration.ActivePreset.Chats.Contains(type)) return;
-
-            string sender = StringSanitizer.LetterOrDigit(senderE.ToString()).ToLower();
-            if ((int)type <= 107 && sender.Equals(Plugin.ClientState.LocalPlayer.Name.ToString().ToLower()))
+            try
             {
-                string message = StringSanitizer.LetterOrDigit(messageE.ToString());
-                foreach (var bannedWord in BannedWords)
+                if (Plugin.ClientState.LocalPlayer == null) return; // If the LocalPlayer is null, we might be transitioning between areas or similiar. Abort the check in those cases.
+
+
+                // This will Check if the Checkbox for "Limit Chats" is enabled and if so, checks if the type of chat message we received is included in that. If its not, then abort the check.
+                if (Plugin.Configuration.ActivePreset.LimitChats && !Plugin.Configuration.ActivePreset.Chats.Contains(type)) return;
+
+                string sender = StringSanitizer.LetterOrDigit(senderE.ToString()).ToLower(); // Get the Sender in a cleaned String. SeStrings can have payloads and stuff and we dont want any of those.
+
+                // First check if the type of Chat we received is above a specific number. Noteably 107 is the last Social Chat that players can technically send stuff to.
+                // Afterwards, check if the sender of the message has the same name as our Local Player Character. If so, we are the person that sent it. We can ignore the World, as if there is another Person with the same name, they will always show their World in the Sender Name, while we dont.
+                if ((int)type <= 107 && sender.Equals(Plugin.ClientState.LocalPlayer.Name.ToString().ToLower()))
                 {
-                    foreach (var word in message.Split(" "))
+                    // Get the message into a cleaned String. Again, messages can have symbols and stuff in them and they might mess up our logic.
+                    string message = StringSanitizer.LetterOrDigit(messageE.ToString());
+                    foreach (var bannedWord in BannedWords) // Go through every banned word the user put in.
                     {
-                        if (bannedWord.Compare(word))
+                        foreach (var word in message.Split(" ")) // Split the message we sent into seperate words and go through every said word.
                         {
-                            Trigger($"You have said {bannedWord}!");
+                            if (bannedWord.Compare(word)) // Now, with both parts. Check each said word, against all banned words. If any of them match, Trigger the Rule and end the Logic.
+                            {
+                                Trigger($"You have said {bannedWord}!");
+                                return;
+                            }
                         }
                     }
                 }
-            }
             }
             catch (Exception e) { Plugin.Error(e.StackTrace); }
         }
@@ -93,12 +103,15 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                 }
                 Index = -1;
             }
-            
+
             ImGui.Checkbox("Punctuation", ref Punctuation);
             ImGui.SameLine();
             ImGui.TextDisabled("(?)");
-            if (ImGui.IsItemHovered()) { ImGui.SetTooltip("If this is enabled, the Word has to be properly written out on its own." +
-                "\nIf the word is \"Master\" then writing \"i like my master\" is accepted, while \"ilikemymaster\" isn't."); }
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.SetTooltip("If this is enabled, the Word has to be properly written out on its own." +
+                "\nIf the word is \"Master\" then writing \"i like my master\" is accepted, while \"ilikemymaster\" isn't.");
+            }
             ImGui.SameLine();
             ImGui.Checkbox("Proper Case", ref ProperCase);
             ImGui.SameLine();

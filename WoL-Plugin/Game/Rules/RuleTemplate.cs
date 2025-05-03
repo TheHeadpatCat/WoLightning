@@ -18,6 +18,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 
         This is a Template to create new Rules for the Plugin.
 
+
         Step 1: Copy this Rule into the correct Category folder and rename the file & class to what you have to do to trigger it.
         You can take a look at the other rules for examples on how to name it.
         Do's:   DutyPops, UseSkill, DieToPlayer
@@ -33,6 +34,9 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         Step 4: Now, you can write the Check() function. This function hosts all the logic of the Rule.
         Basically, you write a bunch of things to check for one after another, and if the Rule gets triggered, you call the Trigger() function.
         Trigger() always wants a string passed to it, which will show up as the Notification in the bottom right, if Notifications are enabled.
+
+        If you want to take a look at how a Check() could look like - please check the Game/Rules/Social/SayWord.cs
+        It's fully commented on what each step does in there.
 
         If you need any extra variables, you can either add them as public with { get; set; } to make the get saved,
         or have them private with [JsonIgnore] to make sure they do not save.
