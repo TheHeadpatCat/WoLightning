@@ -48,7 +48,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 
         Once you have done all of this, your Rule should show up in that Category of the Configuration Window ingame.
         Enable it and give it a try if it properly works!
-        If you encounter issues, you can always try and use Plugin.Log(3, "Text) to debug any issues you might encounter.
+        If you encounter issues, you can always try and use Plugin.Log(3, "Text") to debug any issues you might encounter.
 
         */
 
