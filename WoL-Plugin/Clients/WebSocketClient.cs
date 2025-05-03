@@ -115,16 +115,20 @@ namespace WoLightning.WoL_Plugin.Clients
             if (Client.State == WebSocketState.Open) return;
             try
             {
-                Plugin.Log(2,$"[WebSocket] Connecting to {Uri.ToString().Substring(0,8)}...");
+                Plugin.Log(2,$"[WebSocket] Connecting to {Uri.ToString().Substring(0,16)}...");
                 await Client.ConnectAsync(Uri, CancellationToken.None);
-                Plugin.Log(2,$"[WebSocket] Successfully Connected to {Uri.ToString().Substring(0,8)}!");
+                Plugin.Log(2,$"[WebSocket] Successfully Connected to {Uri.ToString().Substring(0,16)}!");
                 FailedAttempts = 0;
                 Receive();
             }
             catch (Exception ex) {
                 Plugin.Log(1, ex.Message);
-                Plugin.Log(1, "Websocket failed to Connect.\nRetrying in 10 seconds.");
+                Plugin.Log(1, "Websocket failed to Connect.");
                 FailedAttempts++;
+
+                if (Client.State == WebSocketState.Open) return;
+                if (Client.State == WebSocketState.Connecting) return;
+
                 Task.Delay(10000).Wait();
                 await Connect();
             }

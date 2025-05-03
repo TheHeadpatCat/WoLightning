@@ -16,7 +16,7 @@ namespace WoLightning.WoL_Plugin.Clients.Pishock
             List<Command> commands = new();
             List<string> targets = new();
 
-            int x = 0;
+            
             foreach (var shocker in Options.ShockersPishock)
             {
                 Plugin.Log(3,shocker);
