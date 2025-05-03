@@ -88,6 +88,13 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
             catch (Exception e) { Plugin.Error(e.StackTrace); }
         }
 
+
+        // This is UI Code for the Configuration Window.
+        // It gets called in Windows/ConfigWindow under "Word Lists"
+        // Basically, its offloaded here to let the User type in words that will get saved in the BannedWords property.
+        // If you are creating a basic Rule that doesn't need any Input Userdata, then you don't need to implement this.
+
+        // Alternatively, you can add a "public override void DrawExtraButton()" function, to draw extra UI code next to the "Assigned Shockers" button on a Rule.
         public override void DrawAdvancedOptions()
         {
             ImGui.Text("Saying any Word from this list, will trigger the \"Say Banned Word\" Rule!");
