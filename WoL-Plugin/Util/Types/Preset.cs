@@ -38,6 +38,8 @@ namespace WoLightning.Util.Types
         [JsonIgnore] private Plugin Plugin;
 
 
+        // The Position of your Rule here actually also changes the Position of which spot they show up in the Config Window!
+
         // Social Triggers
         public DoEmote DoEmote { get; set; } = new();
         public DoEmoteTo DoEmoteTo { get; set; } = new();
