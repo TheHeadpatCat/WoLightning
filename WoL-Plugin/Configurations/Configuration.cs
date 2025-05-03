@@ -22,10 +22,19 @@ namespace WoLightning.Configurations
         Dev = 4,
     }
 
+    public enum ShownShockers
+    {
+        All = 0,
+        Personal = 1,
+        Shared = 2,
+        None = 3, //...why would anyone pick none
+    }
+
     [Serializable]
     public class Configuration : IPluginConfiguration, IDisposable
     {
         public DebugLevel DebugLevel { get; set; } = DebugLevel.Debug;
+        public ShownShockers ShownShockers { get; set; } = ShownShockers.All;
         public int Version { get; set; } = 500;
         public string LastPresetName { get; set; } = "Default";
         public bool ActivateOnStart { get; set; } = false;

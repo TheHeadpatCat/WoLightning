@@ -260,6 +260,20 @@ public class ConfigWindow : Window, IDisposable
 
             if (limitChats) DrawCustomChats();
 
+            ImGui.SetNextItemWidth(200);
+            int ShownShockersIndex = (int)Configuration.ShownShockers;
+            if (ImGui.Combo("Shown Shockers", ref ShownShockersIndex, ["All", "Personal Only", "Shared Only", "None...?"], 4))
+            {
+                Configuration.ShownShockers = (ShownShockers)ShownShockersIndex;
+                Configuration.Save();
+            }
+            ImGui.SameLine();
+            ImGui.TextDisabled(" (?)");
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.SetTooltip("Allows you to select which Shockers show up on clicking the \"Assign Shockers\" button.");
+            }
+
 
             ImGui.Spacing();
             ImGui.Separator();

@@ -1,6 +1,7 @@
 ﻿using ImGuiNET;
 using System.Collections.Generic;
 using System.Numerics;
+using WoLightning.Configurations;
 using WoLightning.Util;
 using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Clients;
@@ -223,6 +224,11 @@ namespace WoLightning.WoL_Plugin.Game.Rules
                 ImGui.Text("Available Pishock Devices:           ");
                 foreach (var shocker in Plugin.Authentification.PishockShockers)
                 {
+                    if (Plugin.Configuration.ShownShockers == Configurations.ShownShockers.None) continue;
+                    if (Plugin.Configuration.ShownShockers == Configurations.ShownShockers.Personal && !shocker.isPersonal) continue;
+                    if (Plugin.Configuration.ShownShockers == Configurations.ShownShockers.Shared && shocker.isPersonal) continue;
+
+
                     bool isEnabled = Rule.ShockOptions.ShockersPishock.Find(sh => sh.getInternalId() == shocker.getInternalId()) != null;
 
                     if (ImGui.Checkbox($"##shockerbox{shocker.getInternalId()}", ref isEnabled))
@@ -263,6 +269,21 @@ namespace WoLightning.WoL_Plugin.Game.Rules
                     else ImGui.TextColored(ColorNameDisabled, "[Paused] " + shocker.name);
                 }
                 ImGui.EndGroup();
+
+                ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 2 - 170, ImGui.GetWindowSize().Y - 65));
+                ImGui.SetNextItemWidth(200);
+                int ShownShockersIndex = (int)Plugin.Configuration.ShownShockers;
+                if (ImGui.Combo("Shown Shockers", ref ShownShockersIndex, ["All", "Personal Only", "Shared Only", "None...?"], 4))
+                {
+                    Plugin.Configuration.ShownShockers = (ShownShockers)ShownShockersIndex;
+                    Plugin.Configuration.Save();
+                }
+                ImGui.SameLine();
+                ImGui.TextDisabled(" (?)");
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetTooltip("Allows you to select which Shockers show up on clicking the \"Assign Shockers\" button.");
+                }
 
                 ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 2 - 170, ImGui.GetWindowSize().Y - 35));
                 ImGui.BeginGroup();
