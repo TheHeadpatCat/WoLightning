@@ -161,8 +161,7 @@ public class ConfigWindow : Window, IDisposable
 
 
         ImGui.SetNextWindowPos(new Vector2(ImGui.GetWindowPos().X, ImGui.GetWindowPos().Y + ImGui.GetWindowHeight()));
-        ImGui.SetNextWindowSize(new Vector2(ImGui.GetWindowWidth(), 30));
-        ImGui.PushStyleColor(ImGuiCol.ChildBg, new Vector4(0.05f, 0.05f, 0.05f, 0.95f));
+        ImGui.SetNextWindowSize(new Vector2(ImGui.GetWindowWidth(), 35));
         ImGui.Begin("##DiscordFooter", ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoSavedSettings);
         ImGui.Text("Found a issue or got a feature request?");
         ImGui.SameLine();
@@ -179,7 +178,6 @@ public class ConfigWindow : Window, IDisposable
             catch (Exception e) { Plugin.Log(1, e); }
         }
         ImGui.End();
-        ImGui.PopStyleColor();
 
     }
     private void DrawHeader()
