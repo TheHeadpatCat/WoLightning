@@ -63,6 +63,7 @@ public sealed class Plugin : IDalamudPlugin
     public IDataManager DataManager { get; init; }
     public IToastGui ToastGui { get; init; }
     public IGameConfig GameConfig { get; init; }
+    public ICondition Condition { get; init; }
     public TextLog TextLog { get; set; }
 
     // Gui Interfaces
@@ -99,8 +100,8 @@ public sealed class Plugin : IDalamudPlugin
         IPartyList partyList,
         ITargetManager targetManager,
         IDataManager dataManager,
-        IGameConfig gameConfig
-,
+        IGameConfig gameConfig,
+        ICondition condition,
         IToastGui toastGui
 
         )
@@ -122,7 +123,7 @@ public sealed class Plugin : IDalamudPlugin
         DataManager = dataManager;
         ToastGui = toastGui;
         GameConfig = gameConfig;
-
+        Condition = condition;
 
         
         LanguageStrings = new(this);

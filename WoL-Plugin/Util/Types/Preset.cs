@@ -60,6 +60,7 @@ namespace WoLightning.Util.Types
 
         // Misc Triggers
         public SitOnFurniture SitOnFurniture { get; set; } = new();
+        public UseMount UseMount { get; set; } = new();
         public FailCraft FailCraft { get; set; } = new();
         public FishEscaped FishEscaped { get; set; } = new();
             
@@ -84,7 +85,7 @@ namespace WoLightning.Util.Types
                     }
                     catch (Exception ex)
                     {
-                        Plugin.Error(ex.StackTrace);
+                        Plugin.Error(ex.Message);
                         Plugin.Error("Failed to Load Rule");
                     }
                 }
@@ -107,7 +108,7 @@ namespace WoLightning.Util.Types
                     }
                     catch (Exception ex)
                     {
-                        Plugin.Error(ex.StackTrace);
+                        Plugin.Error(ex.Message);
                         Plugin.Error("Failed to Load Rule");
                     }
                 }
