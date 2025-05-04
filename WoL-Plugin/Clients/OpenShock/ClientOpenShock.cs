@@ -1,15 +1,12 @@
-﻿using Lumina.Excel.Sheets;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using WoLightning.Util.Types;
-using WoLightning.WoL_Plugin.Clients;
 using WoLightning.WoL_Plugin.Clients.OpenShock;
 
 
@@ -96,7 +93,7 @@ namespace WoLightning.Clients.OpenShock
             if (Plugin == null || Plugin.Authentification == null) return;
             string apikey = Plugin.Authentification.OpenShockApiKey, url = Plugin.Authentification.OpenShockURL;
 
-            Plugin.Log(2,"Requesting OpenShock Account information...");
+            Plugin.Log(2, "Requesting OpenShock Account information...");
 
             HttpResponseMessage Result;
 
@@ -104,7 +101,7 @@ namespace WoLightning.Clients.OpenShock
             {
                 Result = await Client.GetAsync($"{url}/1/users/self");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Plugin.Error(ex.Message);
                 Plugin.Error("Something went wrong while fetching OpenShock Account Data.");
@@ -116,7 +113,7 @@ namespace WoLightning.Clients.OpenShock
             {
                 Plugin.Error("Could not retrieve Account Information from OpenShock.");
                 Status = ConnectionStatusOpenShock.Unavailable;
-                Plugin.Log(1,new StreamReader(Result.Content.ReadAsStream()).ReadToEnd());
+                Plugin.Log(1, new StreamReader(Result.Content.ReadAsStream()).ReadToEnd());
                 return;
             }
             try
@@ -138,7 +135,7 @@ namespace WoLightning.Clients.OpenShock
                 Status = ConnectionStatusOpenShock.FatalError;
                 return;
             }
-            if(UserId.Length > 1) Status = ConnectionStatusOpenShock.ConnectedNoInfo;
+            if (UserId.Length > 1) Status = ConnectionStatusOpenShock.ConnectedNoInfo;
             else Status = ConnectionStatusOpenShock.InvalidUserdata;
         }
 
@@ -156,7 +153,7 @@ namespace WoLightning.Clients.OpenShock
                 return;
             }
 
-            Plugin.Log(3," -> Received OpenShock Device Information!");
+            Plugin.Log(3, " -> Received OpenShock Device Information!");
 
             using (var reader = new StreamReader(Result.Content.ReadAsStream()))
             {
@@ -165,10 +162,10 @@ namespace WoLightning.Clients.OpenShock
                     string message = reader.ReadToEnd();
                     if (message == null || message.Length == 0) return;
                     ResponseDevices devices = JsonConvert.DeserializeObject<ResponseDevices>(message)!;
-                    Plugin.Log(3,devices);
-                    foreach(var device in devices.data)
+                    Plugin.Log(3, devices);
+                    foreach (var device in devices.data)
                     {
-                        Devices.Add(new HubOpenShock(Plugin,device.id));
+                        Devices.Add(new HubOpenShock(Plugin, device.id));
                     }
 
                 }
@@ -178,7 +175,7 @@ namespace WoLightning.Clients.OpenShock
                 }
             }
         }
-        
+
         public async void SendRequest(ShockOptions Options)
         {
 
@@ -188,19 +185,19 @@ namespace WoLightning.Clients.OpenShock
 
             if (Plugin.isFailsafeActive)
             {
-                Plugin.Log(3," -> Blocked request due to failsafe mode!");
+                Plugin.Log(3, " -> Blocked request due to failsafe mode!");
                 return;
             }
 
             if (!Options.Validate())
             {
-                Plugin.Log(3," -> Blocked due to invalid ShockOptions!");
+                Plugin.Log(3, " -> Blocked due to invalid ShockOptions!");
                 return;
             }
 
             if (Options.ShockersOpenShock.Count == 0)
             {
-                Plugin.Log(3," -> No OpenShock Shockers assigned, discarding!");
+                Plugin.Log(3, " -> No OpenShock Shockers assigned, discarding!");
                 return;
             }
             #endregion
@@ -216,11 +213,11 @@ namespace WoLightning.Clients.OpenShock
                     warningOptions.Duration = 1;
                     foreach (var shocker in Options.ShockersOpenShock)
                     {
-                        Plugin.Log(3,"Sending Warning.");
+                        Plugin.Log(3, "Sending Warning.");
                         StringContent jsonContentWarn = new(CommandPublish.Generate(Options.ShockersOpenShock, warningOptions), Encoding.UTF8, "application/json");
                         await Client.PostAsync($"{Plugin.Authentification.OpenShockURL}/2/shockers/control", jsonContentWarn);
                     }
-                    Plugin.Log(3,"Warnings sent!");
+                    Plugin.Log(3, "Warnings sent!");
                     int delay;
                     switch (Options.WarningMode)
                     {
@@ -232,12 +229,12 @@ namespace WoLightning.Clients.OpenShock
                     await Task.Delay(delay);
                 }
 
-                Plugin.Log(3,"Sending Command");
+                Plugin.Log(3, "Sending Command");
                 StringContent jsonContent = new(CommandPublish.Generate(Options.ShockersOpenShock, Options), Encoding.UTF8, "application/json");
                 var result = await Client.PostAsync($"{Plugin.Authentification.OpenShockURL}/2/shockers/control", jsonContent);
-                Plugin.Log(3,new StreamReader(result.Content.ReadAsStream()).ReadToEnd());
+                Plugin.Log(3, new StreamReader(result.Content.ReadAsStream()).ReadToEnd());
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Plugin.Error(ex.Message);
                 Plugin.Error("Failed to send Command to OpenShock Shocker");

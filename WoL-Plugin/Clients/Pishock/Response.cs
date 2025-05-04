@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace WoLightning.WoL_Plugin.Clients.Pishock
 {
     [Serializable]
     internal class Response
     {
-        public int clientId {  get; set; }
+        public int clientId { get; set; }
         public string name { get; set; }
         public int userId { get; set; }
         public string username { get; set; }
@@ -44,7 +40,7 @@ namespace WoLightning.WoL_Plugin.Clients.Pishock
         public bool isPaused { get; set; }
         public int maxIntensity { get; set; }
         public bool canContinuous { get; set; }
-        public bool canShock {  get; set; }
+        public bool canShock { get; set; }
         public bool canVibrate { get; set; }
         public bool canBeep { get; set; }
         public bool canLog { get; set; }
@@ -67,7 +63,7 @@ namespace WoLightning.WoL_Plugin.Clients.Pishock
             this.shareCode = shareCode;
         }
 
-        public override string ToString() { return "[SharedResponse] ShockerName: " + shockerName + " shareCode: " + shareCode.Substring(0,3) + "[...] shockerId: " + shockerId + " clientId: " + clientId + " canVibrate: " + canVibrate; }
+        public override string ToString() { return "[SharedResponse] ShockerName: " + shockerName + " shareCode: " + shareCode.Substring(0, 3) + "[...] shockerId: " + shockerId + " clientId: " + clientId + " canVibrate: " + canVibrate; }
     }
 
     [Serializable]
@@ -83,7 +79,7 @@ namespace WoLightning.WoL_Plugin.Clients.Pishock
             this.name = name;
             this.shockerId = shockerId;
             this.isPaused = isPaused;
-        } 
+        }
         public override string ToString() { return "[ResponseShocker] Name: " + name + " shockerId: " + shockerId; }
     }
 

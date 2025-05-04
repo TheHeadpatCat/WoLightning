@@ -7,7 +7,6 @@ using System.Linq;
 using System.Reflection;
 using System.Timers;
 using WoLightning.Util.Types;
-using static FFXIVClientStructs.FFXIV.Client.UI.RaptureAtkHistory.Delegates;
 
 
 namespace WoLightning.Configurations
@@ -56,7 +55,7 @@ namespace WoLightning.Configurations
             string f = "";
             if (File.Exists(ConfigurationDirectoryPath + "Config.json")) f = File.ReadAllText(ConfigurationDirectoryPath + "Config.json");
 
-            plugin.Log(3,"Initializing Config...");
+            plugin.Log(3, "Initializing Config...");
 
             Configuration s = DeserializeConfig(f);
             foreach (PropertyInfo property in typeof(Configuration).GetProperties().Where(p => p.CanWrite)) property.SetValue(this, property.GetValue(s, null), null);
@@ -75,8 +74,8 @@ namespace WoLightning.Configurations
                     }
                     catch (Exception e)
                     {
-                        plugin.Log(1,"Failed to deserialize Preset: " + file);
-                        plugin.Log(1,e);
+                        plugin.Log(1, "Failed to deserialize Preset: " + file);
+                        plugin.Log(1, e);
                         continue;
                     }
                     Presets.Add(tPreset);
@@ -84,7 +83,7 @@ namespace WoLightning.Configurations
             }
             if (Presets.Count == 0 || !loadPreset(LastPresetName))
             {
-                plugin.Log(1,"No Presets found, or cannot load last preset - Creating Default.");
+                plugin.Log(1, "No Presets found, or cannot load last preset - Creating Default.");
                 ActivePreset = new Preset("Default", plugin.LocalPlayer.getFullName());
                 Presets.Add(ActivePreset);
                 loadPreset("Default");
@@ -104,7 +103,7 @@ namespace WoLightning.Configurations
         #region Save and Loading
         public void Save()
         {
-            plugin.Log(3,"Configuration.Save() called");
+            plugin.Log(3, "Configuration.Save() called");
             try
             {
                 LastPresetName = ActivePreset.Name;
@@ -119,7 +118,7 @@ namespace WoLightning.Configurations
             catch (Exception e)
             {
                 plugin.NotificationHandler.send("Failed to save Presets!");
-                plugin.Log(1,"Failed to save Presets!");
+                plugin.Log(1, "Failed to save Presets!");
                 plugin.Error(e);
             }
 
@@ -131,7 +130,7 @@ namespace WoLightning.Configurations
             catch (Exception e) // scuffed crash protection - if this happens we got a serious issue.
             {
                 plugin.NotificationHandler.send("Failed to save Configuration!");
-                plugin.Log(1,"Failed to save Configuration!");
+                plugin.Log(1, "Failed to save Configuration!");
                 plugin.Error(e);
             }
         }
@@ -155,19 +154,19 @@ namespace WoLightning.Configurations
             ActivePreset.ValidateShockers();
 
             PresetChanged?.Invoke(ActivePreset, ActivePresetIndex);
-            plugin.Log(3," -> Done.");
+            plugin.Log(3, " -> Done.");
             return true;
         }
 
 
         public void saveCurrentPreset()
         {
-            plugin.Log(3,"Saving preset: " + ActivePreset.Name);
+            plugin.Log(3, "Saving preset: " + ActivePreset.Name);
             File.WriteAllText($"{ConfigurationDirectoryPath}\\Presets\\{ActivePreset.Name}.json", SerializePreset(ActivePreset));
         }
         public void savePreset(Preset target)
         {
-            plugin.Log(3,"Saving preset: " + target.Name);
+            plugin.Log(3, "Saving preset: " + target.Name);
             File.WriteAllText($"{ConfigurationDirectoryPath}\\Presets\\{target.Name}.json", SerializePreset(target));
         }
         public void savePreset(Preset target, bool isAlternative)

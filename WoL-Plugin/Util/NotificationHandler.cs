@@ -1,10 +1,6 @@
 ﻿using Dalamud.Interface.ImGuiNotification;
-using Dalamud.Plugin.Services;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 using WoLightning.Util;
 
@@ -23,10 +19,10 @@ namespace WoLightning.WoL_Plugin.Util
         private readonly static TimerPlus RateLimiter = new();
         private readonly static short RateLimitMax = 3;
         private short RateLimit = 0;
-        
+
 
         public NotificationHandler(Plugin plugin)
-        {   
+        {
             Plugin = plugin;
             RateLimiter.Interval = 3000;
             RateLimiter.AutoReset = true;
@@ -36,10 +32,10 @@ namespace WoLightning.WoL_Plugin.Util
 
         ~NotificationHandler() { RateLimiter.Stop(); RateLimiter.Elapsed -= LowerLimit; RateLimiter.Dispose(); }
 
-        
+
         public void send(string content, string? title, NotificationType? type, TimeSpan? duration)
         {
-            if(QueuedNotifications.Count < MaxQueuedNotifications) QueuedNotifications.Add(createTemplate(content, title, type, duration));
+            if (QueuedNotifications.Count < MaxQueuedNotifications) QueuedNotifications.Add(createTemplate(content, title, type, duration));
             Update();
         }
         public void send(string content) { send(content, null, null, null); }

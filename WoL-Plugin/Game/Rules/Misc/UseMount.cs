@@ -1,15 +1,8 @@
 ﻿using Dalamud.Game.ClientState.Conditions;
-using Dalamud.Game.Gui.Toast;
-using Dalamud.Plugin.Services;
 using ImGuiNET;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using System.Timers;
-using WoLightning.Configurations;
 using WoLightning.Util;
 using WoLightning.Util.Types;
 
@@ -55,7 +48,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         {
             try
             {
-                Plugin.Log(3,flag.ToString());
+                Plugin.Log(3, flag.ToString());
                 if (flag == ConditionFlag.Mounted) isMounted = value;
                 else if (flag == ConditionFlag.Mounted2) isMountedPillion = value;
                 else return;
@@ -68,7 +61,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
                     SafetyStop = 0;
                     Trigger("You got onto a Mount!");
                 }
-                
+
             }
             catch (Exception e) { Plugin.Error(e.Message); }
 
@@ -76,7 +69,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 
         private void shockUntilUnmount(object? sender, ElapsedEventArgs? e)
         {
-            if((!isMounted && (!isMountedPillion && IncludePillion)) || SafetyStop >= 10)
+            if ((!isMounted && (!isMountedPillion && IncludePillion)) || SafetyStop >= 10)
             {
                 isMountedTimer.Stop();
                 SafetyStop = 0;

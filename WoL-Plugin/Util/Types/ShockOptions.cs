@@ -196,7 +196,7 @@ namespace WoLightning.Util.Types
         public int getDurationOpenShock()
         {
             int output = Duration;
-            if(output > 100) return output;
+            if (output > 100) return output;
             return output * 1000;
         }
 

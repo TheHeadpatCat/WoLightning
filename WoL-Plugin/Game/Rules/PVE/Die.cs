@@ -27,7 +27,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
             IsRunning = true;
             Plugin.Framework.Update += Check;
             Player = Plugin.ClientState.LocalPlayer;
-            
+
         }
 
         override public void Stop()
@@ -39,17 +39,18 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 
         private void Check(IFramework framework)
         {
-            try { 
-            Player = Plugin.ClientState.LocalPlayer;
-            if (Player == null) { return; }
-
-            if (Player.IsDead && !IsTriggered) //Player died and Shock has not been triggered yet
+            try
             {
-                Trigger("You have died!");
-                IsTriggered = true;
-            }
-            if (IsTriggered && !Player.IsDead) //Shock was triggered, and now we are alive again
-                IsTriggered = false;
+                Player = Plugin.ClientState.LocalPlayer;
+                if (Player == null) { return; }
+
+                if (Player.IsDead && !IsTriggered) //Player died and Shock has not been triggered yet
+                {
+                    Trigger("You have died!");
+                    IsTriggered = true;
+                }
+                if (IsTriggered && !Player.IsDead) //Shock was triggered, and now we are alive again
+                    IsTriggered = false;
             }
             catch (Exception e) { Plugin.Error(e.Message); }
 

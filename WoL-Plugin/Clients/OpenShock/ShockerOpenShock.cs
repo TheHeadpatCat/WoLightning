@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WoLightning.WoL_Plugin.Clients.Pishock;
-
-namespace WoLightning.WoL_Plugin.Clients.OpenShock
+﻿namespace WoLightning.WoL_Plugin.Clients.OpenShock
 {
     public class ShockerOpenShock : ShockerBase
     {

@@ -1,20 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace WoLightning.WoL_Plugin.Clients.OpenShock
 {
     [Serializable]
     internal class ResponseAccount
     {
-        public string message {  get; set; }
+        public string message { get; set; }
         public ResponseAccountData data { get; set; }
 
         [JsonConstructor]
-        public ResponseAccount(string message, ResponseAccountData data) {
+        public ResponseAccount(string message, ResponseAccountData data)
+        {
             this.message = message;
             this.data = data;
         }
@@ -27,7 +24,7 @@ namespace WoLightning.WoL_Plugin.Clients.OpenShock
     [Serializable]
     internal class ResponseAccountData
     {
-       
+
         public string id { get; set; }
         public string name { get; set; }
         public string email { get; set; }
@@ -98,7 +95,7 @@ namespace WoLightning.WoL_Plugin.Clients.OpenShock
     [Serializable]
     internal class ResponseDeviceLCG
     {
-        
+
 
         public string message { get; set; }
         public ResponseDeviceLCGData data { get; set; }
@@ -182,7 +179,7 @@ namespace WoLightning.WoL_Plugin.Clients.OpenShock
 
         public override string? ToString()
         {
-            return "ID: " + id + " rfId: " + rfId + " Name: " + name + " isPaused: " + isPaused;  
+            return "ID: " + id + " rfId: " + rfId + " Name: " + name + " isPaused: " + isPaused;
         }
     }
 

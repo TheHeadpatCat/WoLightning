@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using WoLightning.WoL_Plugin.Game.Rules;
 
 namespace WoLightning.WoL_Plugin.Clients
@@ -37,7 +32,7 @@ namespace WoLightning.WoL_Plugin.Clients
         public ShockerStatus Status = ShockerStatus.Unchecked;
 
         public Action<RuleBase, ShockerBase> Triggered;
-        public Action<int[],    ShockerBase> TriggeredManually;
+        public Action<int[], ShockerBase> TriggeredManually;
 
         public ShockerBase(ShockerType type, string name)
         {

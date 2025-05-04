@@ -2,7 +2,6 @@ using Dalamud.Game;
 using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.Command;
-using Dalamud.Interface.ImGuiNotification;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
@@ -12,7 +11,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection.Emit;
 using WoLightning.Clients.OpenShock;
 using WoLightning.Clients.Pishock;
 using WoLightning.Clients.Webserver;
@@ -127,10 +125,10 @@ public sealed class Plugin : IDalamudPlugin
         GameConfig = gameConfig;
         Condition = condition;
 
-        
+
         LanguageStrings = new(this);
         NotificationHandler = new(this);
-        
+
 
         // Brio @Brio/Resources/GameDataProvider.cs#L27
         GameEmotes = new(this, dataManager.GetExcelSheet<Emote>()!.ToDictionary(x => x.RowId, x => x).AsReadOnly());
@@ -177,7 +175,7 @@ public sealed class Plugin : IDalamudPlugin
         PluginLog.Verbose("Finished initializing Plugin.");
     }
 
-    
+
 
     private void onUpdate(IFramework framework)
     {
@@ -186,7 +184,7 @@ public sealed class Plugin : IDalamudPlugin
 
     private void onLogin()
     {
-        Log(3,"Running onLogin()");
+        Log(3, "Running onLogin()");
         try
         {
 
@@ -195,8 +193,8 @@ public sealed class Plugin : IDalamudPlugin
 
             if (!File.Exists(PluginInterface.GetPluginConfigDirectory() + "\\version")) // Either new installation or old data - either way, purge.
             {
-                Log(1,"Missing Version file - purging folder.");
-                foreach(var dir in Directory.EnumerateDirectories(PluginInterface.GetPluginConfigDirectory()))
+                Log(1, "Missing Version file - purging folder.");
+                foreach (var dir in Directory.EnumerateDirectories(PluginInterface.GetPluginConfigDirectory()))
                 {
                     Directory.Delete(dir, true);
                 }
@@ -212,7 +210,7 @@ public sealed class Plugin : IDalamudPlugin
 
             ConfigurationDirectoryPath += "\\";
 
-            
+
 
 
             TextLog = new TextLog(this, ConfigurationDirectoryPath);
@@ -231,7 +229,7 @@ public sealed class Plugin : IDalamudPlugin
                 Configuration = new Configuration();
                 Configuration.Save();
                 NotificationHandler.send("Your Configuration has been reset due to an error!");
-                Log(1,e);
+                Log(1, e);
             }
 
             try
@@ -262,14 +260,14 @@ public sealed class Plugin : IDalamudPlugin
             ConfigWindow.SetConfiguration(Configuration);
             MainWindow.Initialize();
 
-            Log(3,"The Game is running " + (ClientLanguage)GameConfig.System.GetUInt("Language") + " Language");
+            Log(3, "The Game is running " + (ClientLanguage)GameConfig.System.GetUInt("Language") + " Language");
 
             if (version < currentVersion)
             {
                 File.Delete(PluginInterface.GetPluginConfigDirectory() + "\\version");
                 File.WriteAllText(PluginInterface.GetPluginConfigDirectory() + "\\version", currentVersion + "");
 
-                if(Configuration.DebugLevel < DebugLevel.Verbose) Configuration.DebugLevel = DebugLevel.Verbose;
+                if (Configuration.DebugLevel < DebugLevel.Verbose) Configuration.DebugLevel = DebugLevel.Verbose;
             }
 
         }
@@ -379,7 +377,7 @@ public sealed class Plugin : IDalamudPlugin
     public void Log(DebugLevel level, Object obj)
     {
         string? message = obj.ToString();
-        if(message != null) Log(level, message);
+        if (message != null) Log(level, message);
     }
 
     public void Log(int level, string message)

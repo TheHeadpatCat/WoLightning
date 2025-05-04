@@ -70,17 +70,17 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
         virtual public void Start()
         {
-            Plugin.Log(2,Name + ".Start() is not Implemented");
+            Plugin.Log(2, Name + ".Start() is not Implemented");
         }
 
         virtual public void Stop()
         {
-            Plugin.Log(2,Name + ".Stop() is not Implemented");
+            Plugin.Log(2, Name + ".Stop() is not Implemented");
         }
 
-        virtual public void Trigger(string Text){Trigger(Text, null, null, null);}
-        virtual public void Trigger(string Text, Player? source){Trigger(Text, source, null, null);}
-        virtual public void Trigger(string Text, Player? source, int[]? overrideOptions){Trigger(Text, source, overrideOptions, null);}
+        virtual public void Trigger(string Text) { Trigger(Text, null, null, null); }
+        virtual public void Trigger(string Text, Player? source) { Trigger(Text, source, null, null); }
+        virtual public void Trigger(string Text, Player? source, int[]? overrideOptions) { Trigger(Text, source, overrideOptions, null); }
 
         virtual public void Trigger(string Text, Player? source, int[]? overrideOptions, bool? noNotification)
         {
@@ -88,12 +88,12 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             if (source != null && !Plugin.Configuration.ActivePreset.isPlayerAllowedToTrigger(source)) return;
             if (!Plugin.Configuration.ActivePreset.AllowRulesInPvP && Plugin.ClientState.IsPvP) return;
 
-            if(overrideOptions == null) Triggered?.Invoke(this.ShockOptions);
+            if (overrideOptions == null) Triggered?.Invoke(this.ShockOptions);
             else Triggered?.Invoke(new ShockOptions(0, overrideOptions[0], overrideOptions[1]));
 
             if ((noNotification == null || noNotification == false) && Plugin.Configuration.ActivePreset.showTriggerNotifs) Plugin.NotificationHandler.send(Text);
 
-            
+
             ShockOptions.startCooldown();
             if (Plugin.Configuration.ActivePreset.showCooldownNotifs && ShockOptions.Cooldown > 0)
             {

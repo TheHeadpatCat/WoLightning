@@ -2,7 +2,6 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Net.Sockets;
 using System.Reflection;
 using WoLightning.WoL_Plugin.Game.Rules;
 using WoLightning.WoL_Plugin.Game.Rules.Misc;
@@ -62,11 +61,11 @@ namespace WoLightning.Util.Types
         public UseMount UseMount { get; set; } = new();
         public FailCraft FailCraft { get; set; } = new();
         public FishEscaped FishEscaped { get; set; } = new();
-            
+
         public void Initialize(Plugin Plugin)
         {
             this.Plugin = Plugin;
-            Plugin.Log(3,"Initializing Preset - " + Name);
+            Plugin.Log(3, "Initializing Preset - " + Name);
 
             foreach (PropertyInfo property in this.GetType().GetProperties())
             {
@@ -94,7 +93,7 @@ namespace WoLightning.Util.Types
         public void ValidateShockers()
         {
             if (Plugin == null || Plugin.Authentification == null || Plugin.ClientPishock.Status != Clients.Pishock.ClientPishock.ConnectionStatusPishock.Connected) return;
-            
+
             foreach (PropertyInfo property in this.GetType().GetProperties())
             {
                 if (property.PropertyType.BaseType == typeof(RuleBase))
@@ -103,7 +102,7 @@ namespace WoLightning.Util.Types
                     {
                         RuleBase r = (RuleBase)property.GetValue(this, null)!;
                         int i = r.ShockOptions.ShockersPishock.RemoveAll((shocker) => !Plugin.Authentification.PishockShockers.Contains(shocker));
-                        if(i > 0) Plugin.Log(2,"Removed " + i + " Invalid Shockers from " + r.Name);
+                        if (i > 0) Plugin.Log(2, "Removed " + i + " Invalid Shockers from " + r.Name);
                     }
                     catch (Exception ex)
                     {
@@ -128,7 +127,7 @@ namespace WoLightning.Util.Types
             }
             catch (Exception ex)
             {
-                if(Plugin != null) Plugin.Error(ex.StackTrace);
+                if (Plugin != null) Plugin.Error(ex.Message);
             }
         }
 
@@ -140,7 +139,7 @@ namespace WoLightning.Util.Types
                 {
                     if (Rule.IsEnabled)
                     {
-                        Plugin.Log(3,"Starting " + Rule.Name);
+                        Plugin.Log(3, "Starting " + Rule.Name);
                         Rule.Start();
                     }
                 }
@@ -153,7 +152,7 @@ namespace WoLightning.Util.Types
             {
                 foreach (var Rule in Rules)
                 {
-                    Plugin.Log(3,"Stopping " + Rule.Name);
+                    Plugin.Log(3, "Stopping " + Rule.Name);
                     Rule.Stop();
                 }
             }

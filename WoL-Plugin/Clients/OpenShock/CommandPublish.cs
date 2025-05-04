@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using WoLightning.Util.Types;
-using WoLightning.WoL_Plugin.Clients.Pishock;
 
 namespace WoLightning.WoL_Plugin.Clients.OpenShock
 {
@@ -31,7 +27,7 @@ namespace WoLightning.WoL_Plugin.Clients.OpenShock
     [Serializable]
     internal class Command
     {
-        public string id {  get; set; }
+        public string id { get; set; }
         public string type { get; set; }
         public int intensity { get; set; }
         public int duration { get; set; }

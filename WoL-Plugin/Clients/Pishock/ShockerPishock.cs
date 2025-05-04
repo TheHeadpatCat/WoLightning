@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WoLightning.WoL_Plugin.Clients.Pishock
+﻿namespace WoLightning.WoL_Plugin.Clients.Pishock
 {
     public class ShockerPishock : ShockerBase
     {
@@ -33,8 +27,8 @@ namespace WoLightning.WoL_Plugin.Clients.Pishock
 
         public override bool Equals(object? obj)
         {
-            if(obj == null) return false;
-            if(obj is ShockerPishock)
+            if (obj == null) return false;
+            if (obj is ShockerPishock)
             {
                 ShockerPishock other = (ShockerPishock)obj;
                 return clientId == other.clientId && shockerId == other.shockerId && shareId == other.shareId && shareCode == other.shareCode;

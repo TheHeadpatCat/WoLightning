@@ -40,7 +40,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
             {
                 if (Plugin.ClientState.LocalPlayer == null || Plugin.PartyList == null || Plugin.PartyList.Length == 0) { return; }
 
-                if(LastPartySize != Plugin.PartyList.Length) // If someone leaves or enters the party, reset the index.
+                if (LastPartySize != Plugin.PartyList.Length) // If someone leaves or enters the party, reset the index.
                 {
                     DeadPlayerIndex = [false, false, false, false, false, false, false, false]; //how do i polyfill
                     LastPartySize = Plugin.PartyList.Length;
@@ -60,7 +60,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 }
             }
             catch (Exception e) { Plugin.Error(e.Message); }
-}
+        }
 
     }
-    } 
+}

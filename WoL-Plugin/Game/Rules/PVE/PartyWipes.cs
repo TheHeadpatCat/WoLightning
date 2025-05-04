@@ -2,7 +2,6 @@
 using System;
 using System.Linq;
 using System.Text.Json.Serialization;
-using WoLightning.Util.Types;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 {

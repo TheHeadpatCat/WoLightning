@@ -4,7 +4,6 @@ using ImGuiNET;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Numerics;
 using WoLightning.Util;
 using WoLightning.WoL_Plugin.Util.Types;

@@ -2,7 +2,6 @@
 using Dalamud.Game.Text.SeStringHandling;
 using System;
 using System.Linq;
-using static FFXIVClientStructs.FFXIV.Client.Game.Character.VfxContainer;
 
 namespace WoLightning.Util.Types
 {
@@ -138,7 +137,7 @@ namespace WoLightning.Util.Types
 
         public Player(Payload playerPayload)
         {
-            if(playerPayload.Type != PayloadType.Player)
+            if (playerPayload.Type != PayloadType.Player)
             {
                 throw new ArgumentException("Tried to create a Player with Payloadtype " + playerPayload.Type);
             }
@@ -149,14 +148,14 @@ namespace WoLightning.Util.Types
             {
                 string[] values = part.Split(":");
                 if (values.Length != 2) continue;
-                
-                if(x == 0) Name = values[1].Trim();
-                if(x == 1) WorldId = int.Parse(values[1].Trim());
+
+                if (x == 0) Name = values[1].Trim();
+                if (x == 1) WorldId = int.Parse(values[1].Trim());
                 x++;
             }
-            if(Name == null || WorldId == null)
+            if (Name == null || WorldId == null)
             {
-                throw new Exception("Unable to create Player from Payload!\n"+playerString);
+                throw new Exception("Unable to create Player from Payload!\n" + playerString);
             }
         }
 
@@ -230,7 +229,7 @@ namespace WoLightning.Util.Types
 
         public override bool Equals(object? obj)
         {
-            if(obj == null) return false;
+            if (obj == null) return false;
             if (obj.GetType() != GetType()) return false;
             return getFullName() == ((Player)obj).getFullName();
         }

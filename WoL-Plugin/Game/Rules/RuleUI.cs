@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Numerics;
 using WoLightning.Configurations;
-using WoLightning.Util;
 using WoLightning.Util.Types;
-using WoLightning.WoL_Plugin.Clients;
 
 namespace WoLightning.WoL_Plugin.Game.Rules
 {
@@ -69,7 +67,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             ImGui.SameLine();
             ImGui.BeginGroup();
 
-            if (Plugin.isFailsafeActive) {
+            if (Plugin.isFailsafeActive)
+            {
                 ImGui.TextColored(ColorNameBlocked, "  " + Rule.Name + $" [Failsafe Active]");
             }
             else
@@ -80,12 +79,12 @@ namespace WoLightning.WoL_Plugin.Game.Rules
                 if (Rule.CreatorName != null)
                 {
                     ImGui.SameLine();
-                    ImGui.TextColored(ColorDescription,$"    by {Rule.CreatorName}");
+                    ImGui.TextColored(ColorDescription, $"    by {Rule.CreatorName}");
                 }
             }
 
             ImGui.TextColored(ColorDescription, $"  {Rule.Description}");
-            
+
             if (Rule.Hint != null && Rule.Hint.Length > 0)
             {
                 ImGui.SameLine();
@@ -146,16 +145,17 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             ImGui.Text("    Warning Mode");
             ImGui.SameLine();
             ImGui.TextDisabled("(?)");
-            if (ImGui.IsItemHovered()) { 
+            if (ImGui.IsItemHovered())
+            {
                 ImGui.SetTooltip("Sends out a 1 second Vibration before the actual command." +
                 "\nHigher settings have a longer waiting time between the Warning and Command." +
                 "\nShort is between 1-3 seconds." +
                 "\nMedium is between 5-10 seconds." +
-                "\nLong is between 10-25 seconds."); 
+                "\nLong is between 10-25 seconds.");
             }
             ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 5 - 30);
             int warning = (int)Rule.ShockOptions.WarningMode;
-            if (ImGui.Combo("##WarningMode" + Rule.Name, ref warning, ["None", "Short", "Medium", "Long"],4))
+            if (ImGui.Combo("##WarningMode" + Rule.Name, ref warning, ["None", "Short", "Medium", "Long"], 4))
             {
                 Rule.ShockOptions.WarningMode = (WarningMode)warning;
                 changed = true;
@@ -217,7 +217,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
                     return;
                 }
 
-                
+
 
                 ImGui.Text("Please select all shockers that should activate for this trigger:");
                 ImGui.BeginGroup();
@@ -247,7 +247,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
                         continue;
                     }
                     if (!shocker.isPaused) ImGui.TextColored(ColorNameEnabled, shocker.name);
-                    else ImGui.TextColored(ColorNameDisabled,"[Paused] " + shocker.name);
+                    else ImGui.TextColored(ColorNameDisabled, "[Paused] " + shocker.name);
                 }
                 ImGui.EndGroup();
 

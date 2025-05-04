@@ -70,10 +70,10 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         {
             safetyStop++;
 
-            Plugin.Log(3,"Chair Check " + Plugin.ClientState.LocalPlayer);
+            Plugin.Log(3, "Chair Check " + Plugin.ClientState.LocalPlayer);
             if (safetyStop > 10)
             {
-                Plugin.Log(3,"Timer has exceeded safety limit - aborting Chair Check.");
+                Plugin.Log(3, "Timer has exceeded safety limit - aborting Chair Check.");
                 sittingOnChair = false;
                 sittingOnChairTimer.Stop();
                 safetyStop = 0;
@@ -82,7 +82,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
             if (Plugin.ClientState.LocalPlayer == null)
             {
-                Plugin.Log(3,"No Player");
+                Plugin.Log(3, "No Player");
                 sittingOnChair = false;
                 sittingOnChairTimer.Stop();
                 safetyStop = 0;

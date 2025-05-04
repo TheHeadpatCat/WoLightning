@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Sockets;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using WoLightning.Util.Types;
 
 namespace WoLightning.WoL_Plugin.Clients.Pishock
@@ -16,11 +12,11 @@ namespace WoLightning.WoL_Plugin.Clients.Pishock
             List<Command> commands = new();
             List<string> targets = new();
 
-            
+
             foreach (var shocker in Options.ShockersPishock)
             {
-                Plugin.Log(3,shocker);
-                var cmd =  new Command(shocker, Options, UserId, isWarning);
+                Plugin.Log(3, shocker);
+                var cmd = new Command(shocker, Options, UserId, isWarning);
                 string target;
                 if (shocker.isPersonal) target = "c" + shocker.clientId + "-ops";
                 else target = "c" + shocker.clientId + "-sops-" + shocker.shareCode;
@@ -55,12 +51,12 @@ namespace WoLightning.WoL_Plugin.Clients.Pishock
                 r = false,
                 l = new
                 {
-                        u = int.Parse(UserId),
-                        w = isWarningT,
-                        ty = "api",
-                        o = "WoLightning"
-                    }
-                };
+                    u = int.Parse(UserId),
+                    w = isWarningT,
+                    ty = "api",
+                    o = "WoLightning"
+                }
+            };
         }
 
         public override string ToString()

@@ -71,7 +71,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                         continue;
                     }
 
-                   
+
                 }
                 if (!foundVuln) lastVulnUpStacks = 0;
                 if (!foundDamage) lastDamageDownStacks = 0;

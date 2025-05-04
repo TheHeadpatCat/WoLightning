@@ -3,9 +3,7 @@ using Dalamud.Plugin.Services;
 using ImGuiNET;
 using System;
 using System.Text.Json.Serialization;
-using WoLightning.Game;
 using WoLightning.Util.Types;
-using static FFXIVClientStructs.FFXIV.Client.Graphics.Kernel.VertexShader;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 {
@@ -130,7 +128,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
             ImGui.SameLine();
             int minimumDamagePercentInput = minimumDamagePercent;
             ImGui.SetNextItemWidth(110);
-            if(ImGui.SliderInt("Minimum Damage% Taken##TakeDamageMinimumDamageSlider", ref minimumDamagePercentInput, 0, 100))
+            if (ImGui.SliderInt("Minimum Damage% Taken##TakeDamageMinimumDamageSlider", ref minimumDamagePercentInput, 0, 100))
             {
                 minimumDamagePercent = minimumDamagePercentInput;
                 Plugin.Configuration.saveCurrentPreset();

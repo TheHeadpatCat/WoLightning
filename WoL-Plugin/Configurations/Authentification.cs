@@ -9,7 +9,6 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Clients;
 using WoLightning.WoL_Plugin.Clients.OpenShock;
 using WoLightning.WoL_Plugin.Clients.Pishock;
@@ -42,7 +41,7 @@ namespace WoLightning.Configurations
         public string OpenShockApiKey { get; set; } = string.Empty;
         [JsonIgnore] public List<ShockerOpenShock> OpenShockShockers { get; set; } = new();
 
-        
+
 
 
         public Authentification() { }

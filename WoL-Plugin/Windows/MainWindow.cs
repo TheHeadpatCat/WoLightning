@@ -1,12 +1,10 @@
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using System;
-using System.Data;
 using System.Numerics;
 using WoLightning.Clients.Webserver;
 using WoLightning.Util;
 using WoLightning.Util.Types;
-using WoLightning.WoL_Plugin.Clients;
 using WoLightning.WoL_Plugin.Clients.OpenShock;
 using WoLightning.WoL_Plugin.Clients.Pishock;
 using static WoLightning.Clients.OpenShock.ClientOpenShock;
@@ -78,7 +76,7 @@ public class MainWindow : Window, IDisposable
         }
         catch (Exception e)
         {
-            Plugin.Log(0,"Something went terribly wrong!");
+            Plugin.Log(0, "Something went terribly wrong!");
             Plugin.Error(e);
         }
 
@@ -147,7 +145,7 @@ public class MainWindow : Window, IDisposable
         }
 
         ImGui.EndGroup();
-        
+
 
 
     }

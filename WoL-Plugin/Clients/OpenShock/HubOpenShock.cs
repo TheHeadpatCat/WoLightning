@@ -1,13 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
-using static WoLightning.Clients.OpenShock.ClientOpenShock;
 
 namespace WoLightning.WoL_Plugin.Clients.OpenShock
 {
@@ -27,7 +23,7 @@ namespace WoLightning.WoL_Plugin.Clients.OpenShock
         }
 
         private Plugin Plugin;
-        public string Gateway {  get; set; }
+        public string Gateway { get; set; }
         public string Country { get; set; }
         public string DeviceId { get; set; }
 
@@ -41,7 +37,7 @@ namespace WoLightning.WoL_Plugin.Clients.OpenShock
 
         public void Dispose()
         {
-            
+
         }
 
         public async Task Setup()
@@ -54,7 +50,7 @@ namespace WoLightning.WoL_Plugin.Clients.OpenShock
             if (Plugin == null || Plugin.Authentification == null) return;
             string apikey = Plugin.Authentification.OpenShockApiKey, url = Plugin.Authentification.OpenShockURL;
 
-            Plugin.Log(3,"Requesting OpenShock Device Shockers for " + DeviceId + "...");
+            Plugin.Log(3, "Requesting OpenShock Device Shockers for " + DeviceId + "...");
 
             HttpResponseMessage Result;
 
@@ -77,7 +73,7 @@ namespace WoLightning.WoL_Plugin.Clients.OpenShock
             {
                 Plugin.Error("Could not retrieve Device Shockers from " + DeviceId);
                 Status = ConnectionStatusOpenShockHub.Unavailable;
-                Plugin.Log(1,new StreamReader(Result.Content.ReadAsStream()).ReadToEnd());
+                Plugin.Log(1, new StreamReader(Result.Content.ReadAsStream()).ReadToEnd());
                 return;
             }
             try
@@ -87,13 +83,13 @@ namespace WoLightning.WoL_Plugin.Clients.OpenShock
                 {
                     string message = reader.ReadToEnd();
                     if (message == null || message.Length == 0) return;
-                    Plugin.Log(3,message);
+                    Plugin.Log(3, message);
                     ResponseDeviceShockers test = JsonConvert.DeserializeObject<ResponseDeviceShockers>(message)!;
-                    Plugin.Log(3,test);
-                    foreach(var shocker in test.data)
+                    Plugin.Log(3, test);
+                    foreach (var shocker in test.data)
                     {
-                        ShockerOpenShock ShockerT = new(this,shocker.name, shocker.id, shocker.isPaused);
-                        Plugin.Log(3,ShockerT);
+                        ShockerOpenShock ShockerT = new(this, shocker.name, shocker.id, shocker.isPaused);
+                        Plugin.Log(3, ShockerT);
                         Plugin.Authentification.OpenShockShockers.Add(ShockerT);
                     }
                 }

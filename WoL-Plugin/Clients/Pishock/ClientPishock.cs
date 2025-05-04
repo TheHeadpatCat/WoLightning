@@ -1,22 +1,13 @@
-﻿using Lumina.Excel.Sheets;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Net.Sockets;
-using System.Net.WebSockets;
-using System.Text;
-using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
 using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Clients;
 using WoLightning.WoL_Plugin.Clients.Pishock;
-using WoLightning.WoL_Plugin.Game.Rules;
-using static Dalamud.Interface.Utility.Raii.ImRaii;
 
 
 namespace WoLightning.Clients.Pishock
@@ -55,7 +46,7 @@ namespace WoLightning.Clients.Pishock
 
         public async void Setup()
         {
-            if(Client != null)
+            if (Client != null)
             {
                 Client.Dispose();
                 Client = null;
@@ -67,7 +58,7 @@ namespace WoLightning.Clients.Pishock
 
         public void Test()
         {
-            
+
         }
 
         public async Task CreateSocket()
@@ -108,7 +99,7 @@ namespace WoLightning.Clients.Pishock
             if (Plugin == null || Plugin.Authentification == null) return;
             string username = Plugin.Authentification.PishockName, apikey = Plugin.Authentification.PishockApiKey;
 
-            Plugin.Log(3,"Requesting Pishock Account information...");
+            Plugin.Log(3, "Requesting Pishock Account information...");
 
             HttpClient HttpClient = new();
             var Result = await HttpClient.GetAsync($"https://auth.pishock.com/Auth/GetUserIfAPIKeyValid?apikey={apikey}&username={username}");
@@ -135,13 +126,14 @@ namespace WoLightning.Clients.Pishock
                     }
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Plugin.Error(ex.Message);
                 Plugin.Error("Something went wrong while fetching the Pishock UserId.");
                 Status = ConnectionStatusPishock.FatalError;
                 return;
             }
-            Plugin.Log(3,"UserID: " + UserID);
+            Plugin.Log(3, "UserID: " + UserID);
             if (UserID.Length > 0) Status = ConnectionStatusPishock.ConnectedNoInfo;
             else Status = ConnectionStatusPishock.InvalidUserdata;
         }
@@ -150,7 +142,7 @@ namespace WoLightning.Clients.Pishock
         {
             string username = Plugin.Authentification.PishockName, apikey = Plugin.Authentification.PishockApiKey;
 
-            Plugin.Log(3,"Requesting Pishock Shocker Information...");
+            Plugin.Log(3, "Requesting Pishock Shocker Information...");
 
             HttpClient HttpClient = new();
             var Result = await HttpClient.GetAsync($"https://ps.pishock.com/PiShock/GetUserDevices?UserId={UserID}&Token={apikey}&api=true");
@@ -161,7 +153,7 @@ namespace WoLightning.Clients.Pishock
                 return;
             }
 
-            Plugin.Log(3," -> Received Shocker Information!");
+            Plugin.Log(3, " -> Received Shocker Information!");
 
             using (var reader = new StreamReader(Result.Content.ReadAsStream()))
             {
@@ -175,9 +167,9 @@ namespace WoLightning.Clients.Pishock
                         foreach (var shocker in response.shockers)
                         {
                             ShockerPishock t = new ShockerPishock(shocker.name, response.clientId, shocker.shockerId);
-                            Plugin.Log(3,t);
+                            Plugin.Log(3, t);
                             Plugin.Authentification.PishockShockers.Add(t);
-                            
+
                         }
                     }
                 }
@@ -192,7 +184,7 @@ namespace WoLightning.Clients.Pishock
         {
             string username = Plugin.Authentification.PishockName, apikey = Plugin.Authentification.PishockApiKey;
 
-            Plugin.Log(3,"Requesting Pishock ShareID Information...");
+            Plugin.Log(3, "Requesting Pishock ShareID Information...");
 
             HttpClient HttpClient = new();
             var Result = await HttpClient.GetAsync($"https://ps.pishock.com/PiShock/GetShareCodesByOwner?UserId={UserID}&Token={apikey}&api=true");
@@ -202,7 +194,7 @@ namespace WoLightning.Clients.Pishock
                 Status = ConnectionStatusPishock.Unavailable;
                 return;
             }
-            Plugin.Log(3," -> Received ShareID Information!");
+            Plugin.Log(3, " -> Received ShareID Information!");
 
             List<string> ShareIds = new List<string>();
 
@@ -211,11 +203,11 @@ namespace WoLightning.Clients.Pishock
                 try
                 {
                     string message = reader.ReadToEnd();
-                    Plugin.Log(3,message);
+                    Plugin.Log(3, message);
                     if (message == null || message.Length == 0) return;
                     string[] parts = message.Split("],");
                     if (parts.Length < 1) return;
-                    foreach(string part in parts)
+                    foreach (string part in parts)
                     {
                         string Tpart = part;
                         Tpart = Tpart.Replace("{", "");
@@ -225,10 +217,10 @@ namespace WoLightning.Clients.Pishock
 
                         string name = Tpart.Split("\"")[1];
                         string[] shareIds = Tpart.Split(":")[1].Split(",");
-                        foreach(string shareid in shareIds)
+                        foreach (string shareid in shareIds)
                         {
                             ShareIds.Add(shareid);
-                            Plugin.Log(3,"Shareid: " +  shareid);
+                            Plugin.Log(3, "Shareid: " + shareid);
                         }
                     }
                 }
@@ -244,7 +236,7 @@ namespace WoLightning.Clients.Pishock
             Plugin.Log(3, "Sharecodes received. Requesting Shocker Information...");
 
             string URL = $"https://ps.pishock.com/PiShock/GetShockersByShareIds?UserId={UserID}&Token={apikey}&api=true";
-            foreach(string shareId in ShareIds)
+            foreach (string shareId in ShareIds)
             {
                 URL += $"&shareIds={shareId}";
             }
@@ -270,15 +262,15 @@ namespace WoLightning.Clients.Pishock
                         string Tpart = part;
                         string name = Tpart.Split("\"")[1];
                         string information = Tpart.Substring(name.Length + 3);
-                        if(information.StartsWith(":")) information =  information.Substring(1);
-                        if (information.EndsWith("}]}")) information = information.Replace("}]}","}");
+                        if (information.StartsWith(":")) information = information.Substring(1);
+                        if (information.EndsWith("}]}")) information = information.Replace("}]}", "}");
                         information += "]";
 
                         SharedResponse[] test = JsonConvert.DeserializeObject<SharedResponse[]>(information)!;
                         foreach (SharedResponse response in test)
                         {
-                            Plugin.Log(3,response);
-                            if(name.ToLower().Equals(Plugin.Authentification.PishockName.ToLower()))continue;
+                            Plugin.Log(3, response);
+                            if (name.ToLower().Equals(Plugin.Authentification.PishockName.ToLower())) continue;
                             ShockerPishock shocker = new ShockerPishock(response.shockerName, response.clientId, response.shockerId);
                             shocker.isPersonal = false;
                             shocker.username = name;
@@ -299,7 +291,7 @@ namespace WoLightning.Clients.Pishock
         public async void SendRequest(ShockOptions Options)
         {
 
-            if(Client == null || Status != ConnectionStatusPishock.Connected) return;
+            if (Client == null || Status != ConnectionStatusPishock.Connected) return;
 
             #region Validation
             if (Plugin.Authentification.PishockName.Length < 3
@@ -320,7 +312,7 @@ namespace WoLightning.Clients.Pishock
                 Plugin.Log(3, " -> Blocked due to invalid ShockOptions!");
                 return;
             }
-            
+
             if (Options.ShockersPishock.Count == 0)
             {
                 Plugin.Log(3, " -> No Pishock Shockers assigned, discarding!");
@@ -328,7 +320,7 @@ namespace WoLightning.Clients.Pishock
             }
             #endregion
 
-            if(Options.WarningMode != WarningMode.None)
+            if (Options.WarningMode != WarningMode.None)
             {
                 ShockOptions warningOptions = new ShockOptions(Options);
                 warningOptions.OpMode = OpMode.Vibrate;
@@ -344,13 +336,13 @@ namespace WoLightning.Clients.Pishock
                     case WarningMode.Long: delay = new Random().Next(12000, 27000); break;
                     default: delay = 2000; break;
                 }
-                Plugin.Log(3,"Warning sent!\nWaiting " + delay + "ms...");
+                Plugin.Log(3, "Warning sent!\nWaiting " + delay + "ms...");
                 await Task.Delay(delay);
             }
 
             string sendCommand = CommandPublish.Generate(Options, Plugin, UserID, null);
             await Client.Send(sendCommand);
-            Plugin.Log(3,"Command sent!");
+            Plugin.Log(3, "Command sent!");
         }
 
 

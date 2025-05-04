@@ -3,11 +3,8 @@ using Dalamud.Game.Text.SeStringHandling;
 using ImGuiNET;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using WoLightning.Util;
 using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Util.Types;
@@ -70,7 +67,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
                 if (sender == null) return;
 
-                Plugin.Log(4,sender);
+                Plugin.Log(4, sender);
 
                 if ((int)type <= 107)
                 {

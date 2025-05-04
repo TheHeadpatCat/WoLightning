@@ -53,28 +53,29 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         }
         private void Check(XivChatType type, int timestamp, ref SeString senderE, ref SeString messageE, ref bool isHandled)
         {
-            try { 
-            if(Plugin.ClientState.LocalPlayer == null) return;
-            //check for chat type limitation
-            if (Plugin.Configuration.ActivePreset.LimitChats && !Plugin.Configuration.ActivePreset.Chats.Contains(type)) return;
-
-            string sender = StringSanitizer.LetterOrDigit(senderE.ToString()).ToLower();
-            if ((int)type <= 107 && sender.Equals(Plugin.ClientState.LocalPlayer.Name.ToString().ToLower()))
+            try
             {
-                string message = StringSanitizer.LetterOrDigit(messageE.ToString());
-                bool found = false;
-                foreach (var EnforcedWord in EnforcedWords)
+                if (Plugin.ClientState.LocalPlayer == null) return;
+                //check for chat type limitation
+                if (Plugin.Configuration.ActivePreset.LimitChats && !Plugin.Configuration.ActivePreset.Chats.Contains(type)) return;
+
+                string sender = StringSanitizer.LetterOrDigit(senderE.ToString()).ToLower();
+                if ((int)type <= 107 && sender.Equals(Plugin.ClientState.LocalPlayer.Name.ToString().ToLower()))
                 {
-                    foreach (var word in message.Split(" "))
+                    string message = StringSanitizer.LetterOrDigit(messageE.ToString());
+                    bool found = false;
+                    foreach (var EnforcedWord in EnforcedWords)
                     {
-                        if (EnforcedWord.Compare(word))
+                        foreach (var word in message.Split(" "))
                         {
-                            found = true;
+                            if (EnforcedWord.Compare(word))
+                            {
+                                found = true;
+                            }
                         }
                     }
+                    if (!found) Trigger($"You forgot to say a Enforced Word!");
                 }
-                if (!found) Trigger($"You forgot to say a Enforced Word!");
-            }
             }
             catch (Exception e) { Plugin.Error(e.Message); }
         }

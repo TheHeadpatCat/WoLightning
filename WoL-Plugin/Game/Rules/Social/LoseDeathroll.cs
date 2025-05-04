@@ -34,26 +34,27 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         }
         private void Check(XivChatType type, int timestamp, ref SeString senderE, ref SeString messageE, ref bool isHandled)
         {
-            try { 
-            if (Plugin.ClientState.LocalPlayer == null) return;
-            if ((int)type == 2122 && messageE.Payloads.Find(pay => pay.Type == PayloadType.Icon) != null) // Deathroll channel and Icon found
+            try
             {
-                string message = messageE.ToString();
-                string[] parts = message.Split(" ");
-                if (message.StartsWith(Plugin.LanguageStrings.DeathrollTrigger()))
+                if (Plugin.ClientState.LocalPlayer == null) return;
+                if ((int)type == 2122 && messageE.Payloads.Find(pay => pay.Type == PayloadType.Icon) != null) // Deathroll channel and Icon found
                 {
-                    foreach (string part in parts)
+                    string message = messageE.ToString();
+                    string[] parts = message.Split(" ");
+                    if (message.StartsWith(Plugin.LanguageStrings.DeathrollTrigger()))
                     {
-                        if (char.IsDigit(part[0])) // this is a number
+                        foreach (string part in parts)
                         {
-                            if (part.Length == 1 && part == "1")
+                            if (char.IsDigit(part[0])) // this is a number
                             {
-                                Trigger("You lost a Deathroll!");
+                                if (part.Length == 1 && part == "1")
+                                {
+                                    Trigger("You lost a Deathroll!");
+                                }
                             }
                         }
                     }
                 }
-            }
             }
             catch (Exception e) { Plugin.Error(e.Message); }
         }
