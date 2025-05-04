@@ -243,13 +243,18 @@ public class ConfigWindow : Window, IDisposable
                 "\nthat will tell you how much time is left until that trigger can activate again.");
             }
 
-            bool allowPVERulesInPVP = Configuration.ActivePreset.AllowPVERulesInPVP;
+            bool allowPVERulesInPVP = Configuration.ActivePreset.AllowRulesInPvP;
             if (ImGui.Checkbox("Have Rules active in PVP?", ref allowPVERulesInPVP))
             {
-                Configuration.ActivePreset.AllowPVERulesInPVP = allowPVERulesInPVP;
+                Configuration.ActivePreset.AllowRulesInPvP = allowPVERulesInPVP;
                 Configuration.Save();
             }
-
+            ImGui.SameLine();
+            ImGui.TextDisabled(" (?)");
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.SetTooltip("This does not include PVP specific Rules. Those will always be active.");
+            }
 
             bool limitChats = Configuration.ActivePreset.LimitChats;
             if (ImGui.Checkbox("Only listen for messages on specific Chat Channels.", ref limitChats))

@@ -86,7 +86,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         {
             if (ShockOptions.hasCooldown() || !IsRunning || Plugin.isFailsafeActive) return;
             if (source != null && !Plugin.Configuration.ActivePreset.isPlayerAllowedToTrigger(source)) return;
-            if (!Plugin.Configuration.ActivePreset.AllowPVERulesInPVP && Plugin.ClientState.IsPvP) return;
+            if (!Plugin.Configuration.ActivePreset.AllowRulesInPvP && Plugin.ClientState.IsPvP) return;
 
             if(overrideOptions == null) Triggered?.Invoke(this.ShockOptions);
             else Triggered?.Invoke(new ShockOptions(0, overrideOptions[0], overrideOptions[1]));

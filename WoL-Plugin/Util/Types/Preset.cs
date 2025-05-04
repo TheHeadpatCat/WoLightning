@@ -19,7 +19,7 @@ namespace WoLightning.Util.Types
         public string Name { get; set; } = Name;
         public string CreatorFullName { get; set; } = CreatorFullName;
 
-        public bool AllowPVERulesInPVP { get; set; } = false;
+        public bool AllowRulesInPvP { get; set; } = false;
 
         public bool showTriggerNotifs { get; set; } = false;
         public bool showCooldownNotifs { get; set; } = false;
