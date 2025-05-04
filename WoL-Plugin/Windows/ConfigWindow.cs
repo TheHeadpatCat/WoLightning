@@ -242,7 +242,14 @@ public class ConfigWindow : Window, IDisposable
                 ImGui.SetTooltip("Activating this will show little Notification" +
                 "\nthat will tell you how much time is left until that trigger can activate again.");
             }
-            
+
+            bool allowPVERulesInPVP = Configuration.ActivePreset.AllowPVERulesInPVP;
+            if (ImGui.Checkbox("Have Rules active in PVP?", ref allowPVERulesInPVP))
+            {
+                Configuration.ActivePreset.AllowPVERulesInPVP = allowPVERulesInPVP;
+                Configuration.Save();
+            }
+
 
             bool limitChats = Configuration.ActivePreset.LimitChats;
             if (ImGui.Checkbox("Only listen for messages on specific Chat Channels.", ref limitChats))

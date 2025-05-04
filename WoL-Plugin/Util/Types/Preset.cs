@@ -19,10 +19,8 @@ namespace WoLightning.Util.Types
         public string Name { get; set; } = Name;
         public string CreatorFullName { get; set; } = CreatorFullName;
 
+        public bool AllowPVERulesInPVP { get; set; } = false;
 
-        public bool IsPassthroughAllowed { get; set; } = false;
-        public int globalTriggerCooldown { get; set; } = 10;
-        public float globalTriggerCooldownGate { get; set; } = 0.75f;
         public bool showTriggerNotifs { get; set; } = false;
         public bool showCooldownNotifs { get; set; } = false;
 
