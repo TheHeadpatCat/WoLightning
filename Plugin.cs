@@ -46,6 +46,8 @@ public sealed class Plugin : IDalamudPlugin
     public IPlayerCharacter LocalPlayerCharacter { get; set; }
     public Player LocalPlayer { get; set; }
 
+
+    // TODO: Move all of this into a static class.
     // Services
     public IDalamudPluginInterface PluginInterface { get; init; }
     private ICommandManager CommandManager { get; init; }

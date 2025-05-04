@@ -130,7 +130,7 @@ public class ConfigWindow : Window, IDisposable
             DrawMiscTab();
             DrawPermissionsTab();
 
-            if (Configuration.ActivePreset.SayWord.IsEnabled || Configuration.ActivePreset.DontSayWord.IsEnabled)
+            if (Configuration.ActivePreset.SayWord.IsEnabled || Configuration.ActivePreset.DontSayWord.IsEnabled ||Configuration.ActivePreset.HearWord.IsEnabled)
             {
                 if (ImGui.BeginTabItem("Word Lists"))
                 {

@@ -41,6 +41,27 @@ namespace WoLightning.WoL_Plugin.Util
             return output;
         }
 
+        public string FailCraftHQTrigger() // Todo: implement
+        {
+            string output = "Unknown";
+            switch (Language)
+            {
+                case ClientLanguage.English:
+                    output = "Your synthesis fails!";
+                    break;
+                case ClientLanguage.French:
+                    output = "La synthèse échoue...";
+                    break;
+                case ClientLanguage.German:
+                    output = "Deine Synthese ist fehlgeschlagen!";
+                    break;
+                case ClientLanguage.Japanese:
+                    output = "は製作に失敗した……";
+                    break;
+            }
+            return output;
+        }
+
         public string FishEscapedTrigger()
         {
             string output = "Unknown";
