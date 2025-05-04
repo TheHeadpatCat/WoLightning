@@ -1,5 +1,8 @@
 ﻿using Dalamud.Game.ClientState.Objects.SubKinds;
+using Dalamud.Game.Text.SeStringHandling;
 using System;
+using System.Linq;
+using static FFXIVClientStructs.FFXIV.Client.Game.Character.VfxContainer;
 
 namespace WoLightning.Util.Types
 {
@@ -133,6 +136,44 @@ namespace WoLightning.Util.Types
         {
         }
 
+        public Player(Payload playerPayload)
+        {
+            if(playerPayload.Type != PayloadType.Player)
+            {
+                throw new ArgumentException("Tried to create a Player with Payloadtype " + playerPayload.Type);
+            }
+
+            string playerString = playerPayload.ToString()!;
+            int x = 0;
+            foreach (var part in playerString.Split(","))
+            {
+                string[] values = part.Split(":");
+                if (values.Length != 2) continue;
+                
+                if(x == 0) Name = values[1].Trim();
+                if(x == 1) WorldId = int.Parse(values[1].Trim());
+                x++;
+            }
+            if(Name == null || WorldId == null)
+            {
+                throw new Exception("Unable to create Player from Payload!\n"+playerString);
+            }
+        }
+
+        public Player(string fullString)
+        {
+            string[] parts = fullString.Split("@");
+            Name = parts[0];
+            foreach (Worlds world in Enum.GetValues(typeof(Worlds)).Cast<Worlds>())
+            {
+                if (world.ToString().Equals(parts[1]))
+                {
+                    WorldId = (int)world;
+                    break;
+                }
+            }
+        }
+
         public Player(string name, int worldId)
         {
             Name = name;
@@ -177,9 +218,11 @@ namespace WoLightning.Util.Types
             return $"[Player] {Name} @{getWorldName()}\nKey: {Key.Substring(0, 7)}(...)";
         }
 
-        public bool equals(Player other)
+        public override bool Equals(object? obj)
         {
-            return getFullName() == other.getFullName();
+            if(obj == null) return false;
+            if (obj.GetType() != GetType()) return false;
+            return getFullName() == ((Player)obj).getFullName();
         }
 
     }

@@ -146,6 +146,11 @@ public class ConfigWindow : Window, IDisposable
                             ActivePreset.DontSayWord.DrawAdvancedOptions();
                             ImGui.EndTabItem();
                         }
+                        if (ImGui.BeginTabItem("Trigger Words"))
+                        {
+                            ActivePreset.HearWord.DrawAdvancedOptions();
+                            ImGui.EndTabItem();
+                        }
                     }
                     ImGui.EndTabBar();
                 }
@@ -406,6 +411,7 @@ public class ConfigWindow : Window, IDisposable
             {
                 if (SelectedPlayerName == "None") return;
                 if (SelectedPlayerName == null) return;
+                if (SelectedPlayer == null) SelectedPlayer = new Player(SelectedPlayerName);
                 if (Whitelist.Contains(SelectedPlayer!)) Whitelist.Remove(SelectedPlayer!);
                 if (Blacklist.Contains(SelectedPlayer!)) Blacklist.Remove(SelectedPlayer!);
                 Whitelist.Add(SelectedPlayer!);
@@ -418,6 +424,7 @@ public class ConfigWindow : Window, IDisposable
             {
                 if (SelectedPlayerName == "None") return;
                 if (SelectedPlayerName == null) return;
+                if (SelectedPlayer == null) SelectedPlayer = new Player(SelectedPlayerName);
                 if (Blacklist.Contains(SelectedPlayer!)) Blacklist.Remove(SelectedPlayer!);
                 if (Whitelist.Contains(SelectedPlayer!)) Whitelist.Remove(SelectedPlayer!);
                 Blacklist.Add(SelectedPlayer!);
@@ -434,7 +441,7 @@ public class ConfigWindow : Window, IDisposable
                 {
                     if (ImGui.Selectable($"{Player.Name}@{Player.getWorldName()}"))
                     {
-                        SelectedPlayerName = Player.Name;
+                        SelectedPlayerName = $"{Player.Name}@{Player.getWorldName()}";
                         removeIndex = index;
                     }
                     index++;
@@ -456,7 +463,7 @@ public class ConfigWindow : Window, IDisposable
                 {
                     if (ImGui.Selectable($"{Player.Name}@{Player.getWorldName()}"))
                     {
-                        SelectedPlayerName = Player.Name;
+                        SelectedPlayerName = $"{Player.Name}@{Player.getWorldName()}";
                         removeIndex = index;
                     }
                     index++;

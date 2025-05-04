@@ -124,7 +124,7 @@ namespace WoLightning.Clients.Webserver
                     return;
                 }
 
-                if (!re.Sender.equals(Plugin.LocalPlayer) && !re.Target.equals(Plugin.LocalPlayer))
+                if (!re.Sender.Equals(Plugin.LocalPlayer) && !re.Target.Equals(Plugin.LocalPlayer))
                 {
                     Plugin.Error("The received packet is neither from nor for us.");
                     return;

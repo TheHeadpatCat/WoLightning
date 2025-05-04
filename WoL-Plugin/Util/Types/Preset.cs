@@ -26,8 +26,6 @@ namespace WoLightning.Util.Types
 
         public bool isWhitelistEnabled { get; set; } = false;
         public List<Player> Whitelist { get; set; } = new();
-
-        public bool isBlacklistEnabled { get; set; } = false;
         public List<Player> Blacklist { get; set; } = new();
 
         public bool LimitChats { get; set; } = false;
@@ -44,6 +42,7 @@ namespace WoLightning.Util.Types
         public GetEmotedAt GetEmotedAt { get; set; } = new();
         public SayWord SayWord { get; set; } = new();
         public DontSayWord DontSayWord { get; set; } = new();
+        public HearWord HearWord { get; set; } = new();
         public LoseDeathroll LoseDeathroll { get; set; } = new();
 
         // PVE Triggers
@@ -164,7 +163,14 @@ namespace WoLightning.Util.Types
         {
             if (player == null) return false;
             bool isAllowed = true;
-            if (isBlacklistEnabled && Blacklist.Contains(player)) isAllowed = false;
+
+            foreach (var playerS in Blacklist)
+            {
+                Plugin.Log(4, "comparing " + player + " and " + playerS + Blacklist.Contains(player));
+
+            }
+
+            if (Blacklist.Contains(player)) isAllowed = false;
             if (isWhitelistEnabled && !Whitelist.Contains(player)) isAllowed = false;
             return isAllowed;
         }
