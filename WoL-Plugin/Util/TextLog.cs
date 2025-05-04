@@ -39,7 +39,7 @@ namespace WoLightning.Util
                     long length = new FileInfo(FilePath).Length;
 
                     Plugin.PluginLog.Verbose("Log Size: " + length);
-                    if (length > 9600)
+                    if (length > 20480)
                     {
                         File.Delete(FilePath);
                         File.Create(FilePath).Close();
