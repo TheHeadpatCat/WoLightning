@@ -409,3 +409,27 @@ public sealed class Plugin : IDalamudPlugin
     #endregion
 
 }
+
+
+
+/* Unused Leash Code
+        private void HandleNetworkMessage(nint dataPtr, ushort OpCode, uint sourceActorId, uint targetActorId, NetworkMessageDirection direction)
+        {
+            Plugin.PluginLog.Info($"(Net) dataPtr: {dataPtr} - OpCode: {OpCode} - ActorId: {sourceActorId} - TargetId: {targetActorId} - direction: ${direction.ToString()}");
+
+            //if (MasterCharacter != null && MasterCharacter.IsValid() && MasterCharacter.Name + "#" + MasterCharacter.HomeWorld.Id == Plugin.Configuration.MasterNameFull) return;
+
+            var targetOb = Plugin.ObjectTable.FirstOrDefault(x => (ulong)x.GameObjectId == targetActorId);
+            if (targetOb != null && targetOb.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.Player)
+            {
+                if (((IPlayerCharacter)targetOb).Name + "#" + ((IPlayerCharacter)targetOb).HomeWorld.Id == Plugin.Configuration.MasterNameFull)
+                {
+                    MasterCharacter = (IPlayerCharacter)targetOb;
+                    Plugin.PluginLog.Info("Found Master Signature!");
+                    Plugin.PluginLog.Info(MasterCharacter.ToString());
+                    Plugin.GameNetwork.NetworkMessage -= HandleNetworkMessage;
+                    return;
+                }
+                //Plugin.PluginLog.Info(targetOb.ToString());
+            }
+        }*/
