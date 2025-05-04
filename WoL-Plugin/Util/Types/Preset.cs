@@ -144,7 +144,7 @@ namespace WoLightning.Util.Types
                     }
                 }
             }
-            catch (Exception ex) { Plugin.Error(ex.Message); }
+            catch (Exception ex) { Plugin.Error("Failed to start Rule " + Name); Plugin.Error(ex.Message); }
         }
         public void StopRules()
         {
@@ -156,7 +156,7 @@ namespace WoLightning.Util.Types
                     Rule.Stop();
                 }
             }
-            catch (Exception ex) { Plugin.Error(ex.Message); }
+            catch (Exception ex) { Plugin.Error("Failed to start Rule " + Name); Plugin.Error(ex.Message); }
         }
         public bool isPlayerAllowedToTrigger(Player player)
         {

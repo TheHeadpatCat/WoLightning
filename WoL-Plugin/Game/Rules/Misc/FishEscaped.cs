@@ -47,7 +47,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
                 String message = messageE.ToString();
                 if (message.Contains(Plugin.LanguageStrings.FishEscapedTrigger())) Trigger("You failed to catch a Fish!");
             }
-            catch (Exception e) { Plugin.Error(e.Message); }
+            catch (Exception e) { Plugin.Error(Name + " Check() failed."); Plugin.Error(e.Message); }
         }
     }
 }

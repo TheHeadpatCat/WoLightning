@@ -54,7 +54,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                     if (!isTriggered && DeadPlayerIndex.All((x) => x == true)) { Trigger("The party is wiped!"); isTriggered = true; } //everyone is dead and we havent triggered the shock
                 }
             }
-            catch (Exception e) { Plugin.Error(e.Message); }
+            catch (Exception e) { Plugin.Error(Name + " Check() failed."); Plugin.Error(e.Message); }
         }
 
     }

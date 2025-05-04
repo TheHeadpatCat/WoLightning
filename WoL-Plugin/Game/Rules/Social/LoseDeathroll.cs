@@ -56,7 +56,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     }
                 }
             }
-            catch (Exception e) { Plugin.Error(e.Message); }
+            catch (Exception e) { Plugin.Error(Name + " Check() failed."); Plugin.Error(e.Message); }
         }
     }
 }

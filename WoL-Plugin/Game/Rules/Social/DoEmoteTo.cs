@@ -53,7 +53,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                 Player targetedPlayer = new Player(character.Name.ToString(), (int)character.HomeWorld.RowId);
                 Trigger("You used a forbidden emote on " + targetedPlayer, targetedPlayer);
             }
-            catch (Exception e) { Plugin.Error(e.Message); }
+            catch (Exception e) { Plugin.Error(Name + " Check() failed."); Plugin.Error(e.Message); }
         }
 
         public override void DrawExtraButton()

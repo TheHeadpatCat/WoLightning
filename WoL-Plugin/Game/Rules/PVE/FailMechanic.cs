@@ -78,6 +78,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
             }
             catch (Exception ex)
             {
+                Plugin.Error(Name + " Check() failed.");
                 Plugin.Error(ex.Message);
             }
         }

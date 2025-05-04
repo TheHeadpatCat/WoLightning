@@ -6,6 +6,7 @@
   "Changelog": " # 0.5.2.1 Warrior of Lightning \n\n Log Update",
   "AcceptsFeedback": true,
   "FeedbackMessage":  "Thank you for your Feedback!",
+  "IconUrl": "https://raw.githubusercontent.com/TheHeadPatCat/WoLightning/master/etc/iconSmall.png",
   "ApplicableVersion": "any",
   "Tags": [
     "Other",

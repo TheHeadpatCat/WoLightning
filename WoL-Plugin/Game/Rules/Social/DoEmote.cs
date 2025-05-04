@@ -46,11 +46,19 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
         public void Check(ushort emoteId)
         {
-            if (TriggeringEmotes.Contains(emoteId)) Trigger("You used a forbidden emote!");
+            try
+            {
+                if (TriggeringEmotes.Contains(emoteId)) Trigger("You used a forbidden emote!");
+            }
+            catch (Exception e) { Plugin.Error(Name + " Check() failed."); Plugin.Error(e.Message); }
         }
         public void Check(IGameObject target, ushort emoteId)
         {
-            if (TriggeringEmotes.Contains(emoteId)) Trigger("You used a forbidden emote!"); // Todo: Get emotename somehow
+            try
+            {
+                if (TriggeringEmotes.Contains(emoteId)) Trigger("You used a forbidden emote!"); // Todo: Get emotename somehow
+            }
+            catch (Exception e) { Plugin.Error(Name + " Check() failed."); Plugin.Error(e.Message); }
         }
         public override void DrawExtraButton()
         {

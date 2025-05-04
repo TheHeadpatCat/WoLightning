@@ -1,4 +1,5 @@
 ﻿using FFXIVClientStructs.FFXIV.Common.Math;
+using Lumina.Excel.Sheets;
 using System;
 using System.Text.Json.Serialization;
 using System.Timers;
@@ -41,66 +42,72 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
         public void Check(ushort emoteId)
         {
-
-            if (emoteId == 50) // /sit on Chair done
+            try
             {
-                sittingOnChair = true;
-                sittingOnChairPos = Plugin.ClientState.LocalPlayer.Position;
-                Trigger("You are sitting on Furniture!");
-                int calc = 5000;
-                if (ShockOptions.Duration <= 10) calc += ShockOptions.Duration * 1000;
-                sittingOnChairTimer.Interval = calc;
-                sittingOnChairTimer.Start();
-            }
+                if (emoteId == 50) // /sit on Chair done
+                {
+                    sittingOnChair = true;
+                    sittingOnChairPos = Plugin.ClientState.LocalPlayer.Position;
+                    Trigger("You are sitting on Furniture!");
+                    int calc = 5000;
+                    if (ShockOptions.Duration <= 10) calc += ShockOptions.Duration * 1000;
+                    sittingOnChairTimer.Interval = calc;
+                    sittingOnChairTimer.Start();
+                }
 
-            if (emoteId == 52) // /sit with no furniture or /groundsit on furniture - check nearby chairs
-            {
-                // Todo - Implement
-            }
+                if (emoteId == 52) // /sit with no furniture or /groundsit on furniture - check nearby chairs
+                {
+                    // Todo - Implement
+                }
 
-            if (emoteId == 51)
-            {
-                sittingOnChair = false;
-                sittingOnChairTimer.Stop();
+                if (emoteId == 51)
+                {
+                    sittingOnChair = false;
+                    sittingOnChairTimer.Stop();
+                }
             }
-
+            catch (Exception e) { Plugin.Error(Name + " Check() failed."); Plugin.Error(e.Message); }
         }
 
         private void checkSittingOnChair(object? sender, ElapsedEventArgs? e)
         {
-            safetyStop++;
-
-            Plugin.Log(3, "Chair Check " + Plugin.ClientState.LocalPlayer);
-            if (safetyStop > 10)
+            try
             {
-                Plugin.Log(3, "Timer has exceeded safety limit - aborting Chair Check.");
-                sittingOnChair = false;
-                sittingOnChairTimer.Stop();
-                safetyStop = 0;
-                return;
-            }
-
-            if (Plugin.ClientState.LocalPlayer == null)
-            {
-                Plugin.Log(3, "No Player");
-                sittingOnChair = false;
-                sittingOnChairTimer.Stop();
-                safetyStop = 0;
-                return;
-            }
-
-            if (sittingOnChair && Plugin.ClientState.LocalPlayer.Position.Equals(sittingOnChairPos))
-            {
-                Trigger("You are still sitting on Furniture!");
-                sittingOnChairTimer.Refresh();
                 safetyStop++;
+
+                Plugin.Log(3, "Chair Check " + Plugin.ClientState.LocalPlayer);
+                if (safetyStop > 10)
+                {
+                    Plugin.Log(3, "Timer has exceeded safety limit - aborting Chair Check.");
+                    sittingOnChair = false;
+                    sittingOnChairTimer.Stop();
+                    safetyStop = 0;
+                    return;
+                }
+
+                if (Plugin.ClientState.LocalPlayer == null)
+                {
+                    Plugin.Log(3, "No Player");
+                    sittingOnChair = false;
+                    sittingOnChairTimer.Stop();
+                    safetyStop = 0;
+                    return;
+                }
+
+                if (sittingOnChair && Plugin.ClientState.LocalPlayer.Position.Equals(sittingOnChairPos))
+                {
+                    Trigger("You are still sitting on Furniture!");
+                    sittingOnChairTimer.Refresh();
+                    safetyStop++;
+                }
+                else
+                {
+                    sittingOnChair = false;
+                    sittingOnChairTimer.Stop();
+                    safetyStop = 0;
+                }
             }
-            else
-            {
-                sittingOnChair = false;
-                sittingOnChairTimer.Stop();
-                safetyStop = 0;
-            }
+            catch (Exception ex) { Plugin.Error(Name + " Check() failed."); Plugin.Error(ex.Message); }
         }
     }
 }

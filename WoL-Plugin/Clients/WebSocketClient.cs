@@ -142,7 +142,7 @@ namespace WoLightning.WoL_Plugin.Clients
                 ArraySegment<byte> byteArraySegment = new ArraySegment<byte>(bytes);
                 await Client.SendAsync(byteArraySegment, WebSocketMessageType.Text, true, CancellationToken.None);
             }
-            catch (Exception ex) { Plugin.Error(ex.Message); }
+            catch (Exception ex) { Plugin.Error("Sending Message Failed."); Plugin.Error(ex.Message); }
         }
 
         private async void Receive()
@@ -157,7 +157,7 @@ namespace WoLightning.WoL_Plugin.Clients
                 if (Client.State == WebSocketState.Open) Receive();
                 else if (UpholdConnection && (Client.State == WebSocketState.CloseReceived || Client.State == WebSocketState.Closed)) return; await Connect();
             }
-            catch (Exception ex) { Plugin.Error(ex.Message); }
+            catch (Exception ex) { Plugin.Error("Receiving Message failed."); Plugin.Error(ex.Message); }
         }
 
     }
