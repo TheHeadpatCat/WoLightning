@@ -97,7 +97,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 }
                 lastHP = Player.CurrentHp;
             }
-            catch (Exception e) { Plugin.Error(e.StackTrace); }
+            catch (Exception e) { Plugin.Error(e.Message); }
         }
 
         public override void DrawExtraButton()

@@ -76,7 +76,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                 if (!found) Trigger($"You forgot to say a Enforced Word!");
             }
             }
-            catch (Exception e) { Plugin.Error(e.StackTrace); }
+            catch (Exception e) { Plugin.Error(e.Message); }
         }
 
         public override void DrawAdvancedOptions()

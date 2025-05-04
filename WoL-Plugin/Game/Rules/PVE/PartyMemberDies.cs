@@ -59,7 +59,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                     if (!PlayerObject.IsDead && DeadPlayerIndex[i]) { DeadPlayerIndex[i] = false; }
                 }
             }
-            catch (Exception e) { Plugin.Error(e.StackTrace); }
+            catch (Exception e) { Plugin.Error(e.Message); }
 }
 
     }

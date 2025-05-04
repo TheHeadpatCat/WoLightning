@@ -64,7 +64,10 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                 // This will Check if the Checkbox for "Limit Chats" is enabled and if so, checks if the type of chat message we received is included in that. If its not, then abort the check.
                 if (Plugin.Configuration.ActivePreset.LimitChats && !Plugin.Configuration.ActivePreset.Chats.Contains(type)) return;
 
-                string sender = StringSanitizer.LetterOrDigit(senderE.ToString()).ToLower(); // Get the Sender in a cleaned String. SeStrings can have payloads and stuff and we dont want any of those.
+                string sender = StringSanitizer.LetterOrDigit(senderE.ToString()).ToLower(); // Get the Sender in a cleaned String. SeStrings can have payloads and stuff and we dont want any of those here.
+
+                // The Plugin.Log() function requires two parts. The first is the LogLevel, a number between 0 to 4. It matches the setting under the "General" tab. So if you set it to 4 here, you'll need the option "Dev" set.
+                Plugin.Log(4, "Comparing sender " + sender + " against " + Plugin.ClientState.LocalPlayer.Name.ToString().ToLower() + " is " + sender.Equals(Plugin.ClientState.LocalPlayer.Name.ToString().ToLower()));
 
                 // First check if the type of Chat we received is above a specific number. Noteably 107 is the last Social Chat that players can technically send stuff to.
                 // Afterwards, check if the sender of the message has the same name as our Local Player Character. If so, we are the person that sent it. We can ignore the World, as if there is another Person with the same name, they will always show their World in the Sender Name, while we dont.
@@ -76,6 +79,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     {
                         foreach (var word in message.Split(" ")) // Split the message we sent into seperate words and go through every said word.
                         {
+                            Plugin.Log(4, "Comparing " + word + " against " + bannedWord.Word + " which is " + bannedWord.Compare(word));
                             if (bannedWord.Compare(word)) // Now, with both parts. Check each said word, against all banned words. If any of them match, Trigger the Rule and end the Logic.
                             {
                                 Trigger($"You have said {bannedWord}!");
@@ -85,7 +89,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     }
                 }
             }
-            catch (Exception e) { Plugin.Error(e.StackTrace); }
+            catch (Exception e) { Plugin.Error(e.Message); }
         }
 
 

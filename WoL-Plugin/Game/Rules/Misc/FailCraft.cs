@@ -48,7 +48,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             String message = messageE.ToString();
             if (message.Contains(Plugin.LanguageStrings.FailCraftTrigger())) Trigger("You have failed a Craft!");
             }
-            catch (Exception e) { Plugin.Error(e.StackTrace); }
+            catch (Exception e) { Plugin.Error(e.Message); }
 
         }
     }

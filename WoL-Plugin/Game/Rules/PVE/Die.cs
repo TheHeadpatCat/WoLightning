@@ -51,7 +51,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
             if (IsTriggered && !Player.IsDead) //Shock was triggered, and now we are alive again
                 IsTriggered = false;
             }
-            catch (Exception e) { Plugin.Error(e.StackTrace); }
+            catch (Exception e) { Plugin.Error(e.Message); }
 
         }
 

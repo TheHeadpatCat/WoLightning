@@ -70,7 +70,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
                 }
                 
             }
-            catch (Exception e) { Plugin.Error(e.StackTrace); }
+            catch (Exception e) { Plugin.Error(e.Message); }
 
         }
 

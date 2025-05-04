@@ -55,7 +55,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                 }
             }
             }
-            catch (Exception e) { Plugin.Error(e.StackTrace); }
+            catch (Exception e) { Plugin.Error(e.Message); }
         }
     }
 }

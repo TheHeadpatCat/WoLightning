@@ -160,6 +160,15 @@ namespace WoLightning.Util.Types
             }
         }
 
+        public static Player? TryCreateFromSeString(SeString senderE)
+        {
+            foreach (var payload in senderE.Payloads)
+            {
+                if (payload.Type == PayloadType.Player) return new Player(payload);
+            }
+            return null;
+        }
+
         public Player(string fullString)
         {
             string[] parts = fullString.Split("@");
@@ -198,6 +207,7 @@ namespace WoLightning.Util.Types
 
         public string getWorldName()
         {
+            if (WorldId == null) return "UNKNOWN";
             string? output = Enum.GetName(typeof(Worlds), WorldId);
             if (output == null) return "UNKNOWN";
             return output;

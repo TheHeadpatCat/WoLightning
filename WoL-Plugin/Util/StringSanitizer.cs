@@ -7,7 +7,7 @@
             string output = string.Empty;
             foreach (char c in s.ToCharArray())
             {
-                if (c != ' ' && c != '\'' && !char.IsLetterOrDigit(c)) break;
+                if (c != ' ' && c != '\'' && !char.IsLetterOrDigit(c)) continue;
                 output += c;
             }
             return output;

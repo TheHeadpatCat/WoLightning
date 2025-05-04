@@ -78,7 +78,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
             }
             catch (Exception ex)
             {
-                Plugin.Error(ex.StackTrace);
+                Plugin.Error(ex.Message);
             }
         }
 
