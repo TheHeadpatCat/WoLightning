@@ -70,9 +70,14 @@ namespace WoLightning.Clients.Pishock
             Status = ConnectionStatusPishock.Connecting;
 
             string username = Plugin.Authentification.PishockName, apikey = Plugin.Authentification.PishockApiKey;
-            Client = new(Plugin, $"wss://broker.pishock.com/v2?Username={username}&ApiKey={apikey}");
 
-            await Client.Setup();
+            if(Client != null)
+            {
+                Client.Dispose();
+                Client = null;
+            }
+
+            Client = new(Plugin, $"wss://broker.pishock.com/v2?Username={username}&ApiKey={apikey}");
         }
 
         public async Task SetupAllData()

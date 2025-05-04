@@ -66,7 +66,7 @@ namespace WoLightning.WoL_Plugin.Clients
             catch { }
         }
 
-        public async Task Setup()
+        private async Task Setup()
         {
             try
             {
