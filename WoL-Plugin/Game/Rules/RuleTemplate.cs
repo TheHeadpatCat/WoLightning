@@ -27,8 +27,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         Step 2: Fill out all the Properties below. Some of the properties aren't fully used yet, but its still important to set them.
         Some Properties like "Hint" can also be removed. In those cases, they will either be replaced by a default from RuleBase.cs or just not show up.
 
-        Step 3: Subscribe to any needed handlers in the Start() function and unsubscribe from them in the Stop() function.
-        You will always get access to the "Plugin" object, which sets up all the needed handlers. If it does not have the handler you need,
+        Step 3: Subscribe to any needed services in the Start() function and unsubscribe from them in the Stop() function.
+        You will always get access to the "Plugin" object, which sets up all the needed services. If it does not have the handler you need,
         add it to the Plugin.cs file at the top.
 
         Step 4: Now, you can write the Check() function. This function hosts all the logic of the Rule.
