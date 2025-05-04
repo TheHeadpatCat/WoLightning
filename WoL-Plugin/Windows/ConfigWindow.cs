@@ -402,9 +402,11 @@ public class ConfigWindow : Window, IDisposable
 
             if (SelectedPlayer != null) SelectedPlayerName = SelectedPlayer.Name + "@" + SelectedPlayer.getWorldName();
 
+            // Todo: Allow manual input.
+
             ImGui.Text("Select a Player ingame, to add them to a List.\nClicking on a Player in the list removes them.");
             ImGui.BeginDisabled();
-            ImGui.InputText("##SelectedPlayer", ref SelectedPlayerName, 512, ImGuiInputTextFlags.ReadOnly);
+            ImGui.InputText("##SelectedPlayer", ref SelectedPlayerName, 64, ImGuiInputTextFlags.ReadOnly);
             ImGui.EndDisabled();
 
             if (ImGui.Button("Whitelist Player##AddWhitelistButton", new Vector2(120, 25)))

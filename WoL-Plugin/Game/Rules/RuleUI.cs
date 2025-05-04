@@ -222,6 +222,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
                 ImGui.Text("Please select all shockers that should activate for this trigger:");
                 ImGui.BeginGroup();
                 ImGui.Text("Available Pishock Devices:           ");
+                ImGui.BeginChild("PishockShockerList",new Vector2(180,260));
                 foreach (var shocker in Plugin.Authentification.PishockShockers)
                 {
                     if (Plugin.Configuration.ShownShockers == Configurations.ShownShockers.None) continue;
@@ -249,12 +250,15 @@ namespace WoLightning.WoL_Plugin.Game.Rules
                     if (!shocker.isPaused) ImGui.TextColored(ColorNameEnabled, shocker.name);
                     else ImGui.TextColored(ColorNameDisabled, "[Paused] " + shocker.name);
                 }
+
+                ImGui.EndChild();
                 ImGui.EndGroup();
 
                 ImGui.SameLine();
 
                 ImGui.BeginGroup();
                 ImGui.Text("Available OpenShock Devices:");
+                ImGui.BeginChild("OpenShockShockerList", new Vector2(180, 260));
                 foreach (var shocker in Plugin.Authentification.OpenShockShockers)
                 {
                     bool isEnabled = Rule.ShockOptions.ShockersOpenShock.Find(sh => sh.getInternalId() == shocker.getInternalId()) != null;
@@ -268,6 +272,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
                     if (!shocker.isPaused) ImGui.TextColored(ColorNameEnabled, shocker.name);
                     else ImGui.TextColored(ColorNameDisabled, "[Paused] " + shocker.name);
                 }
+                ImGui.EndChild();
                 ImGui.EndGroup();
 
                 ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 2 - 170, ImGui.GetWindowSize().Y - 65));
