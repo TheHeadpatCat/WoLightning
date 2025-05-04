@@ -1,6 +1,7 @@
 ﻿using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.Gui.Toast;
 using Dalamud.Plugin.Services;
+using ImGuiNET;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Timers;
+using WoLightning.Configurations;
 using WoLightning.Util;
 using WoLightning.Util.Types;
 
@@ -18,7 +20,12 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         override public string Name { get; } = "Mount up";
         override public string Description { get; } = "Triggers whenever you use a Mount or ride Pillion.";
         override public RuleCategory Category { get; } = RuleCategory.Misc;
+        override public bool hasExtraButton { get; } = true;
+
+        public bool IncludePillion { get; set; } = true;
+
         [JsonIgnore] bool isMounted = false;
+        [JsonIgnore] bool isMountedPillion = false;
         [JsonIgnore] TimerPlus isMountedTimer = new();
         [JsonIgnore] int SafetyStop = 0;
 
@@ -48,10 +55,13 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         {
             try
             {
+                Plugin.Log(3,flag.ToString());
                 if (flag == ConditionFlag.Mounted) isMounted = value;
+                else if (flag == ConditionFlag.Mounted2) isMountedPillion = value;
                 else return;
 
-                if (isMounted && !isMountedTimer.Enabled)
+
+                if ((isMounted || (IncludePillion && isMountedPillion)) && !isMountedTimer.Enabled)
                 {
                     isMountedTimer.Interval = ShockOptions.Cooldown + ShockOptions.Duration * 1000 + 3000;
                     isMountedTimer.Start();
@@ -66,7 +76,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 
         private void shockUntilUnmount(object? sender, ElapsedEventArgs? e)
         {
-            if(!isMounted || SafetyStop >= 10)
+            if((!isMounted && (!isMountedPillion && IncludePillion)) || SafetyStop >= 10)
             {
                 isMountedTimer.Stop();
                 SafetyStop = 0;
@@ -77,5 +87,16 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             SafetyStop += 1;
         }
 
+        public override void DrawExtraButton()
+        {
+            ImGui.SameLine();
+            bool includePillion = IncludePillion;
+            if (ImGui.Checkbox("Include Pillion?", ref includePillion))
+            {
+                IncludePillion = includePillion;
+                Plugin.Configuration.saveCurrentPreset();
+            }
         }
+
+    }
 }
