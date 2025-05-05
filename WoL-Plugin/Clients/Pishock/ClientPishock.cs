@@ -30,6 +30,10 @@ namespace WoLightning.Clients.Pishock
         public ConnectionStatusPishock Status { get; set; } = ConnectionStatusPishock.NotStarted;
         public string UserID { get; set; } = "";
         private WebSocketClient? Client;
+        HttpClient HttpClient = new();
+
+        private string username;
+        private string apikey;
 
         public ClientPishock(Plugin plugin)
         {
@@ -63,21 +67,30 @@ namespace WoLightning.Clients.Pishock
 
         public async Task CreateSocket()
         {
-            if (Client != null || Plugin == null || Plugin.Authentification == null) return;
-
-            if (Plugin.Authentification.PishockName.Length < 3 || Plugin.Authentification.PishockApiKey.Length < 16) return;
-
-            Status = ConnectionStatusPishock.Connecting;
-
-            string username = Plugin.Authentification.PishockName, apikey = Plugin.Authentification.PishockApiKey;
-
-            if(Client != null)
+            try
             {
-                Client.Dispose();
-                Client = null;
-            }
+                if (Client != null || Plugin == null || Plugin.Authentification == null) return;
 
-            Client = new(Plugin, $"wss://broker.pishock.com/v2?Username={username}&ApiKey={apikey}");
+                if (Plugin.Authentification.PishockName.Length < 3 || Plugin.Authentification.PishockApiKey.Length < 16) return;
+
+                Status = ConnectionStatusPishock.Connecting;
+
+                username = Plugin.Authentification.PishockName;
+                apikey = Plugin.Authentification.PishockApiKey;
+
+                if (Client != null)
+                {
+                    Client.Dispose();
+                    Client = null;
+                }
+
+                Client = new(Plugin, $"wss://broker.pishock.com/v2?Username={username}&ApiKey={apikey}");
+            }
+            catch (Exception e)
+            {
+                Plugin.Error("Failed to create Pishock Socket.");
+                Plugin.Error(e.Message);
+            }
         }
 
         public async Task SetupAllData()
@@ -101,17 +114,28 @@ namespace WoLightning.Clients.Pishock
 
         public async Task RequestAccountInformation()
         {
-            if (Plugin == null || Plugin.Authentification == null) return;
-            string username = Plugin.Authentification.PishockName, apikey = Plugin.Authentification.PishockApiKey;
-
-            Plugin.Log(3, "Requesting Pishock Account information...");
-
-            HttpClient HttpClient = new();
-            var Result = await HttpClient.GetAsync($"https://auth.pishock.com/Auth/GetUserIfAPIKeyValid?apikey={apikey}&username={username}");
-            if (Result.StatusCode != HttpStatusCode.OK)
+            HttpResponseMessage Result;
+            try
             {
-                Plugin.Error("Could not retrieve UserID from Pishock.");
-                Status = ConnectionStatusPishock.Unavailable;
+
+                if (Plugin == null || Plugin.Authentification == null) return;
+                string username = Plugin.Authentification.PishockName, apikey = Plugin.Authentification.PishockApiKey;
+
+                Plugin.Log(3, "Requesting Pishock Account information...");
+
+                Result = await HttpClient.GetAsync($"https://auth.pishock.com/Auth/GetUserIfAPIKeyValid?apikey={apikey}&username={username}");
+                if (Result.StatusCode != HttpStatusCode.OK)
+                {
+                    Plugin.Error("Could not retrieve UserID from Pishock.");
+                    Status = ConnectionStatusPishock.Unavailable;
+                    return;
+                }
+            }
+            catch(Exception e)
+            {
+                Plugin.Error("Failed to establish a Connection to Pishockm while requesting Account Information.");
+                Plugin.Error(e);
+                Status = ConnectionStatusPishock.FatalError;
                 return;
             }
             try
@@ -145,19 +169,28 @@ namespace WoLightning.Clients.Pishock
 
         public async Task RequestPersonalDevices()
         {
-            string username = Plugin.Authentification.PishockName, apikey = Plugin.Authentification.PishockApiKey;
-
-            Plugin.Log(3, "Requesting Pishock Shocker Information...");
-
-            HttpClient HttpClient = new();
-            var Result = await HttpClient.GetAsync($"https://ps.pishock.com/PiShock/GetUserDevices?UserId={UserID}&Token={apikey}&api=true");
-            if (Result.StatusCode != HttpStatusCode.OK)
+            HttpResponseMessage Result;
+            try
             {
-                Plugin.Error("Could not retrieve Shocker Information from Pishock.");
-                Status = ConnectionStatusPishock.Unavailable;
+                string username = Plugin.Authentification.PishockName, apikey = Plugin.Authentification.PishockApiKey;
+
+                Plugin.Log(3, "Requesting Pishock Shocker Information...");
+
+                Result = await HttpClient.GetAsync($"https://ps.pishock.com/PiShock/GetUserDevices?UserId={UserID}&Token={apikey}&api=true");
+                if (Result.StatusCode != HttpStatusCode.OK)
+                {
+                    Plugin.Error("Could not retrieve Shocker Information from Pishock.");
+                    Status = ConnectionStatusPishock.Unavailable;
+                    return;
+                }
+            }
+            catch(Exception e)
+            {
+                Plugin.Error("Failed to Connect to Pishock, while requesting Shocker Information.");
+                Plugin.Error(e.Message);
+                Status = ConnectionStatusPishock.FatalError;
                 return;
             }
-
             Plugin.Log(3, " -> Received Shocker Information!");
 
             using (var reader = new StreamReader(Result.Content.ReadAsStream()))
@@ -187,16 +220,26 @@ namespace WoLightning.Clients.Pishock
 
         public async Task RequestSharedDevices()
         {
-            string username = Plugin.Authentification.PishockName, apikey = Plugin.Authentification.PishockApiKey;
-
-            Plugin.Log(3, "Requesting Pishock ShareID Information...");
-
-            HttpClient HttpClient = new();
-            var Result = await HttpClient.GetAsync($"https://ps.pishock.com/PiShock/GetShareCodesByOwner?UserId={UserID}&Token={apikey}&api=true");
-            if (Result.StatusCode != HttpStatusCode.OK)
+            HttpResponseMessage Result;
+            try
             {
-                Plugin.Error("Could not retrieve Sharecode Information from Pishock.");
-                Status = ConnectionStatusPishock.Unavailable;
+                string username = Plugin.Authentification.PishockName, apikey = Plugin.Authentification.PishockApiKey;
+
+                Plugin.Log(3, "Requesting Pishock ShareID Information...");
+
+                Result = await HttpClient.GetAsync($"https://ps.pishock.com/PiShock/GetShareCodesByOwner?UserId={UserID}&Token={apikey}&api=true");
+                if (Result.StatusCode != HttpStatusCode.OK)
+                {
+                    Plugin.Error("Could not retrieve Sharecode Information from Pishock.");
+                    Status = ConnectionStatusPishock.Unavailable;
+                    return;
+                }
+            }
+            catch (Exception e)
+            {
+                Plugin.Error("Failed to connect to Pishock API, while getting ShareIDs");
+                Plugin.Error(e.Message);
+                Status = ConnectionStatusPishock.FatalError;
                 return;
             }
             Plugin.Log(3, " -> Received ShareID Information!");

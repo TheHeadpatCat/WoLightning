@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WoLightning.WoL_Plugin.Clients
 {
-    public class WebSocketClient : IDisposable
+    public class WebSocketClient : IDisposable // todo: rewrite this garbage
     {
         private Plugin Plugin { get; set; }
         private Uri Uri { get; set; }
@@ -154,7 +154,7 @@ namespace WoLightning.WoL_Plugin.Clients
                 string receivedMessage = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
                 if (!receivedMessage.Contains("Ping")) Plugin.Log(3, "Received Message: " + receivedMessage);
                 Received?.Invoke(receivedMessage);
-                if (Client.State == WebSocketState.Open) Receive();
+                if (UpholdConnection && Client.State == WebSocketState.Open) Receive();
                 else if (UpholdConnection && (Client.State == WebSocketState.CloseReceived || Client.State == WebSocketState.Closed)) return; await Connect();
             }
             catch (Exception ex) { Plugin.Log(3,"Receiving Message failed."); Plugin.Log(3,ex.Message); }
