@@ -4,9 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Net.Security;
-using System.Runtime.ConstrainedExecution;
-using System.Security.Authentication;
 using System.Threading.Tasks;
 using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Clients;
@@ -136,7 +133,7 @@ namespace WoLightning.Clients.Pishock
                     return;
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Logger.Error("Failed to establish a Connection to Pishockm while requesting Account Information.");
                 Logger.Error(e);
@@ -149,7 +146,7 @@ namespace WoLightning.Clients.Pishock
                 using (var reader = new StreamReader(Result.Content.ReadAsStream()))
                 {
                     string message = reader.ReadToEnd();
-                    Logger.Log(4,message);
+                    Logger.Log(4, message);
                     var parts = message.Split(',');
                     foreach (var part in parts)
                     {
@@ -190,7 +187,7 @@ namespace WoLightning.Clients.Pishock
                     return;
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Logger.Error("Failed to Connect to Pishock, while requesting Shocker Information.");
                 Logger.Error(e.Message);

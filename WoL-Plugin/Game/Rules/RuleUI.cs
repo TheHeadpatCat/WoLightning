@@ -222,7 +222,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
                 ImGui.Text("Please select all shockers that should activate for this trigger:");
                 ImGui.BeginGroup();
                 ImGui.Text("Available Pishock Devices:           ");
-                ImGui.BeginChild("PishockShockerList",new Vector2(180,260));
+                ImGui.BeginChild("PishockShockerList", new Vector2(180, 260));
                 foreach (var shocker in Plugin.Authentification.PishockShockers)
                 {
                     if (Plugin.Configuration.ShownShockers == Configurations.ShownShockers.None) continue;

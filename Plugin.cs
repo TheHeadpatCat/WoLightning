@@ -1,5 +1,4 @@
 using Dalamud.Game;
-using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.Command;
 using Dalamud.Interface.Windowing;
@@ -16,7 +15,6 @@ using WoLightning.Clients.Pishock;
 using WoLightning.Clients.Webserver;
 using WoLightning.Configurations;
 using WoLightning.Game;
-using WoLightning.Util;
 using WoLightning.Util.Types;
 using WoLightning.Windows;
 using WoLightning.WoL_Plugin.Util;
@@ -251,7 +249,7 @@ public sealed class Plugin : IDalamudPlugin
         Service.CommandManager.RemoveHandler(CommandNameAlias);
         Service.CommandManager.RemoveHandler(Failsafe);
         Service.CommandManager.RemoveHandler(OpenConfigFolder);
-        
+
     }
 
     private void OnCommand(string command, string args)

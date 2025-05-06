@@ -1,18 +1,12 @@
-﻿using Dalamud.Plugin.Services;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WoLightning.Configurations;
-using WoLightning.Util;
 
 namespace WoLightning.WoL_Plugin.Util
 {
     public static class Logger
     {
-        public static string FilePath() 
+        public static string FilePath()
         {
             try
             {
@@ -55,7 +49,8 @@ namespace WoLightning.WoL_Plugin.Util
         }
 
 
-        private static bool ValidateFile() {
+        private static bool ValidateFile()
+        {
             if (FilePath().Equals("NO FILE")) return false;
             return File.Exists(FilePath());
         }
@@ -122,7 +117,7 @@ namespace WoLightning.WoL_Plugin.Util
             switch (level)
             {
                 case DebugLevel.Dev:
-                    if(obj.ToString() != null) Service.PluginLog.Verbose(obj.ToString()!);
+                    if (obj.ToString() != null) Service.PluginLog.Verbose(obj.ToString()!);
                     WriteLog("[Dev - Object]");
                     WriteLog(obj);
                     break;

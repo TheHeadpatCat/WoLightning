@@ -59,7 +59,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
             {
                 if (Service.ClientState.LocalPlayer == null) return;
                 if (Plugin.Configuration.ActivePreset.LimitChats && !Plugin.Configuration.ActivePreset.Chats.Contains(type)) return;
-                
+
                 Player? sender = null;
                 foreach (var payload in senderE.Payloads)
                 {

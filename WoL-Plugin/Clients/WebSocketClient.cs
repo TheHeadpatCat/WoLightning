@@ -194,7 +194,7 @@ namespace WoLightning.WoL_Plugin.Clients
                 if (UpholdConnection && Client.State == WebSocketState.Open) Receive();
                 //else if (UpholdConnection && (Client.State == WebSocketState.CloseReceived || Client.State == WebSocketState.Closed)) return; await Connect();
             }
-            catch (Exception ex) { Logger.Log(3,"Receiving Message failed."); Logger.Log(3,ex.Message); }
+            catch (Exception ex) { Logger.Log(3, "Receiving Message failed."); Logger.Log(3, ex.Message); }
         }
 
     }

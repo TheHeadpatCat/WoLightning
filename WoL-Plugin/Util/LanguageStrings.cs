@@ -7,7 +7,7 @@ namespace WoLightning.WoL_Plugin.Util
         public static string FailCraftTrigger()
         {
             ClientLanguage Language = (ClientLanguage)Service.GameConfig.System.GetUInt("Language");
-            
+
             string output = "Unknown";
             switch (Language)
             {

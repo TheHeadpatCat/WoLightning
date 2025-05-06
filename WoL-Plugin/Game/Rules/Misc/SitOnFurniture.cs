@@ -1,5 +1,4 @@
 ﻿using FFXIVClientStructs.FFXIV.Common.Math;
-using Lumina.Excel.Sheets;
 using System;
 using System.Text.Json.Serialization;
 using System.Timers;
