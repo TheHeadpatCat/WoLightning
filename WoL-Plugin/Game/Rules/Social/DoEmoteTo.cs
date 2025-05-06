@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text.Json.Serialization;
 using WoLightning.Util.Types;
+using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Social
 {
@@ -46,14 +47,14 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         {
             try
             {
-                if (Plugin.ClientState.LocalPlayer == null) return;
+                if (Service.ClientState.LocalPlayer == null) return;
                 if (!TriggeringEmotes.Contains(emoteId)) return; // Emote isnt listed
                 if (target.ObjectKind != Dalamud.Game.ClientState.Objects.Enums.ObjectKind.Player) return; // We arent targeting a player - somehow.
                 IPlayerCharacter character = (IPlayerCharacter)target;
                 Player targetedPlayer = new Player(character.Name.ToString(), (int)character.HomeWorld.RowId);
                 Trigger("You used a forbidden emote on " + targetedPlayer, targetedPlayer);
             }
-            catch (Exception e) { Plugin.Error(Name + " Check() failed."); Plugin.Error(e.Message); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); }
         }
 
         public override void DrawExtraButton()

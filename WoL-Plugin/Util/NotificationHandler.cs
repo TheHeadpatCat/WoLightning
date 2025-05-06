@@ -71,7 +71,7 @@ namespace WoLightning.WoL_Plugin.Util
             if (RateLimit >= RateLimitMax || QueuedNotifications.Count == 0) return;
 
             Notification notif = QueuedNotifications[0];
-            Plugin.NotificationManager.AddNotification(notif);
+            Service.NotificationManager.AddNotification(notif);
             QueuedNotifications.RemoveAt(0);
             RateLimit++;
             Update();

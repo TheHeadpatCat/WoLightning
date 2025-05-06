@@ -3,6 +3,9 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
+using WoLightning.Util;
+using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Clients
 {
@@ -19,20 +22,34 @@ namespace WoLightning.WoL_Plugin.Clients
         public int FailedAttempts = 0;
 
         public Action<string> Received;
+        private TimerPlus Heartbeat;
 
         public WebSocketClient(Plugin Plugin, String URL)
         {
             try
             {
                 this.Plugin = Plugin;
+                Heartbeat = new();
+                Heartbeat.Interval = 5000;
+                Heartbeat.AutoReset = true;
+                Heartbeat.Elapsed += checkHeartbeat;
                 Uri = new Uri(URL);
                 Setup();
             }
             catch (Exception ex)
             {
-                Plugin.Error(ex.Message);
-                Plugin.Error("Could not create WebSocketClient");
+                Logger.Error(ex.Message);
+                Logger.Error("Could not create WebSocketClient");
                 Client = null;
+            }
+        }
+
+        private void checkHeartbeat(object? sender, ElapsedEventArgs e)
+        {
+            if (Plugin == null || Client == null)
+            {
+                Logger.Log(2, "Heartbeat failed - Killing Client.");
+                Dispose();
             }
         }
 
@@ -47,8 +64,8 @@ namespace WoLightning.WoL_Plugin.Clients
             }
             catch (Exception ex)
             {
-                Plugin.Error(ex.Message);
-                Plugin.Error("Could not create WebSocketClient");
+                Logger.Error(ex.Message);
+                Logger.Error("Could not create WebSocketClient");
                 Client = null;
             }
         }
@@ -70,6 +87,11 @@ namespace WoLightning.WoL_Plugin.Clients
         {
             try
             {
+                if (Plugin == null)
+                {
+                    Dispose();
+                    return;
+                }
                 if (Client != null)
                 {
                     UpholdConnection = false;
@@ -94,28 +116,33 @@ namespace WoLightning.WoL_Plugin.Clients
             }
             catch (Exception ex)
             {
-                Plugin.Log(1, ex.Message);
-                Plugin.Log(1, "Failed  to Setup WebSocket");
+                Logger.Log(1, ex.Message);
+                Logger.Log(1, "Failed  to Setup WebSocket");
             }
         }
 
         private async Task Connect()
         {
+            if (Plugin == null)
+            {
+                Dispose();
+                return;
+            }
             if (Client == null || !UpholdConnection) return;
-            if (FailedAttempts >= 5) { Plugin.Error("Failed 5 Attempts. Aborting Websocket Connection."); UpholdConnection = false; return; }
+            if (FailedAttempts >= 5) { Logger.Error("Failed 5 Attempts. Aborting Websocket Connection."); UpholdConnection = false; return; }
             if (Client.State == WebSocketState.Open) return;
             try
             {
-                Plugin.Log(2, $"[WebSocket] Connecting to {Uri.ToString().Substring(0, 16)}...");
+                Logger.Log(2, $"[WebSocket] Connecting to {Uri.ToString().Substring(0, 16)}...");
                 await Client.ConnectAsync(Uri, CancellationToken.None);
-                Plugin.Log(2, $"[WebSocket] Successfully Connected to {Uri.ToString().Substring(0, 16)}!");
+                Logger.Log(2, $"[WebSocket] Successfully Connected to {Uri.ToString().Substring(0, 16)}!");
                 FailedAttempts = 0;
                 Receive();
             }
             catch (Exception ex)
             {
-                Plugin.Log(3, ex.Message);
-                Plugin.Log(3, "Websocket failed to Connect.");
+                Logger.Log(3, ex.Message);
+                Logger.Log(3, "Websocket failed to Connect.");
                 FailedAttempts++;
 
                 if (Client.State == WebSocketState.Open) return;
@@ -131,9 +158,14 @@ namespace WoLightning.WoL_Plugin.Clients
         {
             try
             {
+                if (Plugin == null)
+                {
+                    Dispose();
+                    return;
+                }
                 if (Client == null || Client.State != WebSocketState.Open)
                 {
-                    Plugin.Log(2, "WebSocket Request was sent, but Client was Disposed - Resetting Connection.");
+                    Logger.Log(2, "WebSocket Request was sent, but Client was Disposed - Resetting Connection.");
                     await Setup();
                     await Send(message);
                     return;
@@ -142,22 +174,27 @@ namespace WoLightning.WoL_Plugin.Clients
                 ArraySegment<byte> byteArraySegment = new ArraySegment<byte>(bytes);
                 await Client.SendAsync(byteArraySegment, WebSocketMessageType.Text, true, CancellationToken.None);
             }
-            catch (Exception ex) { Plugin.Log(3, "Sending Message Failed."); Plugin.Log(3, ex.Message); }
+            catch (Exception ex) { Logger.Log(3, "Sending Message Failed."); Logger.Log(3, ex.Message); }
         }
 
         private async void Receive()
         {
             try
             {
+                if (Plugin == null)
+                {
+                    Dispose();
+                    return;
+                }
                 if (Client == null || Client.State != WebSocketState.Open) return;
                 WebSocketReceiveResult result = await Client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
                 string receivedMessage = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
-                if (!receivedMessage.Contains("Ping")) Plugin.Log(3, "Received Message: " + receivedMessage);
+                Logger.Log(4, "Received Message: " + receivedMessage);
                 Received?.Invoke(receivedMessage);
                 if (UpholdConnection && Client.State == WebSocketState.Open) Receive();
-                else if (UpholdConnection && (Client.State == WebSocketState.CloseReceived || Client.State == WebSocketState.Closed)) return; await Connect();
+                //else if (UpholdConnection && (Client.State == WebSocketState.CloseReceived || Client.State == WebSocketState.Closed)) return; await Connect();
             }
-            catch (Exception ex) { Plugin.Log(3,"Receiving Message failed."); Plugin.Log(3,ex.Message); }
+            catch (Exception ex) { Logger.Log(3,"Receiving Message failed."); Logger.Log(3,ex.Message); }
         }
 
     }

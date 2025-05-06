@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using WoLightning.Util.Types;
+using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Game.Rules
 {
@@ -70,12 +71,12 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
         virtual public void Start()
         {
-            Plugin.Log(2, Name + ".Start() is not Implemented");
+            Logger.Log(2, Name + ".Start() is not Implemented");
         }
 
         virtual public void Stop()
         {
-            Plugin.Log(2, Name + ".Stop() is not Implemented");
+            Logger.Log(2, Name + ".Stop() is not Implemented");
         }
 
         virtual public void Trigger(string Text) { Trigger(Text, null, null, null); }
@@ -86,7 +87,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         {
             if (ShockOptions.hasCooldown() || !IsRunning || Plugin.isFailsafeActive) return;
             if (source != null && !Plugin.Configuration.ActivePreset.isPlayerAllowedToTrigger(source)) return;
-            if (!Plugin.Configuration.ActivePreset.AllowRulesInPvP && Plugin.ClientState.IsPvP) return;
+            if (!Plugin.Configuration.ActivePreset.AllowRulesInPvP && Service.ClientState.IsPvP) return;
 
             if (overrideOptions == null) Triggered?.Invoke(this.ShockOptions);
             else Triggered?.Invoke(new ShockOptions(0, overrideOptions[0], overrideOptions[1]));

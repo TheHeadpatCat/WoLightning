@@ -2,6 +2,7 @@
 using Dalamud.Plugin.Services;
 using System;
 using System.Text.Json.Serialization;
+using WoLightning.WoL_Plugin.Util;
 namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 {
     [Serializable]
@@ -24,22 +25,22 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
         {
             if (IsRunning) return;
             IsRunning = true;
-            Plugin.Framework.Update += Check;
-            Player = Plugin.ClientState.LocalPlayer;
+            Service.Framework.Update += Check;
+            Player = Service.ClientState.LocalPlayer;
         }
 
         override public void Stop()
         {
             if (!IsRunning) return;
             IsRunning = false;
-            Plugin.Framework.Update -= Check;
+            Service.Framework.Update -= Check;
         }
 
         private void Check(IFramework framework)
         {
             try
             {
-                Player = Plugin.ClientState.LocalPlayer;
+                Player = Service.ClientState.LocalPlayer;
                 if (Player == null || !Player.StatusFlags.HasFlag(Dalamud.Game.ClientState.Objects.Enums.StatusFlags.InCombat)) { return; }
 
                 var Statuses = Player.StatusList;
@@ -78,8 +79,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
             }
             catch (Exception ex)
             {
-                Plugin.Error(Name + " Check() failed.");
-                Plugin.Error(ex.Message);
+                Logger.Error(Name + " Check() failed.");
+                Logger.Error(ex.Message);
             }
         }
 

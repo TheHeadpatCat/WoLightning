@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using WoLightning.Util.Types;
+using WoLightning.WoL_Plugin.Util;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace WoLightning.Clients.Webserver
@@ -53,14 +54,14 @@ namespace WoLightning.Clients.Webserver
 
             if (Plugin.Authentification.DevKey.Length == 0)
             {
-                Plugin.Log(1, "No Devkey detected - Stopping ClientWebserver creation.");
+                Logger.Log(1, "No Devkey detected - Stopping ClientWebserver creation.");
                 Status = ConnectionStatusWebserver.DevMode;
                 return;
             }
 
             if (!Plugin.Authentification.acceptedEula)
             {
-                Plugin.Log(1, "Eula isn't accepted - Stopping ClientWebserver creation.");
+                Logger.Log(1, "Eula isn't accepted - Stopping ClientWebserver creation.");
                 Status = ConnectionStatusWebserver.EulaNotAccepted;
                 return;
             }
@@ -74,7 +75,7 @@ namespace WoLightning.Clients.Webserver
                 await WebSocket.SendAsync(Encoding.UTF8.GetBytes(text), WebSocketMessageType.Text, true, CancellationToken.None);
                 Receive();
                 JsonSerializer.Deserialize<Packet>(text);
-                Plugin.Log(2, WebSocket.State.ToString());
+                Logger.Log(2, WebSocket.State.ToString());
             }
             catch (Exception ex) { FatalError(ex); }
         }
@@ -85,7 +86,7 @@ namespace WoLightning.Clients.Webserver
             try
             {
                 await WebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None);
-                Plugin.Log(2, WebSocket.State.ToString());
+                Logger.Log(2, WebSocket.State.ToString());
             }
             catch (Exception ex) { FatalError(ex); }
         }
@@ -95,7 +96,7 @@ namespace WoLightning.Clients.Webserver
         public async void Send(OperationCode Op, string? OpData, Player? Target)
         {
             if (Status == ConnectionStatusWebserver.Unavailable) return;
-            if (WebSocket == null || Plugin.ClientState.LocalPlayer == null) return;
+            if (WebSocket == null || Service.ClientState.LocalPlayer == null) return;
             try
             {
                 NetPacket packet = new NetPacket(Op, Plugin.LocalPlayer, OpData, Target);
@@ -119,30 +120,30 @@ namespace WoLightning.Clients.Webserver
 
                 if (!re.validate())
                 {
-                    Plugin.Log(1, "We have received a invalid packet.");
-                    Plugin.Error(re);
+                    Logger.Log(1, "We have received a invalid packet.");
+                    Logger.Error(re);
                     return;
                 }
 
                 if (!re.Sender.Equals(Plugin.LocalPlayer) && !re.Target.Equals(Plugin.LocalPlayer))
                 {
-                    Plugin.Error("The received packet is neither from nor for us.");
+                    Logger.Error("The received packet is neither from nor for us.");
                     return;
                 }
 
                 if (re.OpData != null && re.OpData.Equals("Fail-Unauthorized"))
                 {
-                    Plugin.Error("The server does not remember us sending a request.");
+                    Logger.Error("The server does not remember us sending a request.");
                     return;
                 }
 
-                if (re.Operation != OperationCode.Ping) Plugin.Log(1, re);
+                if (re.Operation != OperationCode.Ping) Logger.Log(1, re);
 
                 /*
                 string? errorMessage = Plugin.Operation.execute(originalPacket, re);
                 if (errorMessage != null)
                 {
-                    Plugin.Error(errorMessage, re);
+                    Logger.Error(errorMessage, re);
                     return;
                 }
                 */
@@ -182,12 +183,12 @@ namespace WoLightning.Clients.Webserver
                         {
                             // 3. Convert textual message from bytes to string
                             string message = Encoding.UTF8.GetString(webSocketPayload.ToArray());
-                            Plugin.Log(3, $"Server says {message}");
+                            Logger.Log(3, $"Server says {message}");
                         }
                         else if (webSocketResponse.MessageType == WebSocketMessageType.Close)
                         {
                             // 4. Close the connection
-                            Plugin.Log(3, $"Server has closed the Connection.");
+                            Logger.Log(3, $"Server has closed the Connection.");
                             connectionAlive = false;
                         }
                     }
@@ -204,9 +205,9 @@ namespace WoLightning.Clients.Webserver
                 WebSocket.Abort();
                 WebSocket.Dispose();
             }
-            catch (Exception ex2) { Plugin.Log(1, ex2.ToString()); }
+            catch (Exception ex2) { Logger.Log(1, ex2.ToString()); }
             WebSocket = null;
-            Plugin.Log(1, ex.ToString());
+            Logger.Log(1, ex.ToString());
         }
     }
 }

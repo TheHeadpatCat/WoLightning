@@ -154,7 +154,7 @@
                     if (responsePacket.OpData != null && responsePacket.OpData.Split("-")[0] == "Success")
                     {
                         Plugin.ClientWebserver.Status = ConnectionStatusWebserver.Connected;
-                        Plugin.Log("Logged into the Webserver!");
+                        Logger.Log("Logged into the Webserver!");
 
                         return null;
                     }
@@ -178,7 +178,7 @@
                     if (responsePacket.OpData != null && responsePacket.OpData.Split("-")[0] == "Success")
                     {
                         Plugin.Authentification.ServerKey = responsePacket.Sender.Key;
-                        Plugin.Log("We have been registered to the Server - Key: " + responsePacket.Sender.Key);
+                        Logger.Log("We have been registered to the Server - Key: " + responsePacket.Sender.Key);
                         return null;
                     }
                     else if (responsePacket.OpData != null && responsePacket.OpData == "Fail-AlreadyExists")
@@ -194,13 +194,13 @@
                     if (responsePacket.OpData != null && responsePacket.OpData == "Success-Removed")
                     {
                         Plugin.Authentification.ServerKey = string.Empty;
-                        Plugin.Log("Reset Userdata on Webserver.");
+                        Logger.Log("Reset Userdata on Webserver.");
                         //Plugin.ClientWebserver.request(OperationCode.Login);
                         return null;
                     }
                     else
                     {
-                        Plugin.Log("Failed Reset");
+                        Logger.Log("Failed Reset");
                     }
                     return responsePacket.OpData;
                 case OperationCode.UploadBackup:

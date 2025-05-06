@@ -2,20 +2,12 @@
 
 namespace WoLightning.WoL_Plugin.Util
 {
-    public class LanguageStrings // This could probably be handled in a static way.
+    public static class LanguageStrings // This could probably be handled in a static way.
     {
-
-        Plugin Plugin { get; set; }
-        public ClientLanguage Language { get; set; }
-
-        public LanguageStrings(Plugin Plugin)
+        public static string FailCraftTrigger()
         {
-            this.Plugin = Plugin;
-            Language = (ClientLanguage)Plugin.GameConfig.System.GetUInt("Language");
-        }
-
-        public string FailCraftTrigger()
-        {
+            ClientLanguage Language = (ClientLanguage)Service.GameConfig.System.GetUInt("Language");
+            
             string output = "Unknown";
             switch (Language)
             {
@@ -35,8 +27,10 @@ namespace WoLightning.WoL_Plugin.Util
             return output;
         }
 
-        public string FailCraftHQTrigger() // Todo: implement
+        public static string FailCraftHQTrigger() // Todo: implement
         {
+            ClientLanguage Language = (ClientLanguage)Service.GameConfig.System.GetUInt("Language");
+
             string output = "Unknown";
             switch (Language)
             {
@@ -56,8 +50,10 @@ namespace WoLightning.WoL_Plugin.Util
             return output;
         }
 
-        public string FishEscapedTrigger()
+        public static string FishEscapedTrigger()
         {
+            ClientLanguage Language = (ClientLanguage)Service.GameConfig.System.GetUInt("Language");
+
             string output = "Unknown";
             switch (Language)
             {
@@ -77,8 +73,10 @@ namespace WoLightning.WoL_Plugin.Util
             return output;
         }
 
-        public string DeathrollTrigger()
+        public static string DeathrollTrigger()
         {
+            ClientLanguage Language = (ClientLanguage)Service.GameConfig.System.GetUInt("Language");
+
             string output = "Unknown";
             switch (Language)
             {

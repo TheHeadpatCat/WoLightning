@@ -4,6 +4,7 @@ using ImGuiNET;
 using System;
 using System.Text.Json.Serialization;
 using WoLightning.Util.Types;
+using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 {
@@ -32,22 +33,22 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
         {
             if (IsRunning) return;
             IsRunning = true;
-            Plugin.Framework.Update += Check;
-            Player = Plugin.ClientState.LocalPlayer;
+            Service.Framework.Update += Check;
+            Player = Service.ClientState.LocalPlayer;
         }
 
         override public void Stop()
         {
             if (!IsRunning) return;
             IsRunning = false;
-            Plugin.Framework.Update -= Check;
+            Service.Framework.Update -= Check;
         }
 
         private void Check(IFramework framework)
         {
             try
             {
-                Player = Plugin.ClientState.LocalPlayer;
+                Player = Service.ClientState.LocalPlayer;
                 if (Player == null) { return; }
 
                 if (bufferFrames > 0)
@@ -76,7 +77,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                     int damageTaken = (int)(lastHP - Player.CurrentHp);
                     double difference = (double)damageTaken / lastMaxHP;
 
-                    //Plugin.Log(" damage taken: " + damageTaken + " dif: " + (int)(difference * 100));
+                    //Logger.Log(" damage taken: " + damageTaken + " dif: " + (int)(difference * 100));
                     if (minimumDamagePercent > difference * 100)
                     {
                         lastHP = Player.CurrentHp;
@@ -95,7 +96,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 }
                 lastHP = Player.CurrentHp;
             }
-            catch (Exception e) { Plugin.Error(Name + " Check() failed."); Plugin.Error(e.Message); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); }
         }
 
         public override void DrawExtraButton()

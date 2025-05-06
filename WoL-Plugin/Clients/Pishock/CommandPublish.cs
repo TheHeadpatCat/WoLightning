@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using WoLightning.Util.Types;
+using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Clients.Pishock
 {
@@ -15,7 +16,7 @@ namespace WoLightning.WoL_Plugin.Clients.Pishock
 
             foreach (var shocker in Options.ShockersPishock)
             {
-                Plugin.Log(3, shocker);
+                Logger.Log(3, shocker);
                 var cmd = new Command(shocker, Options, UserId, isWarning);
                 string target;
                 if (shocker.isPersonal) target = "c" + shocker.clientId + "-ops";

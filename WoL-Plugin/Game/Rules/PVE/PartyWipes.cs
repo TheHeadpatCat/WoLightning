@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Text.Json.Serialization;
+using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 {
@@ -25,24 +26,24 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
         {
             if (IsRunning) return;
             IsRunning = true;
-            Plugin.Framework.Update += Check;
+            Service.Framework.Update += Check;
         }
 
         override public void Stop()
         {
             if (!IsRunning) return;
             IsRunning = false;
-            Plugin.Framework.Update -= Check;
+            Service.Framework.Update -= Check;
         }
 
         private void Check(IFramework framework)
         {
             try
             {
-                if (Plugin.ClientState.LocalPlayer == null || Plugin.PartyList == null || Plugin.PartyList.Length == 0 || !Plugin.ClientState.LocalPlayer.StatusFlags.HasFlag(Dalamud.Game.ClientState.Objects.Enums.StatusFlags.InCombat)) { return; }
+                if (Service.ClientState.LocalPlayer == null || Service.PartyList == null || Service.PartyList.Length == 0 || !Service.ClientState.LocalPlayer.StatusFlags.HasFlag(Dalamud.Game.ClientState.Objects.Enums.StatusFlags.InCombat)) { return; }
 
                 int i = -1;
-                foreach (var Player in Plugin.PartyList)
+                foreach (var Player in Service.PartyList)
                 {
                     i++;
                     if (Player == null) continue;
@@ -54,7 +55,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                     if (!isTriggered && DeadPlayerIndex.All((x) => x == true)) { Trigger("The party is wiped!"); isTriggered = true; } //everyone is dead and we havent triggered the shock
                 }
             }
-            catch (Exception e) { Plugin.Error(Name + " Check() failed."); Plugin.Error(e.Message); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); }
         }
 
     }

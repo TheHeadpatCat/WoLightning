@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using WoLightning.Util;
+using WoLightning.WoL_Plugin.Util;
 using WoLightning.WoL_Plugin.Util.Types;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Social
@@ -42,25 +43,25 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         {
             if (IsRunning) return;
             IsRunning = true;
-            Plugin.ChatGui.ChatMessage += Check;
+            Service.ChatGui.ChatMessage += Check;
         }
 
         override public void Stop()
         {
             if (!IsRunning) return;
             IsRunning = false;
-            Plugin.ChatGui.ChatMessage -= Check;
+            Service.ChatGui.ChatMessage -= Check;
         }
         private void Check(XivChatType type, int timestamp, ref SeString senderE, ref SeString messageE, ref bool isHandled)
         {
             try
             {
-                if (Plugin.ClientState.LocalPlayer == null) return;
+                if (Service.ClientState.LocalPlayer == null) return;
                 //check for chat type limitation
                 if (Plugin.Configuration.ActivePreset.LimitChats && !Plugin.Configuration.ActivePreset.Chats.Contains(type)) return;
 
                 string sender = StringSanitizer.LetterOrDigit(senderE.ToString()).ToLower();
-                if ((int)type <= 107 && sender.Equals(Plugin.ClientState.LocalPlayer.Name.ToString().ToLower()))
+                if ((int)type <= 107 && sender.Equals(Service.ClientState.LocalPlayer.Name.ToString().ToLower()))
                 {
                     string message = StringSanitizer.LetterOrDigit(messageE.ToString());
                     bool found = false;
@@ -77,7 +78,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     if (!found) Trigger($"You forgot to say a Enforced Word!");
                 }
             }
-            catch (Exception e) { Plugin.Error(Name + " Check() failed."); Plugin.Error(e.Message); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); }
         }
 
         public override void DrawAdvancedOptions()

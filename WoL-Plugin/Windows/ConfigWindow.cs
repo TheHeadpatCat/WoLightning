@@ -10,6 +10,7 @@ using System.Numerics;
 using WoLightning.Configurations;
 using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Game.Rules;
+using WoLightning.WoL_Plugin.Util;
 
 
 
@@ -57,7 +58,7 @@ public class ConfigWindow : Window, IDisposable
 
     private void onPresetChanged(Preset preset, int index)
     {
-        Plugin.Log(2, "onPresetChaged() - " + index);
+        Logger.Log(2, "onPresetChaged() - " + index);
         ActivePreset = preset;
         ActivePresetIndex = index;
     }
@@ -74,7 +75,7 @@ public class ConfigWindow : Window, IDisposable
 
     public void SetConfiguration(Configuration? conf)
     {
-        Plugin.Log(2, "SetConfiguration() is called");
+        Logger.Log(2, "SetConfiguration() is called");
         if (Configuration != null) Configuration.PresetChanged -= onPresetChanged;
         Configuration = conf;
         Configuration!.Save();
@@ -112,8 +113,8 @@ public class ConfigWindow : Window, IDisposable
     {
         if (Configuration == null || ActivePresetIndex == -1)
         {
-            if (Configuration == null) Plugin.Log(2, "Configuration is null");
-            if (ActivePresetIndex == -1) Plugin.Log(2, "Active Preset hasnt been picked");
+            if (Configuration == null) Logger.Log(2, "Configuration is null");
+            if (ActivePresetIndex == -1) Logger.Log(2, "Active Preset hasnt been picked");
             return;
         }
 
@@ -175,7 +176,7 @@ public class ConfigWindow : Window, IDisposable
                     UseShellExecute = true
                 });
             }
-            catch (Exception e) { Plugin.Log(1, e); }
+            catch (Exception e) { Logger.Log(1, e); }
         }
         ImGui.End();
 
@@ -387,7 +388,7 @@ public class ConfigWindow : Window, IDisposable
             var Whitelist = Configuration.ActivePreset.Whitelist;
             var Blacklist = Configuration.ActivePreset.Blacklist;
 
-            IGameObject? st = Plugin.TargetManager.Target;
+            IGameObject? st = Service.TargetManager.Target;
             if (st != null && st.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.Player)
             {
                 IPlayerCharacter st1 = (IPlayerCharacter)st;
@@ -979,7 +980,7 @@ public class ConfigWindow : Window, IDisposable
                 SeString s = debugFsender.ToString();
                 SeString m = debugFmessage.ToString();
                 bool b = false;
-                Plugin.Log("Sending fake message:");
+                Logger.Log("Sending fake message:");
                 Plugin.NetworkWatcher.HandleChatMessage(t, 0, ref s, ref m, ref b);
             }
 

@@ -1,6 +1,7 @@
 ﻿using Dalamud.Plugin.Services;
 using System;
 using System.Text.Json.Serialization;
+using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 {
@@ -24,31 +25,31 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
         {
             if (IsRunning) return;
             IsRunning = true;
-            Plugin.Framework.Update += Check;
+            Service.Framework.Update += Check;
         }
 
         override public void Stop()
         {
             if (!IsRunning) return;
             IsRunning = false;
-            Plugin.Framework.Update -= Check;
+            Service.Framework.Update -= Check;
         }
 
         private void Check(IFramework framework)
         {
             try
             {
-                if (Plugin.ClientState.LocalPlayer == null || Plugin.PartyList == null || Plugin.PartyList.Length == 0) { return; }
+                if (Service.ClientState.LocalPlayer == null || Service.PartyList == null || Service.PartyList.Length == 0) { return; }
 
-                if (LastPartySize != Plugin.PartyList.Length) // If someone leaves or enters the party, reset the index.
+                if (LastPartySize != Service.PartyList.Length) // If someone leaves or enters the party, reset the index.
                 {
                     DeadPlayerIndex = [false, false, false, false, false, false, false, false]; //how do i polyfill
-                    LastPartySize = Plugin.PartyList.Length;
+                    LastPartySize = Service.PartyList.Length;
                 }
 
 
                 int i = -1;
-                foreach (var Player in Plugin.PartyList)
+                foreach (var Player in Service.PartyList)
                 {
                     i++;
                     if (Player == null) continue;
@@ -59,7 +60,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                     if (!PlayerObject.IsDead && DeadPlayerIndex[i]) { DeadPlayerIndex[i] = false; }
                 }
             }
-            catch (Exception e) { Plugin.Error(Name + " Check() failed."); Plugin.Error(e.Message); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); }
         }
 
     }

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text.Json.Serialization;
+using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Social
 {
@@ -50,7 +51,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
             {
                 if (TriggeringEmotes.Contains(emoteId)) Trigger("You used a forbidden emote!");
             }
-            catch (Exception e) { Plugin.Error(Name + " Check() failed."); Plugin.Error(e.Message); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); }
         }
         public void Check(IGameObject target, ushort emoteId)
         {
@@ -58,7 +59,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
             {
                 if (TriggeringEmotes.Contains(emoteId)) Trigger("You used a forbidden emote!"); // Todo: Get emotename somehow
             }
-            catch (Exception e) { Plugin.Error(Name + " Check() failed."); Plugin.Error(e.Message); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); }
         }
         public override void DrawExtraButton()
         {

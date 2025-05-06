@@ -3,6 +3,7 @@ using Dalamud.Game.Text.SeStringHandling;
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Social
 {
@@ -23,25 +24,25 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         {
             if (IsRunning) return;
             IsRunning = true;
-            Plugin.ChatGui.ChatMessage += Check;
+            Service.ChatGui.ChatMessage += Check;
         }
 
         override public void Stop()
         {
             if (!IsRunning) return;
             IsRunning = false;
-            Plugin.ChatGui.ChatMessage -= Check;
+            Service.ChatGui.ChatMessage -= Check;
         }
         private void Check(XivChatType type, int timestamp, ref SeString senderE, ref SeString messageE, ref bool isHandled)
         {
             try
             {
-                if (Plugin.ClientState.LocalPlayer == null) return;
+                if (Service.ClientState.LocalPlayer == null) return;
                 if ((int)type == 2122 && messageE.Payloads.Find(pay => pay.Type == PayloadType.Icon) != null) // Deathroll channel and Icon found
                 {
                     string message = messageE.ToString();
                     string[] parts = message.Split(" ");
-                    if (message.StartsWith(Plugin.LanguageStrings.DeathrollTrigger()))
+                    if (message.StartsWith(LanguageStrings.DeathrollTrigger()))
                     {
                         foreach (string part in parts)
                         {
@@ -56,7 +57,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     }
                 }
             }
-            catch (Exception e) { Plugin.Error(Name + " Check() failed."); Plugin.Error(e.Message); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); }
         }
     }
 }

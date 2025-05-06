@@ -5,6 +5,7 @@ using System.Text.Json.Serialization;
 using System.Timers;
 using WoLightning.Util;
 using WoLightning.Util.Types;
+using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 {
@@ -32,7 +33,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         {
             if (IsRunning) return;
             IsRunning = true;
-            Plugin.Condition.ConditionChange += Check;
+            Service.Condition.ConditionChange += Check;
             isMountedTimer.Elapsed += shockUntilUnmount;
         }
 
@@ -40,7 +41,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         {
             if (!IsRunning) return;
             IsRunning = false;
-            Plugin.Condition.ConditionChange -= Check;
+            Service.Condition.ConditionChange -= Check;
             isMountedTimer.Elapsed -= shockUntilUnmount;
         }
 
@@ -48,7 +49,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         {
             try
             {
-                Plugin.Log(3, flag.ToString());
+                Logger.Log(3, flag.ToString());
                 if (flag == ConditionFlag.Mounted) isMounted = value;
                 else if (flag == ConditionFlag.Mounted2) isMountedPillion = value;
                 else return;
@@ -63,7 +64,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
                 }
 
             }
-            catch (Exception e) { Plugin.Error(Name + " Check() failed."); Plugin.Error(e.Message); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); }
 
         }
 

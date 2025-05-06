@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text.Json.Serialization;
 using WoLightning.Util.Types;
+using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Social
 {
@@ -50,13 +51,13 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         {
             try
             {
-                if (Plugin.ClientState.LocalPlayer == null) return;
+                if (Service.ClientState.LocalPlayer == null) return;
                 if (!TriggeringEmotes.Contains(emoteId)) return; // Emote isnt listed
                 if (player.ObjectKind != Dalamud.Game.ClientState.Objects.Enums.ObjectKind.Player) return; // The Sender wasnt a player
                 Player sendingPlayer = new Player(player.Name.ToString(), (int)player.HomeWorld.RowId);
                 Trigger(sendingPlayer + " has used Emote " + emoteId + " on you!", sendingPlayer);
             }
-            catch (Exception e) { Plugin.Error(Name + " Check() failed."); Plugin.Error(e.Message); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); }
         }
 
         public override void DrawExtraButton()

@@ -1,6 +1,7 @@
 ﻿using Dalamud.Game.ClientState.Objects.SubKinds;
 using System;
 using System.Text.Json.Serialization;
+using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 {
@@ -42,7 +43,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 
         Once you have done all of this, your Rule should show up in that Category of the Configuration Window ingame.
         Enable it and give it a try if it properly works!
-        If you encounter issues, you can always try and use Plugin.Log(3, "Text") to debug any issues you might encounter.
+        If you encounter issues, you can always try and use Logger.Log(3, "Text") to debug any issues you might encounter.
 
         */
 
@@ -71,7 +72,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 
             //Plugin.ToastGui.QuestToast += Check;   // Subscribing to some kind of Event to run our Check() on. If you do not subscribe to anything, your Check() will never get called.
             // Your Check() function also needs to match the fields of the Event you subscribed to - in this example your Check would be "Check(ref SeString messageE, ref QuestToastOptions options, ref bool isHandled)"
-            Player = Plugin.ClientState.LocalPlayer; // Setting up our Player so we can use them on the Check() function.
+            Player = Service.ClientState.LocalPlayer; // Setting up our Player so we can use them on the Check() function.
         }
 
         override public void Stop()
@@ -87,7 +88,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             // If you do not do this, and your Logic throws a error, the Plugin will crash.
             try
             {
-                if (Player == null) { Player = Plugin.ClientState.LocalPlayer; return; } // Double Checking that our Player Reference exists.
+                if (Player == null) { Player = Service.ClientState.LocalPlayer; return; } // Double Checking that our Player Reference exists.
 
                 // Do some Logic in here to figure out if we should Trigger from this Event call or not.
                 if (someDataFromTheEvent != null && someDataFromTheEvent.Equals("A String that would trigger this Rule"))
@@ -100,7 +101,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
                 }
 
             }
-            catch (Exception e) { Plugin.Error(Name + " Check() failed."); Plugin.Error(e.Message); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); }
 
         }
     }

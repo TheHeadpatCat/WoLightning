@@ -3,6 +3,7 @@ using Dalamud.Game.Gui.Toast;
 using Dalamud.Game.Text.SeStringHandling;
 using System;
 using System.Text.Json.Serialization;
+using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 {
@@ -25,29 +26,29 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         {
             if (IsRunning) return;
             IsRunning = true;
-            Plugin.ToastGui.QuestToast += Check;
-            Player = Plugin.ClientState.LocalPlayer;
+            Service.ToastGui.QuestToast += Check;
+            Player = Service.ClientState.LocalPlayer;
         }
 
         override public void Stop()
         {
             if (!IsRunning) return;
             IsRunning = false;
-            Plugin.ToastGui.QuestToast -= Check;
+            Service.ToastGui.QuestToast -= Check;
         }
 
         private void Check(ref SeString messageE, ref QuestToastOptions options, ref bool isHandled)
         {
             try
             {
-                Player = Plugin.ClientState.LocalPlayer;
+                Player = Service.ClientState.LocalPlayer;
                 if (Player == null) { return; }
                 if (Player.MaxGp == 0) return; // We are not a Gatherer.
                 if (messageE == null || messageE.ToString() == null) { return; }
                 String message = messageE.ToString();
-                if (message.Contains(Plugin.LanguageStrings.FishEscapedTrigger())) Trigger("You failed to catch a Fish!");
+                if (message.Contains(LanguageStrings.FishEscapedTrigger())) Trigger("You failed to catch a Fish!");
             }
-            catch (Exception e) { Plugin.Error(Name + " Check() failed."); Plugin.Error(e.Message); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); }
         }
     }
 }

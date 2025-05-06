@@ -5,6 +5,7 @@ using System.Text.Json.Serialization;
 using System.Timers;
 using WoLightning.Util;
 using WoLightning.Util.Types;
+using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Social
 {
@@ -47,7 +48,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                 if (emoteId == 50) // /sit on Chair done
                 {
                     sittingOnChair = true;
-                    sittingOnChairPos = Plugin.ClientState.LocalPlayer.Position;
+                    sittingOnChairPos = Service.ClientState.LocalPlayer.Position;
                     Trigger("You are sitting on Furniture!");
                     int calc = 5000;
                     if (ShockOptions.Duration <= 10) calc += ShockOptions.Duration * 1000;
@@ -66,7 +67,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     sittingOnChairTimer.Stop();
                 }
             }
-            catch (Exception e) { Plugin.Error(Name + " Check() failed."); Plugin.Error(e.Message); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); }
         }
 
         private void checkSittingOnChair(object? sender, ElapsedEventArgs? e)
@@ -75,26 +76,26 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
             {
                 safetyStop++;
 
-                Plugin.Log(3, "Chair Check " + Plugin.ClientState.LocalPlayer);
+                Logger.Log(3, "Chair Check " + Service.ClientState.LocalPlayer);
                 if (safetyStop > 10)
                 {
-                    Plugin.Log(3, "Timer has exceeded safety limit - aborting Chair Check.");
+                    Logger.Log(3, "Timer has exceeded safety limit - aborting Chair Check.");
                     sittingOnChair = false;
                     sittingOnChairTimer.Stop();
                     safetyStop = 0;
                     return;
                 }
 
-                if (Plugin.ClientState.LocalPlayer == null)
+                if (Service.ClientState.LocalPlayer == null)
                 {
-                    Plugin.Log(3, "No Player");
+                    Logger.Log(3, "No Player");
                     sittingOnChair = false;
                     sittingOnChairTimer.Stop();
                     safetyStop = 0;
                     return;
                 }
 
-                if (sittingOnChair && Plugin.ClientState.LocalPlayer.Position.Equals(sittingOnChairPos))
+                if (sittingOnChair && Service.ClientState.LocalPlayer.Position.Equals(sittingOnChairPos))
                 {
                     Trigger("You are still sitting on Furniture!");
                     sittingOnChairTimer.Refresh();
@@ -107,7 +108,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     safetyStop = 0;
                 }
             }
-            catch (Exception ex) { Plugin.Error(Name + " Check() failed."); Plugin.Error(ex.Message); }
+            catch (Exception ex) { Logger.Error(Name + " Check() failed."); Logger.Error(ex.Message); }
         }
     }
 }

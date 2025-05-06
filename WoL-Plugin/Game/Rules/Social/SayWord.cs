@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using WoLightning.Util;
+using WoLightning.WoL_Plugin.Util;
 using WoLightning.WoL_Plugin.Util.Types;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Social
@@ -42,14 +43,14 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         {
             if (IsRunning) return;
             IsRunning = true;
-            Plugin.ChatGui.ChatMessage += Check;
+            Service.ChatGui.ChatMessage += Check;
         }
 
         override public void Stop()
         {
             if (!IsRunning) return;
             IsRunning = false;
-            Plugin.ChatGui.ChatMessage -= Check;
+            Service.ChatGui.ChatMessage -= Check;
         }
 
         // All of the passed variables have to match with Plugin.ChatGui.ChatMessage - you can let this be generated for you if you are using Visual Studio or similiar
@@ -57,7 +58,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         {
             try
             {
-                if (Plugin.ClientState.LocalPlayer == null) return; // If the LocalPlayer is null, we might be transitioning between areas or similiar. Abort the check in those cases.
+                if (Service.ClientState.LocalPlayer == null) return; // If the LocalPlayer is null, we might be transitioning between areas or similiar. Abort the check in those cases.
 
 
                 // This will Check if the Checkbox for "Limit Chats" is enabled and if so, checks if the type of chat message we received is included in that. If its not, then abort the check.
@@ -65,12 +66,12 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
                 string sender = StringSanitizer.LetterOrDigit(senderE.ToString()).ToLower(); // Get the Sender in a cleaned String. SeStrings can have payloads and stuff and we dont want any of those here.
 
-                // The Plugin.Log() function requires two parts. The first is the LogLevel, a number between 0 to 4. It matches the setting under the "General" tab. So if you set it to 4 here, you'll need the option "Dev" set.
-                Plugin.Log(4, "Comparing sender " + sender + " against " + Plugin.ClientState.LocalPlayer.Name.ToString().ToLower() + " is " + sender.Equals(Plugin.ClientState.LocalPlayer.Name.ToString().ToLower()));
+                // The Logger.Log() function requires two parts. The first is the LogLevel, a number between 0 to 4. It matches the setting under the "General" tab. So if you set it to 4 here, you'll need the option "Dev" set.
+                Logger.Log(4, "Comparing sender " + sender + " against " + Service.ClientState.LocalPlayer.Name.ToString().ToLower() + " is " + sender.Equals(Service.ClientState.LocalPlayer.Name.ToString().ToLower()));
 
                 // First check if the type of Chat we received is above a specific number. Noteably 107 is the last Social Chat that players can technically send stuff to.
                 // Afterwards, check if the sender of the message has the same name as our Local Player Character. If so, we are the person that sent it. We can ignore the World, as if there is another Person with the same name, they will always show their World in the Sender Name, while we dont.
-                if ((int)type <= 107 && sender.Equals(Plugin.ClientState.LocalPlayer.Name.ToString().ToLower()))
+                if ((int)type <= 107 && sender.Equals(Service.ClientState.LocalPlayer.Name.ToString().ToLower()))
                 {
                     // Get the message into a cleaned String. Again, messages can have symbols and stuff in them and they might mess up our logic.
                     string message = StringSanitizer.LetterOrDigit(messageE.ToString());
@@ -78,7 +79,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     {
                         foreach (var word in message.Split(" ")) // Split the message we sent into seperate words and go through every said word.
                         {
-                            Plugin.Log(4, "Comparing " + word + " against " + bannedWord.Word + " which is " + bannedWord.Compare(word));
+                            Logger.Log(4, "Comparing " + word + " against " + bannedWord.Word + " which is " + bannedWord.Compare(word));
                             if (bannedWord.Compare(word)) // Now, with both parts. Check each said word, against all banned words. If any of them match, Trigger the Rule and end the Logic.
                             {
                                 Trigger($"You have said {bannedWord}!");
@@ -88,7 +89,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     }
                 }
             }
-            catch (Exception e) { Plugin.Error(Name + " Check() failed."); Plugin.Error(e.Message); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); }
         }
 
 

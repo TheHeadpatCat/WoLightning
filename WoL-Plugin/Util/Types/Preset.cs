@@ -7,6 +7,7 @@ using WoLightning.WoL_Plugin.Game.Rules;
 using WoLightning.WoL_Plugin.Game.Rules.Misc;
 using WoLightning.WoL_Plugin.Game.Rules.PVE;
 using WoLightning.WoL_Plugin.Game.Rules.Social;
+using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.Util.Types
 {
@@ -65,7 +66,7 @@ namespace WoLightning.Util.Types
         public void Initialize(Plugin Plugin)
         {
             this.Plugin = Plugin;
-            Plugin.Log(3, "Initializing Preset - " + Name);
+            Logger.Log(3, "Initializing Preset - " + Name);
 
             foreach (PropertyInfo property in this.GetType().GetProperties())
             {
@@ -83,8 +84,8 @@ namespace WoLightning.Util.Types
                     }
                     catch (Exception ex)
                     {
-                        Plugin.Error(ex.Message);
-                        Plugin.Error("Failed to Load Rule");
+                        Logger.Error(ex.Message);
+                        Logger.Error("Failed to Load Rule");
                     }
                 }
             }
@@ -102,12 +103,12 @@ namespace WoLightning.Util.Types
                     {
                         RuleBase r = (RuleBase)property.GetValue(this, null)!;
                         int i = r.ShockOptions.ShockersPishock.RemoveAll((shocker) => !Plugin.Authentification.PishockShockers.Contains(shocker));
-                        if (i > 0) Plugin.Log(2, "Removed " + i + " Invalid Shockers from " + r.Name);
+                        if (i > 0) Logger.Log(2, "Removed " + i + " Invalid Shockers from " + r.Name);
                     }
                     catch (Exception ex)
                     {
-                        Plugin.Error(ex.Message);
-                        Plugin.Error("Failed to Load Rule");
+                        Logger.Error(ex.Message);
+                        Logger.Error("Failed to Load Rule");
                     }
                 }
             }
@@ -127,7 +128,7 @@ namespace WoLightning.Util.Types
             }
             catch (Exception ex)
             {
-                if (Plugin != null) Plugin.Error(ex.Message);
+                if (Plugin != null) Logger.Error(ex.Message);
             }
         }
 
@@ -139,12 +140,12 @@ namespace WoLightning.Util.Types
                 {
                     if (Rule.IsEnabled)
                     {
-                        Plugin.Log(3, "Starting " + Rule.Name);
+                        Logger.Log(3, "Starting " + Rule.Name);
                         Rule.Start();
                     }
                 }
             }
-            catch (Exception ex) { Plugin.Error("Failed to start Rule " + Name); Plugin.Error(ex.Message); }
+            catch (Exception ex) { Logger.Error("Failed to start Rule " + Name); Logger.Error(ex.Message); }
         }
         public void StopRules()
         {
@@ -152,11 +153,11 @@ namespace WoLightning.Util.Types
             {
                 foreach (var Rule in Rules)
                 {
-                    Plugin.Log(3, "Stopping " + Rule.Name);
+                    Logger.Log(3, "Stopping " + Rule.Name);
                     Rule.Stop();
                 }
             }
-            catch (Exception ex) { Plugin.Error("Failed to start Rule " + Name); Plugin.Error(ex.Message); }
+            catch (Exception ex) { Logger.Error("Failed to start Rule " + Name); Logger.Error(ex.Message); }
         }
         public bool isPlayerAllowedToTrigger(Player player)
         {
@@ -165,7 +166,7 @@ namespace WoLightning.Util.Types
 
             foreach (var playerS in Blacklist)
             {
-                Plugin.Log(4, "comparing " + player + " and " + playerS + Blacklist.Contains(player));
+                Logger.Log(4, "comparing " + player + " and " + playerS + Blacklist.Contains(player));
 
             }
 
@@ -180,7 +181,7 @@ namespace WoLightning.Util.Types
 
             foreach (var property in typeof(Preset).GetProperties())
             {
-                //Log($"{property.Name} - {property.PropertyType}");
+                //Logger.Log($"{property.Name} - {property.PropertyType}");
                 if (property.PropertyType == typeof(ShockOptions))
                 {
                     object? obj = property.GetValue(this);

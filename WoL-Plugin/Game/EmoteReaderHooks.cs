@@ -3,6 +3,7 @@ using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Hooking;
 using System;
 using System.Linq;
+using WoLightning.WoL_Plugin.Util;
 
 
 namespace WoLightning.Game
@@ -28,14 +29,14 @@ namespace WoLightning.Game
             Plugin = plugin;
             try
             {
-                hookEmote = Plugin.GameInteropProvider.HookFromSignature<OnEmoteFuncDelegate>("E8 ?? ?? ?? ?? 48 8D 8B ?? ?? ?? ?? 4C 89 74 24", OnEmoteDetour);
+                hookEmote = Service.GameInteropProvider.HookFromSignature<OnEmoteFuncDelegate>("E8 ?? ?? ?? ?? 48 8D 8B ?? ?? ?? ?? 4C 89 74 24", OnEmoteDetour);
                 hookEmote.Enable();
-                Plugin.Log(3, "Started EmoteReaderHook!");
+                Logger.Log(3, "Started EmoteReaderHook!");
                 IsValid = true;
             }
             catch (Exception ex)
             {
-                Plugin.Error(ex + "");
+                Logger.Error(ex + "");
             }
         }
 
@@ -50,43 +51,43 @@ namespace WoLightning.Game
 
             try // todo: clean this up a bit
             {
-                if (Plugin.ClientState.LocalPlayer != null)
+                if (Service.ClientState.LocalPlayer != null)
                 {
-                    if (targetId == Plugin.ClientState.LocalPlayer.GameObjectId) // we are the target
+                    if (targetId == Service.ClientState.LocalPlayer.GameObjectId) // we are the target
                     {
-                        if (log) Plugin.PluginLog.Verbose($"Emote Incoming - {emoteId} - {targetId}");
-                        var instigatorOb = Plugin.ObjectTable.FirstOrDefault(x => (ulong)x.Address == instigatorAddr);
+                        if (log) Service.PluginLog.Verbose($"Emote Incoming - {emoteId} - {targetId}");
+                        var instigatorOb = Service.ObjectTable.FirstOrDefault(x => (ulong)x.Address == instigatorAddr);
                         if (instigatorOb != null) OnEmoteIncoming?.Invoke((IPlayerCharacter)instigatorOb, emoteId); // someone is sending a emote targeting us
                     }
                     else // We are not the target
                     {
-                        if (log) Plugin.PluginLog.Verbose($"We are not the target - {emoteId} - {targetId}");
-                        var instigatorOb = Plugin.ObjectTable.FirstOrDefault(x => (ulong)x.Address == instigatorAddr);
+                        if (log) Service.PluginLog.Verbose($"We are not the target - {emoteId} - {targetId}");
+                        var instigatorOb = Service.ObjectTable.FirstOrDefault(x => (ulong)x.Address == instigatorAddr);
                         if (instigatorOb == null) //bad data or special emote
                         {
-                            if (log) Plugin.PluginLog.Verbose($"No Instigator - Sit Emote or Bad Data");
-                            if (emoteId >= 50 && emoteId <= 52 && instigatorOb.GameObjectId == Plugin.ClientState.LocalPlayer.GameObjectId) OnSitEmote?.Invoke(emoteId); // /sit - getup - /groundsit
+                            if (log) Service.PluginLog.Verbose($"No Instigator - Sit Emote or Bad Data");
+                            if (emoteId >= 50 && emoteId <= 52 && instigatorOb.GameObjectId == Service.ClientState.LocalPlayer.GameObjectId) OnSitEmote?.Invoke(emoteId); // /sit - getup - /groundsit
                             hookEmote.Original(unk, instigatorAddr, emoteId, targetId, unk2);
                             return;
                         }
 
-                        var targetOb = Plugin.ObjectTable.FirstOrDefault(x => x.GameObjectId == targetId);
+                        var targetOb = Service.ObjectTable.FirstOrDefault(x => x.GameObjectId == targetId);
                         if (targetOb == null) // There is no Target.
                         {
-                            if (log) Plugin.PluginLog.Verbose($"No Target");
-                            if (instigatorOb.GameObjectId == Plugin.ClientState.LocalPlayer.GameObjectId) OnEmoteSelf?.Invoke(emoteId); // we are sending an emote without target
+                            if (log) Service.PluginLog.Verbose($"No Target");
+                            if (instigatorOb.GameObjectId == Service.ClientState.LocalPlayer.GameObjectId) OnEmoteSelf?.Invoke(emoteId); // we are sending an emote without target
                             else OnEmoteUnrelated?.Invoke((IPlayerCharacter)instigatorOb, targetOb, emoteId); // seomeone is sending a emote without target
                             return;
                         }
 
-                        if (log) Plugin.PluginLog.Verbose($"Someone is targeting someone");
-                        if (instigatorOb.GameObjectId == Plugin.ClientState.LocalPlayer.GameObjectId) OnEmoteOutgoing?.Invoke(targetOb, emoteId); // we are sending an emote
+                        if (log) Service.PluginLog.Verbose($"Someone is targeting someone");
+                        if (instigatorOb.GameObjectId == Service.ClientState.LocalPlayer.GameObjectId) OnEmoteOutgoing?.Invoke(targetOb, emoteId); // we are sending an emote
                         else OnEmoteUnrelated?.Invoke((IPlayerCharacter)instigatorOb, targetOb, emoteId); // someone is sending a emote to someone else
 
                     }
                 }
             }
-            catch (Exception ex) { Plugin.Error(ex.ToString()); }
+            catch (Exception ex) { Logger.Error(ex.ToString()); }
 
             hookEmote.Original(unk, instigatorAddr, emoteId, targetId, unk2);
         }

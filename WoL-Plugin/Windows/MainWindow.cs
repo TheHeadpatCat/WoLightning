@@ -7,6 +7,7 @@ using WoLightning.Util;
 using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Clients.OpenShock;
 using WoLightning.WoL_Plugin.Clients.Pishock;
+using WoLightning.WoL_Plugin.Util;
 using static WoLightning.Clients.OpenShock.ClientOpenShock;
 using static WoLightning.Clients.Pishock.ClientPishock;
 
@@ -76,8 +77,8 @@ public class MainWindow : Window, IDisposable
         }
         catch (Exception e)
         {
-            Plugin.Log(0, "Something went terribly wrong!");
-            Plugin.Error(e);
+            Logger.Log(0, "Something went terribly wrong!");
+            Logger.Error(e);
         }
 
     }

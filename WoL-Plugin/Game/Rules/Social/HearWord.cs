@@ -7,6 +7,7 @@ using System.Numerics;
 using System.Text.Json.Serialization;
 using WoLightning.Util;
 using WoLightning.Util.Types;
+using WoLightning.WoL_Plugin.Util;
 using WoLightning.WoL_Plugin.Util.Types;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Social
@@ -43,22 +44,22 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         {
             if (IsRunning) return;
             IsRunning = true;
-            Plugin.ChatGui.ChatMessage += Check;
+            Service.ChatGui.ChatMessage += Check;
         }
 
         override public void Stop()
         {
             if (!IsRunning) return;
             IsRunning = false;
-            Plugin.ChatGui.ChatMessage -= Check;
+            Service.ChatGui.ChatMessage -= Check;
         }
         private void Check(XivChatType type, int timestamp, ref SeString senderE, ref SeString messageE, ref bool isHandled)
         {
             try
             {
-                if (Plugin.ClientState.LocalPlayer == null) return;
+                if (Service.ClientState.LocalPlayer == null) return;
                 if (Plugin.Configuration.ActivePreset.LimitChats && !Plugin.Configuration.ActivePreset.Chats.Contains(type)) return;
-
+                
                 Player? sender = null;
                 foreach (var payload in senderE.Payloads)
                 {
@@ -67,7 +68,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
                 if (sender == null) return;
 
-                Plugin.Log(4, sender);
+                Logger.Log(4, sender);
 
                 if ((int)type <= 107)
                 {
@@ -85,7 +86,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     }
                 }
             }
-            catch (Exception e) { Plugin.Error(Name + " Check() failed."); Plugin.Error(e.Message); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); }
         }
 
         public override void DrawAdvancedOptions()

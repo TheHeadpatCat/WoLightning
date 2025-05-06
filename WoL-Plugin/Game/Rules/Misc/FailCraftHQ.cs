@@ -27,20 +27,20 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         {
             if (IsRunning) return;
             IsRunning = true;
-            Plugin.ToastGui.QuestToast += Check;
-            Player = Plugin.ClientState.LocalPlayer;
+            Service.ToastGui.QuestToast += Check;
+            Player = Service.ClientState.LocalPlayer;
         }
 
         override public void Stop()
         {
             if (!IsRunning) return;
             IsRunning = false;
-            Plugin.ToastGui.QuestToast -= Check;
+            Service.ToastGui.QuestToast -= Check;
         }
 
         private unsafe void Check(ref SeString messageE, ref QuestToastOptions options, ref bool isHandled)
         {
-            if (Player == null) { Player = Plugin.ClientState.LocalPlayer; return; }
+            if (Player == null) { Player = Service.ClientState.LocalPlayer; return; }
             if (Player.MaxCp == 0) return; // We are not a Crafter.
 
             /*

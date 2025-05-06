@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Clients.OpenShock
 {
@@ -50,7 +51,7 @@ namespace WoLightning.WoL_Plugin.Clients.OpenShock
             if (Plugin == null || Plugin.Authentification == null) return;
             string apikey = Plugin.Authentification.OpenShockApiKey, url = Plugin.Authentification.OpenShockURL;
 
-            Plugin.Log(3, "Requesting OpenShock Device Shockers for " + DeviceId + "...");
+            Logger.Log(3, "Requesting OpenShock Device Shockers for " + DeviceId + "...");
 
             HttpResponseMessage Result;
 
@@ -63,17 +64,17 @@ namespace WoLightning.WoL_Plugin.Clients.OpenShock
             }
             catch (Exception ex)
             {
-                Plugin.Error(ex.Message);
-                Plugin.Error("Something went wrong while fetching OpenShock Shocker Data for " + DeviceId);
+                Logger.Error(ex.Message);
+                Logger.Error("Something went wrong while fetching OpenShock Shocker Data for " + DeviceId);
                 Status = ConnectionStatusOpenShockHub.FatalError;
                 return;
             }
 
             if (Result.StatusCode != HttpStatusCode.OK)
             {
-                Plugin.Error("Could not retrieve Device Shockers from " + DeviceId);
+                Logger.Error("Could not retrieve Device Shockers from " + DeviceId);
                 Status = ConnectionStatusOpenShockHub.Unavailable;
-                Plugin.Log(1, new StreamReader(Result.Content.ReadAsStream()).ReadToEnd());
+                Logger.Log(1, new StreamReader(Result.Content.ReadAsStream()).ReadToEnd());
                 return;
             }
             try
@@ -83,21 +84,21 @@ namespace WoLightning.WoL_Plugin.Clients.OpenShock
                 {
                     string message = reader.ReadToEnd();
                     if (message == null || message.Length == 0) return;
-                    Plugin.Log(3, message);
+                    Logger.Log(3, message);
                     ResponseDeviceShockers test = JsonConvert.DeserializeObject<ResponseDeviceShockers>(message)!;
-                    Plugin.Log(3, test);
+                    Logger.Log(3, test);
                     foreach (var shocker in test.data)
                     {
                         ShockerOpenShock ShockerT = new(this, shocker.name, shocker.id, shocker.isPaused);
-                        Plugin.Log(3, ShockerT);
+                        Logger.Log(3, ShockerT);
                         Plugin.Authentification.OpenShockShockers.Add(ShockerT);
                     }
                 }
             }
             catch (Exception ex)
             {
-                Plugin.Error(ex.Message);
-                Plugin.Error("Something went wrong while reading OpenShock Device Shocker data from " + DeviceId);
+                Logger.Error(ex.Message);
+                Logger.Error("Something went wrong while reading OpenShock Device Shocker data from " + DeviceId);
                 Status = ConnectionStatusOpenShockHub.FatalError;
                 return;
             }

@@ -1,6 +1,6 @@
 ﻿namespace WoLightning.Util
 {
-    public class StringSanitizer
+    public static class StringSanitizer
     {
         public static string LetterOrDigit(string s)
         {
