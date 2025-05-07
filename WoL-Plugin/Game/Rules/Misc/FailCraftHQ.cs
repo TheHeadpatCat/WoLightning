@@ -4,7 +4,10 @@ using Dalamud.Game.Gui.Toast;
 using Dalamud.Game.Inventory;
 using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Game.Text.SeStringHandling;
+using Dalamud.Plugin.Services;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using FFXIVClientStructs.FFXIV.Common.Component.Excel;
 using ImGuiNET;
 using Lumina.Excel.Sheets;
 using System;
@@ -20,9 +23,10 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         override public string Description { get; } = "Triggers whenever you fail to craft a HQ Item when it would have been possible.";
         override public RuleCategory Category { get; } = RuleCategory.Misc;
         override public bool hasExtraButton { get; } = true;
-        public uint MinimumCollectability { get; set; } = 0;
-        [JsonIgnore] bool isCrafting { get; set; }
-
+        public uint MinimumQualityPercent { get; set; } = 0;
+        [JsonIgnore] bool isCrafting;
+        [JsonIgnore] int CurrentQuality = 0;
+        [JsonIgnore] int MaxQuality = 0;
         [JsonIgnore] IPlayerCharacter Player;
 
 
@@ -36,66 +40,119 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         {
             if (IsRunning) return;
             IsRunning = true;
-            Service.Condition.ConditionChange += UpdateCondition;
+            Service.Condition.ConditionChange += UpdateState;
+            Service.Framework.Update += UpdateQuality;
             Service.GameInventory.ItemAdded += Check;
             Player = Service.ClientState.LocalPlayer;
         }
-
-
 
         override public void Stop()
         {
             if (!IsRunning) return;
             IsRunning = false;
             Service.GameInventory.ItemAdded -= Check;
-            Service.Condition.ConditionChange -= UpdateCondition;
+            Service.Condition.ConditionChange -= UpdateState;
         }
 
         private void Check(GameInventoryEvent type, InventoryEventArgs data)
         {
-            Logger.Log(4, $"{type} {data} - isCrafing {isCrafting}");
-            if (type != GameInventoryEvent.Added) return;
-            if (!isCrafting) return;
-            Item? itemData = Service.DataManager.GetExcelSheet<Item>().GetRowOrDefault(data.Item.BaseItemId);
-            if (itemData == null) return;
-
-            Logger.Log(4, itemData.Value);
-
-            if (itemData.Value.CanBeHq && !data.Item.IsHq)
+            try
             {
-                Trigger("You failed to craft a HQ Item!");
-                return;
-            }
+                Logger.Log(4, $"{type} {data} - isCrafing {isCrafting}");
+                if (type != GameInventoryEvent.Added) return;
+                if (!isCrafting) return;
+                Item? itemData = Service.DataManager.GetExcelSheet<Item>().GetRowOrDefault(data.Item.BaseItemId);
+                if (itemData == null) return;
 
-            if(itemData.Value.IsCollectable && data.Item.SpiritbondOrCollectability < MinimumCollectability)
-            {
-                Trigger($"You failed to reach {MinimumCollectability} Collectability!");
-                return;
+                Logger.Log(4, itemData.Value);
+
+                if (itemData.Value.CanBeHq && !data.Item.IsHq)
+                {
+                    Trigger("You failed to craft a HQ Item!");
+                    return;
+                }
+
+                if (MaxQuality > 0 && (double)CurrentQuality / MaxQuality * 100 < MinimumQualityPercent)
+                {
+                    Trigger($"You failed to reach {MinimumQualityPercent}% Quality!");
+                    return;
+                }
             }
+            catch (Exception ex) { }
         }
 
-        private unsafe void UpdateCondition(ConditionFlag flag, bool value)
+        private void UpdateState(ConditionFlag flag, bool value)
         {
-            Logger.Log(4, "Flag " + flag + " changed to " + value);
-
-            if (Player == null || Player.MaxCp == 0)
+            try
             {
-                Player = Service.ClientState.LocalPlayer;
-                isCrafting = false;
-                return;
-            }
+                Logger.Log(4, "Flag " + flag + " changed to " + value);
 
-            if (flag == ConditionFlag.Crafting) isCrafting = value;
+                if (Player == null || Player.MaxCp == 0)
+                {
+                    Player = Service.ClientState.LocalPlayer;
+                    isCrafting = false;
+                    return;
+                }
+
+                if (flag == ConditionFlag.Crafting)
+                {
+                    isCrafting = value;
+
+                    /*
+                    var agent = AgentRecipeNote.Instance();
+                    CurrentRecipe = Service.DataManager.GetExcelSheet<Recipe>().GetRowOrDefault(agent->ActiveCraftRecipeId);
+                    if (CurrentRecipe == null) return;
+
+                    var table = Service.DataManager.GetExcelSheet<RecipeLevelTable>();
+                    //table.GetRow(CurrentRecipe.Value.RecipeLevelTable.RowId).Quality
+                    var adjustTable = Service.DataManager.GetExcelSheet<GathererCrafterLvAdjustTable>();
+                    var resolvedLevelTableRow = CurrentRecipe.Value.RecipeLevelTable.RowId;
+
+                    var t = adjustTable.GetRow(CurrentRecipe.Value.MaxAdjustableJobLevel).RecipeLevel;
+
+
+
+
+                    var MaxQuality = (CurrentRecipe.Value.CanHq || CurrentRecipe.Value.IsExpert) ? (int)table.GetRow(t).Quality * CurrentRecipe.Value.QualityFactor / 100 : 0;
+                    if (CurrentRecipe != null) Logger.Log(4, "Max Quality: " + MaxQuality);
+                    */
+                }
+            }
+            catch (Exception ex) { }
+        }
+
+        private unsafe void UpdateQuality(IFramework framework)
+        {
+            if (!isCrafting) return;
+            try
+            {
+                nint pointerToSynthesis;
+                AddonSynthesis addonSynthesis;
+                pointerToSynthesis = Service.GameGui.GetAddonByName("Synthesis");
+                addonSynthesis = Dalamud.Memory.MemoryHelper.Cast<AddonSynthesis>(pointerToSynthesis);
+
+                var currentQuality = addonSynthesis.GetNodeById(62)->GetAsAtkTextNode()->NodeText;
+                var maxQuality = addonSynthesis.GetNodeById(63)->GetAsAtkTextNode()->NodeText;
+
+                if (currentQuality.Length > 0)
+                    CurrentQuality = int.Parse(currentQuality);
+
+                if (maxQuality.Length > 0)
+                    MaxQuality = int.Parse(maxQuality);
+
+
+            }
+            catch (Exception e) { }
         }
 
         public override void DrawExtraButton()
         {
             ImGui.SameLine();
-            int minimumCollectabilitySlide = (int)MinimumCollectability;
+            int minimumCollectabilitySlide = (int)MinimumQualityPercent;
             ImGui.SetNextItemWidth(250);
-            if (ImGui.SliderInt("Minimum Collectability", ref minimumCollectabilitySlide, 0, 1000))
+            if (ImGui.SliderInt("Minimum Quality in %", ref minimumCollectabilitySlide, 0, 100))
             {
-                MinimumCollectability = (uint)minimumCollectabilitySlide;
+                MinimumQualityPercent = (uint)minimumCollectabilitySlide;
                 Plugin.Configuration.saveCurrentPreset();
             }
         }
