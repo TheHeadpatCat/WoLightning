@@ -52,6 +52,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             IsRunning = false;
             Service.GameInventory.ItemAdded -= Check;
             Service.Condition.ConditionChange -= UpdateState;
+            Service.Framework.Update -= UpdateQuality;
         }
 
         private void Check(GameInventoryEvent type, InventoryEventArgs data)
