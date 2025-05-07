@@ -122,6 +122,7 @@ public sealed class Plugin : IDalamudPlugin
     private void onUpdate(IFramework framework)
     {
         if (LocalPlayerCharacter == null && Service.ClientState.LocalPlayer != null) onLogin();
+        if (LocalPlayerCharacter == null || !LocalPlayerCharacter.IsValid()) LocalPlayerCharacter = Service.ClientState.LocalPlayer;
     }
 
     private void onLogin()
@@ -274,7 +275,7 @@ public sealed class Plugin : IDalamudPlugin
 
     private void OnOpenConfigFolder(string command, string args)
     {
-        Process.Start(new ProcessStartInfo { Arguments = ConfigurationDirectoryPath, FileName = "explorer.exe" });
+        Process.Start(new ProcessStartInfo { Arguments = Service.PluginInterface.GetPluginConfigDirectory(), FileName = "explorer.exe" });
     }
     private void DrawUI() => WindowSystem.Draw();
     public void ToggleConfigUI() => ConfigWindow.Toggle();

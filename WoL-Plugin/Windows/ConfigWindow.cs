@@ -76,9 +76,17 @@ public class ConfigWindow : Window, IDisposable
     public void SetConfiguration(Configuration? conf)
     {
         Logger.Log(2, "SetConfiguration() is called");
-        if (Configuration != null) Configuration.PresetChanged -= onPresetChanged;
+        if (conf == null) {
+            Configuration.PresetChanged -= onPresetChanged;
+            Configuration.Save();
+            Configuration = conf;
+            ActivePresetIndex = -1;
+            return;
+        }
+
+        if(Configuration != null) Configuration.PresetChanged -= onPresetChanged;
         Configuration = conf;
-        Configuration!.Save();
+        Configuration?.Save();
         ActivePreset = Configuration.ActivePreset;
         ActivePresetIndex = Configuration.ActivePresetIndex;
         Configuration.PresetChanged += onPresetChanged;
@@ -113,8 +121,7 @@ public class ConfigWindow : Window, IDisposable
     {
         if (Configuration == null || ActivePresetIndex == -1)
         {
-            if (Configuration == null) Logger.Log(2, "Configuration is null");
-            if (ActivePresetIndex == -1) Logger.Log(2, "Active Preset hasnt been picked");
+            ImGui.Text("Configuration is not loaded.\nPlease login with a Character.");
             return;
         }
 

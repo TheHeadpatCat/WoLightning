@@ -56,6 +56,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         {
             try
             {
+                if (EnforcedWords.Count == 0) return;
                 if (Service.ClientState.LocalPlayer == null) return;
                 //check for chat type limitation
                 if (Plugin.Configuration.ActivePreset.LimitChats && !Plugin.Configuration.ActivePreset.Chats.Contains(type)) return;
