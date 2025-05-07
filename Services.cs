@@ -25,5 +25,6 @@ namespace WoLightning
         [PluginService] public static IGameConfig GameConfig { get; private set; }
         [PluginService] public static ICondition Condition { get; private set; }
         [PluginService] public static IObjectTable ObjectTable { get; private set; }
+        [PluginService] public static IGameInventory GameInventory { get; private set; }
     }
 }

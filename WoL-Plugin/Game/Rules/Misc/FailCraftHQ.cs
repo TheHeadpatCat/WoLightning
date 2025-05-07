@@ -1,7 +1,11 @@
-﻿using Dalamud.Game.ClientState.Objects.SubKinds;
+﻿using Dalamud.Game.ClientState.Conditions;
+using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.Gui.Toast;
+using Dalamud.Game.Inventory;
+using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using ImGuiNET;
 using Lumina.Excel.Sheets;
 using System;
 using System.Text.Json.Serialization;
@@ -15,7 +19,10 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         override public string Name { get; } = "Fail a HQ Craft";
         override public string Description { get; } = "Triggers whenever you fail to craft a HQ Item when it would have been possible.";
         override public RuleCategory Category { get; } = RuleCategory.Misc;
-        [JsonIgnore] Recipe? CurrentCraft { get; set; }
+        override public bool hasExtraButton { get; } = true;
+        public uint MinimumCollectability { get; set; } = 0;
+        [JsonIgnore] bool isCrafting { get; set; }
+
         [JsonIgnore] IPlayerCharacter Player;
 
 
@@ -29,32 +36,69 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         {
             if (IsRunning) return;
             IsRunning = true;
-            Service.ToastGui.QuestToast += Check;
+            Service.Condition.ConditionChange += UpdateCondition;
+            Service.GameInventory.ItemAdded += Check;
             Player = Service.ClientState.LocalPlayer;
         }
+
+
 
         override public void Stop()
         {
             if (!IsRunning) return;
             IsRunning = false;
-            Service.ToastGui.QuestToast -= Check;
+            Service.GameInventory.ItemAdded -= Check;
+            Service.Condition.ConditionChange -= UpdateCondition;
         }
 
-        private unsafe void Check(ref SeString messageE, ref QuestToastOptions options, ref bool isHandled)
+        private void Check(GameInventoryEvent type, InventoryEventArgs data)
         {
-            try
+            Logger.Log(4, $"{type} {data} - isCrafing {isCrafting}");
+            if (type != GameInventoryEvent.Added) return;
+            if (!isCrafting) return;
+            Item? itemData = Service.DataManager.GetExcelSheet<Item>().GetRowOrDefault(data.Item.BaseItemId);
+            if (itemData == null) return;
+
+            Logger.Log(4, itemData.Value);
+
+            if (itemData.Value.CanBeHq && !data.Item.IsHq)
             {
-                if (Player == null) { Player = Service.ClientState.LocalPlayer; return; }
-                if (Player.MaxCp == 0) return; // We are not a Crafter.
-
-                var agent = AgentRecipeNote.Instance();
-                CurrentCraft = Service.DataManager.GetExcelSheet<Recipe>().GetRowOrDefault(agent->ActiveCraftRecipeId);
-                if (CurrentCraft == null) return;
-
-                String message = messageE.ToString();
-                if (message.Contains(LanguageStrings.FailCraftHQTrigger()) && !message.Contains(LanguageStrings.HQSymbol)) Trigger("You have failed a HQ Craft!");
+                Trigger("You failed to craft a HQ Item!");
+                return;
             }
-            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); }
+
+            if(itemData.Value.IsCollectable && data.Item.SpiritbondOrCollectability < MinimumCollectability)
+            {
+                Trigger($"You failed to reach {MinimumCollectability} Collectability!");
+                return;
+            }
         }
+
+        private unsafe void UpdateCondition(ConditionFlag flag, bool value)
+        {
+            Logger.Log(4, "Flag " + flag + " changed to " + value);
+
+            if (Player == null || Player.MaxCp == 0)
+            {
+                Player = Service.ClientState.LocalPlayer;
+                isCrafting = false;
+                return;
+            }
+
+            if (flag == ConditionFlag.Crafting) isCrafting = value;
+        }
+
+        public override void DrawExtraButton()
+        {
+            ImGui.SameLine();
+            int minimumCollectabilitySlide = (int)MinimumCollectability;
+            ImGui.SetNextItemWidth(250);
+            if (ImGui.SliderInt("Minimum Collectability", ref minimumCollectabilitySlide, 0, 1000))
+            {
+                MinimumCollectability = (uint)minimumCollectabilitySlide;
+                Plugin.Configuration.saveCurrentPreset();
+            }
+        }
+
     }
 }
