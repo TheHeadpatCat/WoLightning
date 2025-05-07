@@ -23,8 +23,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         Some Properties like "Hint" can also be removed. In those cases, they will either be replaced by a default from RuleBase.cs or just not show up.
 
         Step 3: Subscribe to any needed services in the Start() function and unsubscribe from them in the Stop() function.
-        You will always get access to the "Plugin" object, which sets up all the needed services. If it does not have the handler you need,
-        add it to the Plugin.cs file at the top.
+        You can access different events from the "Service" class. If it does not have a Event you need for your Rule to function,
+        simply add another PluginService in it.
 
         Step 4: Now, you can write the Check() function. This function hosts all the logic of the Rule.
         Basically, you write a bunch of things to check for one after another, and if the Rule gets triggered, you call the Trigger() function.
@@ -70,7 +70,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             if (IsRunning) return;
             IsRunning = true;
 
-            //Plugin.ToastGui.QuestToast += Check;   // Subscribing to some kind of Event to run our Check() on. If you do not subscribe to anything, your Check() will never get called.
+            // Service.ToastGui.QuestToast += Check;   // Subscribing to some kind of Event to run our Check() on. If you do not subscribe to anything, your Check() will never get called.
             // Your Check() function also needs to match the fields of the Event you subscribed to - in this example your Check would be "Check(ref SeString messageE, ref QuestToastOptions options, ref bool isHandled)"
             Player = Service.ClientState.LocalPlayer; // Setting up our Player so we can use them on the Check() function.
         }
@@ -79,7 +79,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         {
             if (!IsRunning) return;
             IsRunning = false;
-            //Plugin.ToastGui.QuestToast -= Check;  // Make sure to unsubscribe from the Event. If you do not do this, your Check() will still get called even when the Rule or even the Plugin is disabled!
+            // Service.ToastGui.QuestToast -= Check;  // Make sure to unsubscribe from the Event. If you do not do this, your Check() will still get called even when the Rule or even the Plugin is disabled!
         }
 
         private void Check(string? someDataFromTheEvent)

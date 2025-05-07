@@ -64,7 +64,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                 // This will Check if the Checkbox for "Limit Chats" is enabled and if so, checks if the type of chat message we received is included in that. If its not, then abort the check.
                 if (Plugin.Configuration.ActivePreset.LimitChats && !Plugin.Configuration.ActivePreset.Chats.Contains(type)) return;
 
-                string sender = StringSanitizer.LetterOrDigit(senderE.ToString()).ToLower(); // Get the Sender in a cleaned String. SeStrings can have payloads and stuff and we dont want any of those here.
+                string sender = StringSanitizer.LetterOrDigit(senderE.ToString()).ToLower(); // Get the Sender in a cleaned String. SeStrings can have payloads and stuff but never on the LocalPlayer. So in this case, we just want to strip those away.
 
                 // The Logger.Log() function requires two parts. The first is the LogLevel, a number between 0 to 4. It matches the setting under the "General" tab. So if you set it to 4 here, you'll need the option "Dev" set.
                 Logger.Log(4, "Comparing sender " + sender + " against " + Service.ClientState.LocalPlayer.Name.ToString().ToLower() + " is " + sender.Equals(Service.ClientState.LocalPlayer.Name.ToString().ToLower()));
@@ -99,6 +99,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         // If you are creating a basic Rule that doesn't need any Input Userdata, then you don't need to implement this.
 
         // Alternatively, you can add a "public override void DrawExtraButton()" function, to draw extra UI code next to the "Assigned Shockers" button on a Rule.
+        // If you want to take a look at that, check out Game/Rules/Social/DoEmote.cs
         public override void DrawAdvancedOptions()
         {
             ImGui.Text("Saying any Word from this list, will trigger the \"Say Banned Word\" Rule!");
