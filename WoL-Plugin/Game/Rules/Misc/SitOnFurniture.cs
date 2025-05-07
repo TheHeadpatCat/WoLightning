@@ -1,4 +1,5 @@
 ﻿using FFXIVClientStructs.FFXIV.Common.Math;
+using ImGuiNET;
 using System;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -15,12 +16,15 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         override public string Name { get; } = "Sit on Furniture";
         override public string Description { get; } = "Triggers whenever you try to do /sit on a chair or similiar.";
         override public string Hint { get; }
+        override public bool hasExtraButton { get; } = true;
         override public RuleCategory Category { get; } = RuleCategory.Misc;
 
-        private bool sittingOnChair = false;
-        private Vector3 sittingOnChairPos = new();
-        readonly private TimerPlus sittingOnChairTimer = new();
-        private int safetyStop = 0;
+        public bool KeepTriggering { get; set; } = false;
+
+        [JsonIgnore] bool sittingOnChair = false;
+        [JsonIgnore] Vector3 sittingOnChairPos = new();
+        [JsonIgnore] readonly TimerPlus sittingOnChairTimer = new();
+        [JsonIgnore] int safetyStop = 0;
 
         [JsonConstructor]
         public SitOnFurniture() { }
@@ -49,12 +53,15 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                 {
                     sittingOnChair = true;
                     Trigger("You are sitting on Furniture!");
-                    int calc = 5000;
-                    if (ShockOptions.Duration <= 10) calc += ShockOptions.Duration * 1000;
-                    sittingOnChairTimer.Interval = calc;
-                    sittingOnChairTimer.Start();
-                    Task.Delay(30).Wait(); // wait for a miniscule amount to make 100% sure the position is correct.
-                    sittingOnChairPos = Plugin.LocalPlayerCharacter.Position;
+                    if (KeepTriggering)
+                    {
+                        int calc = 5000;
+                        if (ShockOptions.Duration <= 10) calc += ShockOptions.Duration * 1000;
+                        sittingOnChairTimer.Interval = calc;
+                        sittingOnChairTimer.Start();
+                        Task.Delay(30).Wait(); // wait for a miniscule amount to make 100% sure the position is correct.
+                        sittingOnChairPos = Plugin.LocalPlayerCharacter.Position;
+                    }
                 }
 
                 if (emoteId == 52) // /sit with no furniture or /groundsit on furniture - check nearby chairs
@@ -75,7 +82,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         {
             try
             {
-                if(Plugin.LocalPlayerCharacter == null || !Plugin.LocalPlayerCharacter.IsValid())
+                safetyStop++;
+                if (Plugin.LocalPlayerCharacter == null || !Plugin.LocalPlayerCharacter.IsValid())
                 {
                     Logger.Log(3, "No Player Character.");
                     sittingOnChair = false;
@@ -84,7 +92,6 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     return;
                 }
 
-                safetyStop++;
                 if (safetyStop > 10)
                 {
                     Logger.Log(3, "Timer has exceeded safety limit - aborting Chair Check.");
@@ -94,12 +101,10 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     return;
                 }
 
-
                 if (sittingOnChair && Plugin.LocalPlayerCharacter.Position.Equals(sittingOnChairPos))
                 {
                     Trigger("You are still sitting on Furniture!");
                     sittingOnChairTimer.Refresh();
-                    safetyStop++;
                 }
                 else
                 {
@@ -116,5 +121,17 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                 safetyStop++;
             }
         }
+
+        public override void DrawExtraButton()
+        {
+            ImGui.SameLine();
+            bool keepTriggering = KeepTriggering;
+            if (ImGui.Checkbox("Keep Triggering until standing up? (Max 10)", ref keepTriggering))
+            {
+                KeepTriggering = keepTriggering;
+                Plugin.Configuration.saveCurrentPreset();
+            }
+        }
+
     }
 }
