@@ -12,6 +12,9 @@ using ImGuiNET;
 using Lumina.Excel.Sheets;
 using System;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
+using System.Timers;
+using WoLightning.Util;
 using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Misc
@@ -27,6 +30,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         [JsonIgnore] bool isCrafting;
         [JsonIgnore] int CurrentQuality = 0;
         [JsonIgnore] int MaxQuality = 0;
+        [JsonIgnore] bool IsTriggered = false;
+        [JsonIgnore] TimerPlus FallbackTimer = new();
         [JsonIgnore] IPlayerCharacter Player;
 
 
@@ -44,6 +49,12 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             Service.Framework.Update += UpdateQuality;
             Service.GameInventory.ItemAdded += Check;
             Player = Service.ClientState.LocalPlayer;
+
+            IsTriggered = false;
+
+            FallbackTimer.Interval = 1500;
+            FallbackTimer.AutoReset = false;
+            FallbackTimer.Elapsed += RunFallback;
         }
 
         override public void Stop()
@@ -53,6 +64,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             Service.GameInventory.ItemAdded -= Check;
             Service.Condition.ConditionChange -= UpdateState;
             Service.Framework.Update -= UpdateQuality;
+            FallbackTimer.Stop();
+            FallbackTimer.Elapsed -= RunFallback;
         }
 
         private void Check(GameInventoryEvent type, InventoryEventArgs data)
@@ -65,19 +78,23 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
                 Item? itemData = Service.DataManager.GetExcelSheet<Item>().GetRowOrDefault(data.Item.BaseItemId);
                 if (itemData == null) return;
 
-                Logger.Log(4, itemData.Value);
-
-                if (itemData.Value.CanBeHq && !data.Item.IsHq)
-                {
-                    Trigger("You failed to craft a HQ Item!");
-                    return;
-                }
+                Logger.Log(3, $"MaxQuality: {MaxQuality} Reached Quality: {CurrentQuality} which is {(double)CurrentQuality / MaxQuality * 100}%");
 
                 if (MaxQuality > 0 && (double)CurrentQuality / MaxQuality * 100 < MinimumQualityPercent)
                 {
                     Trigger($"You failed to reach {MinimumQualityPercent}% Quality!");
+                    IsTriggered = true;
                     return;
                 }
+
+                if (itemData.Value.CanBeHq && !data.Item.IsHq)
+                {
+                    Trigger("You failed to craft a HQ Item!");
+                    IsTriggered = true;
+                    return;
+                }
+
+                
             }
             catch (Exception ex) { }
         }
@@ -122,7 +139,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             catch (Exception ex) { }
         }
 
-        private unsafe void UpdateQuality(IFramework framework)
+        private unsafe async void UpdateQuality(IFramework framework)
         {
             if (!isCrafting) return;
             try
@@ -135,16 +152,50 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
                 var currentQuality = addonSynthesis.GetNodeById(62)->GetAsAtkTextNode()->NodeText;
                 var maxQuality = addonSynthesis.GetNodeById(63)->GetAsAtkTextNode()->NodeText;
 
+                var currentProgress = addonSynthesis.GetNodeById(56)->GetAsAtkTextNode()->NodeText;
+                var maxProgress = addonSynthesis.GetNodeById(57)->GetAsAtkTextNode()->NodeText;
+
                 if (currentQuality.Length > 0)
                     CurrentQuality = int.Parse(currentQuality);
 
                 if (maxQuality.Length > 0)
                     MaxQuality = int.Parse(maxQuality);
 
+                //Logger.Log(4, $"{int.Parse(currentProgress)}/{int.Parse(maxProgress)} and isTriggered {!FallbackTimer.Enabled}");
+
+                if (int.Parse(currentProgress) == int.Parse(maxProgress) && !FallbackTimer.Enabled)
+                {
+                    FallbackTimer.Start();
+                    Logger.Log(4, "Started Timer.");
+                }
+
+                if (int.Parse(currentProgress) == 0)
+                {
+                    IsTriggered = false;
+                    FallbackTimer.Stop();
+                }
+
 
             }
             catch (Exception e) { }
         }
+
+        private void RunFallback(object? sender, ElapsedEventArgs e)
+        {
+            Logger.Log(4, $"Fallback called. will run? {!IsTriggered}");
+            if(!IsTriggered)
+            {
+                Logger.Log(4, $"{MaxQuality} and {(double)CurrentQuality / MaxQuality * 100 < MinimumQualityPercent}");
+                if (MaxQuality > 0 && (double)CurrentQuality / MaxQuality * 100 < MinimumQualityPercent)
+                {
+                    Trigger($"You failed to reach {MinimumQualityPercent}% Quality!");
+                    IsTriggered = true;
+                    return;
+                }
+            }
+        }
+
+
 
         public override void DrawExtraButton()
         {
