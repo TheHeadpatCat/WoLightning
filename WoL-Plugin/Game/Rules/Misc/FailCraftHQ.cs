@@ -1,9 +1,11 @@
 ﻿using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.Gui.Toast;
 using Dalamud.Game.Text.SeStringHandling;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Lumina.Excel.Sheets;
 using System;
 using System.Text.Json.Serialization;
+using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 {
@@ -40,16 +42,19 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 
         private unsafe void Check(ref SeString messageE, ref QuestToastOptions options, ref bool isHandled)
         {
-            if (Player == null) { Player = Service.ClientState.LocalPlayer; return; }
-            if (Player.MaxCp == 0) return; // We are not a Crafter.
+            try
+            {
+                if (Player == null) { Player = Service.ClientState.LocalPlayer; return; }
+                if (Player.MaxCp == 0) return; // We are not a Crafter.
 
-            /*
-            var agent = AgentRecipeNote.Instance();
-            CurrentCraft = Plugin.DataManager.GetExcelSheet<Recipe>().GetRowOrDefault(agent->ActiveCraftRecipeId);
-            if(CurrentCraft == null) return;
-            */
+                var agent = AgentRecipeNote.Instance();
+                CurrentCraft = Service.DataManager.GetExcelSheet<Recipe>().GetRowOrDefault(agent->ActiveCraftRecipeId);
+                if (CurrentCraft == null) return;
 
-
+                String message = messageE.ToString();
+                if (message.Contains(LanguageStrings.FailCraftHQTrigger()) && !message.Contains(LanguageStrings.HQSymbol)) Trigger("You have failed a HQ Craft!");
+            }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); }
         }
     }
 }

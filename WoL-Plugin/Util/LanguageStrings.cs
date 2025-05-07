@@ -4,6 +4,9 @@ namespace WoLightning.WoL_Plugin.Util
 {
     public static class LanguageStrings // This could probably be handled in a static way.
     {
+
+        public static readonly string HQSymbol = "";
+
         public static string FailCraftTrigger()
         {
             ClientLanguage Language = (ClientLanguage)Service.GameConfig.System.GetUInt("Language");
@@ -30,21 +33,21 @@ namespace WoLightning.WoL_Plugin.Util
         public static string FailCraftHQTrigger() // Todo: implement
         {
             ClientLanguage Language = (ClientLanguage)Service.GameConfig.System.GetUInt("Language");
-
+           
             string output = "Unknown";
             switch (Language)
             {
                 case ClientLanguage.English:
-                    output = "Your synthesis fails!";
+                    output = "You synthesize a";
                     break;
                 case ClientLanguage.French:
-                    output = "La synthèse échoue...";
+                    output = "Vous fabriquez un";
                     break;
                 case ClientLanguage.German:
-                    output = "Deine Synthese ist fehlgeschlagen!";
+                    output = "Du hast erfolgreich ein";
                     break;
                 case ClientLanguage.Japanese:
-                    output = "は製作に失敗した……";
+                    output = "を完成させた！";
                     break;
             }
             return output;

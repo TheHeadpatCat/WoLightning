@@ -61,6 +61,7 @@ namespace WoLightning.Util.Types
         public SitOnFurniture SitOnFurniture { get; set; } = new();
         public UseMount UseMount { get; set; } = new();
         public FailCraft FailCraft { get; set; } = new();
+        public FailCraftHQ FailCraftHQ { get; set; } = new();
         public FishEscaped FishEscaped { get; set; } = new();
 
         public void Initialize(Plugin Plugin)
