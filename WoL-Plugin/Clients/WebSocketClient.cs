@@ -163,7 +163,7 @@ namespace WoLightning.WoL_Plugin.Clients
                     Dispose();
                     return;
                 }
-                if (Client == null || Client.State != WebSocketState.Open)
+                if (Client == null || Client.State == WebSocketState.Closed)
                 {
                     Logger.Log(2, "WebSocket Request was sent, but Client was Disposed - Resetting Connection.");
                     await Setup();
@@ -192,7 +192,7 @@ namespace WoLightning.WoL_Plugin.Clients
                 Logger.Log(4, "Received Message: " + receivedMessage);
                 Received?.Invoke(receivedMessage);
                 if (UpholdConnection && Client.State == WebSocketState.Open) Receive();
-                //else if (UpholdConnection && (Client.State == WebSocketState.CloseReceived || Client.State == WebSocketState.Closed)) return; await Connect();
+                //else if (UpholdConnection && (Client.State == WebSocketState.CloseReceived || Client.State == WebSocketState.Closed)) await Connect();
             }
             catch (Exception ex) { Logger.Log(3, "Receiving Message failed."); Logger.Log(3, ex.Message); }
         }

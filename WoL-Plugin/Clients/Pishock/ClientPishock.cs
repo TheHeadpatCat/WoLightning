@@ -86,12 +86,22 @@ namespace WoLightning.Clients.Pishock
                     Client = null;
                 }
 
+                
                 Client = new(Plugin, $"wss://broker.pishock.com/v2?Username={username}&ApiKey={apikey}");
+                Client.Received += Received;
             }
             catch (Exception e)
             {
                 Logger.Error("Failed to create Pishock Socket.");
                 Logger.Error(e.Message);
+            }
+        }
+
+        private void Received(string obj)
+        {
+            if (obj.Contains("CONNECTION_ERROR"))
+            {
+                Status = ConnectionStatusPishock.FatalError;
             }
         }
 
@@ -342,7 +352,15 @@ namespace WoLightning.Clients.Pishock
         public async void SendRequest(ShockOptions Options)
         {
 
-            if (Client == null || Status != ConnectionStatusPishock.Connected) return;
+            if (Client == null || Status != ConnectionStatusPishock.Connected)
+            {
+                if (Status == ConnectionStatusPishock.Connecting) return;
+                Client.Dispose();
+                Client = null;
+                await CreateSocket();
+                Status = ConnectionStatusPishock.Connected;
+                return;
+            }
 
             #region Validation
             if (Plugin.Authentification.PishockName.Length < 3
