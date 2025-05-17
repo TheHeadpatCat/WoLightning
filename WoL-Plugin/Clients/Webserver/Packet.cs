@@ -17,19 +17,17 @@ namespace WoLightning.Clients.Webserver
 
         public string[]? OperationData { get; set; } = null;
 
-        [NonSerialized] Plugin Plugin;
-        public Packet(Plugin Plugin, string Type) { Initialize(Plugin, Type, null, null); }
-        public Packet(Plugin Plugin, string Type, string[] OperationData) { Initialize(Plugin, Type, null, OperationData); }
-        public Packet(Plugin Plugin, string Type, Player Target) { Initialize(Plugin, Type, Target, null); }
+        public Packet(string Type) { Initialize(Type, null, null); }
+        public Packet(string Type, string[] OperationData) { Initialize(Type, null, OperationData); }
+        public Packet(string Type, Player Target) { Initialize(Type, Target, null); }
         [JsonConstructor]
-        public Packet(string Type, Player Target, string[] OperationData) { Initialize(null, Type, Target, OperationData); }
+        public Packet(string Type, Player Target, string[] OperationData) { Initialize(Type, Target, OperationData); }
 
 
-        private void Initialize(Plugin? Plugin, string Type, Player? Target, string[]? OperationData)
+        private void Initialize(string Type, Player? Target, string[]? OperationData)
         {
-            this.Plugin = Plugin;
             this.Type = Type;
-            if (Plugin != null) Sender = Plugin.LocalPlayer;
+            //Sender = Plugin.LocalPlayer;
             this.Target = Target;
             this.OperationData = OperationData;
         }

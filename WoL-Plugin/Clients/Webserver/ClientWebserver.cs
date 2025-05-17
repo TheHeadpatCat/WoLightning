@@ -69,7 +69,7 @@ namespace WoLightning.Clients.Webserver
             try
             {
                 WebSocket = new ClientWebSocket();
-                string text = JsonSerializer.Serialize(new Packet(Plugin, "Test"));
+                string text = JsonSerializer.Serialize(new Packet("Test"));
 
                 await WebSocket.ConnectAsync(Address, new CancellationToken());
                 await WebSocket.SendAsync(Encoding.UTF8.GetBytes(text), WebSocketMessageType.Text, true, CancellationToken.None);

@@ -18,6 +18,7 @@ using WoLightning.Game;
 using WoLightning.Util.Types;
 using WoLightning.Windows;
 using WoLightning.WoL_Plugin.Util;
+using WoLightning.WoL_Plugin.Windows;
 
 namespace WoLightning;
 
@@ -33,6 +34,7 @@ public sealed class Plugin : IDalamudPlugin
     private const string CommandOpenConfig = "/wolc";
     private const string Failsafe = "/red";
     private const string OpenConfigFolder = "/wolfolder";
+    private const string OpenShockRemote = "/wolremote";
 
     public const int currentVersion = 543;
     public const String currentVersionString = "0.5.4.3";
@@ -50,6 +52,7 @@ public sealed class Plugin : IDalamudPlugin
     private readonly BufferWindow BufferWindow = new BufferWindow();
     public MainWindow? MainWindow { get; set; }
     public ConfigWindow? ConfigWindow { get; set; }
+    public ShockRemoteWindow? ShockRemoteWindow { get; set; }
 
 
     // Handler Classes
@@ -74,12 +77,18 @@ public sealed class Plugin : IDalamudPlugin
 
         MainWindow = new(this);
         ConfigWindow = new(this);
+        ShockRemoteWindow = new(this);
 
 
         WindowSystem.AddWindow(BufferWindow);
         WindowSystem.AddWindow(MainWindow);
         WindowSystem.AddWindow(ConfigWindow);
+        WindowSystem.AddWindow(ShockRemoteWindow);
 
+        Service.CommandManager.AddHandler(Failsafe, new CommandInfo(OnFailsafe)
+        {
+            HelpMessage = "Stops the plugin."
+        });
         Service.CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
         {
             HelpMessage = "Opens the main window."
@@ -92,13 +101,13 @@ public sealed class Plugin : IDalamudPlugin
         {
             HelpMessage = "Opens the Configuration window."
         });
-        Service.CommandManager.AddHandler(Failsafe, new CommandInfo(OnFailsafe)
-        {
-            HelpMessage = "Stops the plugin."
-        });
         Service.CommandManager.AddHandler(OpenConfigFolder, new CommandInfo(OnOpenConfigFolder)
         {
-            HelpMessage = "Opens the configuration folder."
+            HelpMessage = "Opens the Configuration folder."
+        });
+        Service.CommandManager.AddHandler(OpenShockRemote, new CommandInfo(OnOpenShockRemote)
+        {
+            HelpMessage = "Opens the Shock Remote Window."
         });
 
         Service.PluginInterface.UiBuilder.Draw += DrawUI;
@@ -113,6 +122,7 @@ public sealed class Plugin : IDalamudPlugin
         Service.ClientState.Logout += onLogout;
         Service.PluginLog.Verbose("Finished initializing Plugin.");
     }
+
     ~Plugin()
     {
         Dispose();
@@ -235,6 +245,7 @@ public sealed class Plugin : IDalamudPlugin
         MainWindow?.Dispose();
         ConfigWindow?.Dispose();
         BufferWindow?.Dispose();
+        ShockRemoteWindow?.Dispose();
 
         EmoteReaderHooks?.Dispose();
         ClientWebserver?.Dispose();
@@ -276,6 +287,11 @@ public sealed class Plugin : IDalamudPlugin
     private void OnOpenConfigFolder(string command, string args)
     {
         Process.Start(new ProcessStartInfo { Arguments = Service.PluginInterface.GetPluginConfigDirectory(), FileName = "explorer.exe" });
+    }
+
+    private void OnOpenShockRemote(string command, string arguments)
+    {
+        ShockRemoteWindow.Toggle();
     }
     private void DrawUI() => WindowSystem.Draw();
     public void ToggleConfigUI() => ConfigWindow.Toggle();

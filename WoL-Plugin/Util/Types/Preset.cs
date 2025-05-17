@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using WoLightning.WoL_Plugin.Game.Features;
 using WoLightning.WoL_Plugin.Game.Rules;
 using WoLightning.WoL_Plugin.Game.Rules.Misc;
 using WoLightning.WoL_Plugin.Game.Rules.PVE;
@@ -32,7 +33,6 @@ namespace WoLightning.Util.Types
         public List<XivChatType> Chats { get; set; } = new();
         [JsonIgnore] public List<RuleBase> Rules { get; set; } = new List<RuleBase>();
         [JsonIgnore] private Plugin Plugin;
-
 
         // The Position of your Rule here actually also changes the Position of which spot they show up in the Config Window!
 

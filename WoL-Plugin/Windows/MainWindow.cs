@@ -240,6 +240,12 @@ public class MainWindow : Window, IDisposable
             Plugin.Configuration.ActivateOnStart = ActivateOnStart;
             Plugin.Configuration.Save();
         }
+
+        if (ImGui.Button("Open Shocker Remote", new Vector2(ImGui.GetWindowSize().X - 10, 25)))
+        {
+            Plugin.ShockRemoteWindow.Toggle();
+        }
+
         //if (Plugin.Authentification.isDisallowed) ImGui.EndDisabled();
         if (ImGui.Button("Open Trigger Configuration", new Vector2(ImGui.GetWindowSize().X - 10, 25)))
         {
