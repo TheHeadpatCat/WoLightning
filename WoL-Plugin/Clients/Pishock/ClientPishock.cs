@@ -352,16 +352,6 @@ namespace WoLightning.Clients.Pishock
         public async void SendRequest(ShockOptions Options)
         {
 
-            if (Client == null || Status != ConnectionStatusPishock.Connected)
-            {
-                if (Status == ConnectionStatusPishock.Connecting) return;
-                Client.Dispose();
-                Client = null;
-                await CreateSocket();
-                Status = ConnectionStatusPishock.Connected;
-                return;
-            }
-
             #region Validation
             if (Plugin.Authentification.PishockName.Length < 3
                 || Plugin.Authentification.PishockApiKey.Length < 16)
@@ -388,6 +378,17 @@ namespace WoLightning.Clients.Pishock
                 return;
             }
             #endregion
+
+
+            if (Client == null || Status != ConnectionStatusPishock.Connected)
+            {
+                if (Status == ConnectionStatusPishock.Connecting) return;
+                Client.Dispose();
+                Client = null;
+                await CreateSocket();
+                Status = ConnectionStatusPishock.Connected;
+                return;
+            }
 
             if (Options.WarningMode != WarningMode.None)
             {

@@ -17,6 +17,7 @@ using WoLightning.Configurations;
 using WoLightning.Game;
 using WoLightning.Util.Types;
 using WoLightning.Windows;
+using WoLightning.WoL_Plugin.Clients.Webserver;
 using WoLightning.WoL_Plugin.Util;
 using WoLightning.WoL_Plugin.Windows;
 
