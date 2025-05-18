@@ -53,6 +53,11 @@ namespace WoLightning.WoL_Plugin.Clients
             }
         }
 
+        public WebSocketState getState()
+        {
+            return Client.State;
+        }
+
         public WebSocketClient(Plugin Plugin, String URL, string[][] Headers)
         {
             try
@@ -192,7 +197,11 @@ namespace WoLightning.WoL_Plugin.Clients
                 Logger.Log(4, "Received Message: " + receivedMessage);
                 Received?.Invoke(receivedMessage);
                 if (UpholdConnection && Client.State == WebSocketState.Open) Receive();
-                //else if (UpholdConnection && (Client.State == WebSocketState.CloseReceived || Client.State == WebSocketState.Closed)) await Connect();
+                
+                /*else if (UpholdConnection && (Client.State == WebSocketState.CloseReceived || Client.State == WebSocketState.Closed))
+                {
+                    await Client.CloseAsync(WebSocketCloseStatus.InternalServerError, "Error Received", CancellationToken.None);
+                }*/
             }
             catch (Exception ex) { Logger.Log(3, "Receiving Message failed."); Logger.Log(3, ex.Message); }
         }

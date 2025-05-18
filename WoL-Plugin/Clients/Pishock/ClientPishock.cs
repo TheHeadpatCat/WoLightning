@@ -21,6 +21,7 @@ namespace WoLightning.Clients.Pishock
             Unavailable = 1,
             InvalidUserdata = 2,
             FatalError = 3,
+            ExceededAttempts = 4,
 
             Connecting = 99,
             ConnectedNoInfo = 100,
@@ -35,6 +36,8 @@ namespace WoLightning.Clients.Pishock
 
         private string username;
         private string apikey;
+
+        private int ConnectionAttempts = 0;
 
         public ClientPishock(Plugin plugin)
         {
@@ -75,6 +78,17 @@ namespace WoLightning.Clients.Pishock
 
                 if (Plugin.Authentification.PishockName.Length < 3 || Plugin.Authentification.PishockApiKey.Length < 16) return;
 
+                ConnectionAttempts++;
+                if(ConnectionAttempts >= 7)
+                {
+                    Status = ConnectionStatusPishock.ExceededAttempts;
+                    Plugin.NotificationHandler.send("Failed to connect to the Pishock API after several attempts.\nPlease restart the Plugin.", "FATAL ERROR", Dalamud.Interface.ImGuiNotification.NotificationType.Error, new TimeSpan(0, 0, 30));
+                    Logger.Error("Failed to Connect to the Pishock API after 7 attempts. Stopping creation.");
+                    return;
+                }
+
+                Logger.Log(3,"Creating new Websocket for Pishock API - Attempt " + ConnectionAttempts + "/7");
+
                 Status = ConnectionStatusPishock.Connecting;
 
                 username = Plugin.Authentification.PishockName;
@@ -89,6 +103,15 @@ namespace WoLightning.Clients.Pishock
                 
                 Client = new(Plugin, $"wss://broker.pishock.com/v2?Username={username}&ApiKey={apikey}");
                 Client.Received += Received;
+                Task.Run(() =>
+                {
+                    Task.Delay(7000).Wait();
+                    if (Client != null && Client.getState() == System.Net.WebSockets.WebSocketState.Open)
+                    {
+                        Status = ConnectionStatusPishock.Connected;
+                        ConnectionAttempts = 0;
+                    }
+                });
             }
             catch (Exception e)
             {
@@ -102,6 +125,9 @@ namespace WoLightning.Clients.Pishock
             if (obj.Contains("CONNECTION_ERROR"))
             {
                 Status = ConnectionStatusPishock.FatalError;
+                Client.Dispose();
+                Client = null;
+                CreateSocket();
             }
         }
 
@@ -383,10 +409,10 @@ namespace WoLightning.Clients.Pishock
             if (Client == null || Status != ConnectionStatusPishock.Connected)
             {
                 if (Status == ConnectionStatusPishock.Connecting) return;
+                if (ConnectionAttempts >= 7) return;
                 Client.Dispose();
                 Client = null;
                 await CreateSocket();
-                Status = ConnectionStatusPishock.Connected;
                 return;
             }
 
