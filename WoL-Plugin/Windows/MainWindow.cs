@@ -109,6 +109,8 @@ public class MainWindow : Window, IDisposable
                 ImGui.TextColored(ColorRed, "Unable to Connect!"); break;
             case ConnectionStatusPishock.FatalError:
                 ImGui.TextColored(ColorRed, "Fatal Error!"); break;
+            case ConnectionStatusPishock.ExceededAttempts:
+                ImGui.TextColored(ColorRed, "Cannot Connect.\nPlease Restart the Plugin."); break;
 
             case ConnectionStatusPishock.Connected:
                 ImGui.TextColored(ColorGreen, $"Connected!"); break;
