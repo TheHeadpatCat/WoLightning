@@ -18,7 +18,7 @@ namespace WoLightning.WoL_Plugin.Util
 
         public static void SetupFile()
         {
-            if (!ValidateFile()) return;
+            //if (!ValidateFile()) return;
 
             if (!File.Exists(FilePath()))
             {
