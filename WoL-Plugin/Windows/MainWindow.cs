@@ -63,6 +63,13 @@ public class MainWindow : Window, IDisposable
         WindowWidth = ImGui.GetWindowWidth();
         try
         {
+
+            if (Plugin == null || Plugin.Authentification == null || Plugin.Configuration == null)
+            {
+                ImGui.Text("There was an Issue loading a vital Asset of the plugin.\nPlease login with a character and reload the plugin if needed.");
+                return;
+            }
+
             DrawShockerAPI();
             ImGui.Separator();
 
