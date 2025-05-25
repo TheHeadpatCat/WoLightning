@@ -119,7 +119,7 @@ public class ConfigWindow : Window, IDisposable
 
     public override void Draw()
     {
-        if (Configuration == null || ActivePresetIndex == -1)
+        if (Plugin == null || Plugin.Authentification == null || Configuration == null || ActivePresetIndex == -1)
         {
             ImGui.Text("Configuration is not loaded.\nPlease login with a Character.");
             return;
