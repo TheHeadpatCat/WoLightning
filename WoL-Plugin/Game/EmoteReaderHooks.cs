@@ -49,7 +49,7 @@ namespace WoLightning.Game
         void OnEmoteDetour(ulong unk, ulong instigatorAddr, ushort emoteId, ulong targetId, ulong unk2)
         {
 
-            try // todo: clean this up a bit
+            try
             {
                 if (Service.ClientState.LocalPlayer != null)
                 {
