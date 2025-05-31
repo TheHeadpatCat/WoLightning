@@ -63,6 +63,7 @@ namespace WoLightning.Util.Types
         public FailCraft FailCraft { get; set; } = new();
         public FailCraftHQ FailCraftHQ { get; set; } = new();
         public FishEscaped FishEscaped { get; set; } = new();
+        public UseTeleport UseTeleport { get; set; } = new();
 
         public void Initialize(Plugin Plugin)
         {
