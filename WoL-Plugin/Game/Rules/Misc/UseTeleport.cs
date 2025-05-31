@@ -1,4 +1,5 @@
-﻿using Dalamud.Game.Inventory;
+﻿using Dalamud.Game.ClientState.Conditions;
+using Dalamud.Game.Inventory;
 using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using ImGuiNET;
 using System;
@@ -7,6 +8,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 using WoLightning.Util;
 using WoLightning.WoL_Plugin.Util;
@@ -25,6 +27,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         public int MaximumGil { get; set; } = 2000;
 
         [JsonIgnore] int LastKnownGil = -1;
+        [JsonIgnore] bool DidUseCast = false;
 
         [JsonConstructor]
         public UseTeleport() { }
@@ -37,6 +40,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             if (IsRunning) return;
             IsRunning = true;
             Service.ClientState.TerritoryChanged += Check;
+            Service.GameInventory.ItemChanged += HandleItemUpdate;
+            Service.Condition.ConditionChange += HandleFlagUpdate;
             LastKnownGil = GetCurrentGil();
         }
 
@@ -45,6 +50,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             if (!IsRunning) return;
             IsRunning = false;
             Service.ClientState.TerritoryChanged -= Check;
+            Service.GameInventory.ItemChanged -= HandleItemUpdate;
+            Service.Condition.ConditionChange -= HandleFlagUpdate;
         }
 
         private void Check(ushort obj)
@@ -53,7 +60,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             {
                 int DifferenceGil = LastKnownGil - GetCurrentGil();
                 LastKnownGil = GetCurrentGil();
-                if (DifferenceGil == 0) return; // We didnt teleport.
+                if (DifferenceGil == 0 || !DidUseCast) return; // We didnt teleport.
+                DidUseCast = false;
 
                 if (!UseCosts) { Trigger("You used Teleportation!"); return; }
 
@@ -63,6 +71,22 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
                 if (DifferenceGil < MinimumGil) { Trigger("You didnt hit the Teleportation cost!"); return; }
             }
             catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); }
+        }
+
+        private void HandleFlagUpdate(ConditionFlag flag, bool value)
+        {
+            if(flag == ConditionFlag.Casting)
+            {
+                DidUseCast = true;
+            }
+        }
+
+        private async void HandleItemUpdate(GameInventoryEvent type, InventoryEventArgs data)
+        {
+            if (data.Item.ItemId == 1)
+            {
+                Task.Run(() => { Task.Delay(2000).Wait(); LastKnownGil = data.Item.Quantity; Logger.Log(4, "Changed gil to " + LastKnownGil); }).WaitAsync(CancellationToken.None);
+            }
         }
 
         private int GetCurrentGil()
