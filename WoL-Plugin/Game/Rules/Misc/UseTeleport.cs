@@ -3,6 +3,7 @@ using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using ImGuiNET;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -19,7 +20,9 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         override public RuleCategory Category { get; } = RuleCategory.Misc;
         override public bool hasExtraButton { get; } = true;
 
-        public int MaximumGil { get; set; } = 0;
+        public bool UseCosts { get; set; } = false;
+        public int MinimumGil { get; set; } = 0;
+        public int MaximumGil { get; set; } = 2000;
 
         [JsonIgnore] int LastKnownGil = -1;
 
@@ -49,8 +52,11 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             int DifferenceGil = LastKnownGil - GetCurrentGil();
             LastKnownGil = GetCurrentGil();
             if (DifferenceGil == 0) return; // We didnt teleport.
-            if (MaximumGil == 0) { Trigger("You used Teleportation!"); return; }
+
+            if (!UseCosts) { Trigger("You used Teleportation!"); return; }
+
             if (DifferenceGil > MaximumGil) { Trigger("You exceeded the Teleportation cost!"); return; }
+            if (DifferenceGil < MinimumGil) { Trigger("You didnt hit the Teleportation cost!"); return; }
         }
 
         private int GetCurrentGil()
@@ -70,13 +76,39 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         public override void DrawExtraButton()
         {
             ImGui.SameLine();
-            int maximumGil = MaximumGil;
-            ImGui.SetNextItemWidth(250);
-            if (ImGui.SliderInt("Max Gil cost",ref maximumGil, 0, 1500))
+            bool useCosts = UseCosts;
+            if(ImGui.Checkbox("Use Costs", ref useCosts))
             {
+                UseCosts = useCosts;
+                Plugin.Configuration.saveCurrentPreset();
+            }
+            ImGui.SameLine();
+            ImGui.TextDisabled("(?)");
+            if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Allows you to set a minimum and maximum Cost for teleportation." +
+                "\nMinimum as in \"the teleport has to cost atleast this much gil\"." +
+                "\nMaximum as in \"the teleport is not allowed to cost more than this\"."); }
+
+            if (!UseCosts) return;
+            ImGui.BeginGroup();
+
+            int minimumGil = MinimumGil;
+            if (minimumGil > MaximumGil) MaximumGil = minimumGil;
+            ImGui.SetNextItemWidth(250);
+            if (ImGui.SliderInt("Minimum Cost", ref minimumGil, 0, 2000))
+            {
+                MinimumGil = minimumGil;
+                Plugin.Configuration.saveCurrentPreset();
+            }
+            int maximumGil = MaximumGil;
+            
+            ImGui.SetNextItemWidth(250);
+            if (ImGui.SliderInt("Maximum Cost",ref maximumGil, 0, 2000))
+            {
+                if (maximumGil < MinimumGil) MinimumGil = maximumGil;
                 MaximumGil = maximumGil;
                 Plugin.Configuration.saveCurrentPreset();
             }
+            ImGui.EndGroup();
         }
 
     }
