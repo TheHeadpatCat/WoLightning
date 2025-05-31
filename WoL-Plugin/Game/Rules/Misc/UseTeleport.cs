@@ -60,8 +60,11 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             {
                 int DifferenceGil = LastKnownGil - GetCurrentGil();
                 LastKnownGil = GetCurrentGil();
-                if (DifferenceGil == 0 || !DidUseCast) return; // We didnt teleport.
+
+                if (!DidUseCast) return; // We didnt cast anything - so its impossible that we teleported.
                 DidUseCast = false;
+
+                if (DifferenceGil == 0) return; // We didnt use any money - same thing here.
 
                 if (!UseCosts) { Trigger("You used Teleportation!"); return; }
 
@@ -78,6 +81,12 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             if(flag == ConditionFlag.Casting)
             {
                 DidUseCast = true;
+                return;
+            }
+
+            if(flag != ConditionFlag.BetweenAreas && flag != ConditionFlag.BetweenAreas51)
+            {
+                LastKnownGil = GetCurrentGil();
             }
         }
 
