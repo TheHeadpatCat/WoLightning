@@ -57,6 +57,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 
                 if (!UseCosts) { Trigger("You used Teleportation!"); return; }
 
+                if (LastKnownGil == -1) return;
+
                 if (DifferenceGil > MaximumGil) { Trigger("You exceeded the Teleportation cost!"); return; }
                 if (DifferenceGil < MinimumGil) { Trigger("You didnt hit the Teleportation cost!"); return; }
             }
