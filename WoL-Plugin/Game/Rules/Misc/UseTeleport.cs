@@ -49,27 +49,35 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 
         private void Check(ushort obj)
         {
-            int DifferenceGil = LastKnownGil - GetCurrentGil();
-            LastKnownGil = GetCurrentGil();
-            if (DifferenceGil == 0) return; // We didnt teleport.
+            try
+            {
+                int DifferenceGil = LastKnownGil - GetCurrentGil();
+                LastKnownGil = GetCurrentGil();
+                if (DifferenceGil == 0) return; // We didnt teleport.
 
-            if (!UseCosts) { Trigger("You used Teleportation!"); return; }
+                if (!UseCosts) { Trigger("You used Teleportation!"); return; }
 
-            if (DifferenceGil > MaximumGil) { Trigger("You exceeded the Teleportation cost!"); return; }
-            if (DifferenceGil < MinimumGil) { Trigger("You didnt hit the Teleportation cost!"); return; }
+                if (DifferenceGil > MaximumGil) { Trigger("You exceeded the Teleportation cost!"); return; }
+                if (DifferenceGil < MinimumGil) { Trigger("You didnt hit the Teleportation cost!"); return; }
+            }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); }
         }
 
         private int GetCurrentGil()
         {
             int output = -1;
-            foreach(var item in Service.GameInventory.GetInventoryItems(GameInventoryType.Currency))
+            try
             {
-                if(item.ItemId == 1)
+                foreach (var item in Service.GameInventory.GetInventoryItems(GameInventoryType.Currency))
                 {
-                    output = item.Quantity;
-                    break;
+                    if (item.ItemId == 1)
+                    {
+                        output = item.Quantity;
+                        break;
+                    }
                 }
             }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); }
             return output;
         }
 
@@ -77,16 +85,19 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         {
             ImGui.SameLine();
             bool useCosts = UseCosts;
-            if(ImGui.Checkbox("Use Costs", ref useCosts))
+            if (ImGui.Checkbox("Use Costs", ref useCosts))
             {
                 UseCosts = useCosts;
                 Plugin.Configuration.saveCurrentPreset();
             }
             ImGui.SameLine();
             ImGui.TextDisabled("(?)");
-            if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Allows you to set a minimum and maximum Cost for teleportation." +
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.SetTooltip("Allows you to set a minimum and maximum Cost for teleportation." +
                 "\nMinimum as in \"the teleport has to cost atleast this much gil\"." +
-                "\nMaximum as in \"the teleport is not allowed to cost more than this\"."); }
+                "\nMaximum as in \"the teleport is not allowed to cost more than this\".");
+            }
 
             if (!UseCosts) return;
             ImGui.BeginGroup();
@@ -100,9 +111,9 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
                 Plugin.Configuration.saveCurrentPreset();
             }
             int maximumGil = MaximumGil;
-            
+
             ImGui.SetNextItemWidth(250);
-            if (ImGui.SliderInt("Maximum Cost",ref maximumGil, 0, 2000))
+            if (ImGui.SliderInt("Maximum Cost", ref maximumGil, 0, 2000))
             {
                 if (maximumGil < MinimumGil) MinimumGil = maximumGil;
                 MaximumGil = maximumGil;
