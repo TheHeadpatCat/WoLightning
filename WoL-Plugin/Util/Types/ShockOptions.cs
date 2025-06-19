@@ -1,9 +1,11 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using WoLightning.WoL_Plugin.Clients;
 using WoLightning.WoL_Plugin.Clients.OpenShock;
 using WoLightning.WoL_Plugin.Clients.Pishock;
+using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.Util.Types
 {
@@ -237,8 +239,11 @@ namespace WoLightning.Util.Types
         }
         public void startCooldown()
         {
-            double CooldownTime = Cooldown * (int)modifier + Duration * 1000 + 1000;
+            double lowDurMult = 1;
+            if (Duration > 10) lowDurMult = 0.01;
+            double CooldownTime = Cooldown * (int)modifier + Duration * 1000 * lowDurMult + 1000;
             CooldownTimer.Start(CooldownTime);
+            Logger.Log(4,"CD start: " + CooldownTime);
         }
         #endregion
 

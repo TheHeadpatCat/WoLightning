@@ -59,6 +59,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 
                 if (lastMaxHP != Player.MaxHp && !Player.StatusFlags.HasFlag(Dalamud.Game.ClientState.Objects.Enums.StatusFlags.InCombat)) // out of combat maxhp increase
                 {
+                    Logger.Log(4, "MaxHP changed out of Combat.");
                     lastMaxHP = Player.MaxHp;
                     lastHP = lastMaxHP; // avoid false positives from synch and stuff
                     bufferFrames = 600; // give 10 seconds of buffering, for regens and stuff
@@ -66,6 +67,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 }
                 else if (lastMaxHP != Player.MaxHp) // in combat maxhp increase
                 {
+                    Logger.Log(4, "MaxHP changed inside Combat.");
                     lastMaxHP = Player.MaxHp;
                     lastHP = lastMaxHP; // avoid false positives from synch and stuff
                     bufferFrames = 180; // give 3 seconds of buffering, for regens and stuff
@@ -74,10 +76,11 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 
                 if (lastHP > Player.CurrentHp)
                 {
+                    
                     int damageTaken = (int)(lastHP - Player.CurrentHp);
                     double difference = (double)damageTaken / lastMaxHP;
 
-                    //Logger.Log(" damage taken: " + damageTaken + " dif: " + (int)(difference * 100));
+                    Logger.Log(4,"Damage taken: " + damageTaken + " Dif: " + (int)(difference * 100));
                     if (minimumDamagePercent > difference * 100)
                     {
                         lastHP = Player.CurrentHp;
@@ -87,10 +90,13 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                     if (!isProportional) Trigger("You took damage!");
                     else
                     {
+                        
                         int[] opts = { (int)(ShockOptions.Intensity * difference), (int)(ShockOptions.Duration * difference) };
 
                         if (opts[0] <= 0) opts[0] = 1;
-                        if (opts[1] <= 0) opts[1] = 100;
+                        if (opts[1] < 100 && opts[1] > 10) opts[1] = 100;
+                        Logger.Log(4, "Proportional is enabled." +
+                            "\n int: " + opts[0] + " dur: " + opts[1]);
                         Trigger("You took damage!", null, opts);
                     }
                 }

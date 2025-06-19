@@ -437,6 +437,11 @@ namespace WoLightning.Clients.Pishock
             }
 
             string sendCommand = CommandPublish.Generate(Options, Plugin, UserID, null);
+            if(sendCommand == "Invalid")
+            {
+                Logger.Log(3, "Failed to generate CommandPublish.");
+                return;
+            }
             await Client.Send(sendCommand);
             Logger.Log(3, "Command sent!");
         }
