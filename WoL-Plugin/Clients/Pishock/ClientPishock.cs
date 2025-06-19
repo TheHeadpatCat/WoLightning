@@ -125,6 +125,8 @@ namespace WoLightning.Clients.Pishock
             if (obj.Contains("CONNECTION_ERROR"))
             {
                 Status = ConnectionStatusPishock.FatalError;
+                Logger.Log(3, "Fatal Error while connecting to Pishock API");
+                Logger.Log(3, obj);
                 Client.Dispose();
                 Client = null;
                 CreateSocket();

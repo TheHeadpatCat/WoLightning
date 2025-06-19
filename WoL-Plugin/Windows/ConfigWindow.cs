@@ -195,6 +195,7 @@ public class ConfigWindow : Window, IDisposable
 
     private void DrawPresetHeader()
     {
+        ImGui.BeginDisabled();
 
         DrawModalAddPreset();
         DrawModalDeletePreset();
@@ -220,6 +221,7 @@ public class ConfigWindow : Window, IDisposable
             ImGui.OpenPopup("Delete Preset##delPreMod");
         }
 
+        ImGui.EndDisabled();
     }
 
 
