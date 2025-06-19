@@ -136,11 +136,6 @@ namespace WoLightning.Configurations
             }
         }
 
-        public void Save(object? sender, ElapsedEventArgs? e)
-        {
-            Save();
-        }
-
         public bool loadPreset(string Name)
         {
 
