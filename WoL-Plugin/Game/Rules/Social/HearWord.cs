@@ -70,7 +70,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
                 Logger.Log(4, sender);
 
-                if ((int)type <= 107)
+                if ((int)type <= 107 && (int)type != 13) // Allow all possible social channels, EXCEPT Tell_Incoming
                 {
                     string message = StringSanitizer.LetterOrDigit(messageE.ToString());
                     foreach (var TriggerWord in TriggerWords)
