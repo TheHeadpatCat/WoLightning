@@ -42,6 +42,7 @@ public sealed class Plugin : IDalamudPlugin
     public const int configurationVersion = 501;
     public const string randomKey = "Currently Unused";
 
+    public bool IsEnabled = false;
     public bool isFailsafeActive = false;
     public string? ConfigurationDirectoryPath { get; set; }
     public IPlayerCharacter LocalPlayerCharacter { get; set; }

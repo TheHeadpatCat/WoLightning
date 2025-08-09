@@ -138,7 +138,11 @@ namespace WoLightning.Configurations
 
         public bool loadPreset(string Name)
         {
-            //if(ActivePreset != null) ActivePreset.Dispose();
+            if (ActivePreset != null)
+            {
+                ActivePreset.StopRules();
+                ActivePreset.Dispose();
+            }
             if (!Presets.Exists(preset => preset.Name == Name)) return false;
             ActivePreset = Presets.Find(preset => preset.Name == Name);
             if (ActivePreset == null) throw new Exception("Preset not Found");
@@ -147,6 +151,8 @@ namespace WoLightning.Configurations
             ActivePreset.Initialize(plugin);
             ActivePreset.resetInvalidTriggers();
             ActivePreset.ValidateShockers();
+
+            if(plugin.IsEnabled) ActivePreset.StartRules();
 
             PresetChanged?.Invoke(ActivePreset, ActivePresetIndex);
             Logger.Log(3, " -> Done.");

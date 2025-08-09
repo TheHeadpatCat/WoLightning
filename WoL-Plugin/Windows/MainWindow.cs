@@ -29,8 +29,6 @@ public class MainWindow : Window, IDisposable
 
     private bool isPishockMenuOpen = true;
 
-    public bool IsEnabled = false;
-
     public MainWindow(Plugin plugin)
         : base($"Warrior of Lightning - v{Plugin.currentVersionString}##Main", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.AlwaysAutoResize)
     {
@@ -54,8 +52,8 @@ public class MainWindow : Window, IDisposable
 
     public void Initialize()
     {
-        IsEnabled = Plugin.Configuration.ActivateOnStart;
-        if (IsEnabled) Plugin.Configuration.ActivePreset.StartRules();
+        Plugin.IsEnabled = Plugin.Configuration.ActivateOnStart;
+        if (Plugin.IsEnabled) Plugin.Configuration.ActivePreset.StartRules();
     }
 
     public override async void Draw()
@@ -221,20 +219,20 @@ public class MainWindow : Window, IDisposable
             ImGui.TextColored(ColorRed, "Failsafe is active.\nType /red to disable it.");
         }
 
-        if (IsEnabled)
+        if (Plugin.IsEnabled)
         {
             if (ImGui.Button("Stop Plugin", new Vector2(270, 40))) // Todo: Color coding
             {
-                IsEnabled = false;
+                Plugin.IsEnabled = false;
                 Plugin.Configuration.ActivePreset.StopRules();
             }
         }
 
-        if (!IsEnabled)
+        if (!Plugin.IsEnabled)
         {
             if (ImGui.Button("Start Plugin", new Vector2(270, 40)))
             {
-                IsEnabled = true;
+                Plugin.IsEnabled = true;
                 Plugin.Configuration.ActivePreset.StartRules();
             }
         }

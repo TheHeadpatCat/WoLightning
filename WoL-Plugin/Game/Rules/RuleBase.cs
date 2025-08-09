@@ -65,7 +65,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         virtual public void setEnabled(bool enabled)
         {
             IsEnabled = enabled;
-            if (IsEnabled && !IsRunning && Plugin.MainWindow.IsEnabled) Start();
+            if (IsEnabled && !IsRunning && Plugin.IsEnabled) Start();
             if (!IsEnabled && IsRunning) Stop();
         }
 

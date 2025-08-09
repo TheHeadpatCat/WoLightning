@@ -156,8 +156,11 @@ namespace WoLightning.Util.Types
             {
                 foreach (var Rule in Rules)
                 {
-                    Logger.Log(3, "Stopping " + Rule.Name);
-                    Rule.Stop();
+                    if (Rule.IsEnabled || Rule.IsRunning)
+                    {
+                        Logger.Log(3, "Stopping " + Rule.Name);
+                        Rule.Stop();
+                    }
                 }
             }
             catch (Exception ex) { Logger.Error("Failed to start Rule " + Name); Logger.Error(ex.Message); }
