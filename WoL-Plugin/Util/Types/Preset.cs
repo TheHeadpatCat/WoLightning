@@ -91,6 +91,7 @@ namespace WoLightning.Util.Types
                     }
                 }
             }
+            Logger.Log(3, Name + " has been initialized.");
         }
 
         public void ValidateShockers()

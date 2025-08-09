@@ -54,6 +54,7 @@ public sealed class Plugin : IDalamudPlugin
     public MainWindow? MainWindow { get; set; }
     public ConfigWindow? ConfigWindow { get; set; }
     public ShockRemoteWindow? ShockRemoteWindow { get; set; }
+    public DebugWindow? DebugWindow { get; set; }
 
 
     // Handler Classes
@@ -219,6 +220,15 @@ public sealed class Plugin : IDalamudPlugin
                 if (Configuration.DebugLevel < DebugLevel.Verbose) Configuration.DebugLevel = DebugLevel.Verbose;
             }
 
+            if (Configuration.DebugLevel == DebugLevel.Dev)
+            {
+                MainWindow.Toggle();
+                ConfigWindow.Toggle();
+                DebugWindow = new(this);
+                WindowSystem.AddWindow(DebugWindow);
+                DebugWindow.Toggle();
+            }
+
         }
         catch (Exception ex)
         {
@@ -241,12 +251,14 @@ public sealed class Plugin : IDalamudPlugin
     {
         if (MainWindow != null) WindowSystem.RemoveWindow(MainWindow);
         if (ConfigWindow != null) WindowSystem.RemoveWindow(ConfigWindow);
+        if (DebugWindow != null) WindowSystem.RemoveWindow(DebugWindow);
         WindowSystem?.RemoveWindow(BufferWindow);
 
         MainWindow?.Dispose();
         ConfigWindow?.Dispose();
         BufferWindow?.Dispose();
         ShockRemoteWindow?.Dispose();
+        DebugWindow?.Dispose();
 
         EmoteReaderHooks?.Dispose();
         ClientWebserver?.Dispose();

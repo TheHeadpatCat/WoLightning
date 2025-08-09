@@ -58,9 +58,28 @@ public class ConfigWindow : Window, IDisposable
 
     private void onPresetChanged(Preset preset, int index)
     {
-        Logger.Log(2, "onPresetChaged() - " + index);
+        Logger.Log(2, "onPresetChaged() - " + preset.Name + " " + index);
         ActivePreset = preset;
         ActivePresetIndex = index;
+
+        RulesGeneral.Clear();
+        RulesMaster.Clear();
+        RulesMisc.Clear();
+        RulesPVE.Clear();
+        RulesPVP.Clear();
+        RulesSocial.Clear();
+        foreach (RuleBase Rule in ActivePreset.Rules)
+        {
+            switch (Rule.Category)
+            {
+                case RuleCategory.General: RulesGeneral.Add(Rule); break;
+                case RuleCategory.Master: RulesMaster.Add(Rule); break;
+                case RuleCategory.Misc: RulesMisc.Add(Rule); break;
+                case RuleCategory.PVE: RulesPVE.Add(Rule); break;
+                case RuleCategory.PVP: RulesPVP.Add(Rule); break;
+                case RuleCategory.Social: RulesSocial.Add(Rule); break;
+            }
+        }
     }
 
     public void Dispose()
@@ -195,8 +214,7 @@ public class ConfigWindow : Window, IDisposable
 
     private void DrawPresetHeader()
     {
-        ImGui.BeginDisabled();
-
+        
         DrawModalAddPreset();
         DrawModalDeletePreset();
 
@@ -221,7 +239,6 @@ public class ConfigWindow : Window, IDisposable
             ImGui.OpenPopup("Delete Preset##delPreMod");
         }
 
-        ImGui.EndDisabled();
     }
 
 
@@ -315,7 +332,7 @@ public class ConfigWindow : Window, IDisposable
             ImGui.TextDisabled(" (?)");
             if (ImGui.IsItemHovered())
             {
-                ImGui.SetTooltip("This sets at which level the Plugin logs things.\nIt's a good idea not to touch this.\nIf you are having performance issues, you can set it to \"None\", but your Log.txt file will be useless for finding Bugs.\nThis setting will reset after every update.");
+                ImGui.SetTooltip("This sets at which level the Plugin logs things.\nIt's a good idea not to touch this.\nIf you are having performance issues, you can set it to \"None\", but your Log.txt file will be useless for finding Bugs.\nThis setting will reset after every update.\nSetting it to Dev will expose alot of personal data inside your Log.txt file.");
             }
 
 

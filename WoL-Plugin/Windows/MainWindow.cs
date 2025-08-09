@@ -208,7 +208,6 @@ public class MainWindow : Window, IDisposable
 
     private async void DrawControlPanel()
     {
-        ImGui.BeginDisabled();
         presetIndex = Plugin.Configuration.ActivePresetIndex;
         if (presetIndex == -1) Plugin.Configuration.Save();
         ImGui.SetNextItemWidth(WindowWidth - 15);
@@ -216,7 +215,6 @@ public class MainWindow : Window, IDisposable
         {
             Plugin.Configuration.loadPreset(Plugin.Configuration.PresetNames[presetIndex]);
         }
-        ImGui.EndDisabled();
 
         if (Plugin.isFailsafeActive)
         {
