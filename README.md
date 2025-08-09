@@ -28,8 +28,8 @@ Or if you want to be fancy, open a Issue. That also works.
  Taking any kind of Damage  
 
  - Misc Triggers:  
- Sitting on Furniture
- Fail a Craft
+ Sitting on Furniture  
+ Fail a Craft  
  Fail to catch a Fish  
 
 - Presets for quick swapping of Settings    
