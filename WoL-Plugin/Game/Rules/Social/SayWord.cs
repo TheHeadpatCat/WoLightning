@@ -1,6 +1,6 @@
 ﻿using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

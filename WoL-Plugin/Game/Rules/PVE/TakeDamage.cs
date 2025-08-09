@@ -1,6 +1,6 @@
 ﻿using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Plugin.Services;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using System;
 using System.Text.Json.Serialization;
 using WoLightning.Util.Types;

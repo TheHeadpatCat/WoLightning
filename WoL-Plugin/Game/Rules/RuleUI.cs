@@ -1,4 +1,4 @@
-﻿using ImGuiNET;
+﻿using Dalamud.Bindings.ImGui;
 using System.Collections.Generic;
 using System.Numerics;
 using WoLightning.Configurations;
@@ -52,6 +52,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             }
             if (Rule.IsEnabled)
             {
+				/* TODO: Add back
                 if (isOptionsOpen && ImGui.ArrowButton("##collapse" + Rule.Name, ImGuiDir.Down))
                 {
                     isOptionsOpen = !isOptionsOpen;
@@ -59,9 +60,17 @@ namespace WoLightning.WoL_Plugin.Game.Rules
                 if (!isOptionsOpen && ImGui.ArrowButton("##collapse" + Rule.Name, ImGuiDir.Right))
                 {
                     isOptionsOpen = !isOptionsOpen;
-                }
+                }*/
 
-            }
+				if (isOptionsOpen && ImGui.Button("\\I/ ##collapse" + Rule.Name))
+				{
+					isOptionsOpen = !isOptionsOpen;
+				}
+				if (!isOptionsOpen && ImGui.Button("-> ##collapse" + Rule.Name))
+				{
+					isOptionsOpen = !isOptionsOpen;
+				}
+			}
             ImGui.EndGroup();
 
             ImGui.SameLine();
@@ -176,7 +185,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             ImGui.SameLine();
             int modifierIndex = modifierArray.IndexOf(Rule.ShockOptions.modifier);
             ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 4f - 30);
-            if (ImGui.Combo("##TimeModifier" + Rule.Name, ref modifierIndex, ["Miliseconds", "Seconds", "Minutes", "Hours"], 4, 4))
+            if (ImGui.Combo("##TimeModifier" + Rule.Name, ref modifierIndex, ["Miliseconds", "Seconds", "Minutes", "Hours"], 4))
             {
                 Rule.ShockOptions.modifier = modifierArray[modifierIndex];
                 changed = true;

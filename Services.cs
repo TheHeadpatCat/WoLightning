@@ -12,7 +12,6 @@ namespace WoLightning
         [PluginService] public static ICommandManager CommandManager { get; private set; }
         [PluginService] public static IPluginLog PluginLog { get; private set; }
 
-        [PluginService] public static IGameNetwork GameNetwork { get; private set; }
         [PluginService] public static IChatGui ChatGui { get; private set; }
         [PluginService] public static IDutyState DutyState { get; private set; }
         [PluginService] public static IClientState ClientState { get; private set; }

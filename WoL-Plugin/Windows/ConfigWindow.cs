@@ -2,7 +2,7 @@
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.Text;
 using Dalamud.Interface.Windowing;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -204,7 +204,7 @@ public class ConfigWindow : Window, IDisposable
 
         // Preset Selector
         ActivePresetIndex = Configuration.ActivePresetIndex;
-        if (ImGui.Combo("", ref ActivePresetIndex, [.. Configuration.PresetNames], Configuration.Presets.Count, 6))
+        if (ImGui.Combo("", ref ActivePresetIndex, [.. Configuration.PresetNames], Configuration.Presets.Count))
         { Configuration.loadPreset(Configuration.PresetNames[ActivePresetIndex]); }
         // Preset Modal Openers - Add & Delete
         ImGui.SameLine();

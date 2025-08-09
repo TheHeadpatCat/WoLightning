@@ -1,5 +1,5 @@
 using Dalamud.Interface.Windowing;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using System;
 using System.Numerics;
 using WoLightning.Clients.Webserver;
@@ -212,7 +212,7 @@ public class MainWindow : Window, IDisposable
         presetIndex = Plugin.Configuration.ActivePresetIndex;
         if (presetIndex == -1) Plugin.Configuration.Save();
         ImGui.SetNextItemWidth(WindowWidth - 15);
-        if (ImGui.Combo("", ref presetIndex, [.. Plugin.Configuration.PresetNames], Plugin.Configuration.Presets.Count, 6))
+        if (ImGui.Combo("", ref presetIndex, [.. Plugin.Configuration.PresetNames], Plugin.Configuration.Presets.Count))
         {
             Plugin.Configuration.loadPreset(Plugin.Configuration.PresetNames[presetIndex]);
         }

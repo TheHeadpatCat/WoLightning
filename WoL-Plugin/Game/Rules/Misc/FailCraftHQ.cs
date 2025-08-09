@@ -8,7 +8,7 @@ using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Common.Component.Excel;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using Lumina.Excel.Sheets;
 using System;
 using System.Text.Json.Serialization;

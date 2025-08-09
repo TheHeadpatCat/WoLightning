@@ -1,5 +1,5 @@
 ﻿using Dalamud.Game.ClientState.Conditions;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using System;
 using System.Text.Json.Serialization;
 using System.Timers;
@@ -51,7 +51,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             {
                 //Logger.Log(3, flag.ToString());
                 if (flag == ConditionFlag.Mounted) isMounted = value;
-                else if (flag == ConditionFlag.Mounted2) isMountedPillion = value;
+                else if (flag == ConditionFlag.RidingPillion) isMountedPillion = value;
                 else return;
 
 

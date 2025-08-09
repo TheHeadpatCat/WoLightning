@@ -1,7 +1,7 @@
 ﻿using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.Inventory;
 using Dalamud.Game.Inventory.InventoryEventArgTypes;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using System;
 using System.Collections.Generic;
 using System.Data;

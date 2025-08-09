@@ -1,5 +1,5 @@
 ﻿using FFXIVClientStructs.FFXIV.Common.Math;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using System;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
