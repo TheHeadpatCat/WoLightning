@@ -357,6 +357,15 @@ public class ConfigWindow : Window, IDisposable
                 }
             }
 
+            if (Configuration.DebugLevel != DebugLevel.Dev && Configuration.DebugLevel != DebugLevel.Verbose)
+            {
+                ImGui.Text("Setting your Log Level to anything but \"Verbose\" makes your Log.txt useless for bugfixing.");
+                if (ImGui.Button("Oh okay! Set it back to Verbose!"))
+                {
+                    Configuration.DebugLevel = DebugLevel.Verbose;
+                    Configuration.Save();
+                }
+            }
 
             ImGui.EndTabItem();
         }
