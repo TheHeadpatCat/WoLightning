@@ -37,8 +37,8 @@ public sealed class Plugin : IDalamudPlugin
     private const string OpenConfigFolder = "/wolfolder";
     private const string OpenShockRemote = "/wolremote";
 
-    public const int currentVersion = 560;
-    public const String currentVersionString = "0.5.6.0";
+    public const int currentVersion = 561;
+    public const String currentVersionString = "0.5.6.1";
     public const int configurationVersion = 501;
     public const string randomKey = "Currently Unused";
 
