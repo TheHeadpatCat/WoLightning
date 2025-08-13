@@ -6,6 +6,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using WoLightning.Configurations;
 
 namespace WoLightning.WoL_Plugin.Windows
 {
@@ -27,7 +28,14 @@ namespace WoLightning.WoL_Plugin.Windows
         public void Dispose() { }
         public override async void Draw()
         {
-            ImGui.TextColored(new Vector4(255, 0, 0, 255), "THESE WINDOWS OPEN BECAUSE YOU HAVE THE \"Dev\" DEBUGLEVEL SET.\nYou can change this in the General Settings.");
+            ImGui.TextColored(new Vector4(255, 0, 0, 255), "THESE WINDOWS OPEN BECAUSE\nYOU HAVE THE \"Dev\" DEBUGLEVEL SET.");
+            if (ImGui.Button("Oh okay! Turn it off!"))
+            {
+                Plugin.Configuration.DebugLevel = DebugLevel.Verbose;
+                Plugin.Configuration.Save();
+                this.Toggle();
+            }
+
 
 
             ImGui.Text("ActivePreset: " + Plugin.Configuration.ActivePreset.Name);

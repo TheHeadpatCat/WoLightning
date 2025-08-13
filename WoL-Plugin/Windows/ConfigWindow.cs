@@ -350,6 +350,11 @@ public class ConfigWindow : Window, IDisposable
             if(Configuration.DebugLevel == DebugLevel.Dev)
             {
                 ImGui.TextColored(new Vector4(255, 0, 0, 255), "Please do not use the DEV level, unless specifically asked to do so.\nDoing so exposes personal information in your Log.txt file\nas well as enabling developer options that can break the plugin (or are just annoying).");
+                if(ImGui.Button("Oh okay! Turn it off!"))
+                {
+                    Configuration.DebugLevel = DebugLevel.Verbose;
+                    Configuration.Save();
+                }
             }
 
 
