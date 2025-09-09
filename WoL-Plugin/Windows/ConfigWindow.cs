@@ -286,22 +286,6 @@ public class ConfigWindow : Window, IDisposable
                 ImGui.SetTooltip("This does not include PVP specific Rules. Those will always be active.");
             }
 
-            bool limitChats = Configuration.ActivePreset.LimitChats;
-            if (ImGui.Checkbox("Only listen for messages on specific Chat Channels.", ref limitChats))
-            {
-                Configuration.ActivePreset.LimitChats = limitChats;
-                Configuration.Save();
-            }
-            ImGui.SameLine();
-            ImGui.TextDisabled(" (?)");
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.SetTooltip("Activating this will let you select Channels for the plugin to listen to." +
-                "\nThe \"Say Banned Word\" and \"Forget to say Enforced Word\" Rules will only trigger on those Channels.");
-            }
-
-            if (limitChats) DrawCustomChats();
-
             ImGui.SetNextItemWidth(200);
             int ShownShockersIndex = (int)Configuration.ShownShockers;
             if (ImGui.Combo("Shown Shockers", ref ShownShockersIndex, ["All", "Personal Only", "Shared Only", "None...?"], 4))
@@ -540,43 +524,6 @@ public class ConfigWindow : Window, IDisposable
 
             ImGui.EndTabItem();
         }
-    }
-
-
-
-    private void DrawCustomChats() // Old Code from @lexiconmage
-    {
-        if (!ImGui.CollapsingHeader("Channel Selection"))
-        {
-            return;
-        }
-        var i = 0;
-        foreach (var e in ChatType.GetOrderedChannels())
-        {
-            // See if it is already enabled by default
-            var enabled = Configuration.ActivePreset.Chats.Contains((XivChatType)ChatType.GetXivChatTypeFromChatType(e)!);
-            // Create a new line after every 4 columns
-            if (i != 0 && (i == 4 || i == 7 || i == 11 || i == 15 || i == 19 || i == 23))
-            {
-                ImGui.NewLine();
-                //i = 0;
-            }
-            // Move to the next row if it is LS1 or CWLS1
-            if (e is ChatType.ChatTypes.LS1 or ChatType.ChatTypes.CWL1)
-                ImGui.Separator();
-
-            if (ImGui.Checkbox($"{e}", ref enabled))
-            {
-                // See If the UIHelpers.Checkbox is clicked, If not, add to the list of enabled channels, otherwise, remove it.
-                if (enabled) Configuration.ActivePreset.Chats.Add((XivChatType)ChatType.GetXivChatTypeFromChatType(e)!);
-                else Configuration.ActivePreset.Chats.Remove((XivChatType)ChatType.GetXivChatTypeFromChatType(e)!);
-                Configuration.Save();
-            }
-
-            ImGui.SameLine();
-            i++;
-        }
-        ImGui.NewLine();
     }
 
     #region Modals

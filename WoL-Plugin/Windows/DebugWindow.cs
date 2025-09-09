@@ -37,10 +37,7 @@ namespace WoLightning.WoL_Plugin.Windows
             }
 
 
-
-            ImGui.Text("ActivePreset: " + Plugin.Configuration.ActivePreset.Name);
-            ImGui.Text("ActivePresetIndex: " + Plugin.Configuration.ActivePresetIndex);
-            ImGui.Text("Intensity Value: " + Plugin.Configuration.ActivePreset.DoEmote.ShockOptions.Intensity);
+            Plugin.Configuration.ActivePreset.DontSayWord.Chats.ForEach(chat => ImGui.Text(chat.ToString()));
 
         }
     }

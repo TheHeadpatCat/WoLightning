@@ -1,11 +1,12 @@
-﻿using Dalamud.Game.Text;
+﻿using Dalamud.Bindings.ImGui;
+using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
-using Dalamud.Bindings.ImGui;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using WoLightning.Util;
+using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Util;
 using WoLightning.WoL_Plugin.Util.Types;
 
@@ -21,6 +22,9 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         public override RuleCategory Category { get; } = RuleCategory.Social;
 
         public List<SpecificWord> BannedWords { get; set; } = new();
+        public List<XivChatType> Chats { get; set; } = new();
+        [JsonIgnore] private bool isChatLimiterOpen = false;
+        public override bool hasExtraButton { get; } = true;
 
         override public bool hasAdvancedOptions { get; } = true;
 
@@ -61,19 +65,26 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                 if (Service.ClientState.LocalPlayer == null) return; // If the LocalPlayer is null, we might be transitioning between areas or similiar. Abort the check in those cases.
 
 
-                // This will Check if the Checkbox for "Limit Chats" is enabled and if so, checks if the type of chat message we received is included in that. If its not, then abort the check.
-                if (Plugin.Configuration.ActivePreset.LimitChats && !Plugin.Configuration.ActivePreset.Chats.Contains(type)) return;
+                // Check if the player has enabled any of the "Limit Chat" options, and if so check if the message is in one of those channels.
+                if (Chats.Count >= 1 && !Chats.Contains(type)) return;
 
-                string sender = StringSanitizer.LetterOrDigit(senderE.ToString()).ToLower(); // Get the Sender in a cleaned String. SeStrings can have payloads and stuff but never on the LocalPlayer. So in this case, we just want to strip those away.
-
-                // The Logger.Log() function requires two parts. The first is the LogLevel, a number between 0 to 4. It matches the setting under the "General" tab. So if you set it to 4 here, you'll need the option "Dev" set.
-                Logger.Log(4, "Comparing sender " + sender + " against " + Service.ClientState.LocalPlayer.Name.ToString().ToLower() + " is " + sender.Equals(Service.ClientState.LocalPlayer.Name.ToString().ToLower()));
-
-                // First check if the type of Chat we received is above a specific number. Noteably 107 is the last Social Chat that players can technically send stuff to.
-                // Afterwards, check if the sender of the message has the same name as our Local Player Character. If so, we are the person that sent it. We can ignore the World, as if there is another Person with the same name, they will always show their World in the Sender Name, while we dont.
-                if ((int)type <= 107 && sender.Equals(Service.ClientState.LocalPlayer.Name.ToString().ToLower()))
+                Player? sender = null;
+                foreach (var payload in senderE.Payloads)
                 {
-                    // Get the message into a cleaned String. Again, messages can have symbols and stuff in them and they might mess up our logic.
+                    if (payload.Type == PayloadType.Player) sender = new(payload); // FF messages are split into Payloads, so that some of the stuff is clickable. You can pass a Player payload to the "Player" class and it will filter out everything that you dont need.
+                }
+
+                if (sender == null) sender = Plugin.LocalPlayer; // If there is no player payload, we have to have been the sender.
+
+                // 
+                Logger.Log(4, "Comparing sender " + sender + " against " + Plugin.LocalPlayer + " is same player?: " + sender.Equals(Plugin.LocalPlayer));
+
+                if (sender != Plugin.LocalPlayer && type != XivChatType.TellOutgoing) return; // We check if we either are the Person that sent the message, or if the message is a outgoing /tell message - those have always have the "target" as their sender (for some reason)
+
+                // Check if the type of Chat we received is below a specific number. Noteably 107 is the last Social Chat that players can technically send stuff to.
+                if ((int)type <= 107)
+                {
+                    // Get the message into a cleaned String. Messages can have symbols and stuff in them and they might mess up our logic.
                     string message = StringSanitizer.LetterOrDigit(messageE.ToString());
                     foreach (var bannedWord in BannedWords) // Go through every banned word the user put in.
                     {
@@ -82,7 +93,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                             Logger.Log(4, "Comparing " + word + " against " + bannedWord.Word + " which is " + bannedWord.Compare(word));
                             if (bannedWord.Compare(word)) // Now, with both parts. Check each said word, against all banned words. If any of them match, Trigger the Rule and end the Logic.
                             {
-                                Trigger($"You have said {bannedWord}!");
+                                Trigger($"You have said {bannedWord}!", sender);
                                 return;
                             }
                         }
@@ -97,9 +108,85 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         // It gets called in Windows/ConfigWindow under "Word Lists"
         // Basically, its offloaded here to let the User type in words that will get saved in the BannedWords property.
         // If you are creating a basic Rule that doesn't need any Input Userdata, then you don't need to implement this.
-
+        
         // Alternatively, you can add a "public override void DrawExtraButton()" function, to draw extra UI code next to the "Assigned Shockers" button on a Rule.
         // If you want to take a look at that, check out Game/Rules/Social/DoEmote.cs
+
+        public override void DrawExtraButton()
+        {
+            ImGui.SameLine();
+            if (ImGui.Button("Open Chat Limiter##SayWordOpenButton"))
+            {
+                isChatLimiterOpen = true;
+                ImGui.OpenPopup("Chat Limiter##SayWordChatLimiter");
+            }
+
+            Vector2 center = ImGui.GetMainViewport().GetCenter();
+            ImGui.SetNextWindowPos(center, ImGuiCond.Appearing, new Vector2(0.5f, 0.5f));
+            ImGui.SetNextWindowSize(new Vector2(640, 555));
+
+            if (ImGui.BeginPopupModal("Chat Limiter##SayWordChatLimiter", ref isChatLimiterOpen,
+                ImGuiWindowFlags.Modal | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.Popup))
+            {
+
+                ImGui.Text("This Rule will only work on the selected Channels,\nunless no Channel is selected.");
+                ImGui.Separator();
+
+                var i = 0;
+                foreach (var e in ChatType.GetOrderedChannels()) // Old Code from @lexiconmage
+                {
+                    // See if it is already enabled by default
+                    var enabled = Chats.Contains((XivChatType)ChatType.GetXivChatTypeFromChatType(e)!);
+                    // Create a new line after every 4 columns
+                    if (i != 0 && (i == 4 || i == 7 || i == 11 || i == 15 || i == 19 || i == 23))
+                    {
+                        ImGui.NewLine();
+                        //i = 0;
+                    }
+                    // Move to the next row if it is LS1 or CWLS1
+                    if (e is ChatType.ChatTypes.LS1 or ChatType.ChatTypes.CWL1)
+                        ImGui.Separator();
+
+                    if (ImGui.Checkbox($"{e}", ref enabled))
+                    {
+                        XivChatType type = (XivChatType)ChatType.GetXivChatTypeFromChatType(e)!;
+
+                        // See If the UIHelpers.Checkbox is clicked, If not, add to the list of enabled channels, otherwise, remove it.
+                        if (enabled) Chats.Add(type);
+                        else Chats.Remove(type);
+
+                        if (type == XivChatType.TellIncoming) // Tell is split into 2 parts for some reason, so add the second part as well.
+                        {
+                            if (enabled) Chats.Add(XivChatType.TellOutgoing);
+                            else Chats.Remove(XivChatType.TellOutgoing);
+                        }
+
+                    }
+
+                    ImGui.SameLine();
+                    i++;
+                }
+                ImGui.NewLine();
+
+                if (ImGui.Button("Apply##SayWordApply", new Vector2(ImGui.GetWindowSize().X / 2 - 10, 25)))
+                {
+                    isChatLimiterOpen = false;
+                    Plugin.Configuration.Save();
+                    ImGui.CloseCurrentPopup();
+                }
+                ImGui.SameLine();
+                ImGui.PushItemWidth(ImGui.GetWindowSize().X / 2);
+                if (ImGui.Button("Reset All##SayWordReset", new Vector2(ImGui.GetWindowSize().X / 2 - 10, 25)))
+                {
+                    Chats.Clear();
+                }
+
+                ImGui.EndPopup();
+            }
+
+
+        }
+
         public override void DrawAdvancedOptions()
         {
             ImGui.Text("Saying any Word from this list, will trigger the \"Say Banned Word\" Rule!");

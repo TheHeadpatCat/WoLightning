@@ -22,7 +22,9 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         public override RuleCategory Category { get; } = RuleCategory.Social;
 
         public List<SpecificWord> TriggerWords { get; set; } = new();
-
+        public List<XivChatType> Chats { get; set; } = new();
+        [JsonIgnore] private bool isChatLimiterOpen = false;
+        public override bool hasExtraButton { get; } = true;
         override public bool hasAdvancedOptions { get; } = true;
 
         [JsonIgnore] string Input = string.Empty;
@@ -58,7 +60,9 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
             try
             {
                 if (Service.ClientState.LocalPlayer == null) return;
-                if (Plugin.Configuration.ActivePreset.LimitChats && !Plugin.Configuration.ActivePreset.Chats.Contains(type)) return;
+
+                //check for chat type limitation
+                if (Chats.Count >= 1 && !Chats.Contains(type)) return;
 
                 Player? sender = null;
                 foreach (var payload in senderE.Payloads)
@@ -70,7 +74,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
                 Logger.Log(4, sender);
 
-                if ((int)type <= 107 && (int)type != 12) // Allow all possible social channels, EXCEPT Tell_Outgoing
+                if ((int)type <= 107 && type != XivChatType.TellOutgoing) // Allow all possible social channels, EXCEPT Tell_Outgoing
                 {
                     string message = StringSanitizer.LetterOrDigit(messageE.ToString());
                     foreach (var TriggerWord in TriggerWords)
@@ -87,6 +91,81 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                 }
             }
             catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); }
+        }
+
+        public override void DrawExtraButton()
+        {
+            ImGui.SameLine();
+            if (ImGui.Button("Open Chat Limiter##HearWordOpenButton"))
+            {
+                isChatLimiterOpen = true;
+                ImGui.OpenPopup("Chat Limiter##HearWordChatLimiter");
+            }
+
+            Vector2 center = ImGui.GetMainViewport().GetCenter();
+            ImGui.SetNextWindowPos(center, ImGuiCond.Appearing, new Vector2(0.5f, 0.5f));
+            ImGui.SetNextWindowSize(new Vector2(640, 555));
+
+            if (ImGui.BeginPopupModal("Chat Limiter##HearWordChatLimiter", ref isChatLimiterOpen,
+                ImGuiWindowFlags.Modal | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.Popup))
+            {
+
+                ImGui.Text("This Rule will only work on the selected Channels,\nunless no Channel is selected.");
+                ImGui.Separator();
+
+                var i = 0;
+                foreach (var e in ChatType.GetOrderedChannels()) // Old Code from @lexiconmage
+                {
+                    // See if it is already enabled by default
+                    var enabled = Chats.Contains((XivChatType)ChatType.GetXivChatTypeFromChatType(e)!);
+                    // Create a new line after every 4 columns
+                    if (i != 0 && (i == 4 || i == 7 || i == 11 || i == 15 || i == 19 || i == 23))
+                    {
+                        ImGui.NewLine();
+                        //i = 0;
+                    }
+                    // Move to the next row if it is LS1 or CWLS1
+                    if (e is ChatType.ChatTypes.LS1 or ChatType.ChatTypes.CWL1)
+                        ImGui.Separator();
+
+                    if (ImGui.Checkbox($"{e}", ref enabled))
+                    {
+                        XivChatType type = (XivChatType)ChatType.GetXivChatTypeFromChatType(e)!;
+
+                        // See If the UIHelpers.Checkbox is clicked, If not, add to the list of enabled channels, otherwise, remove it.
+                        if (enabled) Chats.Add(type);
+                        else Chats.Remove(type);
+
+                        if (type == XivChatType.TellIncoming) // Tell is split into 2 parts for some reason, so add the second part as well.
+                        {
+                            if (enabled) Chats.Add(XivChatType.TellOutgoing);
+                            else Chats.Remove(XivChatType.TellOutgoing);
+                        }
+
+                    }
+
+                    ImGui.SameLine();
+                    i++;
+                }
+                ImGui.NewLine();
+
+                if (ImGui.Button("Apply##HearWordApply", new Vector2(ImGui.GetWindowSize().X / 2 - 10, 25)))
+                {
+                    isChatLimiterOpen = false;
+                    Plugin.Configuration.Save();
+                    ImGui.CloseCurrentPopup();
+                }
+                ImGui.SameLine();
+                ImGui.PushItemWidth(ImGui.GetWindowSize().X / 2);
+                if (ImGui.Button("Reset All##HearWordReset", new Vector2(ImGui.GetWindowSize().X / 2 - 10, 25)))
+                {
+                    Chats.Clear();
+                }
+
+                ImGui.EndPopup();
+            }
+
+
         }
 
         public override void DrawAdvancedOptions()

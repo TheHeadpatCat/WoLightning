@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Dalamud.Game.Text;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using WoLightning.Util.Types;

@@ -107,6 +107,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     }
                     ImGui.EndListBox();
                 }
+                
 
                 if (ImGui.Button("Apply##DoEmoteApply", new Vector2(ImGui.GetWindowSize().X / 2 - 10, 25)))
                 {

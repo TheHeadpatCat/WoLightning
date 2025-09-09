@@ -29,8 +29,6 @@ namespace WoLightning.Util.Types
         public List<Player> Whitelist { get; set; } = new();
         public List<Player> Blacklist { get; set; } = new();
 
-        public bool LimitChats { get; set; } = false;
-        public List<XivChatType> Chats { get; set; } = new();
         [JsonIgnore] public List<RuleBase> Rules { get; set; } = new List<RuleBase>();
         [JsonIgnore] private Plugin Plugin;
 
@@ -168,6 +166,7 @@ namespace WoLightning.Util.Types
         public bool isPlayerAllowedToTrigger(Player player)
         {
             if (player == null) return false;
+            if (player == Plugin.LocalPlayer) return true;
             bool isAllowed = true;
 
             foreach (var playerS in Blacklist)
