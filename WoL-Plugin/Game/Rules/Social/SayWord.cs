@@ -76,7 +76,6 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
                 if (sender == null) sender = Plugin.LocalPlayer; // If there is no player payload, we have to have been the sender.
 
-                // 
                 Logger.Log(4, "Comparing sender " + sender + " against " + Plugin.LocalPlayer + " is same player?: " + sender.Equals(Plugin.LocalPlayer));
 
                 if (sender != Plugin.LocalPlayer && type != XivChatType.TellOutgoing) return; // We check if we either are the Person that sent the message, or if the message is a outgoing /tell message - those have always have the "target" as their sender (for some reason)
@@ -104,14 +103,11 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         }
 
 
-        // This is UI Code for the Configuration Window.
-        // It gets called in Windows/ConfigWindow under "Word Lists"
-        // Basically, its offloaded here to let the User type in words that will get saved in the BannedWords property.
-        // If you are creating a basic Rule that doesn't need any Input Userdata, then you don't need to implement this.
-        
-        // Alternatively, you can add a "public override void DrawExtraButton()" function, to draw extra UI code next to the "Assigned Shockers" button on a Rule.
-        // If you want to take a look at that, check out Game/Rules/Social/DoEmote.cs
+        // This is optional UI Code for the extra "Open Chat Limiter" button that you can see next to the "Assign Shockers" button.
+        // If you have the bool "hasExtraButton" set to true and also implement this function, you are able to add more UI Code right next to the "Assign Shockers" button.
+        // In this case, we add a button that opens a big modal where the user can select a number of Chats to limit the code to.
 
+        // If your Rule doesn't need this extra button, simply remove this function as well as the "public override bool hasExtraButton { get; } = true;" property at line 27.
         public override void DrawExtraButton()
         {
             ImGui.SameLine();
@@ -186,6 +182,11 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
 
         }
+
+        // This is UI Code for the Configuration Window.
+        // It gets called in Windows/ConfigWindow under "Word Lists"
+        // Basically, its offloaded here to let the User type in words that will get saved in the BannedWords property.
+        // If you are creating a basic Rule that doesn't need any Input Userdata, then you can simply remove this function as well as the "override public bool hasAdvancedOptions { get; } = true;" in line 29.
 
         public override void DrawAdvancedOptions()
         {
