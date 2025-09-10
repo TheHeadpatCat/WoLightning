@@ -176,8 +176,8 @@ namespace WoLightning.Util.Types
             {
                 case OpMode.Shock: return "shock";
                 case OpMode.Vibrate: return "vibrate";
-                case OpMode.Beep: return "beep";
-                default: return "unknown";
+                case OpMode.Beep: return "sound";
+                default: return "stop";
 
             }
         }

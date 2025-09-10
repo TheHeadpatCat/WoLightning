@@ -232,6 +232,7 @@ namespace WoLightning.Clients.OpenShock
 
                 Logger.Log(3, "Sending Command");
                 StringContent jsonContent = new(CommandPublish.Generate(Options.ShockersOpenShock, Options), Encoding.UTF8, "application/json");
+                //Logger.Log(4, CommandPublish.Generate(Options.ShockersOpenShock, Options));
                 var result = await Client.PostAsync($"{Plugin.Authentification.OpenShockURL}/2/shockers/control", jsonContent);
                 Logger.Log(3, new StreamReader(result.Content.ReadAsStream()).ReadToEnd());
             }
