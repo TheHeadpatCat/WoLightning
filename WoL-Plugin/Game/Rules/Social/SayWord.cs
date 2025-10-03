@@ -63,7 +63,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
             try
             {
                 if (Service.ClientState.LocalPlayer == null) return; // If the LocalPlayer is null, we might be transitioning between areas or similiar. Abort the check in those cases.
-
+                if (senderE.TextValue == null || senderE.TextValue == "") return;
 
                 // Check if the player has enabled any of the "Limit Chat" options, and if so check if the message is in one of those channels.
                 if (Chats.Count >= 1 && !Chats.Contains(type)) return;
@@ -74,7 +74,10 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     if (payload.Type == PayloadType.Player) sender = new(payload); // FF messages are split into Payloads, so that some of the stuff is clickable. You can pass a Player payload to the "Player" class and it will filter out everything that you dont need.
                 }
 
-                if (sender == null) sender = Plugin.LocalPlayer; // If there is no player payload, we have to have been the sender.
+                Logger.Log(4, "Message from: " + senderE.TextValue + " comparing against " + Plugin.LocalPlayer.Name);
+
+                if (sender == null && senderE.TextValue == Plugin.LocalPlayer.Name) sender = Plugin.LocalPlayer; // If there is no player payload, check if names match atleast.
+                else return;
 
                 Logger.Log(4, "Comparing sender " + sender + " against " + Plugin.LocalPlayer + " is same player?: " + sender.Equals(Plugin.LocalPlayer));
 
