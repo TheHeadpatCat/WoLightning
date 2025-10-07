@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Dalamud.NET.Sdk/13.0.0">
   <PropertyGroup>
-    <Version>0.5.7.2</Version>
+    <Version>0.5.7.3</Version>
     <Description>Integration for Pishock and OpenShock devices.</Description>
     <PackageProjectUrl>https://github.com/TheHeadPatCat/WoLightning</PackageProjectUrl>
     <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
