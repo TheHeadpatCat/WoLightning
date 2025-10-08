@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WoLightning.Util.Types;
+﻿using WoLightning.Util.Types;
 
 namespace WoLightning.WoL_Plugin.Game.Features
 {
@@ -15,14 +10,15 @@ namespace WoLightning.WoL_Plugin.Game.Features
         // Also allow for randomization
 
 
-        public RuleReaction() {
+        public RuleReaction()
+        {
             var t = new Dalamud.Game.Text.XivChatEntry();
             Service.ChatGui.Print(t);
         }
 
         public void Trigger(ShockOptions options)
         {
-            
+
         }
     }
 }

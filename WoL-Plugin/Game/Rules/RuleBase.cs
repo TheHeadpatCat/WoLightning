@@ -1,5 +1,4 @@
-﻿using Dalamud.Game.Text;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using WoLightning.Util.Types;
@@ -86,12 +85,13 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
         virtual public void Trigger(string Text, Player? source, int[]? overrideOptions, bool? noNotification)
         {
-            if (ShockOptions.hasCooldown() || !IsRunning || Plugin.IsFailsafeActive) { Logger.Log(3," -> Aborted due to Cooldown."); return; }
+            if (ShockOptions.hasCooldown() || !IsRunning || Plugin.IsFailsafeActive) { Logger.Log(3, " -> Aborted due to Cooldown."); return; }
             if (source != null && !Plugin.Configuration.ActivePreset.isPlayerAllowedToTrigger(source)) { Logger.Log(3, " -> Aborted due to Permissions."); return; }
             if (!Plugin.Configuration.ActivePreset.AllowRulesInPvP && Service.ClientState.IsPvP) { Logger.Log(3, " -> Aborted due to PVP."); return; }
 
             if (overrideOptions == null) Triggered?.Invoke(ShockOptions);
-            else {
+            else
+            {
                 ShockOptions newOpt = new ShockOptions(0, overrideOptions[0], overrideOptions[1]);
                 newOpt.ShockersPishock = ShockOptions.ShockersPishock;
                 newOpt.ShockersOpenShock = ShockOptions.ShockersOpenShock;

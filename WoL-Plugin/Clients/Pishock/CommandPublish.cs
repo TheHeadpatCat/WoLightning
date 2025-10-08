@@ -31,7 +31,7 @@ namespace WoLightning.WoL_Plugin.Clients.Pishock
             }
             catch (Exception ex) { Logger.Error("Fatal Error during CommandPublish.Generate()"); return "Invalid"; }
         }
-        
+
     }
 
 

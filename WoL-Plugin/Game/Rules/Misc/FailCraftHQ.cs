@@ -1,18 +1,13 @@
-﻿using Dalamud.Game.ClientState.Conditions;
+﻿using Dalamud.Bindings.ImGui;
+using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.SubKinds;
-using Dalamud.Game.Gui.Toast;
 using Dalamud.Game.Inventory;
 using Dalamud.Game.Inventory.InventoryEventArgTypes;
-using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.UI;
-using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using FFXIVClientStructs.FFXIV.Common.Component.Excel;
-using Dalamud.Bindings.ImGui;
 using Lumina.Excel.Sheets;
 using System;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using System.Timers;
 using WoLightning.Util;
 using WoLightning.WoL_Plugin.Util;
@@ -94,7 +89,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
                     return;
                 }
 
-                
+
             }
             catch (Exception ex) { }
         }
@@ -183,7 +178,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         private void RunFallback(object? sender, ElapsedEventArgs e)
         {
             Logger.Log(4, $"Fallback called. will run? {!IsTriggered}");
-            if(!IsTriggered)
+            if (!IsTriggered)
             {
                 Logger.Log(4, $"{MaxQuality} and {(double)CurrentQuality / MaxQuality * 100 < MinimumQualityPercent}");
                 if (MaxQuality > 0 && (double)CurrentQuality / MaxQuality * 100 < MinimumQualityPercent)

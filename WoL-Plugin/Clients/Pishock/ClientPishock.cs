@@ -79,7 +79,7 @@ namespace WoLightning.Clients.Pishock
                 if (Plugin.Authentification.PishockName.Length < 3 || Plugin.Authentification.PishockApiKey.Length < 16) return;
 
                 ConnectionAttempts++;
-                if(ConnectionAttempts >= 7)
+                if (ConnectionAttempts >= 7)
                 {
                     Status = ConnectionStatusPishock.ExceededAttempts;
                     Plugin.NotificationHandler.send("Failed to connect to the Pishock API after several attempts.\nPlease restart the Plugin.", "FATAL ERROR", Dalamud.Interface.ImGuiNotification.NotificationType.Error, new TimeSpan(0, 0, 30));
@@ -87,7 +87,7 @@ namespace WoLightning.Clients.Pishock
                     return;
                 }
 
-                Logger.Log(3,"Creating new Websocket for Pishock API - Attempt " + ConnectionAttempts + "/7");
+                Logger.Log(3, "Creating new Websocket for Pishock API - Attempt " + ConnectionAttempts + "/7");
 
                 Status = ConnectionStatusPishock.Connecting;
 
@@ -100,7 +100,7 @@ namespace WoLightning.Clients.Pishock
                     Client = null;
                 }
 
-                
+
                 Client = new(Plugin, $"wss://broker.pishock.com/v2?Username={username}&ApiKey={apikey}");
                 Client.Received += Received;
                 Task.Run(() =>
@@ -439,7 +439,7 @@ namespace WoLightning.Clients.Pishock
             }
 
             string sendCommand = CommandPublish.Generate(Options, Plugin, UserID, null);
-            if(sendCommand == "Invalid")
+            if (sendCommand == "Invalid")
             {
                 Logger.Log(3, "Failed to generate CommandPublish.");
                 return;

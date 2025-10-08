@@ -1,16 +1,11 @@
-﻿using Dalamud.Game.ClientState.Conditions;
+﻿using Dalamud.Bindings.ImGui;
+using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.Inventory;
 using Dalamud.Game.Inventory.InventoryEventArgTypes;
-using Dalamud.Bindings.ImGui;
 using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
-using WoLightning.Util;
 using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Misc
@@ -78,13 +73,13 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 
         private void HandleFlagUpdate(ConditionFlag flag, bool value)
         {
-            if(flag == ConditionFlag.Casting)
+            if (flag == ConditionFlag.Casting)
             {
                 DidUseCast = true;
                 return;
             }
 
-            if(flag != ConditionFlag.BetweenAreas && flag != ConditionFlag.BetweenAreas51)
+            if (flag != ConditionFlag.BetweenAreas && flag != ConditionFlag.BetweenAreas51)
             {
                 LastKnownGil = GetCurrentGil();
             }

@@ -1,8 +1,7 @@
-﻿using Dalamud.Game.ClientState.Objects.SubKinds;
+﻿using Dalamud.Bindings.ImGui;
+using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
-using Dalamud.Game.Text;
 using Dalamud.Interface.Windowing;
-using Dalamud.Bindings.ImGui;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -95,7 +94,8 @@ public class ConfigWindow : Window, IDisposable
     public void SetConfiguration(Configuration? conf)
     {
         Logger.Log(2, "SetConfiguration() is called");
-        if (conf == null) {
+        if (conf == null)
+        {
             Configuration.PresetChanged -= onPresetChanged;
             Configuration.Save();
             Configuration = conf;
@@ -103,7 +103,7 @@ public class ConfigWindow : Window, IDisposable
             return;
         }
 
-        if(Configuration != null) Configuration.PresetChanged -= onPresetChanged;
+        if (Configuration != null) Configuration.PresetChanged -= onPresetChanged;
         Configuration = conf;
         Configuration?.Save();
         ActivePreset = Configuration.ActivePreset;
@@ -214,7 +214,7 @@ public class ConfigWindow : Window, IDisposable
 
     private void DrawPresetHeader()
     {
-        
+
         DrawModalAddPreset();
         DrawModalDeletePreset();
 
@@ -331,10 +331,10 @@ public class ConfigWindow : Window, IDisposable
                 ImGui.SetTooltip("This sets at which level the Plugin logs things.\nIt's a good idea not to touch this.\nIf you are having performance issues, you can set it to \"None\", but your Log.txt file will be useless for finding Bugs.\nThis setting will reset after every update.\nSetting it to Dev will expose alot of personal data inside your Log.txt file.");
             }
 
-            if(Configuration.DebugLevel == DebugLevel.Dev)
+            if (Configuration.DebugLevel == DebugLevel.Dev)
             {
                 ImGui.TextColored(new Vector4(255, 0, 0, 255), "Please do not use the DEV level, unless specifically asked to do so.\nDoing so exposes personal information in your Log.txt file\nas well as enabling developer options that can break the plugin (or are just annoying).");
-                if(ImGui.Button("Oh okay! Turn it off!"))
+                if (ImGui.Button("Oh okay! Turn it off!"))
                 {
                     Configuration.DebugLevel = DebugLevel.Verbose;
                     Configuration.Save();

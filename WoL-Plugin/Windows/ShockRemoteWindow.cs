@@ -1,15 +1,10 @@
-﻿using Dalamud.Interface.Windowing;
-using Dalamud.Bindings.ImGui;
+﻿using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Windowing;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 using WoLightning.Configurations;
 using WoLightning.Util.Types;
-using WoLightning.WoL_Plugin.Clients;
 
 namespace WoLightning.WoL_Plugin.Windows
 {
@@ -49,7 +44,7 @@ namespace WoLightning.WoL_Plugin.Windows
         public override void Draw()
         {
 
-            if(Plugin == null || Plugin.Configuration == null || Plugin.Authentification == null || Plugin.Authentification.GetShockerCount() == 0)
+            if (Plugin == null || Plugin.Configuration == null || Plugin.Authentification == null || Plugin.Authentification.GetShockerCount() == 0)
             {
                 ImGui.TextWrapped("This Window isn't initialized yet.\nPlease login with a character first and make sure you are connected to either the Pishock, or OpenShock API.");
                 return;
@@ -66,7 +61,7 @@ namespace WoLightning.WoL_Plugin.Windows
 
             if (Options.hasCooldown()) ImGui.BeginDisabled();
             ImGui.BeginGroup();
-            if(ImGui.Button("Shock!",new Vector2(90, 40)))
+            if (ImGui.Button("Shock!", new Vector2(90, 40)))
             {
                 Options.OpMode = OpMode.Shock;
                 Plugin.ClientPishock.SendRequest(Options);
@@ -138,7 +133,7 @@ namespace WoLightning.WoL_Plugin.Windows
             }
             ImGui.EndGroup();
 
-            
+
 
         }
 
@@ -260,8 +255,8 @@ namespace WoLightning.WoL_Plugin.Windows
 
 
         }
-    
-    
+
+
     }
 }
 

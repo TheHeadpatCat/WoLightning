@@ -52,7 +52,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             }
             if (Rule.IsEnabled)
             {
-				
+
                 if (isOptionsOpen && ImGui.ArrowButton("##collapse" + Rule.Name, ImGuiDir.Down))
                 {
                     isOptionsOpen = !isOptionsOpen;
@@ -61,7 +61,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
                 {
                     isOptionsOpen = !isOptionsOpen;
                 }
-			}
+            }
             ImGui.EndGroup();
 
             ImGui.SameLine();

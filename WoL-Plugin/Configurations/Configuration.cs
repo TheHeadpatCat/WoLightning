@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Timers;
 using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Util;
 
@@ -152,7 +151,7 @@ namespace WoLightning.Configurations
             ActivePreset.resetInvalidTriggers();
             ActivePreset.ValidateShockers();
 
-            if(plugin.IsEnabled) ActivePreset.StartRules();
+            if (plugin.IsEnabled) ActivePreset.StartRules();
 
             PresetChanged?.Invoke(ActivePreset, ActivePresetIndex);
             Logger.Log(3, " -> Done.");

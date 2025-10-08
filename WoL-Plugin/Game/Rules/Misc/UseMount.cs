@@ -1,5 +1,5 @@
-﻿using Dalamud.Game.ClientState.Conditions;
-using Dalamud.Bindings.ImGui;
+﻿using Dalamud.Bindings.ImGui;
+using Dalamud.Game.ClientState.Conditions;
 using System;
 using System.Text.Json.Serialization;
 using System.Timers;

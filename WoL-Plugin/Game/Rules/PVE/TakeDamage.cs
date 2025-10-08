@@ -1,6 +1,6 @@
-﻿using Dalamud.Game.ClientState.Objects.SubKinds;
+﻿using Dalamud.Bindings.ImGui;
+using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Plugin.Services;
-using Dalamud.Bindings.ImGui;
 using System;
 using System.Text.Json.Serialization;
 using WoLightning.Util.Types;
@@ -76,11 +76,11 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 
                 if (lastHP > Player.CurrentHp)
                 {
-                    
+
                     int damageTaken = (int)(lastHP - Player.CurrentHp);
                     double difference = (double)damageTaken / lastMaxHP;
 
-                    Logger.Log(4,"Damage taken: " + damageTaken + " Dif: " + (int)(difference * 100));
+                    Logger.Log(4, "Damage taken: " + damageTaken + " Dif: " + (int)(difference * 100));
                     if (minimumDamagePercent > difference * 100)
                     {
                         lastHP = Player.CurrentHp;
@@ -90,7 +90,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                     if (!isProportional) Trigger("You took damage!");
                     else
                     {
-                        
+
                         int[] opts = { (int)(ShockOptions.Intensity * difference), (int)(ShockOptions.Duration * difference) };
 
                         if (opts[0] <= 0) opts[0] = 1;

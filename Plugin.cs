@@ -12,7 +12,6 @@ using System.IO;
 using System.Linq;
 using WoLightning.Clients.OpenShock;
 using WoLightning.Clients.Pishock;
-using WoLightning.Clients.Webserver;
 using WoLightning.Configurations;
 using WoLightning.Game;
 using WoLightning.Util.Types;

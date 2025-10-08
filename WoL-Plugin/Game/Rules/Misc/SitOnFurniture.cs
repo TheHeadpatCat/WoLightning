@@ -1,5 +1,5 @@
-﻿using FFXIVClientStructs.FFXIV.Common.Math;
-using Dalamud.Bindings.ImGui;
+﻿using Dalamud.Bindings.ImGui;
+using FFXIVClientStructs.FFXIV.Common.Math;
 using System;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -114,8 +114,9 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     safetyStop = 0;
                 }
             }
-            catch (Exception ex) { 
-                Logger.Error(Name + " Check() failed."); 
+            catch (Exception ex)
+            {
+                Logger.Error(Name + " Check() failed.");
                 Logger.Error(ex.Message);
                 sittingOnChairTimer.Stop();
                 safetyStop++;

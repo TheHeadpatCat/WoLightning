@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using WoLightning.Util.Types;
 
 namespace WoLightning.Clients.Webserver

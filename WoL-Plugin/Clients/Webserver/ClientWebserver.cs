@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Net.WebSockets;
-using System.Text;
-using System.Threading.Tasks;
 using WoLightning.Clients.Webserver;
 
 namespace WoLightning.WoL_Plugin.Clients.Webserver
@@ -27,7 +22,7 @@ namespace WoLightning.WoL_Plugin.Clients.Webserver
         }
         public void Dispose()
         {
-            
+
         }
     }
 }

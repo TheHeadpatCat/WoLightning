@@ -1,5 +1,5 @@
-﻿using Dalamud.Game.ClientState.Objects.Types;
-using Dalamud.Bindings.ImGui;
+﻿using Dalamud.Bindings.ImGui;
+using Dalamud.Game.ClientState.Objects.Types;
 using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
@@ -107,7 +107,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     }
                     ImGui.EndListBox();
                 }
-                
+
 
                 if (ImGui.Button("Apply##DoEmoteApply", new Vector2(ImGui.GetWindowSize().X / 2 - 10, 25)))
                 {

@@ -243,7 +243,7 @@ namespace WoLightning.Util.Types
             if (Duration > 10) lowDurMult = 0.01;
             double CooldownTime = Cooldown * (int)modifier + Duration * 1000 * lowDurMult + 1000;
             CooldownTimer.Start(CooldownTime);
-            Logger.Log(4,"CD start: " + CooldownTime);
+            Logger.Log(4, "CD start: " + CooldownTime);
         }
         #endregion
 

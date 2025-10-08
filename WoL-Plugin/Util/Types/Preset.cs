@@ -1,9 +1,7 @@
-﻿using Dalamud.Game.Text;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using WoLightning.WoL_Plugin.Game.Features;
 using WoLightning.WoL_Plugin.Game.Rules;
 using WoLightning.WoL_Plugin.Game.Rules.Misc;
 using WoLightning.WoL_Plugin.Game.Rules.PVE;

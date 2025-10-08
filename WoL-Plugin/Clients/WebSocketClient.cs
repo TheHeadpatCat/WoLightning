@@ -197,7 +197,7 @@ namespace WoLightning.WoL_Plugin.Clients
                 Logger.Log(4, "Received Message: " + receivedMessage);
                 Received?.Invoke(receivedMessage);
                 if (UpholdConnection && Client.State == WebSocketState.Open) Receive();
-                
+
                 /*else if (UpholdConnection && (Client.State == WebSocketState.CloseReceived || Client.State == WebSocketState.Closed))
                 {
                     await Client.CloseAsync(WebSocketCloseStatus.InternalServerError, "Error Received", CancellationToken.None);

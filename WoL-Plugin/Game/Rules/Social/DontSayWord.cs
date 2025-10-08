@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using WoLightning.Configurations;
 using WoLightning.Util;
 using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Util;
@@ -81,7 +80,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
                 Logger.Log(4, sender);
 
-                if ((int)type <= 107 && 
+                if ((int)type <= 107 &&
                     (sender.Equals(Plugin.LocalPlayer)
                     || type == XivChatType.TellOutgoing)) // Tell is a very weird channel. It considers only the target player and gives us no reference of the actual sender.
                 {
@@ -146,7 +145,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                         if (enabled) Chats.Add(type);
                         else Chats.Remove(type);
 
-                        if(type == XivChatType.TellIncoming) // Tell is split into 2 parts for some reason, so add the second part as well.
+                        if (type == XivChatType.TellIncoming) // Tell is split into 2 parts for some reason, so add the second part as well.
                         {
                             if (enabled) Chats.Add(XivChatType.TellOutgoing);
                             else Chats.Remove(XivChatType.TellOutgoing);
@@ -174,7 +173,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
                 ImGui.EndPopup();
             }
-            
+
 
         }
         public override void DrawAdvancedOptions()

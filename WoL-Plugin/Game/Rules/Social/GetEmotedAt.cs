@@ -1,5 +1,5 @@
-﻿using Dalamud.Game.ClientState.Objects.SubKinds;
-using Dalamud.Bindings.ImGui;
+﻿using Dalamud.Bindings.ImGui;
+using Dalamud.Game.ClientState.Objects.SubKinds;
 using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
