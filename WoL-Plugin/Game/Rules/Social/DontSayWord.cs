@@ -67,6 +67,9 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                 //check for chat type limitation
                 if (Chats.Count >= 1 && !Chats.Contains(type)) return;
 
+                // Check if its actually a emote. We don't want to trigger on emotes.
+                if (type == XivChatType.StandardEmote || type == XivChatType.CustomEmote) return;
+
                 Player? sender = null;
                 foreach (var payload in senderE.Payloads)
                 {
