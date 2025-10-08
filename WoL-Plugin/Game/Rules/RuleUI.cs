@@ -67,7 +67,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             ImGui.SameLine();
             ImGui.BeginGroup();
 
-            if (Plugin.isFailsafeActive)
+            if (Plugin.IsFailsafeActive)
             {
                 ImGui.TextColored(ColorNameBlocked, "  " + Rule.Name + $" [Failsafe Active]");
             }

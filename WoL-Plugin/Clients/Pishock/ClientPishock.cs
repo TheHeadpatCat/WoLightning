@@ -388,7 +388,7 @@ namespace WoLightning.Clients.Pishock
                 return;
             }
 
-            if (Plugin.isFailsafeActive)
+            if (Plugin.IsFailsafeActive)
             {
                 Logger.Log(3, " -> Blocked request due to failsafe mode!");
                 return;

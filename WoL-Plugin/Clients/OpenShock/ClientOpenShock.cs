@@ -184,7 +184,7 @@ namespace WoLightning.Clients.OpenShock
 
             #region Validation
 
-            if (Plugin.isFailsafeActive)
+            if (Plugin.IsFailsafeActive)
             {
                 Logger.Log(3, " -> Blocked request due to failsafe mode!");
                 return;

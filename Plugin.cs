@@ -43,7 +43,7 @@ public sealed class Plugin : IDalamudPlugin
     public const string randomKey = "Currently Unused";
 
     public bool IsEnabled = false;
-    public bool isFailsafeActive = false;
+    public bool IsFailsafeActive = false;
     public string? ConfigurationDirectoryPath { get; set; }
     public IPlayerCharacter LocalPlayerCharacter { get; set; }
     public Player LocalPlayer { get; set; }
@@ -292,8 +292,8 @@ public sealed class Plugin : IDalamudPlugin
     }
     private void OnFailsafe(string command, string args)
     {
-        isFailsafeActive = !isFailsafeActive;
-        if (isFailsafeActive) Service.ChatGui.Print("Failsafe is active!\nStopping all requests...");
+        IsFailsafeActive = !IsFailsafeActive;
+        if (IsFailsafeActive) Service.ChatGui.Print("Failsafe is active!\nStopping all requests...");
         else Service.ChatGui.Print("Failsafe deactivated.");
     }
 

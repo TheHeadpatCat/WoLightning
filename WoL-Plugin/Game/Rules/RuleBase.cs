@@ -86,7 +86,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
         virtual public void Trigger(string Text, Player? source, int[]? overrideOptions, bool? noNotification)
         {
-            if (ShockOptions.hasCooldown() || !IsRunning || Plugin.isFailsafeActive) { Logger.Log(3," -> Aborted due to Cooldown."); return; }
+            if (ShockOptions.hasCooldown() || !IsRunning || Plugin.IsFailsafeActive) { Logger.Log(3," -> Aborted due to Cooldown."); return; }
             if (source != null && !Plugin.Configuration.ActivePreset.isPlayerAllowedToTrigger(source)) { Logger.Log(3, " -> Aborted due to Permissions."); return; }
             if (!Plugin.Configuration.ActivePreset.AllowRulesInPvP && Service.ClientState.IsPvP) { Logger.Log(3, " -> Aborted due to PVP."); return; }
 

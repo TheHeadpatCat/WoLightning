@@ -214,7 +214,7 @@ public class MainWindow : Window, IDisposable
             Plugin.Configuration.loadPreset(Plugin.Configuration.PresetNames[presetIndex]);
         }
 
-        if (Plugin.isFailsafeActive)
+        if (Plugin.IsFailsafeActive)
         {
             ImGui.TextColored(ColorRed, "Failsafe is active.\nType /red to disable it.");
         }
