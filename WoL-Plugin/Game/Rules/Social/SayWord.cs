@@ -227,6 +227,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         public override void DrawAdvancedOptions()
         {
             ImGui.Text("Saying any Word from this list, will trigger the \"Say Banned Word\" Rule!");
+            ImGui.TextColored(new Vector4(0.66f, 0.66f, 0.66f, 0.80f), "Note: Despite saying \"Word\", sentences are also supported.");
 
             ImGui.SetNextItemWidth(ImGui.GetWindowWidth() - 230);
             if (ImGui.InputTextWithHint("##BannedWordInput", "Click on a entry to edit it.", ref Input, 48))

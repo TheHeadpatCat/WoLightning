@@ -190,6 +190,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         {
             ImGui.TextWrapped("If someone says one of these words, it will trigger the \"Hear a Trigger Word\" Rule!" +
                 "\nYou can change who can say these words in the \"Permissions\" Tab.");
+            ImGui.TextColored(new Vector4(0.66f, 0.66f, 0.66f, 0.80f), "Note: Despite saying \"Word\", sentences are also supported.");
 
             ImGui.SetNextItemWidth(ImGui.GetWindowWidth() - 230);
             if (ImGui.InputTextWithHint("##TriggerWordInput", "Click on a entry to edit it.", ref Input, 48))
