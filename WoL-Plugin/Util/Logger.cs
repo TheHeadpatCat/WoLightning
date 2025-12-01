@@ -6,6 +6,9 @@ namespace WoLightning.WoL_Plugin.Util
 {
     public static class Logger
     {
+
+        public static Configuration? CONFIGURATION_REF;
+
         public static string FilePath()
         {
             try
@@ -86,6 +89,8 @@ namespace WoLightning.WoL_Plugin.Util
 
         public static void Log(DebugLevel level, string message)
         {
+            if (CONFIGURATION_REF != null && CONFIGURATION_REF.DebugLevel < level) return;
+
             switch (level)
             {
                 case DebugLevel.Dev:

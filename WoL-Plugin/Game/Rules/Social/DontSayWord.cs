@@ -75,7 +75,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     if (payload.Type == PayloadType.Player) sender = new(payload);
                 }
 
-                if (sender == null && senderE.TextValue == Plugin.LocalPlayer.Name) sender = Plugin.LocalPlayer; // If there is no player payload, check if names match atleast.
+                if (sender == null && senderE.TextValue.Contains(Plugin.LocalPlayer.Name!)) sender = Plugin.LocalPlayer; // If there is no player payload, check if names match atleast.
                 else return;
 
                 Logger.Log(4, sender);

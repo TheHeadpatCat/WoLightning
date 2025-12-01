@@ -51,6 +51,7 @@ namespace WoLightning.Configurations
         {
             this.plugin = plugin;
             this.ConfigurationDirectoryPath = ConfigurationDirectoryPath;
+            Logger.CONFIGURATION_REF = this;
 
             string f = "";
             if (File.Exists(ConfigurationDirectoryPath + "Config.json")) f = File.ReadAllText(ConfigurationDirectoryPath + "Config.json");

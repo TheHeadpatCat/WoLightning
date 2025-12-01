@@ -32,6 +32,8 @@ namespace WoLightning.Util.Types
 
         // The Position of your Rule here actually also changes the Position of which spot they show up in the Config Window!
 
+        // TODO: Make these dynamic. Surely i can somehow iterate through all rules or smth. -- Is that even a good idea though?
+
         // Social Triggers
         public DoEmote DoEmote { get; set; } = new();
         public DoEmoteTo DoEmoteTo { get; set; } = new();

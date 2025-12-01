@@ -79,7 +79,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
                 Logger.Log(4, "Message from: " + senderE.TextValue + " comparing against " + Plugin.LocalPlayer.Name + " type: " + type.ToString());
 
-                if (sender == null && senderE.TextValue == Plugin.LocalPlayer.Name) sender = Plugin.LocalPlayer; // If there is no player payload, check if names match atleast.
+                // Todo: Maybe create a Player object out of this instead?
+                if (sender == null && senderE.TextValue.Contains(Plugin.LocalPlayer.Name!)) sender = Plugin.LocalPlayer; // If there is no player payload, check if names match atleast.
                 else return;
 
                 Logger.Log(4, "Comparing sender " + sender + " against " + Plugin.LocalPlayer + " is same player?: " + sender.Equals(Plugin.LocalPlayer));

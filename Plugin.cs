@@ -81,7 +81,6 @@ public sealed class Plugin : IDalamudPlugin
         ConfigWindow = new(this);
         ShockRemoteWindow = new(this);
 
-
         WindowSystem.AddWindow(BufferWindow);
         WindowSystem.AddWindow(MainWindow);
         WindowSystem.AddWindow(ConfigWindow);
