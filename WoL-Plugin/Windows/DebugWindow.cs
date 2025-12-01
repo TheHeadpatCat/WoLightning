@@ -33,8 +33,6 @@ namespace WoLightning.WoL_Plugin.Windows
             }
 
 
-            Plugin.Configuration.ActivePreset.DontSayWord.Chats.ForEach(chat => ImGui.Text(chat.ToString()));
-
         }
     }
 }

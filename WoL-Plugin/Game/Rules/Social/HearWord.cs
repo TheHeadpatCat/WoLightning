@@ -76,16 +76,34 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
                 if ((int)type <= 107 && type != XivChatType.TellOutgoing) // Allow all possible social channels, EXCEPT Tell_Outgoing
                 {
+                    Logger.Log(4, "Sender: " + sender.Name);
                     string message = StringSanitizer.LetterOrDigit(messageE.ToString());
                     foreach (var TriggerWord in TriggerWords)
                     {
-                        foreach (var word in message.Split(" "))
+                        int spaceAmount = TriggerWord.Word.CountSpaces();
+                        Logger.Log(4, "Found " + spaceAmount + " spaces.");
+
+                        string[] words = message.Split(' ');
+                        for (int i = 0; i < words.Length; i++)
                         {
-                            if (TriggerWord.Compare(word))
+                            string wordsToCompare = words[i];
+                            if (spaceAmount > 0)
                             {
-                                Trigger($"You heard {TriggerWord.Word}!", sender);
+                                for (int j = i + 1; j < words.Length; j++)
+                                {
+                                    wordsToCompare += " " + words[j];
+                                    Logger.Log(4, "Added " + words[j] + " to the compound.");
+                                }
+                            }
+
+                            Logger.Log(4, "Comparing " + wordsToCompare + " against " + TriggerWord.Word + " which is " + TriggerWord.Compare(wordsToCompare));
+
+                            if (TriggerWord.Compare(wordsToCompare)) // Now, with both parts. Check each said word, against all banned words. If any of them match, Trigger the Rule and end the Logic.
+                            {
+                                Trigger($"You heard {TriggerWord} from {sender.Name}!", sender);
                                 return;
                             }
+                            Logger.Log(4, "Word failed.\n=========");
                         }
                     }
                 }
