@@ -57,7 +57,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                 Player sendingPlayer = new Player(player.Name.ToString(), (int)player.HomeWorld.RowId);
                 Trigger(sendingPlayer + " has used Emote " + emoteId + " on you!", sendingPlayer);
             }
-            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if(e.StackTrace != null) Logger.Error(e.StackTrace); }
         }
 
         public override void DrawExtraButton()

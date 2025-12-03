@@ -84,9 +84,9 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
                 if (sender != Plugin.LocalPlayer && type == XivChatType.TellOutgoing) sender = Plugin.LocalPlayer;
 
-                Logger.Log(3, $"{Name} | Comparing sender " + sender + " against " + Plugin.LocalPlayer + " is same player?: " + sender.Equals(Plugin.LocalPlayer));
-
                 if (sender == null || sender != Plugin.LocalPlayer) return;
+
+                Logger.Log(3, $"{Name} | Comparing sender " + sender + " against " + Plugin.LocalPlayer + " is same player?: " + sender.Equals(Plugin.LocalPlayer));
 
                 // Check if the type of Chat we received is below a specific number. Noteably 107 is the last Social Chat that players can technically send stuff to.
                 if ((int)type <= 107)
@@ -123,7 +123,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     }
                 }
             }
-            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if(e.StackTrace != null) Logger.Error(e.StackTrace); }
         }
 
 

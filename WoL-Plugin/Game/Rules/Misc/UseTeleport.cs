@@ -68,7 +68,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
                 if (DifferenceGil > MaximumGil) { Trigger("You exceeded the Teleportation cost!"); return; }
                 if (DifferenceGil < MinimumGil) { Trigger("You didnt hit the Teleportation cost!"); return; }
             }
-            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if(e.StackTrace != null) Logger.Error(e.StackTrace); }
         }
 
         private void HandleFlagUpdate(ConditionFlag flag, bool value)
@@ -107,7 +107,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
                     }
                 }
             }
-            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if(e.StackTrace != null) Logger.Error(e.StackTrace); }
             return output;
         }
 

@@ -81,9 +81,9 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
                 if (sender != Plugin.LocalPlayer && type == XivChatType.TellOutgoing) sender = Plugin.LocalPlayer;
 
-                Logger.Log(3, $"{Name} | Comparing sender " + sender + " against " + Plugin.LocalPlayer + " is same player?: " + sender.Equals(Plugin.LocalPlayer));
-
                 if (sender == null || sender != Plugin.LocalPlayer) return;
+
+                Logger.Log(3, $"{Name} | Comparing sender " + sender + " against " + Plugin.LocalPlayer + " is same player?: " + sender.Equals(Plugin.LocalPlayer));
 
                 if ((int)type <= 107 &&
                     (sender.Equals(Plugin.LocalPlayer)
@@ -122,7 +122,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     if (!found) Trigger($"You forgot to say a Enforced Word!", sender);
                 }
             }
-            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if(e.StackTrace != null) Logger.Error(e.StackTrace); }
         }
 
         public override void DrawExtraButton()
