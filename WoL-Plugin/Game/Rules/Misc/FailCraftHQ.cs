@@ -67,13 +67,13 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         {
             try
             {
-                Logger.Log(4, $"{type} {data} - isCrafing {isCrafting}");
+                Logger.Log(3, $"{Name} | {type} {data} - isCrafing {isCrafting}");
                 if (type != GameInventoryEvent.Added) return;
                 if (!isCrafting) return;
                 Item? itemData = Service.DataManager.GetExcelSheet<Item>().GetRowOrDefault(data.Item.BaseItemId);
                 if (itemData == null) return;
 
-                Logger.Log(3, $"MaxQuality: {MaxQuality} Reached Quality: {CurrentQuality} which is {(double)CurrentQuality / MaxQuality * 100}%");
+                Logger.Log(3, $"{Name} | MaxQuality: {MaxQuality} Reached Quality: {CurrentQuality} which is {(double)CurrentQuality / MaxQuality * 100}%");
 
                 if (MaxQuality > 0 && (double)CurrentQuality / MaxQuality * 100 < MinimumQualityPercent)
                 {
@@ -91,8 +91,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 
 
             }
-            catch (Exception ex) { }
-        }
+			catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); }
+		}
 
         private void UpdateState(ConditionFlag flag, bool value)
         {

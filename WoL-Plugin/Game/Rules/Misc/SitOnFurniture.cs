@@ -85,7 +85,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                 safetyStop++;
                 if (Plugin.LocalPlayerCharacter == null || !Plugin.LocalPlayerCharacter.IsValid())
                 {
-                    Logger.Log(3, "No Player Character.");
+                    Logger.Log(3, $"{Name} | No Player Character.");
                     sittingOnChair = false;
                     sittingOnChairTimer.Stop();
                     safetyStop = 0;
@@ -94,7 +94,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
                 if (safetyStop > 10)
                 {
-                    Logger.Log(3, "Timer has exceeded safety limit - aborting Chair Check.");
+                    Logger.Log(3, $"{Name} | Timer has exceeded safety limit - aborting Chair Check.");
                     sittingOnChair = false;
                     sittingOnChairTimer.Stop();
                     safetyStop = 0;
@@ -108,7 +108,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                 }
                 else
                 {
-                    Logger.Log(4, "Moved from Position.");
+                    Logger.Log(3, $"{Name} | Moved from Position.");
                     sittingOnChair = false;
                     sittingOnChairTimer.Stop();
                     safetyStop = 0;

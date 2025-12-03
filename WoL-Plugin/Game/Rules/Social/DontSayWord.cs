@@ -74,14 +74,14 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     if (payload.Type == PayloadType.Player) sender = new(payload);
                 }
 
-                Logger.Log(4, "Message from: " + senderE.TextValue + " comparing against " + Plugin.LocalPlayer.Name + " type: " + type.ToString());
+                Logger.Log(3, $"{Name} | Message from: " + senderE.TextValue + " comparing against " + Plugin.LocalPlayer.Name + " type: " + type.ToString());
 
                 string senderClean = StringSanitizer.LetterOrDigit(senderE.TextValue);
                 if (sender == null && senderClean == Plugin.LocalPlayer.Name) sender = Plugin.LocalPlayer; // If there is no player payload, check if names match atleast.
 
                 if (sender != Plugin.LocalPlayer && type == XivChatType.TellOutgoing) sender = Plugin.LocalPlayer;
 
-                Logger.Log(4, "Comparing sender " + sender + " against " + Plugin.LocalPlayer + " is same player?: " + sender.Equals(Plugin.LocalPlayer));
+                Logger.Log(3, $"{Name} | Comparing sender " + sender + " against " + Plugin.LocalPlayer + " is same player?: " + sender.Equals(Plugin.LocalPlayer));
 
                 if (sender == null || sender != Plugin.LocalPlayer) return;
 
@@ -95,7 +95,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     foreach (var enforcedWord in EnforcedWords) // Go through every banned word the user put in.
                     {
                         int spaceAmount = enforcedWord.Word.CountSpaces();
-                        Logger.Log(4, "Found " + spaceAmount + " spaces.");
+                        Logger.Log(3, $"{Name} | Found " + spaceAmount + " spaces.");
 
                         string[] words = message.Split(' ');
                         for (int i = 0; i < words.Length; i++)
@@ -106,11 +106,11 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                                 for (int j = i + 1; j < words.Length; j++)
                                 {
                                     wordsToCompare += " " + words[j];
-                                    Logger.Log(4, "Added " + words[j] + " to the compound.");
+                                    Logger.Log(3, $"{Name} | Added " + words[j] + " to the compound.");
                                 }
                             }
 
-                            Logger.Log(4, "Comparing " + wordsToCompare + " against " + enforcedWord.Word + " which is " + enforcedWord.Compare(wordsToCompare));
+                            Logger.Log(3, $"{Name} | Comparing " + wordsToCompare + " against " + enforcedWord.Word + " which is " + enforcedWord.Compare(wordsToCompare));
 
                             if (enforcedWord.Compare(wordsToCompare)) // Now, with both parts. Check each said word, against all banned words. If any of them match, Trigger the Rule and end the Logic.
                             {
@@ -120,22 +120,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                         }
                     }
                     if (!found) Trigger($"You forgot to say a Enforced Word!", sender);
-
-
-                        /*
-                        foreach (var EnforcedWord in EnforcedWords)
-                        {
-                            foreach (var word in message.Split(" "))
-                            {
-                                if (EnforcedWord.Compare(word))
-                                {
-                                    found = true;
-                                }
-                            }
-                        }
-                        if (!found) Trigger($"You forgot to say a Enforced Word!", sender);
-                        */
-                    }
+                }
             }
             catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); }
         }

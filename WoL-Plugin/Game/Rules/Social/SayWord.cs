@@ -77,14 +77,14 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     if (payload.Type == PayloadType.Player) sender = new(payload); // FF messages are split into Payloads, so that some of the stuff is clickable. You can pass a Player payload to the "Player" class and it will filter out everything that you dont need.
                 }
 
-                Logger.Log(4, "Message from: " + senderE.TextValue + " comparing against " + Plugin.LocalPlayer.Name + " type: " + type.ToString());
+                Logger.Log(3, $"{Name} | Message from: " + senderE.TextValue + " comparing against " + Plugin.LocalPlayer.Name + " type: " + type.ToString());
 
                 string senderClean = StringSanitizer.LetterOrDigit(senderE.TextValue);
                 if (sender == null && senderClean == Plugin.LocalPlayer.Name) sender = Plugin.LocalPlayer; // If there is no player payload, check if names match atleast.
 
                 if (sender != Plugin.LocalPlayer && type == XivChatType.TellOutgoing) sender = Plugin.LocalPlayer;
 
-                Logger.Log(4, "Comparing sender " + sender + " against " + Plugin.LocalPlayer + " is same player?: " + sender.Equals(Plugin.LocalPlayer));
+                Logger.Log(3, $"{Name} | Comparing sender " + sender + " against " + Plugin.LocalPlayer + " is same player?: " + sender.Equals(Plugin.LocalPlayer));
 
                 if (sender == null || sender != Plugin.LocalPlayer) return;
 
@@ -96,7 +96,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     foreach (var bannedWord in BannedWords) // Go through every banned word the user put in.
                     {
                         int spaceAmount = bannedWord.Word.CountSpaces();
-                        Logger.Log(4, "Found " + spaceAmount + " spaces.");
+                        Logger.Log(3, $"{Name} | Found " + spaceAmount + " spaces.");
 
                         string[] words = message.Split(' ');
                         for (int i = 0; i < words.Length; i++)
@@ -107,31 +107,19 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                                 for (int j = i+1; j < words.Length; j++)
                                 {
                                     wordsToCompare += " " + words[j];
-                                    Logger.Log(4, "Added " + words[j] + " to the compound.");
+                                    Logger.Log(3, $"{Name} | Added " + words[j] + " to the compound.");
                                 }
                             }
 
-                            Logger.Log(4, "Comparing " + wordsToCompare + " against " + bannedWord.Word + " which is " + bannedWord.Compare(wordsToCompare));
+                            Logger.Log(3, $"{Name} | Comparing " + wordsToCompare + " against " + bannedWord.Word + " which is " + bannedWord.Compare(wordsToCompare));
                             
                             if (bannedWord.Compare(wordsToCompare)) // Now, with both parts. Check each said word, against all banned words. If any of them match, Trigger the Rule and end the Logic.
                             {
                                 Trigger($"You have said {bannedWord}!", sender);
                                 return;
                             }
-                            Logger.Log(4, "Word failed.\n=========");
+                            Logger.Log(3, $"{Name} | Word failed.\n=========");
                         }
-
-                        /*
-                        foreach (var word in message.Split(" ")) // Split the message we sent into seperate words and go through every said word.
-                        {
-                            Logger.Log(4, "Comparing " + word + " against " + bannedWord.Word + " which is " + bannedWord.Compare(word));
-                            if (bannedWord.Compare(word)) // Now, with both parts. Check each said word, against all banned words. If any of them match, Trigger the Rule and end the Logic.
-                            {
-                                Trigger($"You have said {bannedWord}!", sender);
-                                return;
-                            }
-                        }
-                        */
                     }
                 }
             }
