@@ -37,8 +37,8 @@ public sealed class Plugin : IDalamudPlugin
     private const string OpenShockRemote = "/wolremote";
     private const string SwapPreset = "/wolpreset";
 
-    public const int currentVersion = 576;
-    public const String currentVersionString = "0.5.7.6";
+    public const int currentVersion = 580;
+    public const String currentVersionString = "0.5.8.0";
     public const int configurationVersion = 501;
     public const string randomKey = "Currently Unused";
 
