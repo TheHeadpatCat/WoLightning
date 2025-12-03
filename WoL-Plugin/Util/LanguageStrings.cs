@@ -99,5 +99,28 @@ namespace WoLightning.WoL_Plugin.Util
             return output;
         }
 
+        public static string MateriaMeldFailedTrigger()
+        {
+            ClientLanguage Language = (ClientLanguage)Service.GameConfig.System.GetUInt("Language");
+
+            string output = "Unknown";
+            switch (Language)
+            {
+                case ClientLanguage.English:
+                    output = "You are unable to attach a ";
+                    break;
+                case ClientLanguage.French:
+                    output = "Le sertissage du ";
+                    break;
+                case ClientLanguage.German:
+                    output = "Einsetzen von Materia in den ";
+                    break;
+                case ClientLanguage.Japanese:
+                    output = "へのマテリア装着に失敗した ---"; // Doesnt work since it always includes the name of the player
+                    break;
+            }
+            return output;
+        }
+
     }
 }
