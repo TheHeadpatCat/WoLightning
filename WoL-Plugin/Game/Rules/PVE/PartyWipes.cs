@@ -40,7 +40,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
         {
             try
             {
-                if (Service.ClientState.LocalPlayer == null || Service.PartyList == null || Service.PartyList.Length == 0 || !Service.ClientState.LocalPlayer.StatusFlags.HasFlag(Dalamud.Game.ClientState.Objects.Enums.StatusFlags.InCombat)) { return; }
+                if (Service.ObjectTable.LocalPlayer == null || Service.PartyList == null || Service.PartyList.Length == 0 || !Service.ObjectTable.LocalPlayer.StatusFlags.HasFlag(Dalamud.Game.ClientState.Objects.Enums.StatusFlags.InCombat)) { return; }
 
                 int i = -1;
                 foreach (var Player in Service.PartyList)

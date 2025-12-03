@@ -39,7 +39,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
         {
             try
             {
-                if (Service.ClientState.LocalPlayer == null || Service.PartyList == null || Service.PartyList.Length == 0) { return; }
+                if (Service.ObjectTable.LocalPlayer == null || Service.PartyList == null || Service.PartyList.Length == 0) { return; }
 
                 if (LastPartySize != Service.PartyList.Length) // If someone leaves or enters the party, reset the index.
                 {

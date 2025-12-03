@@ -96,7 +96,7 @@ namespace WoLightning.Clients.Webserver
         public async void Send(OperationCode Op, string? OpData, Player? Target)
         {
             if (Status == ConnectionStatusWebserver.Unavailable) return;
-            if (WebSocket == null || Service.ClientState.LocalPlayer == null) return;
+            if (WebSocket == null || Service.ObjectTable.LocalPlayer == null) return;
             try
             {
                 NetPacket packet = new NetPacket(Op, Plugin.LocalPlayer, OpData, Target);

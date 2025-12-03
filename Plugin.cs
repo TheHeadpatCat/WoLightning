@@ -35,6 +35,7 @@ public sealed class Plugin : IDalamudPlugin
     private const string Failsafe = "/red";
     private const string OpenConfigFolder = "/wolfolder";
     private const string OpenShockRemote = "/wolremote";
+    private const string SwapPreset = "/wolpreset";
 
     public const int currentVersion = 576;
     public const String currentVersionString = "0.5.7.6";
@@ -132,8 +133,8 @@ public sealed class Plugin : IDalamudPlugin
 
     private void onUpdate(IFramework framework)
     {
-        if (LocalPlayerCharacter == null && Service.ClientState.LocalPlayer != null) onLogin();
-        if (LocalPlayerCharacter == null || !LocalPlayerCharacter.IsValid()) LocalPlayerCharacter = Service.ClientState.LocalPlayer;
+        if (LocalPlayerCharacter == null && Service.ObjectTable.LocalPlayer != null) onLogin();
+        if (LocalPlayerCharacter == null || !LocalPlayerCharacter.IsValid()) LocalPlayerCharacter = Service.ObjectTable.LocalPlayer;
     }
 
     private void onLogin()
@@ -141,7 +142,7 @@ public sealed class Plugin : IDalamudPlugin
         try
         {
 
-            LocalPlayerCharacter = Service.ClientState.LocalPlayer;
+            LocalPlayerCharacter = Service.ObjectTable.LocalPlayer;
             LocalPlayer = new Player(LocalPlayerCharacter.Name.ToString(), (int)LocalPlayerCharacter.HomeWorld.Value.RowId);
 
             if (!File.Exists(Service.PluginInterface.GetPluginConfigDirectory() + "\\version")) // Either new installation or old data - either way, purge.
@@ -155,7 +156,7 @@ public sealed class Plugin : IDalamudPlugin
 
             int version = int.Parse(File.ReadAllText(Service.PluginInterface.GetPluginConfigDirectory() + "\\version"));
 
-            ConfigurationDirectoryPath = Service.PluginInterface.GetPluginConfigDirectory() + "\\" + Service.ClientState.LocalPlayer.Name;
+            ConfigurationDirectoryPath = Service.PluginInterface.GetPluginConfigDirectory() + "\\" + Service.ObjectTable.LocalPlayer.Name;
             if (!Directory.Exists(ConfigurationDirectoryPath)) Directory.CreateDirectory(ConfigurationDirectoryPath);
             if (!Directory.Exists(ConfigurationDirectoryPath + "\\Presets")) Directory.CreateDirectory(ConfigurationDirectoryPath + "\\Presets");
             if (!Directory.Exists(ConfigurationDirectoryPath + "\\MasterPresets")) Directory.CreateDirectory(ConfigurationDirectoryPath + "\\MasterPresets");

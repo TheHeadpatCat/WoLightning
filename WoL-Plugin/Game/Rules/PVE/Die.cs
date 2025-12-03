@@ -27,7 +27,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
             if (IsRunning) return;
             IsRunning = true;
             Service.Framework.Update += Check;
-            Player = Service.ClientState.LocalPlayer;
+            Player = Service.ObjectTable.LocalPlayer;
 
         }
 
@@ -42,7 +42,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
         {
             try
             {
-                Player = Service.ClientState.LocalPlayer;
+                Player = Service.ObjectTable.LocalPlayer;
                 if (Player == null) { return; }
 
                 if (Player.IsDead && !IsTriggered) //Player died and Shock has not been triggered yet

@@ -37,7 +37,6 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         {
             try
             {
-                if (Service.ClientState.LocalPlayer == null) return;
                 if ((int)type == 2122 && messageE.Payloads.Find(pay => pay.Type == PayloadType.Icon) != null) // Deathroll channel and Icon found
                 {
                     string message = messageE.ToString();

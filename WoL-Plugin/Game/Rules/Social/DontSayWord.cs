@@ -61,7 +61,6 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
             try
             {
                 if (EnforcedWords.Count == 0) return;
-                if (Service.ClientState.LocalPlayer == null) return;
 
                 //check for chat type limitation
                 if (Chats.Count >= 1 && !Chats.Contains(type)) return;
@@ -75,12 +74,16 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     if (payload.Type == PayloadType.Player) sender = new(payload);
                 }
 
-                // Todo: Maybe create a Player object out of this instead?
+                Logger.Log(4, "Message from: " + senderE.TextValue + " comparing against " + Plugin.LocalPlayer.Name + " type: " + type.ToString());
+
+                if (sender != Plugin.LocalPlayer && type == XivChatType.TellOutgoing) sender = Plugin.LocalPlayer;
+
                 string senderClean = StringSanitizer.LetterOrDigit(senderE.TextValue);
                 if (sender == null && senderClean == Plugin.LocalPlayer.Name) sender = Plugin.LocalPlayer; // If there is no player payload, check if names match atleast.
-                else return;
 
-                Logger.Log(4, sender);
+                Logger.Log(4, "Comparing sender " + sender + " against " + Plugin.LocalPlayer + " is same player?: " + sender.Equals(Plugin.LocalPlayer));
+
+                if (sender == null || sender != Plugin.LocalPlayer) return;
 
                 if ((int)type <= 107 &&
                     (sender.Equals(Plugin.LocalPlayer)

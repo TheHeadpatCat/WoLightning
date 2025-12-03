@@ -62,7 +62,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         {
             try
             {
-                if (Service.ClientState.LocalPlayer == null) return; // If the LocalPlayer is null, we might be transitioning between areas or similiar. Abort the check in those cases.
+                if(BannedWords.Count == 0) return;
                 if (senderE.TextValue == null || senderE.TextValue == "") return;
 
                 // Check if the player has enabled any of the "Limit Chat" options, and if so check if the message is in one of those channels.
@@ -79,14 +79,14 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
                 Logger.Log(4, "Message from: " + senderE.TextValue + " comparing against " + Plugin.LocalPlayer.Name + " type: " + type.ToString());
 
-                // Todo: Maybe create a Player object out of this instead?
+                if (sender != Plugin.LocalPlayer && type == XivChatType.TellOutgoing) sender = Plugin.LocalPlayer;
+
                 string senderClean = StringSanitizer.LetterOrDigit(senderE.TextValue);
                 if (sender == null && senderClean == Plugin.LocalPlayer.Name) sender = Plugin.LocalPlayer; // If there is no player payload, check if names match atleast.
-                else return;
 
                 Logger.Log(4, "Comparing sender " + sender + " against " + Plugin.LocalPlayer + " is same player?: " + sender.Equals(Plugin.LocalPlayer));
 
-                if (sender != Plugin.LocalPlayer && type != XivChatType.TellOutgoing) return; // We check if we either are the Person that sent the message, or if the message is a outgoing /tell message - those have always have the "target" as their sender (for some reason)
+                if (sender == null || sender != Plugin.LocalPlayer) return;
 
                 // Check if the type of Chat we received is below a specific number. Noteably 107 is the last Social Chat that players can technically send stuff to.
                 if ((int)type <= 107)

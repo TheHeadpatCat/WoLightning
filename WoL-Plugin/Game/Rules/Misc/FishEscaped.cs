@@ -27,7 +27,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             if (IsRunning) return;
             IsRunning = true;
             Service.ToastGui.QuestToast += Check;
-            Player = Service.ClientState.LocalPlayer;
+            Player = Service.ObjectTable.LocalPlayer;
         }
 
         override public void Stop()
@@ -41,7 +41,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         {
             try
             {
-                Player = Service.ClientState.LocalPlayer;
+                Player = Service.ObjectTable.LocalPlayer;
                 if (Player == null) { return; }
                 if (Player.MaxGp == 0) return; // We are not a Gatherer.
                 if (messageE == null || messageE.ToString() == null) { return; }

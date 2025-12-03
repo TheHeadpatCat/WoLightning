@@ -51,12 +51,12 @@ namespace WoLightning.Game
 
             try
             {
-                if (Service.ClientState.LocalPlayer != null)
+                if (Service.ObjectTable.LocalPlayer != null)
                 {
                     IGameObject? instigatorObject = Service.ObjectTable.FirstOrDefault(x => (ulong)x.Address == instigatorAddr);
                     IGameObject? targetObject = Service.ObjectTable.FirstOrDefault(x => x.GameObjectId == targetId);
 
-                    bool isLocalPlayerTarget = targetId == Service.ClientState.LocalPlayer.GameObjectId;
+                    bool isLocalPlayerTarget = targetId == Service.ObjectTable.LocalPlayer.GameObjectId;
 
                     Logger.Log(4, $"EmoteHook - ID: {emoteId} " +
                         $"\nInstigator - Address: {instigatorAddr} Obj: {instigatorObject}" +
@@ -74,7 +74,7 @@ namespace WoLightning.Game
                     }
 
                     // Special - We are using a sit emote.
-                    if (instigatorObject.GameObjectId == Service.ClientState.LocalPlayer.GameObjectId
+                    if (instigatorObject.GameObjectId == Service.ObjectTable.LocalPlayer.GameObjectId
                         && (emoteId >= 50 && emoteId <= 52))
                     {
                         OnSitEmote?.Invoke(emoteId);
@@ -86,7 +86,7 @@ namespace WoLightning.Game
                     // We are not the target.
                     if (targetObject == null) // There is no target.
                     {
-                        if (instigatorObject.GameObjectId == Service.ClientState.LocalPlayer.GameObjectId) // We sent a Emote without a target.
+                        if (instigatorObject.GameObjectId == Service.ObjectTable.LocalPlayer.GameObjectId) // We sent a Emote without a target.
                             OnEmoteSelf?.Invoke(emoteId);
                         else
                             OnEmoteUnrelated?.Invoke((IPlayerCharacter)instigatorObject, targetObject, emoteId); // Someone sent a Emote without a target.
@@ -95,7 +95,7 @@ namespace WoLightning.Game
                         return;
                     }
 
-                    if (instigatorObject.GameObjectId == Service.ClientState.LocalPlayer.GameObjectId)
+                    if (instigatorObject.GameObjectId == Service.ObjectTable.LocalPlayer.GameObjectId)
                         OnEmoteOutgoing?.Invoke(targetObject, emoteId); // We sent a Emote to a target.
                     else
                         OnEmoteUnrelated?.Invoke((IPlayerCharacter)instigatorObject, targetObject, emoteId); // Someone is sending a Emote to someone else.

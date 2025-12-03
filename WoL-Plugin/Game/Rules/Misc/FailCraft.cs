@@ -27,7 +27,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             if (IsRunning) return;
             IsRunning = true;
             Service.ToastGui.QuestToast += Check;
-            Player = Service.ClientState.LocalPlayer;
+            Player = Service.ObjectTable.LocalPlayer;
         }
 
         override public void Stop()
@@ -41,7 +41,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         {
             try
             {
-                if (Player == null) { Player = Service.ClientState.LocalPlayer; return; }
+                if (Player == null) { Player = Service.ObjectTable.LocalPlayer; return; }
                 if (Player.MaxCp == 0) return; // We are not a Crafter.
                 String message = messageE.ToString();
                 if (message.Contains(LanguageStrings.FailCraftTrigger())) Trigger("You have failed a Craft!");

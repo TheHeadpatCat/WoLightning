@@ -43,7 +43,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             Service.Condition.ConditionChange += UpdateState;
             Service.Framework.Update += UpdateQuality;
             Service.GameInventory.ItemAdded += Check;
-            Player = Service.ClientState.LocalPlayer;
+            Player = Service.ObjectTable.LocalPlayer;
 
             IsTriggered = false;
 
@@ -102,7 +102,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 
                 if (Player == null || Player.MaxCp == 0)
                 {
-                    Player = Service.ClientState.LocalPlayer;
+                    Player = Service.ObjectTable.LocalPlayer;
                     isCrafting = false;
                     return;
                 }

@@ -51,7 +51,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         {
             try
             {
-                if (Service.ClientState.LocalPlayer == null) return;
+                if (Service.ObjectTable.LocalPlayer == null) return;
                 if (!TriggeringEmotes.Contains(emoteId)) return; // Emote isnt listed
                 if (player.ObjectKind != Dalamud.Game.ClientState.Objects.Enums.ObjectKind.Player) return; // The Sender wasnt a player
                 Player sendingPlayer = new Player(player.Name.ToString(), (int)player.HomeWorld.RowId);

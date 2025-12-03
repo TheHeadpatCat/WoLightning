@@ -36,7 +36,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
             if (IsRunning) return;
             IsRunning = true;
             Service.Framework.Update += Check;
-            Player = Service.ClientState.LocalPlayer;
+            Player = Service.ObjectTable.LocalPlayer;
         }
 
         override public void Stop()
@@ -50,7 +50,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
         {
             try
             {
-                Player = Service.ClientState.LocalPlayer;
+                Player = Service.ObjectTable.LocalPlayer;
                 if (Player == null) { return; }
 
                 if (bufferFrames > 0)

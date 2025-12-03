@@ -72,7 +72,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 
             // Service.ToastGui.QuestToast += Check;   // Subscribing to some kind of Event to run our Check() on. If you do not subscribe to anything, your Check() will never get called.
             // Your Check() function also needs to match the fields of the Event you subscribed to - in this example your Check would be "Check(ref SeString messageE, ref QuestToastOptions options, ref bool isHandled)"
-            Player = Service.ClientState.LocalPlayer; // Setting up our Player so we can use them on the Check() function.
+            Player = Service.ObjectTable.LocalPlayer; // Setting up our Player so we can use them on the Check() function.
         }
 
         override public void Stop()
@@ -88,7 +88,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             // If you do not do this, and your Logic throws a error, the Plugin will crash.
             try
             {
-                if (Player == null) { Player = Service.ClientState.LocalPlayer; return; } // Double Checking that our Player Reference exists.
+                if (Player == null) { Player = Service.ObjectTable.LocalPlayer; return; } // Double Checking that our Player Reference exists.
 
                 // Do some Logic in here to figure out if we should Trigger from this Event call or not.
                 if (someDataFromTheEvent != null && someDataFromTheEvent.Equals("A String that would trigger this Rule"))

@@ -47,7 +47,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         {
             try
             {
-                if (Service.ClientState.LocalPlayer == null) return;
+                if (Service.ObjectTable.LocalPlayer == null) return;
                 if (!TriggeringEmotes.Contains(emoteId)) return; // Emote isnt listed
                 if (target.ObjectKind != Dalamud.Game.ClientState.Objects.Enums.ObjectKind.Player) return; // We arent targeting a player - somehow.
                 IPlayerCharacter character = (IPlayerCharacter)target;
