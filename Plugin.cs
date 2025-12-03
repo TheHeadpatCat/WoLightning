@@ -111,6 +111,10 @@ public sealed class Plugin : IDalamudPlugin
         {
             HelpMessage = "Opens the Shock Remote Window."
         });
+        Service.CommandManager.AddHandler(SwapPreset, new CommandInfo(OnSwapPreset)
+        {
+            HelpMessage = "Swaps to the named Preset."
+        });
 
         Service.PluginInterface.UiBuilder.Draw += DrawUI;
 
@@ -274,7 +278,8 @@ public sealed class Plugin : IDalamudPlugin
         Service.CommandManager.RemoveHandler(CommandNameAlias);
         Service.CommandManager.RemoveHandler(Failsafe);
         Service.CommandManager.RemoveHandler(OpenConfigFolder);
-
+        Service.CommandManager.RemoveHandler(OpenShockRemote);
+        Service.CommandManager.RemoveHandler(SwapPreset);
     }
 
     private void OnCommand(string command, string args)
@@ -305,6 +310,12 @@ public sealed class Plugin : IDalamudPlugin
     private void OnOpenShockRemote(string command, string arguments)
     {
         ShockRemoteWindow.Toggle();
+    }
+    private void OnSwapPreset(string command, string arguments)
+    {
+        arguments.Trim();
+        if (Configuration.loadPreset(arguments)) Service.ChatGui.Print($"Loaded Preset {Configuration.ActivePreset.Name}!");
+        else Service.ChatGui.PrintError($"Cannot find a Preset named \"{arguments}\"!\n(This Command is case-sensitive!)");
     }
     private void DrawUI() => WindowSystem.Draw();
     public void ToggleConfigUI() => ConfigWindow.Toggle();

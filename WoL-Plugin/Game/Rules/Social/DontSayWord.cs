@@ -76,10 +76,10 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
                 Logger.Log(4, "Message from: " + senderE.TextValue + " comparing against " + Plugin.LocalPlayer.Name + " type: " + type.ToString());
 
-                if (sender != Plugin.LocalPlayer && type == XivChatType.TellOutgoing) sender = Plugin.LocalPlayer;
-
                 string senderClean = StringSanitizer.LetterOrDigit(senderE.TextValue);
                 if (sender == null && senderClean == Plugin.LocalPlayer.Name) sender = Plugin.LocalPlayer; // If there is no player payload, check if names match atleast.
+
+                if (sender != Plugin.LocalPlayer && type == XivChatType.TellOutgoing) sender = Plugin.LocalPlayer;
 
                 Logger.Log(4, "Comparing sender " + sender + " against " + Plugin.LocalPlayer + " is same player?: " + sender.Equals(Plugin.LocalPlayer));
 
