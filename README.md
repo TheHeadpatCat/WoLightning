@@ -1,14 +1,15 @@
 
-
-
-# A FFXIV Plugin that integrates PiShock and OpenShock devices into the Game.
+# Warrior of Lightning  
+## A FFXIV Plugin that integrates [Pishock](https://pishock.com/#/) and [OpenShock](https://openshock.org/) devices.
 
 ![Plugin Icon](etc/iconSmall.png)
 
-If any problems or Questions or even suggestions come up, you can send those in our Discord Server!  
-https://discord.gg/hMyWcZyhRa  
+If any Problems, Questions or Suggestions come up, you can send those in the [Discord Server](https://discord.gg/hMyWcZyhRa)!  
 Or if you want to be fancy, open a Issue. That also works.  
   
+  
+  
+## Ingame UI Preview:
 ![Preview of Main Menu](etc/preview.png)
   
 ## Current Features
@@ -35,10 +36,7 @@ Or if you want to be fancy, open a Issue. That also works.
 - Presets for quick swapping of Settings    
 
 - A safeword with /red  
-  This disables all Pishock functionality from the plugin until used again.
-  
-  
-![Preview of Configuration](etc/configPreview.png)
+  This disables all Pishock & OpenShock functionality from the plugin until used again.
   
   
 ## Installation:  
