@@ -10,6 +10,8 @@ using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Util;
 using WoLightning.WoL_Plugin.Util.Types;
 
+/* Todo: Implement
+
 namespace WoLightning.WoL_Plugin.Game.Rules.Social
 {
     public class DontSayWordInContext : RuleBase
@@ -225,7 +227,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
             {
 
                 SpecificWord? target = null;
-                foreach (SpecificWord EnforcedWord in EnforcedWords)
+                foreach (SpecificWord EnforcedWord in ContextualWords)
                 {
                     if (EnforcedWord.Word.ToLower() == Input.ToLower())
                     {
@@ -235,13 +237,13 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                 }
                 if (target != null)
                 {
-                    EnforcedWords.Remove(target);
+                    ContextualWords.Remove(target);
                 }
 
                 target = new SpecificWord(Input);
                 target.NeedsPunctuation = Punctuation;
                 target.NeedsProperCase = ProperCase;
-                EnforcedWords.Add(target);
+                ContextualWords.Add(target);
 
                 Index = -1;
                 Input = new String("");
@@ -298,3 +300,4 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
     }
 }
+*/
