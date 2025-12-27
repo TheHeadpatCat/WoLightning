@@ -37,8 +37,8 @@ public sealed class Plugin : IDalamudPlugin
     private const string OpenShockRemote = "/wolremote";
     private const string SwapPreset = "/wolpreset";
 
-    public const int currentVersion = 581;
-    public const String currentVersionString = "0.5.8.1";
+    public const int currentVersion = 585;
+    public const String currentVersionString = "0.5.8.5";
     public const int configurationVersion = 501;
     public const string randomKey = "Currently Unused";
 
@@ -256,7 +256,7 @@ public sealed class Plugin : IDalamudPlugin
         if (MainWindow != null) WindowSystem.RemoveWindow(MainWindow);
         if (ConfigWindow != null) WindowSystem.RemoveWindow(ConfigWindow);
         if (DebugWindow != null) WindowSystem.RemoveWindow(DebugWindow);
-        WindowSystem?.RemoveWindow(BufferWindow);
+        if (BufferWindow != null && WindowSystem.Windows.Contains(BufferWindow)) WindowSystem?.RemoveWindow(BufferWindow);
 
         MainWindow?.Dispose();
         ConfigWindow?.Dispose();

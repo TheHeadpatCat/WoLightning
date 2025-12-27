@@ -13,10 +13,16 @@ namespace WoLightning.Util.Types
     [Serializable]
     public class Preset(string Name, string CreatorFullName) : IDisposable
     {
+        public int Version { get; set; } = 100;
 
         public bool isInitialized { get; set; } = false;
         public string Name { get; set; } = Name;
+
+
         public string CreatorFullName { get; set; } = CreatorFullName;
+        public bool IsPresetLocked { get; set; } = false;
+
+
 
         public bool AllowRulesInPvP { get; set; } = false;
 
@@ -68,6 +74,11 @@ namespace WoLightning.Util.Types
         {
             this.Plugin = Plugin;
             Logger.Log(3, "Initializing Preset - " + Name);
+
+            if(CreatorFullName == null || CreatorFullName.Equals("Unknown") || CreatorFullName.Length == 0)
+            {
+                CreatorFullName = Plugin.LocalPlayer.getFullName();
+            }
 
             foreach (PropertyInfo property in this.GetType().GetProperties())
             {

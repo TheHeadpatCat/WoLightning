@@ -429,7 +429,7 @@ public class ConfigWindow : Window, IDisposable
             var Whitelist = Configuration.ActivePreset.Whitelist;
             var Blacklist = Configuration.ActivePreset.Blacklist;
 
-            IGameObject? st = Service.TargetManager.Target;
+            IGameObject? st = Service.ObjectTable.LocalPlayer.TargetObject;
             if (st != null && st.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.Player)
             {
                 IPlayerCharacter st1 = (IPlayerCharacter)st;
@@ -549,7 +549,7 @@ public class ConfigWindow : Window, IDisposable
 
                 while (Configuration.PresetNames.Contains(ModalAddPresetInputName)) { ModalAddPresetInputName += "+"; }
 
-                Preset tPreset = new Preset(ModalAddPresetInputName, "Unknown");
+                Preset tPreset = new Preset(ModalAddPresetInputName, Plugin.LocalPlayer.getFullName());
                 Configuration.Presets.Add(tPreset);
                 Configuration.Save();
                 Configuration.loadPreset(ModalAddPresetInputName);

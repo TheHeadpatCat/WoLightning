@@ -1,5 +1,4 @@
-﻿using Dalamud.Game.ClientState.Objects;
-using Dalamud.IoC;
+﻿using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 
@@ -19,7 +18,7 @@ namespace WoLightning
         [PluginService] public static INotificationManager NotificationManager { get; private set; }
         [PluginService] public static IGameInteropProvider GameInteropProvider { get; private set; }
         [PluginService] public static IPartyList PartyList { get; private set; }
-        [PluginService] public static ITargetManager TargetManager { get; private set; }
+        //[PluginService] public static ITargetManager TargetManager { get; private set; }
         [PluginService] public static IDataManager DataManager { get; private set; }
         [PluginService] public static IToastGui ToastGui { get; private set; }
         [PluginService] public static IGameConfig GameConfig { get; private set; }

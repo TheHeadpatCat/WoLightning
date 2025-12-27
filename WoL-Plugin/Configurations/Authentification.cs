@@ -16,6 +16,7 @@ using WoLightning.WoL_Plugin.Clients.Pishock;
 namespace WoLightning.Configurations
 {
 
+    [Serializable]
     public class Authentification : IDisposable // This class is here to make sure the data that gets received from the server, is actually from this plugin (well not entirely, but it helps)
     {
         public int Version { get; set; } = 401;
