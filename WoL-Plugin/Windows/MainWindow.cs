@@ -3,6 +3,7 @@ using Dalamud.Interface.Windowing;
 using System;
 using System.Numerics;
 using WoLightning.Clients.Webserver;
+using WoLightning.Configurations;
 using WoLightning.Util;
 using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Clients.OpenShock;
@@ -209,17 +210,20 @@ public class MainWindow : Window, IDisposable
     {
         presetIndex = Plugin.Configuration.ActivePresetIndex;
         if (presetIndex == -1) Plugin.Configuration.Save();
+        if (Plugin.Configuration.IsLockedByController) ImGui.BeginDisabled();
         ImGui.SetNextItemWidth(WindowWidth - 15);
         if (ImGui.Combo("", ref presetIndex, [.. Plugin.Configuration.PresetNames], Plugin.Configuration.Presets.Count))
         {
             Plugin.Configuration.loadPreset(Plugin.Configuration.PresetNames[presetIndex]);
         }
+        if (Plugin.Configuration.IsLockedByController) ImGui.EndDisabled();
 
         if (Plugin.IsFailsafeActive)
         {
             ImGui.TextColored(ColorRed, "Failsafe is active.\nType /red to disable it.");
         }
 
+        if (Plugin.ControlSettings.FullControl) ImGui.BeginDisabled();
         if (Plugin.IsEnabled)
         {
             if (ImGui.Button("Stop Plugin", new Vector2(270, 40))) // Todo: Color coding
@@ -246,7 +250,7 @@ public class MainWindow : Window, IDisposable
             Plugin.Configuration.ActivateOnStart = ActivateOnStart;
             Plugin.Configuration.Save();
         }
-
+        if (Plugin.ControlSettings.FullControl) ImGui.EndDisabled();
 
         // Todo: Move this onto the api part
         /*if (ImGui.Button("Open Shocker Remote", new Vector2(ImGui.GetWindowSize().X - 10, 25)))
@@ -286,8 +290,10 @@ public class MainWindow : Window, IDisposable
             ImGui.SameLine();
             if (ImGui.RadioButton("OpenShock", !isPishockMenuOpen)) isPishockMenuOpen = false;
 
+            if (Plugin.Configuration.IsLockedByController) ImGui.BeginDisabled();
             if (isPishockMenuOpen) DrawPishockAccount();
             else DrawOpenShockAccount();
+            if (Plugin.Configuration.IsLockedByController) ImGui.EndDisabled();
 
         }
     }

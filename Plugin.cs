@@ -335,6 +335,13 @@ public sealed class Plugin : IDalamudPlugin
     }
     private void OnFailsafe(string command, string args)
     {
+
+        if (ControlSettings.SafewordDisabled)
+        {
+            Service.ChatGui.PrintError("The Safeword is disabled!\nThere is nothing you can do...");
+            return;
+        }
+
         IsFailsafeActive = !IsFailsafeActive;
         if (IsFailsafeActive) Service.ChatGui.Print("Failsafe is active!\nStopping all requests...");
         else Service.ChatGui.Print("Failsafe deactivated.");
@@ -352,6 +359,13 @@ public sealed class Plugin : IDalamudPlugin
     }
     private void OnSwapPreset(string command, string arguments)
     {
+
+        if (Configuration.IsLockedByController)
+        {
+            Service.ChatGui.PrintError($"{ControlSettings.Controller.Name} doesn't allow you to swap Presets!");
+            return;
+        }
+
         arguments.Trim();
         if (Configuration.loadPreset(arguments)) Service.ChatGui.Print($"Loaded Preset {Configuration.ActivePreset.Name}!");
         else Service.ChatGui.PrintError($"Cannot find a Preset named \"{arguments}\"!\n(This Command is case-sensitive!)");

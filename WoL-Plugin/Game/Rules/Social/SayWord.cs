@@ -62,7 +62,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         {
             try
             {
-                if(BannedWords.Count == 0) return;
+                if (BannedWords.Count == 0) return;
                 if (senderE.TextValue == null || senderE.TextValue == "") return;
 
                 // Check if the player has enabled any of the "Limit Chat" options, and if so check if the message is in one of those channels.

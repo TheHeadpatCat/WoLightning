@@ -144,6 +144,11 @@ public class ConfigWindow : Window, IDisposable
             return;
         }
 
+        if (Plugin.Configuration.IsLockedByController)
+        {
+            ImGui.Text($"{Plugin.ControlSettings.Controller.Name} doesn't allow you to edit Presets.");
+        }
+
         DrawHeader();
 
         if (Configuration.Version < 1) return; //safety check for old configs
@@ -163,17 +168,23 @@ public class ConfigWindow : Window, IDisposable
                 {
                     if (ImGui.BeginTabItem("Banned Words"))
                     {
+                        if (Configuration.IsLockedByController) ImGui.BeginDisabled();
                         ActivePreset.SayWord.DrawAdvancedOptions();
+                        if (Configuration.IsLockedByController) ImGui.EndDisabled();
                         ImGui.EndTabItem();
                     }
                     if (ImGui.BeginTabItem("Enforced Words"))
                     {
+                        if (Configuration.IsLockedByController) ImGui.BeginDisabled();
                         ActivePreset.DontSayWord.DrawAdvancedOptions();
+                        if (Configuration.IsLockedByController) ImGui.EndDisabled();
                         ImGui.EndTabItem();
                     }
                     if (ImGui.BeginTabItem("Trigger Words"))
                     {
+                        if (Configuration.IsLockedByController) ImGui.BeginDisabled();
                         ActivePreset.HearWord.DrawAdvancedOptions();
+                        if (Configuration.IsLockedByController) ImGui.EndDisabled();
                         ImGui.EndTabItem();
                     }
                 }
@@ -215,6 +226,8 @@ public class ConfigWindow : Window, IDisposable
     private void DrawPresetHeader()
     {
 
+        if (Configuration.IsLockedByController) ImGui.BeginDisabled();
+
         DrawModalAddPreset();
         DrawModalDeletePreset();
 
@@ -239,6 +252,8 @@ public class ConfigWindow : Window, IDisposable
             ImGui.OpenPopup("Delete Preset##delPreMod");
         }
 
+        if (Configuration.IsLockedByController) ImGui.EndDisabled();
+
     }
 
 
@@ -246,6 +261,8 @@ public class ConfigWindow : Window, IDisposable
     {
         if (ImGui.BeginTabItem("General"))
         {
+            if (Configuration.IsLockedByController) ImGui.BeginDisabled();
+
             bool showTriggerNotifs = Configuration.ActivePreset.showTriggerNotifs;
             if (ImGui.Checkbox("Show Trigger Notifications", ref showTriggerNotifs))
             {
@@ -300,6 +317,7 @@ public class ConfigWindow : Window, IDisposable
                 ImGui.SetTooltip("Allows you to select which Shockers show up on clicking the \"Assign Shockers\" button.");
             }
 
+            if (Configuration.IsLockedByController) ImGui.EndDisabled();
 
             ImGui.Spacing();
             ImGui.Separator();
@@ -409,7 +427,7 @@ public class ConfigWindow : Window, IDisposable
     {
         if (ImGui.BeginTabItem("Permissions"))
         {
-
+            if (Configuration.IsLockedByController) ImGui.BeginDisabled();
             bool isWhitelistEnabled = Configuration.ActivePreset.isWhitelistEnabled;
             if (ImGui.Checkbox("Activate Whitelist", ref isWhitelistEnabled))
             {
@@ -520,7 +538,7 @@ public class ConfigWindow : Window, IDisposable
             }
 
             ImGui.TextWrapped("These settings are Preset-Dependant. Swapping Presets will also swap these lists.");
-
+            if (Configuration.IsLockedByController) ImGui.EndDisabled();
 
             ImGui.EndTabItem();
         }

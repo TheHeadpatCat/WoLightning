@@ -75,6 +75,14 @@ namespace WoLightning.Util.Types
             this.Duration = Duration;
             CooldownTimer.AutoReset = false;
         }
+
+        public ShockOptions(OpMode Mode, int Intensity, int Duration)
+        {
+            this.OpMode = Mode;
+            this.Intensity = Intensity;
+            this.Duration = Duration;
+            CooldownTimer.AutoReset = false;
+        }
         public ShockOptions(int[] Settings)
         {
             this.OpMode = (OpMode)Settings[0];

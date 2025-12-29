@@ -3,12 +3,16 @@ using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface.Windowing;
 using Lumina.Excel.Sheets;
+using Lumina.Excel.Sheets.Experimental;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Numerics;
 using System.Text;
 using WoLightning.Clients.Webserver.Operations.Account;
+using WoLightning.Configurations;
 using WoLightning.Util.Types;
+using Emote = Lumina.Excel.Sheets.Emote;
 
 namespace WoLightning.WoL_Plugin.Windows
 {
@@ -25,8 +29,18 @@ namespace WoLightning.WoL_Plugin.Windows
 
         private string lockingEmoteName = "";
         private string unlockingEmoteName = "";
+        private string leashDistanceEmoteName = "";
+        private string leashEmoteName = "";
+        private string unleashEmoteName = "";
 
         private Vector4 Red = new(1, 0.2f, 0.2f, 1);
+
+        bool isModalShockerSelectorOpen = false;
+
+        Vector4 ColorNameEnabled = new Vector4(0.5f, 1, 0.3f, 0.9f);
+        Vector4 ColorNameBlocked = new Vector4(1.0f, 0f, 0f, 0.9f);
+        Vector4 ColorNameDisabled = new Vector4(1, 1, 1, 0.9f);
+        Vector4 ColorDescription = new Vector4(0.7f, 0.7f, 0.7f, 0.8f);
 
         public ControlWindow(Plugin plugin) : base("Warrior of Lightning - Control Settings")
         {
@@ -35,8 +49,8 @@ namespace WoLightning.WoL_Plugin.Windows
 
             SizeConstraints = new WindowSizeConstraints
             {
-                MinimumSize = new Vector2(500, 650),
-                MaximumSize = new Vector2(600, 800)
+                MinimumSize = new Vector2(500, 800),
+                MaximumSize = new Vector2(650, 950)
             };
             Plugin = plugin;
         }
@@ -61,7 +75,15 @@ namespace WoLightning.WoL_Plugin.Windows
                 return;
             }
 
-            ImGui.Text("Your current Controller:");
+            if (Plugin.ControlSettings.FullControl)
+            {
+                ImGui.BeginDisabled();
+                ImGui.Text("Your Controller for all of eternity:");
+            }
+            else
+            {
+                ImGui.Text("Your current Controller:");
+            }
             string controllerName = Plugin.ControlSettings.Controller.getFullName();
             ImGui.SetNextItemWidth(250);
             ImGui.BeginDisabled();
@@ -115,6 +137,9 @@ namespace WoLightning.WoL_Plugin.Windows
             ImGui.Separator();
             ImGui.Spacing();
 
+            ImGui.TextColored(ColorDescription, "All Emotes need to be used while targeting you.");
+
+
             bool lockAllowed = Plugin.ControlSettings.LockingAllowed;
             ushort lockEmote = Plugin.ControlSettings.LockingEmote;
             ushort unlockEmote = Plugin.ControlSettings.UnlockingEmote;
@@ -126,6 +151,7 @@ namespace WoLightning.WoL_Plugin.Windows
                 Plugin.ControlSettings.LockingAllowed = lockAllowed;
                 Plugin.ControlSettings.LockingEmote = lockEmote;
                 Plugin.ControlSettings.UnlockingEmote = unlockEmote;
+                if (!lockAllowed) Plugin.Configuration.IsLockedByController = false;
                 Plugin.ControlSettings.Save();
             }
 
@@ -147,11 +173,11 @@ namespace WoLightning.WoL_Plugin.Windows
             ImGui.InputTextWithHint("##LockingEmoteName", Plugin.ControlSettings.LastEmoteFromControllerName, ref lockingEmoteName, 64, ImGuiInputTextFlags.ReadOnly);
             ImGui.EndDisabled();
             ImGui.SameLine();
-            if (ImGui.Button("Set to Controllers last used Emote"))
+            if (ImGui.Button("Set to Controllers last used Emote##lockEmoteButton"))
             {
-                //lastEmote = Plugin.GameEmotes.getEmote(Plugin.ControlSettings.LastEmoteFromController);
                 if (Plugin.ControlSettings.LastEmoteFromController == 0) return;
                 lockEmote = Plugin.ControlSettings.LastEmoteFromController;
+                Plugin.ControlSettings.LockingEmote = lockEmote;
                 lockingEmoteName = Plugin.ControlSettings.LastEmoteFromControllerName;
             }
 
@@ -161,11 +187,11 @@ namespace WoLightning.WoL_Plugin.Windows
             ImGui.InputTextWithHint("##UnlockingEmoteName", Plugin.ControlSettings.LastEmoteFromControllerName, ref unlockingEmoteName, 64, ImGuiInputTextFlags.ReadOnly);
             ImGui.EndDisabled();
             ImGui.SameLine();
-            if (ImGui.Button("Set to Controllers last used Emote"))
+            if (ImGui.Button("Set to Controllers last used Emote##unlockEmoteButton"))
             {
-                //lastEmote = Plugin.GameEmotes.getEmote(Plugin.ControlSettings.LastEmoteFromController);
                 if (Plugin.ControlSettings.LastEmoteFromController == 0) return;
                 unlockEmote = Plugin.ControlSettings.LastEmoteFromController;
+                Plugin.ControlSettings.UnlockingEmote = unlockEmote;
                 unlockingEmoteName = Plugin.ControlSettings.LastEmoteFromControllerName;
             }
 
@@ -176,40 +202,76 @@ namespace WoLightning.WoL_Plugin.Windows
             ImGui.Spacing();
 
             bool leashAllowed = Plugin.ControlSettings.LeashAllowed;
-            int leashDistance = Plugin.ControlSettings.LeashDistance;
+            float leashDistance = Plugin.ControlSettings.LeashDistance;
             float leashGraceTime = Plugin.ControlSettings.LeashGraceTime;
             ushort leashEmote = Plugin.ControlSettings.LeashEmote;
+            ushort unleashEmote = Plugin.ControlSettings.UnleashEmote;
             ushort leashDistanceEmote = Plugin.ControlSettings.LeashDistanceEmote;
 
-            if (leashEmote == 0 || leashDistanceEmote == 0) ImGui.BeginDisabled();
+            if (leashEmote == 0 || unleashEmote == 0 || leashDistanceEmote == 0) ImGui.BeginDisabled();
 
-            if (ImGui.Checkbox("Allow Leashing", ref lockAllowed))
+            if (ImGui.Checkbox("Allow Leashing", ref leashAllowed))
             {
                 Plugin.ControlSettings.LeashAllowed = leashAllowed;
                 Plugin.ControlSettings.LeashDistance = leashDistance;
                 Plugin.ControlSettings.LeashGraceTime = leashGraceTime;
                 Plugin.ControlSettings.LeashEmote = leashEmote;
+                Plugin.ControlSettings.UnleashEmote = unleashEmote;
                 Plugin.ControlSettings.LeashDistanceEmote = leashDistanceEmote;
                 Plugin.ControlSettings.Save();
             }
 
-            if (leashEmote == 0 || leashDistanceEmote == 0) ImGui.EndDisabled();
+            if (leashEmote == 0 || unleashEmote == 0 || leashDistanceEmote == 0) ImGui.EndDisabled();
 
             ImGui.SameLine();
             ImGui.TextDisabled(" (?)");
             if (ImGui.IsItemHovered())
             {
                 ImGui.SetTooltip("Allows the Controller to leash you by using a Emote on you." +
+                    "\nIf the Emote for leashing and unleashin is the same, using it will toggle the Leash." +
                     "\nYou will have to stay within a certain radius of them, or get shocked after some time." +
-                    "\nA second emote is used to adjust the radius to whatever current distance you have." +
-                    "\nAfter leaving the radius and grace period, you will first receive 2 warning vibrations, then increasing shocks." +
-                    "\nIt is currently not possible to adjust the shock settings for this... sorry!" +
+                    "\nAnother emote is used to adjust the radius to whatever current distance you have." +
+                    "\nAfter leaving the radius and a grace period, you will first receive 2 warning vibrations, then increasing shocks." +
+                    "\nIf the Controller leaves the Area, you will still have to follow them and get a Grace of 25 seconds to do so." +
+                    "\n\n\nIt is currently not possible to adjust the shock settings for this... sorry!" +
                     "\nAlso, never forget that you can use /red to stop receiving any more shocks!");
+            }
+
+            if (leashAllowed) ImGui.BeginDisabled();
+
+            DrawShockerSelector();
+
+            ImGui.Text("Emote to attach Leash:");
+            ImGui.SetNextItemWidth(250);
+            ImGui.BeginDisabled();
+            ImGui.InputTextWithHint("##LeashEmoteName", Plugin.ControlSettings.LastEmoteFromControllerName, ref leashEmoteName, 64, ImGuiInputTextFlags.ReadOnly);
+            ImGui.EndDisabled();
+            ImGui.SameLine();
+            if (ImGui.Button("Set to Controllers last used Emote##leashEmoteButton"))
+            {
+                if (Plugin.ControlSettings.LastEmoteFromController == 0) return;
+                leashEmote = Plugin.ControlSettings.LastEmoteFromController;
+                Plugin.ControlSettings.LeashEmote = leashEmote;
+                leashEmoteName = Plugin.ControlSettings.LastEmoteFromControllerName;
+            }
+
+            ImGui.Text("Emote to remove Leash:");
+            ImGui.SetNextItemWidth(250);
+            ImGui.BeginDisabled();
+            ImGui.InputTextWithHint("##UnleashEmoteName", Plugin.ControlSettings.LastEmoteFromControllerName, ref unleashEmoteName, 64, ImGuiInputTextFlags.ReadOnly);
+            ImGui.EndDisabled();
+            ImGui.SameLine();
+            if (ImGui.Button("Set to Controllers last used Emote##unleashEmoteButton"))
+            {
+                if (Plugin.ControlSettings.LastEmoteFromController == 0) return;
+                unleashEmote = Plugin.ControlSettings.LastEmoteFromController;
+                Plugin.ControlSettings.UnleashEmote = unleashEmote;
+                unleashEmoteName = Plugin.ControlSettings.LastEmoteFromControllerName;
             }
 
             ImGui.Text("Maximum Distance from Controller: (yalms)");
             ImGui.SetNextItemWidth(75);
-            if (ImGui.InputInt("##leashDistanceInput", ref leashDistance))
+            if (ImGui.InputFloat("##leashDistanceInput", ref leashDistance))
             {
                 Plugin.ControlSettings.LeashDistance = leashDistance;
             }
@@ -217,12 +279,91 @@ namespace WoLightning.WoL_Plugin.Windows
             ImGui.SetNextItemWidth(140);
             if (ImGui.Button("Set to current Distance"))
             {
-                var controller = Plugin.ControlSettings.Controller.FindInObjectTable();
-                leashDistance = controller.YalmDistanceX + controller.YalmDistanceZ;
+                leashDistance = Plugin.ControlSettings.DistanceFromController();
                 Plugin.ControlSettings.LeashDistance = leashDistance;
+                
             }
 
+            ImGui.Text("Emote to change to current Distance: (can't be same as above)");
+            ImGui.SetNextItemWidth(250);
+            ImGui.BeginDisabled();
+            ImGui.InputTextWithHint("##DistanceEmoteName", Plugin.ControlSettings.LastEmoteFromControllerName, ref leashDistanceEmoteName, 64, ImGuiInputTextFlags.ReadOnly);
+            ImGui.EndDisabled();
+            ImGui.SameLine();
+            if (ImGui.Button("Set to Controllers last used Emote##distanceEmoteButton"))
+            {
+                if (Plugin.ControlSettings.LastEmoteFromController == 0) return;
+                leashDistanceEmote = Plugin.ControlSettings.LastEmoteFromController;
+                Plugin.ControlSettings.LeashDistanceEmote = leashDistanceEmote;
+                leashDistanceEmoteName = Plugin.ControlSettings.LastEmoteFromControllerName;
+            }
 
+            ImGui.Text("Grace Time in Seconds:");
+            ImGui.SetNextItemWidth(95);
+            if (ImGui.InputFloat("##leashGraceInput", ref leashGraceTime))
+            {
+                Plugin.ControlSettings.LeashGraceTime = leashGraceTime;
+            }
+
+            if (leashAllowed) ImGui.EndDisabled();
+
+
+            ImGui.Spacing();
+            ImGui.Separator();
+            ImGui.Spacing();
+            ImGui.Spacing();
+            ImGui.Spacing();
+            ImGui.Spacing();
+            ImGui.Spacing();
+
+            bool fullControl = Plugin.ControlSettings.FullControl;
+
+            if (!swapAllowed || !lockAllowed || !leashAllowed) ImGui.BeginDisabled();
+
+            if (ImGui.Checkbox("Make Settings Permanent", ref fullControl))
+            {
+                Plugin.ControlSettings.FullControl = fullControl;
+                Plugin.Configuration.ActivateOnStart = true;
+                if (!Plugin.IsEnabled)
+                {
+                    Plugin.IsEnabled = true;
+                    Plugin.Configuration.ActivePreset.StartRules();
+                }
+                Plugin.ControlSettings.Save();
+            }
+
+            if (!swapAllowed || !lockAllowed || !leashAllowed) ImGui.EndDisabled();
+
+            ImGui.SameLine();
+            ImGui.TextDisabled(" (?)");
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.SetTooltip("Enabling this makes you unable to remove the Controller or their Permissions." +
+                    "\nThe only way to remove them, is by either resetting the Plugins data, or changing the Files in /wolfolder manually." +
+                    "\nYou can only enable this, once you have given all permissions to the Controller.");
+            }
+
+            if (Plugin.ControlSettings.FullControl) ImGui.EndDisabled();
+
+            if (fullControl)
+            {
+                if (Plugin.ControlSettings.SafewordDisabled) ImGui.BeginDisabled();
+                bool safewordDisabled = Plugin.ControlSettings.SafewordDisabled;
+                if (ImGui.Checkbox("Disable /red Safeword", ref safewordDisabled))
+                {
+                    Plugin.ControlSettings.SafewordDisabled = safewordDisabled;
+                    Plugin.ControlSettings.Save();
+                }
+                if (Plugin.ControlSettings.SafewordDisabled) ImGui.EndDisabled();
+                ImGui.SameLine();
+                ImGui.TextDisabled(" (?)");
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetTooltip("Enabling this removes the /red safeword command." +
+                        "\nThis is potentially very dangerous, so please make absolutely sure that you actually want this!" +
+                        "\nOnce enabled, you cannot reverse this decision without resetting the Plugins data, or changing the Files in /wolfolder manually.");
+                }
+            }
 
         }
 
@@ -268,6 +409,163 @@ namespace WoLightning.WoL_Plugin.Windows
             {
                 hasAcceptedRisks = true;
             }
+
+            Emote? emote = null;
+            if (Plugin.ControlSettings.LockingEmote != 0)
+            {
+                emote = Plugin.GameEmotes.getEmote(Plugin.ControlSettings.LockingEmote);
+                lockingEmoteName = ((Emote)emote!).Name.ToString();
+            }
+
+            if (Plugin.ControlSettings.UnlockingEmote != 0)
+            {
+                emote = Plugin.GameEmotes.getEmote(Plugin.ControlSettings.UnlockingEmote);
+                unlockingEmoteName = ((Emote)emote!).Name.ToString();
+            }
+
+            if (Plugin.ControlSettings.LeashDistanceEmote != 0)
+            {
+                emote = Plugin.GameEmotes.getEmote(Plugin.ControlSettings.LeashDistanceEmote);
+                leashDistanceEmoteName = ((Emote)emote!).Name.ToString();
+            }
+
+            if (Plugin.ControlSettings.LeashEmote != 0)
+            {
+                emote = Plugin.GameEmotes.getEmote(Plugin.ControlSettings.LeashEmote);
+                leashEmoteName = ((Emote)emote!).Name.ToString();
+            }
+
+            if (Plugin.ControlSettings.UnleashEmote != 0)
+            {
+                emote = Plugin.GameEmotes.getEmote(Plugin.ControlSettings.UnleashEmote);
+                unleashEmoteName = ((Emote)emote!).Name.ToString();
+            }
+
+        }
+
+
+        protected void DrawShockerSelector()
+        {
+            if (ImGui.Button($"Assigned {Plugin.ControlSettings.LeashShockOptions.getShockerCount()} Shockers##assignedShockersLeash", new Vector2(150, 25)))
+            {
+                isModalShockerSelectorOpen = true;
+                ImGui.OpenPopup("Select Shockers##ShockerSelectLeash");
+            }
+
+            if (isModalShockerSelectorOpen) //setup modal
+            {
+                Vector2 center = ImGui.GetMainViewport().GetCenter();
+                ImGui.SetNextWindowPos(center, ImGuiCond.Appearing, new Vector2(0.5f, 0.5f));
+                ImGui.SetNextWindowSize(new Vector2(400, 400));
+            }
+
+            if (ImGui.BeginPopupModal("Select Shockers##ShockerSelectLeash", ref isModalShockerSelectorOpen,
+            ImGuiWindowFlags.NoResize | ImGuiWindowFlags.Popup))
+            {
+                if (Plugin.Authentification.GetShockerCount() == 0)
+                {
+                    ImGui.TextWrapped("The Shockers are still being loaded!" +
+                        "\nIf this doesn't change, please make sure that your" +
+                        "\nAccount Settings are properly set up!");
+                    if (ImGui.Button($"Okay##okayShockerSelectorAbort", new Vector2(ImGui.GetWindowSize().X / 2, 25)))
+                    {
+                        ImGui.CloseCurrentPopup();
+                    }
+                    ImGui.EndPopup();
+                    return;
+                }
+
+
+
+                ImGui.Text("Please select all shockers that should activate for this trigger:");
+                ImGui.BeginGroup();
+                ImGui.Text("Available Pishock Devices:           ");
+                ImGui.BeginChild("PishockShockerList", new Vector2(180, 260));
+                foreach (var shocker in Plugin.Authentification.PishockShockers)
+                {
+                    if (Plugin.Configuration.ShownShockers == ShownShockers.None) continue;
+                    if (Plugin.Configuration.ShownShockers == ShownShockers.Personal && !shocker.isPersonal) continue;
+                    if (Plugin.Configuration.ShownShockers == ShownShockers.Shared && shocker.isPersonal) continue;
+
+
+                    bool isEnabled = Plugin.ControlSettings.LeashShockOptions.ShockersPishock.Find(sh => sh.getInternalId() == shocker.getInternalId()) != null;
+
+                    if (ImGui.Checkbox($"##shockerbox{shocker.getInternalId()}", ref isEnabled))
+                    { // this could probably be solved more elegantly
+                        if (isEnabled) Plugin.ControlSettings.LeashShockOptions.ShockersPishock.Add(shocker);
+                        else Plugin.ControlSettings.LeashShockOptions.ShockersPishock.RemoveAt(Plugin.ControlSettings.LeashShockOptions.ShockersPishock.FindIndex(sh => sh.getInternalId() == shocker.getInternalId()));
+                    }
+                    ImGui.SameLine();
+                    if (!shocker.isPersonal)
+                    {
+                        ImGui.BeginGroup();
+                        ImGui.Text(shocker.username);
+                        if (!shocker.isPaused) ImGui.TextColored(ColorNameEnabled, shocker.name);
+                        else ImGui.TextColored(ColorNameDisabled, "[Paused] " + shocker.name);
+                        ImGui.EndGroup();
+                        continue;
+                    }
+                    if (!shocker.isPaused) ImGui.TextColored(ColorNameEnabled, shocker.name);
+                    else ImGui.TextColored(ColorNameDisabled, "[Paused] " + shocker.name);
+                }
+
+                ImGui.EndChild();
+                ImGui.EndGroup();
+
+                ImGui.SameLine();
+
+                ImGui.BeginGroup();
+                ImGui.Text("Available OpenShock Devices:");
+                ImGui.BeginChild("OpenShockShockerList", new Vector2(180, 260));
+                foreach (var shocker in Plugin.Authentification.OpenShockShockers)
+                {
+                    bool isEnabled = Plugin.ControlSettings.LeashShockOptions.ShockersOpenShock.Find(sh => sh.getInternalId() == shocker.getInternalId()) != null;
+
+                    if (ImGui.Checkbox($"##shockerbox{shocker.getInternalId()}", ref isEnabled))
+                    { // this could probably be solved more elegantly
+                        if (isEnabled) Plugin.ControlSettings.LeashShockOptions.ShockersOpenShock.Add(shocker);
+                        else Plugin.ControlSettings.LeashShockOptions.ShockersOpenShock.RemoveAt(Plugin.ControlSettings.LeashShockOptions.ShockersOpenShock.FindIndex(sh => sh.getInternalId() == shocker.getInternalId()));
+                    }
+                    ImGui.SameLine();
+                    if (!shocker.isPaused) ImGui.TextColored(ColorNameEnabled, shocker.name);
+                    else ImGui.TextColored(ColorNameDisabled, "[Paused] " + shocker.name);
+                }
+                ImGui.EndChild();
+                ImGui.EndGroup();
+
+                ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 2 - 170, ImGui.GetWindowSize().Y - 65));
+                ImGui.SetNextItemWidth(200);
+                int ShownShockersIndex = (int)Plugin.Configuration.ShownShockers;
+                if (ImGui.Combo("Shown Shockers", ref ShownShockersIndex, ["All", "Personal Only", "Shared Only", "None...?"], 4))
+                {
+                    Plugin.Configuration.ShownShockers = (ShownShockers)ShownShockersIndex;
+                    Plugin.Configuration.Save();
+                }
+                ImGui.SameLine();
+                ImGui.TextDisabled(" (?)");
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetTooltip("Allows you to select which Shockers show up on clicking the \"Assign Shockers\" button.");
+                }
+
+                ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 2 - 170, ImGui.GetWindowSize().Y - 35));
+                ImGui.BeginGroup();
+                if (ImGui.Button($"Apply##applyLeash", new Vector2(ImGui.GetWindowSize().X - 120, 25)))
+                {
+                    ImGui.CloseCurrentPopup();
+                }
+                ImGui.SameLine();
+                if (ImGui.Button($"Reset##resetallLeash", new Vector2(ImGui.GetWindowSize().X / 8, 25)))
+                {
+                    Plugin.ControlSettings.LeashShockOptions.ShockersPishock.Clear();
+                }
+                ImGui.EndGroup();
+
+
+                ImGui.EndPopup();
+            }
+
+
         }
     }
 }

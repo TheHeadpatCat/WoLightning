@@ -412,7 +412,7 @@ namespace WoLightning.Clients.Pishock
             {
                 if (Status == ConnectionStatusPishock.Connecting) return;
                 if (ConnectionAttempts >= 7) return;
-                Client.Dispose();
+                Client?.Dispose();
                 Client = null;
                 await CreateSocket();
                 return;

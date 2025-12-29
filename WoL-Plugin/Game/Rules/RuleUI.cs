@@ -45,11 +45,13 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         {
             ImGui.BeginGroup();
             bool refEn = Rule.IsEnabled;
+            if (Plugin.Configuration.IsLockedByController) ImGui.BeginDisabled();
             if (ImGui.Checkbox("##checkbox" + Rule.Name, ref refEn))
             {
                 Rule.setEnabled(refEn);
                 Plugin.Configuration.saveCurrentPreset();
             }
+            if (Plugin.Configuration.IsLockedByController) ImGui.EndDisabled();
             if (Rule.IsEnabled)
             {
 
@@ -96,12 +98,14 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
         public void DrawOptions()
         {
+            if (Plugin.Configuration.IsLockedByController) ImGui.BeginDisabled();
             bool changed = false;
             DrawShockerSelector();
             if (Rule.hasExtraButton) Rule.DrawExtraButton();
             DrawOptionsBase(ref changed);
             DrawOptionsCooldown(ref changed);
             if (changed) Plugin.Configuration.saveCurrentPreset();
+            if (Plugin.Configuration.IsLockedByController) ImGui.EndDisabled();
         }
         protected void DrawOptionsBase(ref bool changed)
         {
