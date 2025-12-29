@@ -57,6 +57,7 @@ namespace WoLightning.Util.Types
         public PartyWipes PartyWipes { get; set; } = new();
         public TakeDamage TakeDamage { get; set; } = new();
         //public UseSkill UseSkill { get; set; }
+        public ForgetSync ForgetSync { get; set; } = new();
 
         // PVP Triggers
 
