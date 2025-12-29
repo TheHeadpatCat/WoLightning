@@ -156,7 +156,15 @@ public class MainWindow : Window, IDisposable
 
         ImGui.EndGroup();
 
-
+        ImGui.SameLine();
+        if (ImGui.ArrowButton("##RemoteButton", ImGuiDir.Right))
+        {
+            Plugin.ShockRemoteWindow.Toggle();
+        }
+        if (ImGui.IsItemHovered())
+        {
+            ImGui.SetTooltip("Open Shocker Remote");
+        }
 
     }
     private async void DrawWebserverAPI()

@@ -73,6 +73,7 @@ namespace WoLightning.WoL_Plugin.Configurations
         public void Initialize(Plugin plugin)
         {
             Plugin = plugin;
+            if (Controller == null) Plugin.Configuration.IsLockedByController = false;
             Plugin.EmoteReaderHooks.OnEmoteIncoming += OnEmoteIncoming;
             Service.ChatGui.ChatMessage += OnChatMessage;
         }
