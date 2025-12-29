@@ -40,7 +40,7 @@ public sealed class Plugin : IDalamudPlugin
     private const string OpenShockRemote = "/wolremote";
     private const string SwapPreset = "/wolpreset";
 
-    public static readonly Version CurrentVersion = new(6,0,0,'a');
+    public static readonly Version CurrentVersion = new(6,0,2,'a');
 
     public const string randomKey = "Currently Unused";
 
@@ -335,11 +335,10 @@ public sealed class Plugin : IDalamudPlugin
     }
     private void OnFailsafe(string command, string args)
     {
-
+        
         if (ControlSettings.SafewordDisabled)
         {
-            Service.ChatGui.PrintError("The Safeword is disabled!\nThere is nothing you can do...");
-            return;
+            Service.ChatGui.PrintError("I know you disabled the safeword, but i just cant get myself to actually allow that... sorry!");
         }
 
         IsFailsafeActive = !IsFailsafeActive;

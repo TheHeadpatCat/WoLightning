@@ -41,6 +41,7 @@ namespace WoLightning.WoL_Plugin.Configurations
         public bool LeashAllowed { get; set; } = false;
         public float LeashDistance { get; set; } = 8.5f;
         public float LeashGraceTime { get; set; } = 5;
+        public float LeashGraceAreaTime { get; set; } = 30;
         public ushort LeashEmote { get; set; }
         public ushort UnleashEmote { get; set; }
         public ushort LeashDistanceEmote { get; set; }
@@ -203,7 +204,7 @@ namespace WoLightning.WoL_Plugin.Configurations
                     if(emoteId == LeashDistanceEmote)
                     {
                         LeashDistance = DistanceFromController() + 0.05f;
-                        Service.ToastGui.ShowQuest($"Leash Distance is now {LeashDistance} Yalms");
+                        Service.ToastGui.ShowQuest($"Leash Distance is now {LeashDistance.ToString("0.0")} Yalms");
                         return;
                     }
                 }
@@ -256,7 +257,7 @@ namespace WoLightning.WoL_Plugin.Configurations
             LeashGraceTimer.AutoReset = false;
             LeashGraceTimer.Elapsed += OnGraceElapsed;
 
-            LeashGraceAreaTimer.Interval = 25000;
+            LeashGraceAreaTimer.Interval = LeashGraceAreaTime * 1000;
             LeashGraceAreaTimer.AutoReset = false;
             LeashGraceAreaTimer.Elapsed += OnGraceAreaElapsed;
 
@@ -354,7 +355,7 @@ namespace WoLightning.WoL_Plugin.Configurations
                 case 0: newOpt = new ShockOptions(OpMode.Vibrate, 30, 2); break;
                 case 1: newOpt = new ShockOptions(OpMode.Vibrate, 60, 2); break;
                 case 2: newOpt = new ShockOptions(OpMode.Shock, 10, 1); break;
-                case 3: newOpt = new ShockOptions(OpMode.Shock, 30, 2); break;
+                case 3: newOpt = new ShockOptions(OpMode.Shock, 30, 1); break;
                 case 4: newOpt = new ShockOptions(OpMode.Shock, 60, 2); break;
                 case 5: newOpt = new ShockOptions(OpMode.Shock, 80, 2); break;
                 case 6: newOpt = new ShockOptions(OpMode.Shock, 90, 2); break;
@@ -364,8 +365,8 @@ namespace WoLightning.WoL_Plugin.Configurations
             newOpt.ShockersPishock = LeashShockOptions.ShockersPishock;
             newOpt.ShockersOpenShock = LeashShockOptions.ShockersOpenShock;
             newOpt.Validate();
-            Plugin.ClientPishock.SendRequest(LeashShockOptions);
-            Plugin.ClientOpenShock.SendRequest(LeashShockOptions);
+            Plugin.ClientPishock.SendRequest(newOpt);
+            Plugin.ClientOpenShock.SendRequest(newOpt);
             Plugin.NotificationHandler.send($"You are too far from {Controller.Name}", "Leash is broken!");
             LeashShockAmount++;
         }

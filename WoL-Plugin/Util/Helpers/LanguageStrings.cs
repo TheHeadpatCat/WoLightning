@@ -122,5 +122,28 @@ namespace WoLightning.WoL_Plugin.Util
             return output;
         }
 
+        public static string FateLevelNotSynchedTrigger()
+        {
+            ClientLanguage Language = (ClientLanguage)Service.GameConfig.System.GetUInt("Language");
+
+            string output = "Unknown";
+            switch (Language)
+            {
+                case ClientLanguage.English:
+                    output = "Unable to attack FATE Target. Your level is too high.";
+                    break;
+                case ClientLanguage.French:
+                    output = "Impossible d'attaquer. Votre niveau est trop élevé pour cet ALÉA.";
+                    break;
+                case ClientLanguage.German:
+                    output = "Du kannst nicht angreifen, weil deine Stufe zu hoch ist.";
+                    break;
+                case ClientLanguage.Japanese:
+                    output = "uh, no";
+                    break;
+            }
+            return output;
+        }
+
     }
 }

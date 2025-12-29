@@ -97,6 +97,11 @@ namespace WoLightning.WoL_Plugin.Windows
             }
 
             ImGui.Spacing();
+            ImGui.Spacing();
+            ImGui.Text("When allowing Permissions, you'll need to put in all of the Settings first.");
+
+
+            ImGui.Spacing();
             ImGui.Separator();
             ImGui.Spacing();
 
@@ -204,6 +209,7 @@ namespace WoLightning.WoL_Plugin.Windows
             bool leashAllowed = Plugin.ControlSettings.LeashAllowed;
             float leashDistance = Plugin.ControlSettings.LeashDistance;
             float leashGraceTime = Plugin.ControlSettings.LeashGraceTime;
+            float leashGraceAreaTime = Plugin.ControlSettings.LeashGraceAreaTime;
             ushort leashEmote = Plugin.ControlSettings.LeashEmote;
             ushort unleashEmote = Plugin.ControlSettings.UnleashEmote;
             ushort leashDistanceEmote = Plugin.ControlSettings.LeashDistanceEmote;
@@ -215,6 +221,7 @@ namespace WoLightning.WoL_Plugin.Windows
                 Plugin.ControlSettings.LeashAllowed = leashAllowed;
                 Plugin.ControlSettings.LeashDistance = leashDistance;
                 Plugin.ControlSettings.LeashGraceTime = leashGraceTime;
+                Plugin.ControlSettings.LeashGraceAreaTime= leashGraceAreaTime;
                 Plugin.ControlSettings.LeashEmote = leashEmote;
                 Plugin.ControlSettings.UnleashEmote = unleashEmote;
                 Plugin.ControlSettings.LeashDistanceEmote = leashDistanceEmote;
@@ -232,7 +239,7 @@ namespace WoLightning.WoL_Plugin.Windows
                     "\nYou will have to stay within a certain radius of them, or get shocked after some time." +
                     "\nAnother emote is used to adjust the radius to whatever current distance you have." +
                     "\nAfter leaving the radius and a grace period, you will first receive 2 warning vibrations, then increasing shocks." +
-                    "\nIf the Controller leaves the Area, you will still have to follow them and get a Grace of 25 seconds to do so." +
+                    "\nIf the Controller leaves the Area, you get a special Area Grace Period, which is alot longer." +
                     "\n\n\nIt is currently not possible to adjust the shock settings for this... sorry!" +
                     "\nAlso, never forget that you can use /red to stop receiving any more shocks!");
             }
@@ -304,6 +311,20 @@ namespace WoLightning.WoL_Plugin.Windows
             {
                 Plugin.ControlSettings.LeashGraceTime = leashGraceTime;
             }
+
+            ImGui.Text("Left Area Grace Time in Seconds:");
+            ImGui.SetNextItemWidth(95);
+            if (ImGui.InputFloat("##leashGraceAreaInput", ref leashGraceAreaTime))
+            {
+                Plugin.ControlSettings.LeashGraceAreaTime = leashGraceAreaTime;
+            }
+
+            if(leashGraceAreaTime < 30)
+            {
+                ImGui.TextColored(Red, "It is strongly recommended to not set this value too low." +
+                    "\nLoading Screens still count towards this time!");
+            }
+
 
             if (leashAllowed) ImGui.EndDisabled();
 
