@@ -67,7 +67,7 @@ namespace WoLightning.Configurations
         {
             if (Hash != null && Hash.Length > 0) return Hash;
 
-            byte[] arr = Encoding.ASCII.GetBytes(Plugin.currentVersion + Plugin.randomKey);
+            byte[] arr = Encoding.ASCII.GetBytes(Plugin.CurrentVersion.ToString() + Plugin.randomKey);
             byte[] hashed = SHA256.Create().ComputeHash(arr);
 
 

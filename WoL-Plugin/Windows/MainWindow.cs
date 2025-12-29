@@ -8,6 +8,7 @@ using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Clients.OpenShock;
 using WoLightning.WoL_Plugin.Clients.Pishock;
 using WoLightning.WoL_Plugin.Util;
+using WoLightning.WoL_Plugin.Windows;
 using static WoLightning.Clients.OpenShock.ClientOpenShock;
 using static WoLightning.Clients.Pishock.ClientPishock;
 
@@ -30,7 +31,7 @@ public class MainWindow : Window, IDisposable
     private bool isPishockMenuOpen = true;
 
     public MainWindow(Plugin plugin)
-        : base($"Warrior of Lightning - v{Plugin.currentVersionString}##Main", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.AlwaysAutoResize)
+        : base($"Warrior of Lightning - v{Plugin.CurrentVersion}##Main", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.AlwaysAutoResize)
     {
 
         SizeConstraints = new WindowSizeConstraints
@@ -246,9 +247,16 @@ public class MainWindow : Window, IDisposable
             Plugin.Configuration.Save();
         }
 
-        if (ImGui.Button("Open Shocker Remote", new Vector2(ImGui.GetWindowSize().X - 10, 25)))
+
+        // Todo: Move this onto the api part
+        /*if (ImGui.Button("Open Shocker Remote", new Vector2(ImGui.GetWindowSize().X - 10, 25)))
         {
             Plugin.ShockRemoteWindow.Toggle();
+        }*/
+
+        if (ImGui.Button("Open Control Settings", new Vector2(ImGui.GetWindowSize().X - 10, 25)))
+        {
+            Plugin.ControlWindow.Toggle();
         }
 
         //if (Plugin.Authentification.isDisallowed) ImGui.EndDisabled();

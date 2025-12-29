@@ -2,6 +2,7 @@
 using Dalamud.Game.Text.SeStringHandling;
 using System;
 using System.Linq;
+using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.Util.Types
 {
@@ -202,6 +203,30 @@ namespace WoLightning.Util.Types
         {
             Name = playerCharacter.Name.ToString();
             WorldId = (int)playerCharacter.HomeWorld.Value.RowId;
+        }
+
+        public bool IsInObjectTable()
+        {
+            foreach (var player in Service.ObjectTable.PlayerObjects)
+            {
+                IPlayerCharacter playerCharacter = (IPlayerCharacter)player;
+                Player comparing = new Player(playerCharacter);
+                Logger.Log(4, comparing);
+                if (this.Equals(comparing)) return true;
+            }
+            return false;
+        }
+
+        public IPlayerCharacter? FindInObjectTable()
+        {
+            foreach(var player in Service.ObjectTable.PlayerObjects)
+            {
+                IPlayerCharacter playerCharacter = (IPlayerCharacter)player;
+                Player comparing = new Player(playerCharacter);
+                Logger.Log(4, comparing);
+                if (this.Equals(comparing)) return playerCharacter;
+            }
+            return null;
         }
 
         public string getWorldName()

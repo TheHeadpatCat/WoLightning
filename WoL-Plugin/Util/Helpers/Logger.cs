@@ -45,7 +45,7 @@ namespace WoLightning.WoL_Plugin.Util
             }
             try
             {
-                File.AppendAllText(FilePath(), $"\n\n======================\nNew Session Started\nVersion {Plugin.currentVersion}");
+                File.AppendAllText(FilePath(), $"\n\n======================\nNew Session Started\nVersion {Plugin.CurrentVersion}");
                 File.AppendAllText(FilePath(), "\n" + DateTime.Now.ToShortDateString() + "  " + DateTime.Now.Hour + ":" + DateTime.Now.Minute + ":" + DateTime.Now.Second);
             }
             catch { }

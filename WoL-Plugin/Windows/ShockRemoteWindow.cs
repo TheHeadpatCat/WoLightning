@@ -171,9 +171,9 @@ namespace WoLightning.WoL_Plugin.Windows
                 ImGui.BeginChild("PishockShockerList", new Vector2(180, 260));
                 foreach (var shocker in Plugin.Authentification.PishockShockers)
                 {
-                    if (Plugin.Configuration.ShownShockers == Configurations.ShownShockers.None) continue;
-                    if (Plugin.Configuration.ShownShockers == Configurations.ShownShockers.Personal && !shocker.isPersonal) continue;
-                    if (Plugin.Configuration.ShownShockers == Configurations.ShownShockers.Shared && shocker.isPersonal) continue;
+                    if (Plugin.Configuration.ShownShockers == ShownShockers.None) continue;
+                    if (Plugin.Configuration.ShownShockers == ShownShockers.Personal && !shocker.isPersonal) continue;
+                    if (Plugin.Configuration.ShownShockers == ShownShockers.Shared && shocker.isPersonal) continue;
 
 
                     bool isEnabled = Options.ShockersPishock.Find(sh => sh.getInternalId() == shocker.getInternalId()) != null;

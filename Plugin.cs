@@ -17,8 +17,11 @@ using WoLightning.Game;
 using WoLightning.Util.Types;
 using WoLightning.Windows;
 using WoLightning.WoL_Plugin.Clients.Webserver;
+using WoLightning.WoL_Plugin.Configurations;
 using WoLightning.WoL_Plugin.Util;
+using WoLightning.WoL_Plugin.Util.Types;
 using WoLightning.WoL_Plugin.Windows;
+using Version = WoLightning.WoL_Plugin.Util.Types.Version;
 
 namespace WoLightning;
 
@@ -37,9 +40,8 @@ public sealed class Plugin : IDalamudPlugin
     private const string OpenShockRemote = "/wolremote";
     private const string SwapPreset = "/wolpreset";
 
-    public const int currentVersion = 585;
-    public const String currentVersionString = "0.5.8.5";
-    public const int configurationVersion = 501;
+    public static readonly Version CurrentVersion = new(5,8,5,'a');
+
     public const string randomKey = "Currently Unused";
 
     public bool IsEnabled = false;
@@ -55,6 +57,7 @@ public sealed class Plugin : IDalamudPlugin
     public MainWindow? MainWindow { get; set; }
     public ConfigWindow? ConfigWindow { get; set; }
     public ShockRemoteWindow? ShockRemoteWindow { get; set; }
+    public ControlWindow? ControlWindow { get; set; }
     public DebugWindow? DebugWindow { get; set; }
 
 
@@ -65,6 +68,7 @@ public sealed class Plugin : IDalamudPlugin
     public ClientWebserver? ClientWebserver { get; set; }
     public Authentification? Authentification { get; set; }
     public Configuration? Configuration { get; set; }
+    public ControlSettings? ControlSettings { get; set; }
     public GameEmotes? GameEmotes { get; set; }
     public NotificationHandler? NotificationHandler { get; set; }
 
@@ -81,11 +85,13 @@ public sealed class Plugin : IDalamudPlugin
         MainWindow = new(this);
         ConfigWindow = new(this);
         ShockRemoteWindow = new(this);
+        ControlWindow = new(this);
 
         WindowSystem.AddWindow(BufferWindow);
         WindowSystem.AddWindow(MainWindow);
         WindowSystem.AddWindow(ConfigWindow);
         WindowSystem.AddWindow(ShockRemoteWindow);
+        WindowSystem.AddWindow(ControlWindow);
 
         Service.CommandManager.AddHandler(Failsafe, new CommandInfo(OnFailsafe)
         {
@@ -155,10 +161,8 @@ public sealed class Plugin : IDalamudPlugin
                 {
                     Directory.Delete(dir, true);
                 }
-                File.WriteAllText(Service.PluginInterface.GetPluginConfigDirectory() + "\\version", currentVersion + "");
+                File.WriteAllText(Service.PluginInterface.GetPluginConfigDirectory() + "\\version", CurrentVersion + "");
             }
-
-            int version = int.Parse(File.ReadAllText(Service.PluginInterface.GetPluginConfigDirectory() + "\\version"));
 
             ConfigurationDirectoryPath = Service.PluginInterface.GetPluginConfigDirectory() + "\\" + Service.ObjectTable.LocalPlayer.Name;
             if (!Directory.Exists(ConfigurationDirectoryPath)) Directory.CreateDirectory(ConfigurationDirectoryPath);
@@ -188,6 +192,7 @@ public sealed class Plugin : IDalamudPlugin
 
             try
             {
+                // todo: update to new versioning
                 Authentification = new Authentification(ConfigurationDirectoryPath);
                 if (Authentification.Version < new Authentification().Version)
                 {
@@ -204,6 +209,19 @@ public sealed class Plugin : IDalamudPlugin
 
             LocalPlayer.Key = Authentification.ServerKey;
 
+            try
+            {
+                ControlSettings = new ControlSettings(ConfigurationDirectoryPath);
+                ControlSettings.Load();
+            }
+            catch (Exception e)
+            {
+                ControlSettings = new ControlSettings(ConfigurationDirectoryPath, true);
+                NotificationHandler.send("Your ControlSettings have been reset due to an error!");
+                Logger.Error(e.StackTrace);
+            }
+
+            ControlSettings.Save();
 
             //ClientWebserver.Connect();
             ClientPishock.Setup();
@@ -212,14 +230,29 @@ public sealed class Plugin : IDalamudPlugin
             EmoteReaderHooks = new EmoteReaderHooks(this);
 
             ConfigWindow.SetConfiguration(Configuration);
+            ControlSettings.Initialize(this);
             MainWindow.Initialize();
 
             Logger.Log(3, "The Game is running " + (ClientLanguage)Service.GameConfig.System.GetUInt("Language") + " Language");
 
-            if (version < currentVersion)
+            string fileVersionString = File.ReadAllText(Service.PluginInterface.GetPluginConfigDirectory() + "\\version");
+
+            Version savedVersion;
+            bool versionFail = false;
+            try
+            {
+                savedVersion = new Version(fileVersionString);
+            }
+            catch (Exception e)
+            {
+                versionFail = true;
+                savedVersion = new Version(0, 0, 0);
+            }
+
+            if (versionFail || CurrentVersion.NeedsUpdate(savedVersion) > Version.NeedUpdateState.Keep)
             {
                 File.Delete(Service.PluginInterface.GetPluginConfigDirectory() + "\\version");
-                File.WriteAllText(Service.PluginInterface.GetPluginConfigDirectory() + "\\version", currentVersion + "");
+                File.WriteAllText(Service.PluginInterface.GetPluginConfigDirectory() + "\\version", CurrentVersion.ToString());
 
                 if (Configuration.DebugLevel < DebugLevel.Verbose) Configuration.DebugLevel = DebugLevel.Verbose;
             }
@@ -253,15 +286,21 @@ public sealed class Plugin : IDalamudPlugin
 
     public void Dispose()
     {
+        /* Old Way
         if (MainWindow != null) WindowSystem.RemoveWindow(MainWindow);
         if (ConfigWindow != null) WindowSystem.RemoveWindow(ConfigWindow);
         if (DebugWindow != null) WindowSystem.RemoveWindow(DebugWindow);
+        if (ControlWindow != null) WindowSystem.RemoveWindow(ControlWindow);
         if (BufferWindow != null && WindowSystem.Windows.Contains(BufferWindow)) WindowSystem?.RemoveWindow(BufferWindow);
+        */
+
+        WindowSystem.RemoveAllWindows();
 
         MainWindow?.Dispose();
         ConfigWindow?.Dispose();
         BufferWindow?.Dispose();
         ShockRemoteWindow?.Dispose();
+        ControlWindow?.Dispose();
         DebugWindow?.Dispose();
 
         EmoteReaderHooks?.Dispose();
