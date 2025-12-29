@@ -81,7 +81,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     foreach (var TriggerWord in TriggerWords)
                     {
                         int spaceAmount = TriggerWord.Word.CountSpaces();
-                        Logger.Log(3, $"{Name} | Found " + spaceAmount + " spaces.");
+                        Logger.Log(4, $"{Name} | Found " + spaceAmount + " spaces.");
 
                         string[] words = message.Split(' ');
                         for (int i = 0; i < words.Length; i++)
@@ -92,14 +92,15 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                                 for (int j = i + 1; j < words.Length; j++)
                                 {
                                     wordsToCompare += " " + words[j];
-                                    Logger.Log(3, $"{Name} | Added " + words[j] + " to the compound.");
+                                    Logger.Log(4, $"{Name} | Added " + words[j] + " to the compound.");
                                 }
                             }
 
-                            Logger.Log(3, $"{Name} | Comparing " + wordsToCompare + " against " + TriggerWord.Word + " which is " + TriggerWord.Compare(wordsToCompare));
+                            Logger.Log(3, $"{Name} | Comparing [" + wordsToCompare + "] against [" + TriggerWord.Word + "] which is " + TriggerWord.Compare(wordsToCompare));
 
                             if (TriggerWord.Compare(wordsToCompare)) // Now, with both parts. Check each said word, against all banned words. If any of them match, Trigger the Rule and end the Logic.
                             {
+                                Logger.Log(3, $"{Name} | Found [" + wordsToCompare + "] - sending request...");
                                 Trigger($"You heard {TriggerWord} from {sender.Name}!", sender);
                                 return;
                             }

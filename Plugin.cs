@@ -187,7 +187,7 @@ public sealed class Plugin : IDalamudPlugin
                 Configuration = new Configuration();
                 Configuration.Save();
                 NotificationHandler.send("Your Configuration has been reset due to an error!");
-                Logger.Log(1, e);
+                Logger.Error(e);
             }
 
             try
@@ -204,7 +204,7 @@ public sealed class Plugin : IDalamudPlugin
             {
                 Authentification = new Authentification(ConfigurationDirectoryPath, true);
                 NotificationHandler.send("Your Authentification has been reset due to an error!");
-                Logger.Log(1, e);
+                Logger.Error(e);
             }
 
             LocalPlayer.Key = Authentification.ServerKey;

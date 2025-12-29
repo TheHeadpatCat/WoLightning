@@ -348,15 +348,7 @@ namespace WoLightning.WoL_Plugin.Configurations
 
         private void OnShockElapsed(object? sender, ElapsedEventArgs e)
         {
-            float Distance = DistanceFromController();
-
-            if (Distance <= LeashDistance) {
-                LeashShockTimer.Stop();
-                LeashShockAmount = 0;
-                return;
-            }
-
-                ShockOptions newOpt;
+            ShockOptions newOpt;
             switch (LeashShockAmount) // i want to vomit
             {
                 case 0: newOpt = new ShockOptions(OpMode.Vibrate, 30, 2); break;
