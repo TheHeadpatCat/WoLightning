@@ -26,7 +26,7 @@ namespace WoLightning.WoL_Plugin.Configurations
 
         [JsonIgnore] private Plugin Plugin;
         protected override string FileName { get; } = "ControlSettings.json";
-        protected override Version CurrentVersion { get; init; } = new Version(0,3,0,'a');
+        protected override Version CurrentVersion { get; init; } = new Version(1,0,0,'a');
 
         public Player Controller { get; set; }
 

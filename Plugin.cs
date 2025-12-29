@@ -40,7 +40,7 @@ public sealed class Plugin : IDalamudPlugin
     private const string OpenShockRemote = "/wolremote";
     private const string SwapPreset = "/wolpreset";
 
-    public static readonly Version CurrentVersion = new(5,8,5,'a');
+    public static readonly Version CurrentVersion = new(6,0,0,'a');
 
     public const string randomKey = "Currently Unused";
 
