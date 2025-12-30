@@ -1,22 +1,30 @@
-﻿using Dalamud.Game.ClientState.Objects.SubKinds;
+﻿using Dalamud.Game.Addon.Lifecycle;
+using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
+using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Plugin.Services;
+using FFXIVClientStructs.FFXIV.Client.UI;
+using FFXIVClientStructs.FFXIV.Client.UI.Info;
+using InteropGenerator.Runtime;
 using Lumina.Excel.Sheets;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using WoLightning.Util;
 using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Util;
+using static System.Net.Mime.MediaTypeNames;
 using Version = WoLightning.WoL_Plugin.Util.Types.Version;
 
 namespace WoLightning.WoL_Plugin.Configurations
 {
     [Serializable]
-    public class ControlSettings : Saveable, IDisposable
+    public class ControlSettings : Saveable, IDisposable // this is probably the worst class i ever made. it breaks more conventions than i commited war crimes
     {
 
         [JsonIgnore] private Plugin Plugin;
@@ -41,6 +49,9 @@ namespace WoLightning.WoL_Plugin.Configurations
         public ushort UnleashEmote { get; set; }
         public ushort LeashDistanceEmote { get; set; }
         public ShockOptions LeashShockOptions { get; set; } = new();
+        public float LeashTriggerInterval { get; set; } = 3;
+        public int LeashVibrationScalingAmount { get; set; } = 2;
+        public int LeashShockScalingAmount { get; set; } = 5;
 
         public bool FullControl { get; set; } = false;
         public bool SafewordDisabled { get; set; } = false;
@@ -60,6 +71,8 @@ namespace WoLightning.WoL_Plugin.Configurations
 
         [JsonIgnore] public ushort LastEmoteFromController { get; set; } = 0;
         [JsonIgnore] public string LastEmoteFromControllerName { get; set; } = "None";
+        [JsonIgnore] private TimerPlus CheckFriendListTimer { get; set; } = new();
+        [JsonIgnore] private int LastFriendAmount { get; set; } = 0;
 
         public ControlSettings(string saveLocation, bool reset = false) : base(saveLocation, reset)
         {
@@ -72,6 +85,60 @@ namespace WoLightning.WoL_Plugin.Configurations
             if (Controller == null) Plugin.Configuration.IsLockedByController = false;
             Plugin.EmoteReaderHooks.OnEmoteIncoming += OnEmoteIncoming;
             Service.ChatGui.ChatMessage += OnChatMessage;
+            Service.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, "FriendList", OnFriendListOpened);
+            Service.AddonLifecycle.RegisterListener(AddonEvent.PreClose, "FriendList", OnFriendListClosed);
+            CheckFriendListTimer.Elapsed += CheckFriendList;
+            CheckFriendListTimer.Interval = 3000;
+        }
+
+        
+
+        private unsafe void CheckFriendList(object? sender, ElapsedEventArgs e)
+        {
+            if (Controller == null) return;
+            try
+            {
+                AddonFriendList* addon = Service.GameGui.GetAddonByName<AddonFriendList>("FriendList");
+                if(addon == null) return;
+                var friendList = addon->GetNodeById(14)->GetAsAtkComponentList();
+                if(friendList == null) return;
+
+                Logger.Log(4, friendList->ListLength);
+
+                if (LastFriendAmount == friendList->ListLength) return;
+                LastFriendAmount = friendList->ListLength;
+
+                var character = InfoProxyFriendList.Instance()->GetEntryByName(Controller.Name, (ushort)Controller.WorldId!);
+                if( character == null ) return;
+                
+                Logger.Log(4, character->State.ToString());
+                if (character->State.ToString().Contains("Offline")) // for some reason, flags didnt work
+                {
+                    if (LeashActive)
+                    {
+                        Service.ChatGui.PrintError($"{Controller.Name} is offline, so the leash has been removed.");
+                        RemoveLeash();
+                    }
+                }
+                CheckFriendListTimer.Stop();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex.StackTrace);
+            }
+        }
+
+        private void OnFriendListOpened(AddonEvent eventType, AddonArgs addonRef)
+        {
+            CheckFriendListTimer.Refresh();
+            CheckFriendListTimer.Start();
+            LastFriendAmount = 0;
+        }
+
+        private void OnFriendListClosed(AddonEvent eventType, AddonArgs addonRef)
+        {
+            CheckFriendListTimer.Stop();
+            LastFriendAmount = 0;
         }
 
         private void OnChatMessage(XivChatType type, int timestamp, ref SeString senderE, ref SeString messageE, ref bool isHandled)
@@ -109,14 +176,6 @@ namespace WoLightning.WoL_Plugin.Configurations
                         Plugin.NotificationHandler.send($"Cannot swap Preset, as Message was malformed.", "Swap Failed", Dalamud.Interface.ImGuiNotification.NotificationType.Warning, new TimeSpan(0, 0, 5));
                         return;
                     }
-
-                    /*
-                    if (Plugin.Configuration.PresetNames.Contains(array[1]))
-                    {
-                        Logger.Log(3, $"Command to Swap was heard, but not Preset named \"{array[1]}\" exists.");
-                        Plugin.NotificationHandler.send($"No Preset named \"{array[1]}\" exists.", "Swap Failed", Dalamud.Interface.ImGuiNotification.NotificationType.Warning, new TimeSpan(0, 0, 10));
-                        return;
-                    }*/
 
                     array[1] = array[1].Trim();
                     Logger.Log(3, $"Swapping to \"{array[1]}\" via Command.");
@@ -241,12 +300,15 @@ namespace WoLightning.WoL_Plugin.Configurations
 
         private void ApplyLeash()
         {
+            if (LeashActive) return;
             LeashActive = true;
             LeashShockOptions.Validate();
 
             Service.Framework.Update += CheckLeash;
             Plugin.NotificationHandler.send("You have been Leashed!", $"{Controller.Name} applied a Leash to you");
             Service.ToastGui.ShowQuest($"Follow {Controller.Name}!");
+            Service.ChatGui.PrintError($"You have been Leashed to {Controller.Name}!" +
+                $"\nStay within {LeashDistance.ToString("0.0")} yalms of them.");
 
             LeashGraceTimer.Interval = LeashGraceTime * 1000;
             LeashGraceTimer.AutoReset = false;
@@ -266,6 +328,7 @@ namespace WoLightning.WoL_Plugin.Configurations
 
         private void RemoveLeash()
         {
+            if (!LeashActive) return;
             Service.Framework.Update -= CheckLeash;
             Plugin.NotificationHandler.send("The Leash has been removed!", $"{Controller.Name} removed the Leash");
 
@@ -284,12 +347,20 @@ namespace WoLightning.WoL_Plugin.Configurations
             }
             CheckInterval = 30;
 
+            if (!LeashAllowed || Controller == null)
+            {
+                RemoveLeash();
+                return;
+            }
+
             if (ControllerReference == null)
             {
                 if (!HasBeenToldToFollow)
                 {
                     Logger.Log(4, "Lost Controller Signature - searching...");
                     Service.ToastGui.ShowError($"{Controller.Name} has left the Area - Follow them!");
+                    Service.ChatGui.PrintError($"{Controller.Name} has left the Area - Follow them!" +
+                        $"\n(If they went offline, open your Friendlist to confirm)");
                     ControllerReference = null;
                     LeashGraceAreaTimer.Refresh();
                     LeashGraceAreaTimer.Start();
@@ -311,6 +382,7 @@ namespace WoLightning.WoL_Plugin.Configurations
                 if (!HasBeenWarned)
                 {
                     Service.ToastGui.ShowError($"You are too far from {Controller.Name}!");
+                    Service.ChatGui.PrintError($"You are too far from {Controller.Name}!");
                     HasBeenWarned = true;
                     LeashGraceTimer.Refresh();
                     LeashGraceTimer.Start();
@@ -388,6 +460,10 @@ namespace WoLightning.WoL_Plugin.Configurations
             Plugin.EmoteReaderHooks.OnEmoteIncoming -= OnEmoteIncoming;
             Service.ChatGui.ChatMessage -= OnChatMessage;
             if (LeashActive) RemoveLeash();
+            Service.AddonLifecycle.UnregisterListener(OnFriendListOpened);
+            Service.AddonLifecycle.UnregisterListener(OnFriendListClosed);
+            CheckFriendListTimer.Elapsed -= CheckFriendList;
+            CheckFriendListTimer.Stop();
             Save();
         }
 
