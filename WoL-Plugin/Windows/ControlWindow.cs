@@ -715,18 +715,24 @@ namespace WoLightning.WoL_Plugin.Windows
             }
             ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 2.50f - 30);
             float interval = Plugin.ControlSettings.LeashTriggerInterval;
+            int durationT = Plugin.ControlSettings.LeashShockOptions.Duration;
+            if (durationT > 10) durationT = 1;
             if (ImGui.InputFloat("##ShockInterval", ref interval))
             {
-                int duration = Plugin.ControlSettings.LeashShockOptions.Duration;
-                if (duration > 10) duration = 1;
-
-                if (interval < duration) interval = duration;
+                if (interval < durationT) interval = durationT;
                 if (interval > 60) interval = 60;
 
                 Plugin.ControlSettings.LeashTriggerInterval = interval;
                 changed = true;
             }
             ImGui.EndGroup();
+
+            if(interval == durationT)
+            {
+                ImGui.TextColored(ColorDescription,"You cannot set the interval lower than the maximum duration." +
+                    "\n(Because setting it to the same means constant shocks already)");
+            }
+
         }
     }
 }

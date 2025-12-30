@@ -641,10 +641,6 @@ public class ConfigWindow : Window, IDisposable
             ImGui.Spacing();
 
 
-            if (ImGui.Button("websocket test"))
-            {
-                Plugin.ClientPishock.Test();
-            }
 
         }
     }
