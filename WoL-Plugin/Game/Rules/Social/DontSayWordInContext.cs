@@ -1,16 +1,4 @@
-﻿using Dalamud.Bindings.ImGui;
-using Dalamud.Game.Text;
-using Dalamud.Game.Text.SeStringHandling;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Numerics;
-using WoLightning.Util;
-using WoLightning.Util.Types;
-using WoLightning.WoL_Plugin.Util;
-using WoLightning.WoL_Plugin.Util.Types;
-
-/* Todo: Implement
+﻿/* Todo: Implement
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Social
 {

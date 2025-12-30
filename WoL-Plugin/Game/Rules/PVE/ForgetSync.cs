@@ -1,10 +1,6 @@
 ﻿using Dalamud.Game.Text.SeStringHandling;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Util;
-using static FFXIVClientStructs.FFXIV.Client.UI.Misc.CharaView.Delegates;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 {

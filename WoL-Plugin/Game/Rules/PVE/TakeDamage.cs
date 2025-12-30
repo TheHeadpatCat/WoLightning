@@ -1,8 +1,6 @@
 ﻿using Dalamud.Bindings.ImGui;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Plugin.Services;
-using FFXIVClientStructs.FFXIV.Client.Game.Character;
-using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using System;
 using System.Text.Json.Serialization;
 using WoLightning.Util.Types;
@@ -104,7 +102,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 }
                 lastHP = Player.CurrentHp;
             }
-            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if(e.StackTrace != null) Logger.Error(e.StackTrace); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if (e.StackTrace != null) Logger.Error(e.StackTrace); }
         }
 
         public override void DrawExtraButton()

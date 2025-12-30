@@ -75,7 +75,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     sittingOnChairTimer.Stop();
                 }
             }
-            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if(e.StackTrace != null) Logger.Error(e.StackTrace); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if (e.StackTrace != null) Logger.Error(e.StackTrace); }
         }
 
         private void checkSittingOnChair(object? sender, ElapsedEventArgs? e)

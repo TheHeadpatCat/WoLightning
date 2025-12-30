@@ -2,20 +2,15 @@
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Plugin.Services;
-using FFXIVClientStructs;
 using Lumina.Excel.Sheets;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Reflection;
 using System.Timers;
-using System.Xml.Linq;
-using WoLightning.Configurations;
 using WoLightning.Util;
 using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Util;
-using WoLightning.WoL_Plugin.Util.Types;
-using static FFXIVClientStructs.FFXIV.Client.UI.Misc.CharaView.Delegates;
 using Version = WoLightning.WoL_Plugin.Util.Types.Version;
 
 namespace WoLightning.WoL_Plugin.Configurations
@@ -26,7 +21,7 @@ namespace WoLightning.WoL_Plugin.Configurations
 
         [JsonIgnore] private Plugin Plugin;
         protected override string FileName { get; } = "ControlSettings.json";
-        protected override Version CurrentVersion { get; init; } = new Version(1,0,0,'a');
+        protected override Version CurrentVersion { get; init; } = new Version(1, 0, 0, 'a');
 
         public Player Controller { get; set; }
 
@@ -62,7 +57,7 @@ namespace WoLightning.WoL_Plugin.Configurations
         [JsonIgnore] public int LeashShockAmount { get; set; } = 0;
         [JsonIgnore] private int CheckInterval = 0;
 
-        
+
         [JsonIgnore] public ushort LastEmoteFromController { get; set; } = 0;
         [JsonIgnore] public string LastEmoteFromControllerName { get; set; } = "None";
 
@@ -140,7 +135,7 @@ namespace WoLightning.WoL_Plugin.Configurations
                 Logger.Error(e);
                 Logger.Error(e.StackTrace);
             }
-         }
+        }
 
         private void OnEmoteIncoming(IPlayerCharacter character, ushort emoteId)
         {
@@ -159,10 +154,10 @@ namespace WoLightning.WoL_Plugin.Configurations
                 {
                     if (emoteId == LockingEmote)
                     {
-                        if(LockingEmote == UnlockingEmote)
+                        if (LockingEmote == UnlockingEmote)
                         {
                             Plugin.Configuration.IsLockedByController = !Plugin.Configuration.IsLockedByController;
-                            if(Plugin.Configuration.IsLockedByController) Plugin.NotificationHandler.send("Locked Presets!");
+                            if (Plugin.Configuration.IsLockedByController) Plugin.NotificationHandler.send("Locked Presets!");
                             else Plugin.NotificationHandler.send("Unlocked Presets!");
                             return;
                         }
@@ -182,26 +177,26 @@ namespace WoLightning.WoL_Plugin.Configurations
 
                 if (LeashAllowed)
                 {
-                    if(emoteId == LeashEmote)
+                    if (emoteId == LeashEmote)
                     {
-                        if(LeashEmote == UnleashEmote)
+                        if (LeashEmote == UnleashEmote)
                         {
-                            if(LeashActive) RemoveLeash();
+                            if (LeashActive) RemoveLeash();
                             else ApplyLeash();
                             return;
                         }
 
-                        if(!LeashActive) ApplyLeash();
+                        if (!LeashActive) ApplyLeash();
                         return;
                     }
 
                     if (emoteId == UnleashEmote)
                     {
-                        if(LeashActive) RemoveLeash();
+                        if (LeashActive) RemoveLeash();
                         return;
                     }
 
-                    if(emoteId == LeashDistanceEmote)
+                    if (emoteId == LeashDistanceEmote)
                     {
                         LeashDistance = DistanceFromController() + 0.05f;
                         Service.ToastGui.ShowQuest($"Leash Distance is now {LeashDistance.ToString("0.0")} Yalms");
@@ -250,7 +245,7 @@ namespace WoLightning.WoL_Plugin.Configurations
             LeashShockOptions.Validate();
 
             Service.Framework.Update += CheckLeash;
-            Plugin.NotificationHandler.send("You have been Leashed!",$"{Controller.Name} applied a Leash to you");
+            Plugin.NotificationHandler.send("You have been Leashed!", $"{Controller.Name} applied a Leash to you");
             Service.ToastGui.ShowQuest($"Follow {Controller.Name}!");
 
             LeashGraceTimer.Interval = LeashGraceTime * 1000;
@@ -277,19 +272,19 @@ namespace WoLightning.WoL_Plugin.Configurations
             LeashGraceTimer.Elapsed -= OnGraceElapsed;
             LeashGraceAreaTimer.Elapsed -= OnGraceAreaElapsed;
             LeashShockTimer.Elapsed -= OnShockElapsed;
-            LeashActive=false;
+            LeashActive = false;
         }
 
         private void CheckLeash(IFramework framework)
         {
-            if(CheckInterval > 0)
+            if (CheckInterval > 0)
             {
                 CheckInterval--;
                 return;
             }
             CheckInterval = 30;
 
-            if(ControllerReference == null)
+            if (ControllerReference == null)
             {
                 if (!HasBeenToldToFollow)
                 {
@@ -307,11 +302,11 @@ namespace WoLightning.WoL_Plugin.Configurations
                 return;
             }
 
-            HasBeenToldToFollow=false;
+            HasBeenToldToFollow = false;
 
             float Distance = DistanceFromController();
-            
-            if(Distance > LeashDistance)
+
+            if (Distance > LeashDistance)
             {
                 if (!HasBeenWarned)
                 {
@@ -378,7 +373,7 @@ namespace WoLightning.WoL_Plugin.Configurations
 
             ControllerReference = Controller.FindInObjectTable();
 
-            if(ControllerReference == null ) return 0;
+            if (ControllerReference == null) return 0;
 
             var local = Service.ObjectTable.LocalPlayer;
 

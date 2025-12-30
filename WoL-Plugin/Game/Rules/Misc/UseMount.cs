@@ -49,7 +49,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         {
             try
             {
-                
+
                 //Logger.Log(3, flag.ToString());
                 if (flag == ConditionFlag.Mounted) isMounted = value;
                 else if (flag == ConditionFlag.RidingPillion) isMountedPillion = value;
@@ -65,7 +65,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
                 }
 
             }
-            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if(e.StackTrace != null) Logger.Error(e.StackTrace); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if (e.StackTrace != null) Logger.Error(e.StackTrace); }
 
         }
 

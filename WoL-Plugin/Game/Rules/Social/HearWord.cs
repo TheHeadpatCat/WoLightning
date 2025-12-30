@@ -59,7 +59,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         {
             try
             {
-                if(TriggerWords.Count == 0) return;
+                if (TriggerWords.Count == 0) return;
 
                 //check for chat type limitation
                 if (Chats.Count >= 1 && !Chats.Contains(type)) return;
@@ -109,7 +109,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     }
                 }
             }
-            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if(e.StackTrace != null) Logger.Error(e.StackTrace); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if (e.StackTrace != null) Logger.Error(e.StackTrace); }
         }
 
         public override void DrawExtraButton()

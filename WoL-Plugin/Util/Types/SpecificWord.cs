@@ -1,5 +1,4 @@
 ﻿using System;
-using WoLightning.Util.Types;
 
 namespace WoLightning.WoL_Plugin.Util.Types
 {

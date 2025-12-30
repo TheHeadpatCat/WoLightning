@@ -104,7 +104,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                             string wordsToCompare = words[i];
                             if (spaceAmount > 0)
                             {
-                                for (int j = i+1; j < words.Length; j++)
+                                for (int j = i + 1; j < words.Length; j++)
                                 {
                                     wordsToCompare += " " + words[j];
                                     Logger.Log(4, $"{Name} | Added " + words[j] + " to the compound.");
@@ -112,7 +112,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                             }
 
                             Logger.Log(3, $"{Name} | Comparing [" + wordsToCompare + "] against [" + bannedWord.Word + "] which is " + bannedWord.Compare(wordsToCompare));
-                            
+
                             if (bannedWord.Compare(wordsToCompare)) // Now, with both parts. Check each said word, against all banned words. If any of them match, Trigger the Rule and end the Logic.
                             {
                                 Logger.Log(3, $"{Name} | Found [" + wordsToCompare + "] - sending request...");
@@ -124,7 +124,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     }
                 }
             }
-            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if(e.StackTrace != null) Logger.Error(e.StackTrace); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if (e.StackTrace != null) Logger.Error(e.StackTrace); }
         }
 
 

@@ -51,7 +51,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
             {
                 if (TriggeringEmotes.Contains(emoteId)) Trigger("You used a forbidden emote!");
             }
-            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if(e.StackTrace != null) Logger.Error(e.StackTrace); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if (e.StackTrace != null) Logger.Error(e.StackTrace); }
         }
         public void Check(IGameObject target, ushort emoteId)
         {
@@ -59,7 +59,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
             {
                 if (TriggeringEmotes.Contains(emoteId)) Trigger("You used a forbidden emote!"); // Todo: Get emotename somehow
             }
-            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if(e.StackTrace != null) Logger.Error(e.StackTrace); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if (e.StackTrace != null) Logger.Error(e.StackTrace); }
         }
         public override void DrawExtraButton()
         {

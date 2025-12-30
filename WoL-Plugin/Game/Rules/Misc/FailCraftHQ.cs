@@ -91,8 +91,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 
 
             }
-			catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if(e.StackTrace != null) Logger.Error(e.StackTrace); }
-		}
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if (e.StackTrace != null) Logger.Error(e.StackTrace); }
+        }
 
         private void UpdateState(ConditionFlag flag, bool value)
         {
@@ -131,8 +131,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
                     */
                 }
             }
-			catch (Exception e) { Logger.Error(Name + " UpdateState() failed."); Logger.Error(e.Message); if(e.StackTrace != null) Logger.Error(e.StackTrace); }
-		}
+            catch (Exception e) { Logger.Error(Name + " UpdateState() failed."); Logger.Error(e.Message); if (e.StackTrace != null) Logger.Error(e.StackTrace); }
+        }
 
         private unsafe async void UpdateQuality(IFramework framework)
         {
@@ -172,8 +172,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 
 
             }
-			catch (Exception e) { Logger.Error(Name + " UpdateQuality() failed."); Logger.Error(e.Message); if(e.StackTrace != null) Logger.Error(e.StackTrace); }
-		}
+            catch (Exception e) { Logger.Error(Name + " UpdateQuality() failed."); Logger.Error(e.Message); if (e.StackTrace != null) Logger.Error(e.StackTrace); }
+        }
 
         private void RunFallback(object? sender, ElapsedEventArgs e)
         {

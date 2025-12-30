@@ -3,13 +3,11 @@ using Dalamud.Interface.Windowing;
 using System;
 using System.Numerics;
 using WoLightning.Clients.Webserver;
-using WoLightning.Configurations;
 using WoLightning.Util;
 using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Clients.OpenShock;
 using WoLightning.WoL_Plugin.Clients.Pishock;
 using WoLightning.WoL_Plugin.Util;
-using WoLightning.WoL_Plugin.Windows;
 using static WoLightning.Clients.OpenShock.ClientOpenShock;
 using static WoLightning.Clients.Pishock.ClientPishock;
 

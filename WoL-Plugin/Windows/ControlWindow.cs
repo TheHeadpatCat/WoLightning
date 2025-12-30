@@ -2,14 +2,8 @@
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface.Windowing;
-using Lumina.Excel.Sheets;
-using Lumina.Excel.Sheets.Experimental;
 using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Numerics;
-using System.Text;
-using WoLightning.Clients.Webserver.Operations.Account;
 using WoLightning.Configurations;
 using WoLightning.Util.Types;
 using Emote = Lumina.Excel.Sheets.Emote;
@@ -57,7 +51,7 @@ namespace WoLightning.WoL_Plugin.Windows
 
         public void Dispose()
         {
-            if(this.IsOpen) this.Toggle();
+            if (this.IsOpen) this.Toggle();
         }
 
         public override void Draw()
@@ -69,7 +63,7 @@ namespace WoLightning.WoL_Plugin.Windows
                 return;
             }
 
-            if(Plugin.ControlSettings.Controller == null)
+            if (Plugin.ControlSettings.Controller == null)
             {
                 drawSelectController();
                 return;
@@ -109,7 +103,7 @@ namespace WoLightning.WoL_Plugin.Windows
             if (swapCommand == null || swapCommand.Length < 3) ImGui.BeginDisabled();
 
             bool swapAllowed = Plugin.ControlSettings.SwappingAllowed;
-            if(ImGui.Checkbox("Allow Preset Swapping", ref swapAllowed))
+            if (ImGui.Checkbox("Allow Preset Swapping", ref swapAllowed))
             {
                 Plugin.ControlSettings.SwappingAllowed = swapAllowed;
                 Plugin.ControlSettings.SwappingCommand = swapCommand;
@@ -148,8 +142,8 @@ namespace WoLightning.WoL_Plugin.Windows
             bool lockAllowed = Plugin.ControlSettings.LockingAllowed;
             ushort lockEmote = Plugin.ControlSettings.LockingEmote;
             ushort unlockEmote = Plugin.ControlSettings.UnlockingEmote;
-            
-            if(lockEmote == 0 || unlockEmote == 0) ImGui.BeginDisabled();
+
+            if (lockEmote == 0 || unlockEmote == 0) ImGui.BeginDisabled();
 
             if (ImGui.Checkbox("Allow Preset Locking", ref lockAllowed))
             {
@@ -221,7 +215,7 @@ namespace WoLightning.WoL_Plugin.Windows
                 Plugin.ControlSettings.LeashAllowed = leashAllowed;
                 Plugin.ControlSettings.LeashDistance = leashDistance;
                 Plugin.ControlSettings.LeashGraceTime = leashGraceTime;
-                Plugin.ControlSettings.LeashGraceAreaTime= leashGraceAreaTime;
+                Plugin.ControlSettings.LeashGraceAreaTime = leashGraceAreaTime;
                 Plugin.ControlSettings.LeashEmote = leashEmote;
                 Plugin.ControlSettings.UnleashEmote = unleashEmote;
                 Plugin.ControlSettings.LeashDistanceEmote = leashDistanceEmote;
@@ -288,7 +282,7 @@ namespace WoLightning.WoL_Plugin.Windows
             {
                 leashDistance = Plugin.ControlSettings.DistanceFromController();
                 Plugin.ControlSettings.LeashDistance = leashDistance;
-                
+
             }
 
             ImGui.Text("Emote to change to current Distance: (can't be same as above)");
@@ -319,7 +313,7 @@ namespace WoLightning.WoL_Plugin.Windows
                 Plugin.ControlSettings.LeashGraceAreaTime = leashGraceAreaTime;
             }
 
-            if(leashGraceAreaTime < 30)
+            if (leashGraceAreaTime < 30)
             {
                 ImGui.TextColored(Red, "It is strongly recommended to not set this value too low." +
                     "\nLoading Screens still count towards this time!");

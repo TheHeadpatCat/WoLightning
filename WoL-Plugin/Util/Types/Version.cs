@@ -1,7 +1,4 @@
-﻿using FFXIVClientStructs;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 using System.Text.Json.Serialization;
 
 namespace WoLightning.WoL_Plugin.Util.Types
@@ -29,13 +26,13 @@ namespace WoLightning.WoL_Plugin.Util.Types
         public Version(string versionString)
         {
             string[] array = versionString.Split('.');
-            if(array.Length != 4) 
+            if (array.Length != 4)
                 throw new FormatException("Versioning String is not in a correct format.");
 
             short major = short.Parse(array[1]);
             short minor = short.Parse(array[2]);
             short bugfix = short.Parse(array[3]);
-            char suffix = versionString[versionString.Length-1];
+            char suffix = versionString[versionString.Length - 1];
 
             Major = major;
             Minor = minor;
@@ -56,7 +53,7 @@ namespace WoLightning.WoL_Plugin.Util.Types
 
             if (Major <= against.Major
                 && Minor <= against.Minor
-                && Bugfix <= against.Bugfix) 
+                && Bugfix <= against.Bugfix)
                 return NeedUpdateState.Downgrade;
 
             return NeedUpdateState.Keep;
@@ -74,7 +71,7 @@ namespace WoLightning.WoL_Plugin.Util.Types
         {
             if (a.Manifest > b.Manifest
                 || a.Major > b.Major
-                || a.Minor > b.Minor) 
+                || a.Minor > b.Minor)
                 return true;
             return false;
         }
@@ -83,7 +80,7 @@ namespace WoLightning.WoL_Plugin.Util.Types
         {
             if (a.Manifest < b.Manifest
                 || a.Major < b.Major
-                || a.Minor < b.Minor) 
+                || a.Minor < b.Minor)
                 return true;
             return false;
         }
@@ -92,7 +89,7 @@ namespace WoLightning.WoL_Plugin.Util.Types
         {
             if (a.Manifest == b.Manifest
                 && a.Major == b.Major
-                && a.Minor == b.Minor) 
+                && a.Minor == b.Minor)
                 return true;
             return false;
         }

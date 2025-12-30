@@ -19,7 +19,6 @@ using WoLightning.Windows;
 using WoLightning.WoL_Plugin.Clients.Webserver;
 using WoLightning.WoL_Plugin.Configurations;
 using WoLightning.WoL_Plugin.Util;
-using WoLightning.WoL_Plugin.Util.Types;
 using WoLightning.WoL_Plugin.Windows;
 using Version = WoLightning.WoL_Plugin.Util.Types.Version;
 
@@ -40,7 +39,7 @@ public sealed class Plugin : IDalamudPlugin
     private const string OpenShockRemote = "/wolremote";
     private const string SwapPreset = "/wolpreset";
 
-    public static readonly Version CurrentVersion = new(6,0,3,'b');
+    public static readonly Version CurrentVersion = new(6, 0, 3, 'b');
 
     public const string randomKey = "Currently Unused";
 
@@ -335,7 +334,7 @@ public sealed class Plugin : IDalamudPlugin
     }
     private void OnFailsafe(string command, string args)
     {
-        
+
         if (ControlSettings.SafewordDisabled)
         {
             Service.ChatGui.PrintError("I know you disabled the safeword, but i just cant get myself to actually allow that... sorry!");

@@ -1,5 +1,4 @@
 ﻿using Dalamud.Game.ClientState.Objects.SubKinds;
-using Dalamud.Game.Gui.Toast;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
 using System;
@@ -51,7 +50,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
                 String message = messageE.ToString();
                 if (message.Contains(LanguageStrings.MateriaMeldFailedTrigger())) Trigger("You failed to meld Materia!");
             }
-            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if(e.StackTrace != null) Logger.Error(e.StackTrace); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if (e.StackTrace != null) Logger.Error(e.StackTrace); }
         }
     }
 }

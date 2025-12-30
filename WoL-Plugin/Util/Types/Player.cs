@@ -219,7 +219,7 @@ namespace WoLightning.Util.Types
 
         public IPlayerCharacter? FindInObjectTable()
         {
-            foreach(var player in Service.ObjectTable.PlayerObjects)
+            foreach (var player in Service.ObjectTable.PlayerObjects)
             {
                 IPlayerCharacter playerCharacter = (IPlayerCharacter)player;
                 Player comparing = new Player(playerCharacter);

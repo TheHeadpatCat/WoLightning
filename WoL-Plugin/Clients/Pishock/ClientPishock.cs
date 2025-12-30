@@ -116,7 +116,7 @@ namespace WoLightning.Clients.Pishock
             catch (Exception e)
             {
                 Logger.Error("Failed to create Pishock Socket.");
-                Logger.Error(e.Message); if(e.StackTrace != null) Logger.Error(e.StackTrace);
+                Logger.Error(e.Message); if (e.StackTrace != null) Logger.Error(e.StackTrace);
             }
         }
 
@@ -228,7 +228,7 @@ namespace WoLightning.Clients.Pishock
             catch (Exception e)
             {
                 Logger.Error("Failed to Connect to Pishock, while requesting Shocker Information.");
-                Logger.Error(e.Message); if(e.StackTrace != null) Logger.Error(e.StackTrace);
+                Logger.Error(e.Message); if (e.StackTrace != null) Logger.Error(e.StackTrace);
                 Status = ConnectionStatusPishock.FatalError;
                 return;
             }
@@ -279,7 +279,7 @@ namespace WoLightning.Clients.Pishock
             catch (Exception e)
             {
                 Logger.Error("Failed to connect to Pishock API, while getting ShareIDs");
-                Logger.Error(e.Message); if(e.StackTrace != null) Logger.Error(e.StackTrace);
+                Logger.Error(e.Message); if (e.StackTrace != null) Logger.Error(e.StackTrace);
                 Status = ConnectionStatusPishock.FatalError;
                 return;
             }

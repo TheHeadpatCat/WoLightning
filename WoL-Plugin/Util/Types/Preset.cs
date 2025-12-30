@@ -76,7 +76,7 @@ namespace WoLightning.Util.Types
             this.Plugin = Plugin;
             Logger.Log(3, "Initializing Preset - " + Name);
 
-            if(CreatorFullName == null || CreatorFullName.Equals("Unknown") || CreatorFullName.Length == 0)
+            if (CreatorFullName == null || CreatorFullName.Equals("Unknown") || CreatorFullName.Length == 0)
             {
                 CreatorFullName = Plugin.LocalPlayer.getFullName();
             }

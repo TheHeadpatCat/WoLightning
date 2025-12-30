@@ -123,7 +123,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     if (!found) Trigger($"You forgot to say a Enforced Word!", sender);
                 }
             }
-            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if(e.StackTrace != null) Logger.Error(e.StackTrace); }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if (e.StackTrace != null) Logger.Error(e.StackTrace); }
         }
 
         public override void DrawExtraButton()
@@ -203,7 +203,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         public override void DrawAdvancedOptions()
         {
             ImGui.Text("Not saying atleast one Word from this list, will trigger the \"Forget to say Enforced Word\" Rule!");
-            ImGui.TextColored(new Vector4(0.66f,0.66f,0.66f,0.80f),"Note: Despite saying \"Word\", sentences are also supported.");
+            ImGui.TextColored(new Vector4(0.66f, 0.66f, 0.66f, 0.80f), "Note: Despite saying \"Word\", sentences are also supported.");
 
             ImGui.SetNextItemWidth(ImGui.GetWindowWidth() - 230);
             if (ImGui.InputTextWithHint("##EnforcedWordInput", "Click on a entry to edit it.", ref Input, 48))

@@ -15,7 +15,7 @@ namespace WoLightning.WoL_Plugin.Configurations
         [JsonIgnore] abstract protected Version CurrentVersion { get; init; }
         public Version SavedVersion { get; set; }
 
-        public Saveable(string saveLocation, bool reset = false) 
+        public Saveable(string saveLocation, bool reset = false)
         {
             SaveLocation = saveLocation;
         }
@@ -56,7 +56,7 @@ namespace WoLightning.WoL_Plugin.Configurations
             if (File.Exists(SaveLocation + FileName)) dataString = File.ReadAllText(SaveLocation + FileName);
             return dataString;
         }
-         
+
         abstract internal void updateFile();
 
         //abstract internal void injectProperties();
