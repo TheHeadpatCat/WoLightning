@@ -95,6 +95,7 @@ namespace WoLightning.Clients.Pishock
                 {
                     Status = ConnectionStatusPishock.ExceededAttempts;
                     Plugin.NotificationHandler.send("Failed to connect to the Pishock API after several attempts.\nPlease restart the Plugin.", "FATAL ERROR", Dalamud.Interface.ImGuiNotification.NotificationType.Error, new TimeSpan(0, 0, 30));
+                    Service.ChatGui.PrintError("[WoLightning] Failed to connect to the Pishock API after several attempts.\nPlease restart the Plugin.");
                     Logger.Error("Failed to Connect to the Pishock API after 7 attempts. Stopping creation.");
                     ResetConnectionAttempts.Stop();
                     return;
