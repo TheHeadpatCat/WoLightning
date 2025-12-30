@@ -5,6 +5,8 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Timers;
+using WoLightning.Util;
 using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Clients;
 using WoLightning.WoL_Plugin.Clients.Pishock;
@@ -34,6 +36,8 @@ namespace WoLightning.Clients.Pishock
         private WebSocketClient? Client;
         HttpClient HttpClient;
 
+        private TimerPlus ResetConnectionAttempts = new TimerPlus();
+
         private string username;
         private string apikey;
 
@@ -51,6 +55,8 @@ namespace WoLightning.Clients.Pishock
                 Client.Dispose();
                 Client = null;
             }
+            ResetConnectionAttempts.Elapsed -= OnResetAttempts;
+            ResetConnectionAttempts.Dispose();
         }
 
         public async void Setup()
@@ -61,13 +67,18 @@ namespace WoLightning.Clients.Pishock
                 Client = null;
             }
 
+            ResetConnectionAttempts.Interval = 10000;
+            ResetConnectionAttempts.Elapsed += OnResetAttempts;
+            ResetConnectionAttempts.AutoReset = false;
+            ResetConnectionAttempts.Start();
+
             await CreateSocket();
             await SetupAllData();
         }
 
-        public void Test()
+        private void OnResetAttempts(object? sender, ElapsedEventArgs e)
         {
-
+            ConnectionAttempts = 0;
         }
 
         public async Task CreateSocket()
@@ -78,12 +89,14 @@ namespace WoLightning.Clients.Pishock
 
                 if (Plugin.Authentification.PishockName.Length < 3 || Plugin.Authentification.PishockApiKey.Length < 16) return;
 
+                ResetConnectionAttempts.Refresh();
                 ConnectionAttempts++;
                 if (ConnectionAttempts >= 7)
                 {
                     Status = ConnectionStatusPishock.ExceededAttempts;
                     Plugin.NotificationHandler.send("Failed to connect to the Pishock API after several attempts.\nPlease restart the Plugin.", "FATAL ERROR", Dalamud.Interface.ImGuiNotification.NotificationType.Error, new TimeSpan(0, 0, 30));
                     Logger.Error("Failed to Connect to the Pishock API after 7 attempts. Stopping creation.");
+                    ResetConnectionAttempts.Stop();
                     return;
                 }
 
@@ -109,7 +122,6 @@ namespace WoLightning.Clients.Pishock
                     if (Client != null && Client.getState() == System.Net.WebSockets.WebSocketState.Open)
                     {
                         Status = ConnectionStatusPishock.Connected;
-                        ConnectionAttempts = 0;
                     }
                 });
             }
