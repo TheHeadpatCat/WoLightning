@@ -639,7 +639,7 @@ namespace WoLightning.WoL_Plugin.Windows
 
             ImGui.SameLine();
             ImGui.BeginGroup();
-            ImGui.Text("    Duration");
+            ImGui.Text("    Max Duration");
             ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 7);
             int DurationIndex = durationArray.IndexOf(Plugin.ControlSettings.LeashShockOptions.Duration);
             if (ImGui.Combo("##DurationSelectLeash", ref DurationIndex, ["0.1s", "0.3s", "1s", "2s", "3s", "4s", "5s", "6s", "7s", "8s", "9s", "10s"], 12))
@@ -657,7 +657,7 @@ namespace WoLightning.WoL_Plugin.Windows
 
             ImGui.SameLine();
             ImGui.BeginGroup();
-            ImGui.Text("    Intensity");
+            ImGui.Text("    Max Intensity");
             ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 2.50f - 30);
             int Intensity = Plugin.ControlSettings.LeashShockOptions.Intensity;
             if (ImGui.SliderInt("##IntensitySelectLeash", ref Intensity, 1, 100))
