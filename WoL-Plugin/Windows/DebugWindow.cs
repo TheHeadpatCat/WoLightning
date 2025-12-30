@@ -33,6 +33,11 @@ namespace WoLightning.WoL_Plugin.Windows
             }
 
 
+            ImGui.Text("Grace: " + Plugin.ControlSettings.LeashGraceTimer.TimeLeft.ToString());
+            ImGui.Text("Area: " + Plugin.ControlSettings.LeashGraceAreaTimer.TimeLeft.ToString());
+            ImGui.Text("Shock: " + Plugin.ControlSettings.LeashShockTimer.TimeLeft.ToString());
+
+
         }
     }
 }

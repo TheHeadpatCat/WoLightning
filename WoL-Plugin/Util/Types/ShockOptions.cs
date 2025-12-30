@@ -136,7 +136,7 @@ namespace WoLightning.Util.Types
             if ((int)OpMode < 0 || (int)OpMode > 2) return false;                       // Check for correct OpMode
             if (Intensity < 1) Intensity = 1;                                          // Clamp Intesity Min
             if (Intensity > 100) Intensity = 100;                                     // Clamp Intensity Max
-            if (Duration < 1) Duration = 1;                                          // Clamp Duration Min
+            if (Duration < 1 || (Duration > 10 && Duration < 100)) Duration = 100;   // Clamp Duration Min
             if (Duration > 10 && Duration != 100 && Duration != 300) Duration = 10; //Clamp Duration Max
             if (modifier != CooldownModifier.Miliseconds && modifier != CooldownModifier.Seconds && modifier != CooldownModifier.Minutes && modifier != CooldownModifier.Hours) modifier = CooldownModifier.Seconds;
             return true;

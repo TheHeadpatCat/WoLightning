@@ -211,7 +211,7 @@ namespace WoLightning.Util.Types
             {
                 IPlayerCharacter playerCharacter = (IPlayerCharacter)player;
                 Player comparing = new Player(playerCharacter);
-                Logger.Log(4, comparing);
+                //Logger.Log(4, comparing);
                 if (this.Equals(comparing)) return true;
             }
             return false;
@@ -223,7 +223,7 @@ namespace WoLightning.Util.Types
             {
                 IPlayerCharacter playerCharacter = (IPlayerCharacter)player;
                 Player comparing = new Player(playerCharacter);
-                Logger.Log(4, comparing);
+                //Logger.Log(4, comparing);
                 if (this.Equals(comparing)) return playerCharacter;
             }
             return null;

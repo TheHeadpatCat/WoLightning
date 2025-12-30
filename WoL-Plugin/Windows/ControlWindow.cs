@@ -3,6 +3,8 @@ using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface.Windowing;
 using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Numerics;
 using WoLightning.Configurations;
 using WoLightning.Util.Types;
@@ -35,6 +37,9 @@ namespace WoLightning.WoL_Plugin.Windows
         Vector4 ColorNameBlocked = new Vector4(1.0f, 0f, 0f, 0.9f);
         Vector4 ColorNameDisabled = new Vector4(1, 1, 1, 0.9f);
         Vector4 ColorDescription = new Vector4(0.7f, 0.7f, 0.7f, 0.8f);
+
+        private bool isOptionsOpen = false;
+        private List<int> durationArray = [100, 300, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
         public ControlWindow(Plugin plugin) : base("Warrior of Lightning - Control Settings")
         {
@@ -234,13 +239,27 @@ namespace WoLightning.WoL_Plugin.Windows
                     "\nAnother emote is used to adjust the radius to whatever current distance you have." +
                     "\nAfter leaving the radius and a grace period, you will first receive 2 warning vibrations, then increasing shocks." +
                     "\nIf the Controller leaves the Area, you get a special Area Grace Period, which is alot longer." +
-                    "\n\n\nIt is currently not possible to adjust the shock settings for this... sorry!" +
+                    "\nIn the case that the Controller logs off, you can open the Friendlist and it will remove the leash." +
                     "\nAlso, never forget that you can use /red to stop receiving any more shocks!");
             }
 
             if (leashAllowed) ImGui.BeginDisabled();
 
-            DrawShockerSelector();
+            DrawLeashBase();
+            if (!Plugin.ControlSettings.LeashAllowed)
+            {
+                ImGui.SameLine();
+                ImGui.Text("Options");
+            }
+            if (isOptionsOpen)
+            {
+                DrawLeashOptions();
+                ImGui.Spacing();
+                ImGui.Spacing();
+                ImGui.Spacing();
+                ImGui.Separator();
+                ImGui.Spacing();
+            }
 
             ImGui.Text("Emote to attach Leash:");
             ImGui.SetNextItemWidth(250);
@@ -579,8 +598,135 @@ namespace WoLightning.WoL_Plugin.Windows
 
                 ImGui.EndPopup();
             }
+        }
 
 
+        public void DrawLeashBase()
+        {
+            if (!Plugin.ControlSettings.LeashAllowed)
+            {
+
+                if (isOptionsOpen && ImGui.ArrowButton("##collapseLeash", ImGuiDir.Down))
+                {
+                    isOptionsOpen = !isOptionsOpen;
+                }
+                if (!isOptionsOpen && ImGui.ArrowButton("##collapseLeash", ImGuiDir.Right))
+                {
+                    isOptionsOpen = !isOptionsOpen;
+                }
+            }
+        }
+
+        public void DrawLeashOptions()
+        {
+            bool changed = false;
+            DrawShockerSelector();
+            DrawLeashOptionsBase(ref changed);
+            if (changed) Plugin.ControlSettings.Save();
+        }
+        protected void DrawLeashOptionsBase(ref bool changed)
+        {
+            ImGui.BeginGroup();
+            ImGui.Text("    Mode");
+            ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 3 - 50);
+            int OpMode = (int)Plugin.ControlSettings.LeashShockOptions.OpMode;
+            if (ImGui.Combo("##OpModeSelectLeash", ref OpMode, ["Shock", "Vibrate", "Beep"], 3))
+            {
+                Plugin.ControlSettings.LeashShockOptions.OpMode = (OpMode)OpMode;
+                changed = true;
+            }
+            ImGui.EndGroup();
+
+            ImGui.SameLine();
+            ImGui.BeginGroup();
+            ImGui.Text("    Duration");
+            ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 7);
+            int DurationIndex = durationArray.IndexOf(Plugin.ControlSettings.LeashShockOptions.Duration);
+            if (ImGui.Combo("##DurationSelectLeash", ref DurationIndex, ["0.1s", "0.3s", "1s", "2s", "3s", "4s", "5s", "6s", "7s", "8s", "9s", "10s"], 12))
+            {
+                Plugin.ControlSettings.LeashShockOptions.Duration = durationArray[DurationIndex];
+
+                float intervalS = Plugin.ControlSettings.LeashTriggerInterval;
+                int duration = Plugin.ControlSettings.LeashShockOptions.Duration;
+                if (duration > 10) duration = 1;
+                if (intervalS < duration) intervalS = duration;
+                Plugin.ControlSettings.LeashTriggerInterval = intervalS;
+                changed = true;
+            }
+            ImGui.EndGroup();
+
+            ImGui.SameLine();
+            ImGui.BeginGroup();
+            ImGui.Text("    Intensity");
+            ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 2.50f - 30);
+            int Intensity = Plugin.ControlSettings.LeashShockOptions.Intensity;
+            if (ImGui.SliderInt("##IntensitySelectLeash", ref Intensity, 1, 100))
+            {
+                Plugin.ControlSettings.LeashShockOptions.Intensity = Intensity;
+                changed = true;
+            }
+            ImGui.EndGroup();
+
+            ImGui.BeginGroup();
+            ImGui.Text("Amount of Warning Vibrations");
+            ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 2.50f - 30);
+            int warningAmount = Plugin.ControlSettings.LeashWarningScalingAmount;
+            if (ImGui.InputInt("##WarningAmountLeash", ref warningAmount))
+            {
+                if (warningAmount < 0) warningAmount = 0;
+                if (warningAmount > 9) warningAmount = 9;
+
+                Plugin.ControlSettings.LeashWarningScalingAmount = warningAmount;
+                changed = true;
+            }
+            ImGui.EndGroup();
+
+            
+            ImGui.BeginGroup();
+            ImGui.Text("Amount of Triggers to reach above Settings");
+            ImGui.SameLine();
+            ImGui.TextDisabled(" (?)");
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.SetTooltip("This Setting will divide the Settings to scale them up after multiple requests." +
+                    "\nIf you set this to 5, then the first request will be divided by 4, next one by 3, and so on, until it reaches 100% of your settings above.");
+            }
+            ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 2.50f - 30);
+            int shockAmount = Plugin.ControlSettings.LeashShockScalingAmount;
+            if (ImGui.InputInt("##ShockAmountLeash", ref shockAmount))
+            {
+                if (shockAmount < 0) shockAmount = 0;
+                if (shockAmount > 9) shockAmount = 9;
+
+                Plugin.ControlSettings.LeashShockScalingAmount = shockAmount;
+                changed = true;
+            }
+            ImGui.EndGroup();
+
+            ImGui.BeginGroup();
+            ImGui.Text("Interval of Triggers (s)");
+            ImGui.SameLine();
+            ImGui.TextDisabled(" (?)");
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.SetTooltip("This sets at which interval requests will be sent out." +
+                    "\n5 seconds would mean, that for every 5 seconds that you are outside the leash distance, a request will be sent." +
+                    "\nPlease note that this doesnt include the Duration itself, so if you have a 5 second shock and a 5 second interval, you will get consistent shocks.");
+            }
+            ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 2.50f - 30);
+            float interval = Plugin.ControlSettings.LeashTriggerInterval;
+            if (ImGui.InputFloat("##ShockInterval", ref interval))
+            {
+                int duration = Plugin.ControlSettings.LeashShockOptions.Duration;
+                if (duration > 10) duration = 1;
+
+                if (interval < duration) interval = duration;
+                if (interval > 60) interval = 60;
+
+                Plugin.ControlSettings.LeashTriggerInterval = interval;
+                changed = true;
+            }
+            ImGui.EndGroup();
         }
     }
 }

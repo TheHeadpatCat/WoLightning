@@ -29,7 +29,7 @@ namespace WoLightning.WoL_Plugin.Configurations
 
         [JsonIgnore] private Plugin Plugin;
         protected override string FileName { get; } = "ControlSettings.json";
-        protected override Version CurrentVersion { get; init; } = new Version(1, 0, 0, 'a');
+        protected override Version CurrentVersion { get; init; } = new Version(1, 1, 0, 'a');
 
         public Player Controller { get; set; }
 
@@ -50,7 +50,7 @@ namespace WoLightning.WoL_Plugin.Configurations
         public ushort LeashDistanceEmote { get; set; }
         public ShockOptions LeashShockOptions { get; set; } = new();
         public float LeashTriggerInterval { get; set; } = 3;
-        public int LeashVibrationScalingAmount { get; set; } = 2;
+        public int LeashWarningScalingAmount { get; set; } = 2;
         public int LeashShockScalingAmount { get; set; } = 5;
 
         public bool FullControl { get; set; } = false;
@@ -318,7 +318,7 @@ namespace WoLightning.WoL_Plugin.Configurations
             LeashGraceAreaTimer.AutoReset = false;
             LeashGraceAreaTimer.Elapsed += OnGraceAreaElapsed;
 
-            LeashShockTimer.Interval = 3000;
+            LeashShockTimer.Interval = LeashTriggerInterval * 1000;
             LeashShockTimer.AutoReset = true;
             LeashShockTimer.Elapsed += OnShockElapsed;
 
@@ -382,7 +382,6 @@ namespace WoLightning.WoL_Plugin.Configurations
                 if (!HasBeenWarned)
                 {
                     Service.ToastGui.ShowError($"You are too far from {Controller.Name}!");
-                    Service.ChatGui.PrintError($"You are too far from {Controller.Name}!");
                     HasBeenWarned = true;
                     LeashGraceTimer.Refresh();
                     LeashGraceTimer.Start();
@@ -403,6 +402,7 @@ namespace WoLightning.WoL_Plugin.Configurations
         private void OnGraceElapsed(object? sender, ElapsedEventArgs e)
         {
             Service.ToastGui.ShowError($"Get closer to {Controller.Name} or you will get shocked!");
+            Service.ChatGui.PrintError($"Get closer to {Controller.Name} or you will get shocked!");
             LeashShockTimer.Refresh();
             LeashShockTimer.Start();
         }
@@ -410,31 +410,53 @@ namespace WoLightning.WoL_Plugin.Configurations
         private void OnGraceAreaElapsed(object? sender, ElapsedEventArgs e)
         {
             Service.ToastGui.ShowError($"Follow {Controller.Name} or you will get shocked!");
+            Service.ChatGui.PrintError($"Follow {Controller.Name} or you will get shocked!");
             LeashShockTimer.Refresh();
             LeashShockTimer.Start();
         }
 
         private void OnShockElapsed(object? sender, ElapsedEventArgs e)
         {
-            ShockOptions newOpt;
-            switch (LeashShockAmount) // i want to vomit
+            Logger.Log(4, "Shock Elapsed!");
+            ShockOptions newOpt = new ShockOptions();
+
+            try
             {
-                case 0: newOpt = new ShockOptions(OpMode.Vibrate, 30, 2); break;
-                case 1: newOpt = new ShockOptions(OpMode.Vibrate, 60, 2); break;
-                case 2: newOpt = new ShockOptions(OpMode.Shock, 10, 1); break;
-                case 3: newOpt = new ShockOptions(OpMode.Shock, 30, 1); break;
-                case 4: newOpt = new ShockOptions(OpMode.Shock, 60, 2); break;
-                case 5: newOpt = new ShockOptions(OpMode.Shock, 80, 2); break;
-                case 6: newOpt = new ShockOptions(OpMode.Shock, 90, 2); break;
-                default: newOpt = new ShockOptions(OpMode.Shock, 100, 3); break;
+                if (LeashShockAmount < LeashWarningScalingAmount)
+                {
+                    float scale = (float)(LeashShockAmount + 1) / LeashWarningScalingAmount;
+                    if (scale > 1) scale = 1;
+                    Logger.Log(4, "Scaling " + scale);
+                    newOpt.OpMode = OpMode.Vibrate;
+                    newOpt.Intensity = (int) (100 * scale);
+                    newOpt.Duration = (int) (LeashTriggerInterval * scale);
+                    if (newOpt.Duration > 5) newOpt.Duration = 5;
+                }
+                else
+                {
+                    float scale = (float)(LeashShockAmount + 1 - LeashWarningScalingAmount) / LeashShockScalingAmount;
+                    if (scale > 1) scale = 1;
+                    Logger.Log(4, "Scaling " +  scale);
+                    newOpt.OpMode = LeashShockOptions.OpMode;
+                    newOpt.Intensity = (int) (LeashShockOptions.Intensity * scale);
+                    newOpt.Duration = (int)(LeashShockOptions.Duration * scale);
+                }
             }
+            catch (Exception ex)
+            {
+                Logger.Error(ex.Message);
+                Logger.Error(ex.ToString());
+            }
+
+            Logger.Log(4, "Creating Request...");
+            Logger.Log(4, newOpt.ToString());
 
             newOpt.ShockersPishock = LeashShockOptions.ShockersPishock;
             newOpt.ShockersOpenShock = LeashShockOptions.ShockersOpenShock;
             newOpt.Validate();
             Plugin.ClientPishock.SendRequest(newOpt);
             Plugin.ClientOpenShock.SendRequest(newOpt);
-            Plugin.NotificationHandler.send($"You are too far from {Controller.Name}", "Leash is broken!");
+            Plugin.NotificationHandler.send($"You are too far from {Controller.Name}");
             LeashShockAmount++;
         }
 
