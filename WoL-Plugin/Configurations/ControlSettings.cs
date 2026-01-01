@@ -41,6 +41,7 @@ namespace WoLightning.WoL_Plugin.Configurations
         public ushort LockingEmote { get; set; }
         public ushort UnlockingEmote { get; set; }
 
+        // Todo: Move this into its own class or something, this is terrible
         public bool LeashAllowed { get; set; } = false;
         public float LeashDistance { get; set; } = 8.5f;
         public float LeashGraceTime { get; set; } = 5;
@@ -52,6 +53,8 @@ namespace WoLightning.WoL_Plugin.Configurations
         public float LeashTriggerInterval { get; set; } = 3;
         public int LeashWarningScalingAmount { get; set; } = 2;
         public int LeashShockScalingAmount { get; set; } = 5;
+        public bool LeashShowDistanceWarning { get; set; } = true;
+        public bool LeashShowGraceWarning { get; set; } = true;
 
         public bool FullControl { get; set; } = false;
         public bool SafewordDisabled { get; set; } = false;
@@ -358,9 +361,9 @@ namespace WoLightning.WoL_Plugin.Configurations
                 if (!HasBeenToldToFollow)
                 {
                     Logger.Log(4, "Lost Controller Signature - searching...");
-                    Service.ToastGui.ShowError($"{Controller.Name} has left the Area - Follow them!");
-                    Service.ChatGui.PrintError($"{Controller.Name} has left the Area - Follow them!" +
-                        $"\n(If they went offline, open your Friendlist to confirm)");
+                        Service.ToastGui.ShowError($"{Controller.Name} has left the Area - Follow them!");
+                        Service.ChatGui.PrintError($"{Controller.Name} has left the Area - Follow them!" +
+                            $"\n(If they went offline, open your Friendlist to confirm)");
                     ControllerReference = null;
                     LeashGraceAreaTimer.Refresh();
                     LeashGraceAreaTimer.Start();
@@ -381,7 +384,10 @@ namespace WoLightning.WoL_Plugin.Configurations
             {
                 if (!HasBeenWarned)
                 {
-                    Service.ToastGui.ShowError($"You are too far from {Controller.Name}!");
+                    if (LeashShowDistanceWarning) 
+                    {
+                        Service.ToastGui.ShowError($"You are too far from {Controller.Name}!");
+                    }
                     HasBeenWarned = true;
                     LeashGraceTimer.Refresh();
                     LeashGraceTimer.Start();
@@ -401,16 +407,22 @@ namespace WoLightning.WoL_Plugin.Configurations
 
         private void OnGraceElapsed(object? sender, ElapsedEventArgs e)
         {
-            Service.ToastGui.ShowError($"Get closer to {Controller.Name} or you will get shocked!");
-            Service.ChatGui.PrintError($"Get closer to {Controller.Name} or you will get shocked!");
+            if (LeashShowGraceWarning)
+            {
+                Service.ToastGui.ShowError($"Get closer to {Controller.Name} or you will get shocked!");
+                Service.ChatGui.PrintError($"Get closer to {Controller.Name} or you will get shocked!");
+            }
             LeashShockTimer.Refresh();
             LeashShockTimer.Start();
         }
 
         private void OnGraceAreaElapsed(object? sender, ElapsedEventArgs e)
         {
-            Service.ToastGui.ShowError($"Follow {Controller.Name} or you will get shocked!");
-            Service.ChatGui.PrintError($"Follow {Controller.Name} or you will get shocked!");
+            if (LeashShowGraceWarning)
+            {
+                Service.ToastGui.ShowError($"Follow {Controller.Name} or you will get shocked!");
+                Service.ChatGui.PrintError($"Follow {Controller.Name} or you will get shocked!");
+            }
             LeashShockTimer.Refresh();
             LeashShockTimer.Start();
         }

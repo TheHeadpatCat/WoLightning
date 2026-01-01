@@ -212,6 +212,8 @@ namespace WoLightning.WoL_Plugin.Windows
             ushort leashEmote = Plugin.ControlSettings.LeashEmote;
             ushort unleashEmote = Plugin.ControlSettings.UnleashEmote;
             ushort leashDistanceEmote = Plugin.ControlSettings.LeashDistanceEmote;
+            bool leashShowDistanceWarning = Plugin.ControlSettings.LeashShowDistanceWarning;
+            bool leashShowGraceWarning = Plugin.ControlSettings.LeashShowGraceWarning;
 
             if (leashEmote == 0 || unleashEmote == 0 || leashDistanceEmote == 0) ImGui.BeginDisabled();
 
@@ -224,6 +226,8 @@ namespace WoLightning.WoL_Plugin.Windows
                 Plugin.ControlSettings.LeashEmote = leashEmote;
                 Plugin.ControlSettings.UnleashEmote = unleashEmote;
                 Plugin.ControlSettings.LeashDistanceEmote = leashDistanceEmote;
+                Plugin.ControlSettings.LeashShowDistanceWarning = leashShowDistanceWarning;
+                Plugin.ControlSettings.LeashShowGraceWarning = leashShowGraceWarning;
                 Plugin.ControlSettings.Save();
             }
 
@@ -318,6 +322,11 @@ namespace WoLightning.WoL_Plugin.Windows
                 leashDistanceEmoteName = Plugin.ControlSettings.LastEmoteFromControllerName;
             }
 
+            if (ImGui.Checkbox("Show Distance Warning", ref leashShowDistanceWarning))
+            {
+                Plugin.ControlSettings.LeashShowDistanceWarning = leashShowDistanceWarning;
+            }
+
             ImGui.Text("Grace Time in Seconds:");
             ImGui.SetNextItemWidth(95);
             if (ImGui.InputFloat("##leashGraceInput", ref leashGraceTime))
@@ -338,6 +347,10 @@ namespace WoLightning.WoL_Plugin.Windows
                     "\nLoading Screens still count towards this time!");
             }
 
+            if (ImGui.Checkbox("Show Grace Warning", ref leashShowGraceWarning))
+            {
+                Plugin.ControlSettings.LeashShowGraceWarning = leashShowGraceWarning;
+            }
 
             if (leashAllowed) ImGui.EndDisabled();
 
