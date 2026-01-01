@@ -297,9 +297,16 @@ namespace WoLightning.WoL_Plugin.Configurations
         }
 
 
-        private void ApplyLeash()
+        public void ApplyLeash()
         {
             if (LeashActive) return;
+
+            if (Plugin.IsEnabled)
+            {
+                Service.ChatGui.PrintError($"{Controller.Name} tried to leash you, but the Plugin is stopped.");
+                return;
+            }
+
             LeashActive = true;
             LeashShockOptions.Validate();
 
@@ -325,7 +332,7 @@ namespace WoLightning.WoL_Plugin.Configurations
 
         }
 
-        private void RemoveLeash()
+        public void RemoveLeash()
         {
             if (!LeashActive) return;
             Service.Framework.Update -= CheckLeash;

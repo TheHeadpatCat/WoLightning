@@ -233,6 +233,7 @@ public class MainWindow : Window, IDisposable
             {
                 Plugin.IsEnabled = false;
                 Plugin.Configuration.ActivePreset.StopRules();
+                Plugin.ControlSettings.RemoveLeash();
             }
         }
 
