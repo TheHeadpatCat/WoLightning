@@ -268,7 +268,7 @@ public class ConfigWindow : Window, IDisposable
             if (ImGui.Checkbox("Show Trigger Notifications", ref showTriggerNotifs))
             {
                 Configuration.ActivePreset.showTriggerNotifs = showTriggerNotifs;
-                Configuration.Save();
+                Configuration.saveCurrentPreset();
             }
             ImGui.SameLine();
             ImGui.TextDisabled(" (?)");
@@ -281,7 +281,7 @@ public class ConfigWindow : Window, IDisposable
             if (ImGui.Checkbox("Show Cooldown Notifications", ref showCooldownNotifs))
             {
                 Configuration.ActivePreset.showCooldownNotifs = showCooldownNotifs;
-                Configuration.Save();
+                Configuration.saveCurrentPreset();
             }
             ImGui.SameLine();
             ImGui.TextDisabled(" (?)");
@@ -295,7 +295,7 @@ public class ConfigWindow : Window, IDisposable
             if (ImGui.Checkbox("Have Rules active in PVP?", ref allowPVERulesInPVP))
             {
                 Configuration.ActivePreset.AllowRulesInPvP = allowPVERulesInPVP;
-                Configuration.Save();
+                Configuration.saveCurrentPreset();
             }
             ImGui.SameLine();
             ImGui.TextDisabled(" (?)");
@@ -433,7 +433,7 @@ public class ConfigWindow : Window, IDisposable
             if (ImGui.Checkbox("Activate Whitelist", ref isWhitelistEnabled))
             {
                 Configuration.ActivePreset.isWhitelistEnabled = isWhitelistEnabled;
-                Configuration.Save();
+                Configuration.saveCurrentPreset();
             }
             ImGui.SameLine();
             ImGui.TextDisabled(" (?)");
@@ -468,7 +468,8 @@ public class ConfigWindow : Window, IDisposable
             ImGui.InputText("##SelectedPlayer", ref SelectedPlayerName, 64, ImGuiInputTextFlags.ReadOnly);
             ImGui.EndDisabled();
 
-            if (ImGui.Button("Whitelist Player##AddWhitelistButton", new Vector2(120, 25)))
+            ImGui.BeginGroup();
+            if (ImGui.Button("Whitelist Player##AddWhitelistButton", new Vector2(ImGui.GetWindowWidth() / 2f - 30, 0)))
             {
                 if (SelectedPlayerName == "None") return;
                 if (SelectedPlayerName == null) return;
@@ -477,25 +478,13 @@ public class ConfigWindow : Window, IDisposable
                 if (Blacklist.Contains(SelectedPlayer!)) Blacklist.Remove(SelectedPlayer!);
                 Whitelist.Add(SelectedPlayer!);
                 Configuration.ActivePreset.Whitelist = Whitelist;
-                Configuration.Save();
-                SelectedPlayerName = new String("None");
-            }
-            ImGui.SameLine();
-            if (ImGui.Button("Blacklist Player##AddBlacklistButton", new Vector2(120, 25)))
-            {
-                if (SelectedPlayerName == "None") return;
-                if (SelectedPlayerName == null) return;
-                if (SelectedPlayer == null) SelectedPlayer = new Player(SelectedPlayerName);
-                if (Blacklist.Contains(SelectedPlayer!)) Blacklist.Remove(SelectedPlayer!);
-                if (Whitelist.Contains(SelectedPlayer!)) Whitelist.Remove(SelectedPlayer!);
-                Blacklist.Add(SelectedPlayer!);
-                Configuration.ActivePreset.Blacklist = Blacklist;
-                Configuration.Save();
+                Configuration.saveCurrentPreset();
                 SelectedPlayerName = new String("None");
             }
 
             int removeIndex = -1;
-            if (ImGui.BeginListBox("Whitelisted\nPlayers##WhitelistBox"))
+
+            if (ImGui.BeginListBox("##WhitelistBox", new Vector2(ImGui.GetWindowWidth() / 2f - 30, 0)))
             {
                 int index = 0;
                 foreach (var Player in Whitelist)
@@ -513,11 +502,31 @@ public class ConfigWindow : Window, IDisposable
             {
                 Whitelist.RemoveAt(removeIndex);
                 Configuration.ActivePreset.Whitelist = Whitelist;
-                Configuration.Save();
+                Configuration.saveCurrentPreset();
                 removeIndex = -1;
             }
+            ImGui.EndGroup();
 
-            if (ImGui.BeginListBox("Blacklisted\nPlayers##BlacklistBox"))
+            ImGui.SameLine();
+            ImGui.Text("    ");
+            ImGui.SameLine();
+
+            ImGui.BeginGroup();
+
+            if (ImGui.Button("Blacklist Player##AddBlacklistButton", new Vector2(ImGui.GetWindowWidth() / 2f - 30, 0)))
+            {
+                if (SelectedPlayerName == "None") return;
+                if (SelectedPlayerName == null) return;
+                if (SelectedPlayer == null) SelectedPlayer = new Player(SelectedPlayerName);
+                if (Blacklist.Contains(SelectedPlayer!)) Blacklist.Remove(SelectedPlayer!);
+                if (Whitelist.Contains(SelectedPlayer!)) Whitelist.Remove(SelectedPlayer!);
+                Blacklist.Add(SelectedPlayer!);
+                Configuration.ActivePreset.Blacklist = Blacklist;
+                Configuration.saveCurrentPreset();
+                SelectedPlayerName = new String("None");
+            }
+
+            if (ImGui.BeginListBox("##BlacklistBox", new Vector2(ImGui.GetWindowWidth() / 2f - 30, 0)))
             {
                 int index = 0;
                 foreach (var Player in Blacklist)
@@ -535,8 +544,10 @@ public class ConfigWindow : Window, IDisposable
             {
                 Blacklist.RemoveAt(removeIndex);
                 Configuration.ActivePreset.Blacklist = Blacklist;
-                Configuration.Save();
+                Configuration.saveCurrentPreset();
             }
+
+            ImGui.EndGroup();
 
             ImGui.TextWrapped("These settings are Preset-Dependant. Swapping Presets will also swap these lists.");
             if (Configuration.IsLockedByController) ImGui.EndDisabled();
