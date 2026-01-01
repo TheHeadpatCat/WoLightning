@@ -8,7 +8,9 @@ using System.Numerics;
 using WoLightning.Util;
 using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Util;
+using WoLightning.WoL_Plugin.Util.Helpers;
 using WoLightning.WoL_Plugin.Util.Types;
+using WoLightning.WoL_Plugin.Util.UI_Elements;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Social
 {
@@ -16,25 +18,23 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
     {
         public override string Name { get; } = "Forget to say a Enforced Word";
 
-        public override string Description { get; } = "Triggers whenever you do not say a word from a list.";
+        public override string Description { get; } = "Triggers whenever you do not say a word from this list.";
         override public string Hint { get; } = "Once enabled, you can set the Words in the \"Word List\" Tab!";
+        public override bool hasOptions { get; } = false;
 
         public override RuleCategory Category { get; } = RuleCategory.Social;
 
         public List<SpecificWord> EnforcedWords { get; set; } = new();
         public List<XivChatType> Chats { get; set; } = new();
         [JsonIgnore] private bool isChatLimiterOpen = false;
+        [JsonIgnore] private WordListBox wordListBox;
 
         override public bool hasAdvancedOptions { get; } = true;
         public override bool hasExtraButton { get; } = true;
 
-        [JsonIgnore] string Input = string.Empty;
-        [JsonIgnore] int Index = -1;
-        [JsonIgnore] String SelectedWord = string.Empty;
-        [JsonIgnore] int[] Settings = new int[3];
-
-        [JsonIgnore] bool Punctuation = false;
-        [JsonIgnore] bool ProperCase = false;
+        [JsonIgnore] ShockOptionsEditor shockOptionsEditor;
+        [JsonIgnore] private string TestInput = "";
+        [JsonIgnore] private SpecificWord? TestWord;
 
 
         [JsonConstructor]
@@ -42,6 +42,11 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         public DontSayWord(Plugin plugin) : base(plugin)
         {
 
+        }
+
+        public override void Draw()
+        {
+            // removes it from the "social" tab. We are putting it into its own space.
         }
         override public void Start()
         {
@@ -90,45 +95,50 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     || type == XivChatType.TellOutgoing)) // Tell is a very weird channel. It considers only the target player and gives us no reference of the actual sender.
                 {
                     string message = StringSanitizer.LetterOrDigit(messageE.ToString());
-                    bool found = false;
-
-                    foreach (var enforcedWord in EnforcedWords) // Go through every banned word the user put in.
-                    {
-                        int spaceAmount = enforcedWord.Word.CountSpaces();
-                        Logger.Log(4, $"{Name} | Found " + spaceAmount + " spaces.");
-
-                        string[] words = message.Split(' ');
-                        for (int i = 0; i < words.Length; i++)
-                        {
-                            string wordsToCompare = words[i];
-                            if (spaceAmount > 0)
-                            {
-                                for (int j = i + 1; j < words.Length; j++)
-                                {
-                                    wordsToCompare += " " + words[j];
-                                    Logger.Log(4, $"{Name} | Added " + words[j] + " to the compound.");
-                                }
-                            }
-
-                            Logger.Log(3, $"{Name} | Comparing [" + wordsToCompare + "] against [" + enforcedWord.Word + "] which is " + enforcedWord.Compare(wordsToCompare));
-
-                            if (enforcedWord.Compare(wordsToCompare)) // Now, with both parts. Check each said word, against all banned words. If any of them match, Trigger the Rule and end the Logic.
-                            {
-                                Logger.Log(3, $"{Name} | Found [" + wordsToCompare + "] - sending request...");
-                                found = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (!found) Trigger($"You forgot to say a Enforced Word!", sender);
+                    SpecificWord? result = CheckMessage(message);
+                    if (result != null) return;
+                    else Trigger($"You forgot to say a Enforced Word!", sender);
                 }
             }
             catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if (e.StackTrace != null) Logger.Error(e.StackTrace); }
         }
 
+        public SpecificWord? CheckMessage(string message)
+        {
+            Logger.Log(4, "Message: " + message);
+            foreach (var enforcedWord in EnforcedWords) // Go through every banned word the user put in.
+            {
+                int spaceAmount = enforcedWord.Word.CountSpaces();
+                Logger.Log(4, $"{Name} | Found " + spaceAmount + " spaces.");
+
+                string[] words = message.Split(' ');
+                for (int i = 0; i < words.Length; i++)
+                {
+                    string wordsToCompare = words[i];
+                    if (spaceAmount > 0)
+                    {
+                        for (int j = i + 1; j < words.Length; j++)
+                        {
+                            wordsToCompare += " " + words[j];
+                            Logger.Log(4, $"{Name} | Added " + words[j] + " to the compound.");
+                        }
+                    }
+
+                    Logger.Log(3, $"{Name} | Comparing [" + wordsToCompare + "] against [" + enforcedWord.Word + "] which is " + enforcedWord.Compare(wordsToCompare));
+
+                    if (enforcedWord.Compare(wordsToCompare)) // Now, with both parts. Check each said word, against all banned words. If any of them match, Trigger the Rule and end the Logic.
+                    {
+                        Logger.Log(3, $"{Name} | Found [" + wordsToCompare + "] - sending request...");
+                        return enforcedWord;
+                    }
+                }
+            }
+            return null;
+        }
+
         public override void DrawExtraButton()
         {
-            ImGui.SameLine();
+
             if (ImGui.Button("Open Chat Limiter##DontSayWordOpenButton"))
             {
                 isChatLimiterOpen = true;
@@ -202,114 +212,71 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         }
         public override void DrawAdvancedOptions()
         {
-            ImGui.Text("Not saying atleast one Word from this list, will trigger the \"Forget to say Enforced Word\" Rule!");
+
+            bool enabled = IsEnabled;
+            if (ImGui.Checkbox("##EnforcedWordsEnabled", ref enabled))
+            {
+                IsEnabled = enabled;
+                Plugin.Configuration.saveCurrentPreset();
+            }
+
+            ImGui.SameLine();
+            ImGui.BeginGroup();
+            ImGui.Text(Name);
+            ImGui.TextColored(UIValues.ColorDescription, Description);
+            ImGui.EndGroup();
+
+            if (shockOptionsEditor == null)
+            {
+                shockOptionsEditor = new(Name, Plugin, ShockOptions);
+            }
+
+            if (IsEnabled)
+            {
+                shockOptionsEditor.Draw();
+            }
+
+            ImGui.Spacing();
+            ImGui.Separator();
+            ImGui.Spacing();
+
+
+            if (wordListBox == null)
+            {
+                wordListBox = new(Name, Plugin, EnforcedWords);
+                wordListBox.HasPerWordOptions = false;
+            }
+            bool changed = false;
+            wordListBox.Draw(ref changed);
+            if (changed) Plugin.Configuration.saveCurrentPreset();
+
             ImGui.TextColored(new Vector4(0.66f, 0.66f, 0.66f, 0.80f), "Note: Despite saying \"Word\", sentences are also supported.");
 
-            ImGui.SetNextItemWidth(ImGui.GetWindowWidth() - 230);
-            if (ImGui.InputTextWithHint("##EnforcedWordInput", "Click on a entry to edit it.", ref Input, 48))
-            {
-                if (Index != -1) // Get rid of the old settings, otherwise we build connections between two items
-                {
-                    int[] copyArray = new int[3];
-                    Settings.CopyTo(copyArray, 0);
-                    Settings = copyArray;
-                }
-                Index = -1;
-            }
-            ImGui.Checkbox("Punctuation", ref Punctuation);
-            ImGui.SameLine();
-            ImGui.TextDisabled("(?)");
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.SetTooltip("If this is enabled, the Word has to be properly written out on its own." +
-                "\nIf the word is \"Master\" then writing \"i like my master\" is accepted, while \"ilikemymaster\" isn't.");
-            }
-            ImGui.SameLine();
-            ImGui.Checkbox("Proper Case", ref ProperCase);
-            ImGui.SameLine();
-            ImGui.TextDisabled("(?)");
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.SetTooltip("If this is enabled, the Word has to properly match the Case." +
-                "\nIf the word is \"Collar\" then writing \"i have a Collar\" is accepted, while \"i have a collar\" isn't.");
-            }
+            DrawWordTesting();
+        }
 
+        private void DrawWordTesting()
+        {
             ImGui.Separator();
-
             ImGui.Spacing();
-
-            if (ImGui.Button("Add/Edit Word##EnforcedWordAdd", new Vector2(ImGui.GetWindowWidth() / 2 - 8, 25)))
+            if (TestInput.Length == 0)
             {
-
-                SpecificWord? target = null;
-                foreach (SpecificWord EnforcedWord in EnforcedWords)
-                {
-                    if (EnforcedWord.Word.ToLower() == Input.ToLower())
-                    {
-                        target = EnforcedWord;
-                        break;
-                    }
-                }
-                if (target != null)
-                {
-                    EnforcedWords.Remove(target);
-                }
-
-                target = new SpecificWord(Input);
-                target.NeedsPunctuation = Punctuation;
-                target.NeedsProperCase = ProperCase;
-                EnforcedWords.Add(target);
-
-                Index = -1;
-                Input = new String("");
-                Settings = new int[3];
-                SelectedWord = new String("");
+                ImGui.Text("Test out if the List works: ");
             }
-
-            ImGui.SameLine();
-
-            if (Index == -1) ImGui.BeginDisabled();
-            if (ImGui.Button("Remove Word##EnforcedWordRemove", new Vector2(ImGui.GetWindowWidth() / 2 - 8, 25)))
+            else
             {
-                SpecificWord? target = null;
-                foreach (SpecificWord EnforcedWord in EnforcedWords)
+                if (TestWord == null)
                 {
-                    if (EnforcedWord.Word.ToLower() == Input.ToLower())
-                    {
-                        target = EnforcedWord;
-                        break;
-                    }
+                    ImGui.TextColored(UIValues.ColorNameBlocked, "You haven't said a Enforced word!");
                 }
-                if (target != null)
+                else
                 {
-                    EnforcedWords.Remove(target);
+                    ImGui.TextColored(UIValues.ColorNameEnabled, $"Found: {TestWord.Word}");
                 }
-                Index = -1;
-                Input = new String("");
-                Settings = new int[3];
-                SelectedWord = new String("");
             }
-            if (Index == -1) ImGui.EndDisabled();
-
-            ImGui.Spacing();
-
-            if (ImGui.BeginListBox("##EnforcedWordListBox", new Vector2(ImGui.GetWindowWidth() - 15, 340)))
+            if (ImGui.InputTextWithHint($"##{Name}TestInput", "Input something you would say!", ref TestInput))
             {
-                int index = 0;
-                foreach (SpecificWord EnforcedWord in EnforcedWords)
-                {
-                    string mode = new String("");
-                    string durS = new String("");
-                    bool is_Selected = (Index == index);
-                    if (ImGui.Selectable($"{EnforcedWord.Word} - Punctuation: {EnforcedWord.NeedsPunctuation} - Proper Case: {EnforcedWord.NeedsProperCase}", ref is_Selected))
-                    {
-                        SelectedWord = EnforcedWord.Word;
-                        Index = index;
-                        Input = EnforcedWord.Word;
-                    }
-                    index++;
-                }
-                ImGui.EndListBox();
+                TestWord = CheckMessage(TestInput);
             }
         }
 

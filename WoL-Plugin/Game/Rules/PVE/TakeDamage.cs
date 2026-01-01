@@ -107,7 +107,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 
         public override void DrawExtraButton()
         {
-            ImGui.SameLine();
+
             if (isProportional)
             {
                 if (ImGui.Button("Disable Proportional##TakeDamageProportionalDisable"))

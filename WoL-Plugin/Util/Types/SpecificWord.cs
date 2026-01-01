@@ -1,4 +1,5 @@
 ﻿using System;
+using WoLightning.Util.Types;
 
 namespace WoLightning.WoL_Plugin.Util.Types
 {
@@ -19,7 +20,7 @@ namespace WoLightning.WoL_Plugin.Util.Types
         public bool NeedsProperCase { get; set; } = false;
         public bool NeedsPunctuation { get; set; } = false;
         public WordPosition NeedsPosition { get; set; } = WordPosition.Any;
-        //public ShockOptions ShockOptions { get; set; } = new();
+        public ShockOptions ShockOptions { get; set; } = new();
 
         public SpecificWord(String Word) { this.Word = Word; }
 

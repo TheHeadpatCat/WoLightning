@@ -25,6 +25,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         [JsonIgnore] abstract public string Description { get; }
         [JsonIgnore] virtual public string Hint { get; }
         [JsonIgnore] abstract public RuleCategory Category { get; }
+        [JsonIgnore] virtual public bool hasOptions { get; } = true;
         [JsonIgnore] virtual public bool hasAdvancedOptions { get; } = false;
         [JsonIgnore] virtual public bool hasExtraButton { get; } = false;
         [JsonIgnore] virtual public string CreatorName { get; }
@@ -89,7 +90,11 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             if (source != null && !Plugin.Configuration.ActivePreset.isPlayerAllowedToTrigger(source)) { Logger.Log(3, " -> Aborted due to Permissions."); return; }
             if (!Plugin.Configuration.ActivePreset.AllowRulesInPvP && Service.ClientState.IsPvP) { Logger.Log(3, " -> Aborted due to PVP."); return; }
 
-            if (overrideOptions == null) Triggered?.Invoke(ShockOptions);
+            if (overrideOptions == null)
+            {
+                Logger.Log(4, "Triggering with Settings: " + ShockOptions.ToString());
+                Triggered?.Invoke(ShockOptions);
+            }
             else
             {
                 ShockOptions newOpt = new ShockOptions(0, overrideOptions[0], overrideOptions[1]);

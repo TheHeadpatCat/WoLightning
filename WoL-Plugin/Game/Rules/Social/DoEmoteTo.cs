@@ -59,7 +59,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
         public override void DrawExtraButton()
         {
-            ImGui.SameLine();
+
             if (ImGui.Button("Open Emote Selector##DoEmoteToOpenButton"))
             {
                 isEmoteSelectorOpen = true;

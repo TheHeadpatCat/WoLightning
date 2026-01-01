@@ -125,7 +125,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
         public override void DrawExtraButton()
         {
-            ImGui.SameLine();
+
             bool keepTriggering = KeepTriggering;
             if (ImGui.Checkbox("Keep Triggering until standing up? (Max 10)", ref keepTriggering))
             {

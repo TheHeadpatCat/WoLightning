@@ -6,19 +6,15 @@ using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Info;
-using InteropGenerator.Runtime;
 using Lumina.Excel.Sheets;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Timers;
 using WoLightning.Util;
 using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Util;
-using static System.Net.Mime.MediaTypeNames;
 using Version = WoLightning.WoL_Plugin.Util.Types.Version;
 
 namespace WoLightning.WoL_Plugin.Configurations
@@ -94,7 +90,7 @@ namespace WoLightning.WoL_Plugin.Configurations
             CheckFriendListTimer.Interval = 3000;
         }
 
-        
+
 
         private unsafe void CheckFriendList(object? sender, ElapsedEventArgs e)
         {
@@ -102,9 +98,9 @@ namespace WoLightning.WoL_Plugin.Configurations
             try
             {
                 AddonFriendList* addon = Service.GameGui.GetAddonByName<AddonFriendList>("FriendList");
-                if(addon == null) return;
+                if (addon == null) return;
                 var friendList = addon->GetNodeById(14)->GetAsAtkComponentList();
-                if(friendList == null) return;
+                if (friendList == null) return;
 
                 Logger.Log(4, friendList->ListLength);
 
@@ -112,8 +108,8 @@ namespace WoLightning.WoL_Plugin.Configurations
                 LastFriendAmount = friendList->ListLength;
 
                 var character = InfoProxyFriendList.Instance()->GetEntryByName(Controller.Name, (ushort)Controller.WorldId!);
-                if( character == null ) return;
-                
+                if (character == null) return;
+
                 Logger.Log(4, character->State.ToString());
                 if (character->State.ToString().Contains("Offline")) // for some reason, flags didnt work
                 {
@@ -361,9 +357,9 @@ namespace WoLightning.WoL_Plugin.Configurations
                 if (!HasBeenToldToFollow)
                 {
                     Logger.Log(4, "Lost Controller Signature - searching...");
-                        Service.ToastGui.ShowError($"{Controller.Name} has left the Area - Follow them!");
-                        Service.ChatGui.PrintError($"{Controller.Name} has left the Area - Follow them!" +
-                            $"\n(If they went offline, open your Friendlist to confirm)");
+                    Service.ToastGui.ShowError($"{Controller.Name} has left the Area - Follow them!");
+                    Service.ChatGui.PrintError($"{Controller.Name} has left the Area - Follow them!" +
+                        $"\n(If they went offline, open your Friendlist to confirm)");
                     ControllerReference = null;
                     LeashGraceAreaTimer.Refresh();
                     LeashGraceAreaTimer.Start();
@@ -384,7 +380,7 @@ namespace WoLightning.WoL_Plugin.Configurations
             {
                 if (!HasBeenWarned)
                 {
-                    if (LeashShowDistanceWarning) 
+                    if (LeashShowDistanceWarning)
                     {
                         Service.ToastGui.ShowError($"You are too far from {Controller.Name}!");
                     }
@@ -440,17 +436,17 @@ namespace WoLightning.WoL_Plugin.Configurations
                     if (scale > 1) scale = 1;
                     Logger.Log(4, "Scaling " + scale);
                     newOpt.OpMode = OpMode.Vibrate;
-                    newOpt.Intensity = (int) (100 * scale);
-                    newOpt.Duration = (int) (LeashTriggerInterval * scale);
+                    newOpt.Intensity = (int)(100 * scale);
+                    newOpt.Duration = (int)(LeashTriggerInterval * scale);
                     if (newOpt.Duration > 5) newOpt.Duration = 5;
                 }
                 else
                 {
                     float scale = (float)(LeashShockAmount + 1 - LeashWarningScalingAmount) / LeashShockScalingAmount;
                     if (scale > 1) scale = 1;
-                    Logger.Log(4, "Scaling " +  scale);
+                    Logger.Log(4, "Scaling " + scale);
                     newOpt.OpMode = LeashShockOptions.OpMode;
-                    newOpt.Intensity = (int) (LeashShockOptions.Intensity * scale);
+                    newOpt.Intensity = (int)(LeashShockOptions.Intensity * scale);
                     newOpt.Duration = (int)(LeashShockOptions.Duration * scale);
                 }
             }

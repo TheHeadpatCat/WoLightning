@@ -8,7 +8,9 @@ using System.Text.Json.Serialization;
 using WoLightning.Util;
 using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Util;
+using WoLightning.WoL_Plugin.Util.Helpers;
 using WoLightning.WoL_Plugin.Util.Types;
+using WoLightning.WoL_Plugin.Util.UI_Elements;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Social
 {
@@ -16,24 +18,21 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
     {
         public override string Name { get; } = "Hear a Trigger Word";
 
-        public override string Description { get; } = "Triggers whenever you hear a specific Word from a list.";
+        public override string Description { get; } = "Triggers whenever you hear a specific Word from this list.";
         override public string Hint { get; } = "Once enabled, you can set the Words in the \"Word List\" Tab!";
+        public override bool hasOptions { get; } = false;
 
         public override RuleCategory Category { get; } = RuleCategory.Social;
 
         public List<SpecificWord> TriggerWords { get; set; } = new();
         public List<XivChatType> Chats { get; set; } = new();
         [JsonIgnore] private bool isChatLimiterOpen = false;
+        [JsonIgnore] private WordListBox wordListBox;
         public override bool hasExtraButton { get; } = true;
         override public bool hasAdvancedOptions { get; } = true;
 
-        [JsonIgnore] string Input = string.Empty;
-        [JsonIgnore] int Index = -1;
-        [JsonIgnore] String SelectedWord = string.Empty;
-        [JsonIgnore] int[] Settings = new int[3];
-
-        [JsonIgnore] bool Punctuation = false;
-        [JsonIgnore] bool ProperCase = false;
+        [JsonIgnore] private string TestInput = "";
+        [JsonIgnore] private SpecificWord? TestWord;
 
 
         [JsonConstructor]
@@ -41,6 +40,11 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         public HearWord(Plugin plugin) : base(plugin)
         {
 
+        }
+
+        public override void Draw()
+        {
+            // removes it from the "social" tab. We are putting it into its own space.
         }
         override public void Start()
         {
@@ -78,43 +82,51 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                 {
                     Logger.Log(3, $"{Name} | Sender: " + sender.Name);
                     string message = StringSanitizer.LetterOrDigit(messageE.ToString());
-                    foreach (var TriggerWord in TriggerWords)
-                    {
-                        int spaceAmount = TriggerWord.Word.CountSpaces();
-                        Logger.Log(4, $"{Name} | Found " + spaceAmount + " spaces.");
-
-                        string[] words = message.Split(' ');
-                        for (int i = 0; i < words.Length; i++)
-                        {
-                            string wordsToCompare = words[i];
-                            if (spaceAmount > 0)
-                            {
-                                for (int j = i + 1; j < words.Length; j++)
-                                {
-                                    wordsToCompare += " " + words[j];
-                                    Logger.Log(4, $"{Name} | Added " + words[j] + " to the compound.");
-                                }
-                            }
-
-                            Logger.Log(3, $"{Name} | Comparing [" + wordsToCompare + "] against [" + TriggerWord.Word + "] which is " + TriggerWord.Compare(wordsToCompare));
-
-                            if (TriggerWord.Compare(wordsToCompare)) // Now, with both parts. Check each said word, against all banned words. If any of them match, Trigger the Rule and end the Logic.
-                            {
-                                Logger.Log(3, $"{Name} | Found [" + wordsToCompare + "] - sending request...");
-                                Trigger($"You heard {TriggerWord} from {sender.Name}!", sender);
-                                return;
-                            }
-                            Logger.Log(3, $"{Name} | Word failed.\n=========");
-                        }
-                    }
+                    SpecificWord? result = CheckMessage(message);
+                    if (result == null) return;
+                    else Trigger($"You heard {result} from {sender.Name}!", sender);
                 }
             }
             catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if (e.StackTrace != null) Logger.Error(e.StackTrace); }
         }
 
+        public SpecificWord? CheckMessage(string message)
+        {
+            Logger.Log(4, "Message: " + message);
+            foreach (var TriggerWord in TriggerWords)
+            {
+                int spaceAmount = TriggerWord.Word.CountSpaces();
+                Logger.Log(4, $"{Name} | Found " + spaceAmount + " spaces.");
+
+                string[] words = message.Split(' ');
+                for (int i = 0; i < words.Length; i++)
+                {
+                    string wordsToCompare = words[i];
+                    if (spaceAmount > 0)
+                    {
+                        for (int j = i + 1; j < words.Length; j++)
+                        {
+                            wordsToCompare += " " + words[j];
+                            Logger.Log(4, $"{Name} | Added " + words[j] + " to the compound.");
+                        }
+                    }
+
+                    Logger.Log(3, $"{Name} | Comparing [" + wordsToCompare + "] against [" + TriggerWord.Word + "] which is " + TriggerWord.Compare(wordsToCompare));
+
+                    if (TriggerWord.Compare(wordsToCompare)) // Now, with both parts. Check each said word, against all banned words. If any of them match, Trigger the Rule and end the Logic.
+                    {
+                        Logger.Log(3, $"{Name} | Found [" + wordsToCompare + "] - sending request...");
+                        return TriggerWord;
+                    }
+                    Logger.Log(3, $"{Name} | Word failed.\n=========");
+                }
+            }
+            return null;
+        }
+
         public override void DrawExtraButton()
         {
-            ImGui.SameLine();
+
             if (ImGui.Button("Open Chat Limiter##HearWordOpenButton"))
             {
                 isChatLimiterOpen = true;
@@ -189,115 +201,57 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
         public override void DrawAdvancedOptions()
         {
-            ImGui.TextWrapped("If someone says one of these words, it will trigger the \"Hear a Trigger Word\" Rule!" +
-                "\nYou can change who can say these words in the \"Permissions\" Tab.");
+
+            bool enabled = IsEnabled;
+            if (ImGui.Checkbox("##HearWordsEnabled", ref enabled))
+            {
+                IsEnabled = enabled;
+                Plugin.Configuration.saveCurrentPreset();
+            }
+
+            ImGui.SameLine();
+            ImGui.BeginGroup();
+            ImGui.Text(Name);
+            ImGui.TextColored(UIValues.ColorDescription, Description);
+            ImGui.EndGroup();
+
+            ImGui.Spacing();
+            ImGui.Separator();
+            ImGui.Spacing();
+
+
+            if (wordListBox == null) wordListBox = new(Name, Plugin, TriggerWords);
+            bool changed = false;
+            wordListBox.Draw(ref changed);
+            if (changed) Plugin.Configuration.saveCurrentPreset();
+
             ImGui.TextColored(new Vector4(0.66f, 0.66f, 0.66f, 0.80f), "Note: Despite saying \"Word\", sentences are also supported.");
 
-            ImGui.SetNextItemWidth(ImGui.GetWindowWidth() - 230);
-            if (ImGui.InputTextWithHint("##TriggerWordInput", "Click on a entry to edit it.", ref Input, 48))
-            {
-                if (Index != -1) // Get rid of the old settings, otherwise we build connections between two items
-                {
-                    int[] copyArray = new int[3];
-                    Settings.CopyTo(copyArray, 0);
-                    Settings = copyArray;
-                }
-                Index = -1;
-            }
-            ImGui.Checkbox("Punctuation", ref Punctuation);
-            ImGui.SameLine();
-            ImGui.TextDisabled("(?)");
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.SetTooltip("If this is enabled, the Word has to be properly written out on its own." +
-                "\nIf the word is \"Master\" then writing \"i like my master\" is accepted, while \"ilikemymaster\" isn't.");
-            }
-            ImGui.SameLine();
-            ImGui.Checkbox("Proper Case", ref ProperCase);
-            ImGui.SameLine();
-            ImGui.TextDisabled("(?)");
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.SetTooltip("If this is enabled, the Word has to properly match the Case." +
-                "\nIf the word is \"Collar\" then writing \"i have a Collar\" is accepted, while \"i have a collar\" isn't.");
-            }
+            DrawWordTesting();
+        }
 
+        private void DrawWordTesting()
+        {
             ImGui.Separator();
-
             ImGui.Spacing();
-
-            if (ImGui.Button("Add/Edit Word##EnforcedWordAdd", new Vector2(ImGui.GetWindowWidth() / 2 - 8, 25)))
+            if (TestInput.Length == 0)
             {
-
-                SpecificWord? target = null;
-                foreach (SpecificWord TriggerWord in TriggerWords)
-                {
-                    if (TriggerWord.Word.ToLower() == Input.ToLower())
-                    {
-                        target = TriggerWord;
-                        break;
-                    }
-                }
-                if (target != null)
-                {
-                    TriggerWords.Remove(target);
-                }
-
-                target = new SpecificWord(Input);
-                target.NeedsPunctuation = Punctuation;
-                target.NeedsProperCase = ProperCase;
-                TriggerWords.Add(target);
-
-                Index = -1;
-                Input = new String("");
-                Settings = new int[3];
-                SelectedWord = new String("");
+                ImGui.Text("Test out if the List works: ");
             }
-
-            ImGui.SameLine();
-
-            if (Index == -1) ImGui.BeginDisabled();
-            if (ImGui.Button("Remove Word##TriggerWordRemove", new Vector2(ImGui.GetWindowWidth() / 2 - 8, 25)))
+            else
             {
-                SpecificWord? target = null;
-                foreach (SpecificWord TriggerWord in TriggerWords)
+                if (TestWord == null)
                 {
-                    if (TriggerWord.Word.ToLower() == Input.ToLower())
-                    {
-                        target = TriggerWord;
-                        break;
-                    }
+                    ImGui.TextColored(UIValues.ColorNameEnabled, "You're safe!");
                 }
-                if (target != null)
+                else
                 {
-                    TriggerWords.Remove(target);
+                    ImGui.TextColored(UIValues.ColorNameBlocked, $"Found: {TestWord.Word}");
                 }
-                Index = -1;
-                Input = new String("");
-                Settings = new int[3];
-                SelectedWord = new String("");
             }
-            if (Index == -1) ImGui.EndDisabled();
-
-            ImGui.Spacing();
-
-            if (ImGui.BeginListBox("##TriggerWordListBox", new Vector2(ImGui.GetWindowWidth() - 15, 340)))
+            if (ImGui.InputTextWithHint($"##{Name}TestInput", "Input something you would hear!", ref TestInput))
             {
-                int index = 0;
-                foreach (SpecificWord TriggerWord in TriggerWords)
-                {
-                    string mode = new String("");
-                    string durS = new String("");
-                    bool is_Selected = (Index == index);
-                    if (ImGui.Selectable($"{TriggerWord.Word} - Punctuation: {TriggerWord.NeedsPunctuation} - Proper Case: {TriggerWord.NeedsProperCase}", ref is_Selected))
-                    {
-                        SelectedWord = TriggerWord.Word;
-                        Index = index;
-                        Input = TriggerWord.Word;
-                    }
-                    index++;
-                }
-                ImGui.EndListBox();
+                TestWord = CheckMessage(TestInput);
             }
         }
 

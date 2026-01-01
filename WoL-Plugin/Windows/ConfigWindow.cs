@@ -173,17 +173,17 @@ public class ConfigWindow : Window, IDisposable
                         if (Configuration.IsLockedByController) ImGui.EndDisabled();
                         ImGui.EndTabItem();
                     }
-                    if (ImGui.BeginTabItem("Enforced Words"))
-                    {
-                        if (Configuration.IsLockedByController) ImGui.BeginDisabled();
-                        ActivePreset.DontSayWord.DrawAdvancedOptions();
-                        if (Configuration.IsLockedByController) ImGui.EndDisabled();
-                        ImGui.EndTabItem();
-                    }
                     if (ImGui.BeginTabItem("Trigger Words"))
                     {
                         if (Configuration.IsLockedByController) ImGui.BeginDisabled();
                         ActivePreset.HearWord.DrawAdvancedOptions();
+                        if (Configuration.IsLockedByController) ImGui.EndDisabled();
+                        ImGui.EndTabItem();
+                    }
+                    if (ImGui.BeginTabItem("Enforced Words"))
+                    {
+                        if (Configuration.IsLockedByController) ImGui.BeginDisabled();
+                        ActivePreset.DontSayWord.DrawAdvancedOptions();
                         if (Configuration.IsLockedByController) ImGui.EndDisabled();
                         ImGui.EndTabItem();
                     }
@@ -199,11 +199,12 @@ public class ConfigWindow : Window, IDisposable
 
 
         ImGui.SetNextWindowPos(new Vector2(ImGui.GetWindowPos().X, ImGui.GetWindowPos().Y + ImGui.GetWindowHeight()));
-        ImGui.SetNextWindowSize(new Vector2(ImGui.GetWindowWidth(), 35));
+        ImGui.SetNextWindowSize(new Vector2(ImGui.GetWindowWidth(), 45));
         ImGui.Begin("##DiscordFooter", ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoSavedSettings);
         ImGui.Text("Found a issue or got a feature request?");
         ImGui.SameLine();
-        if (ImGui.Button("Join the Discord", new Vector2(130, 25)))
+        //ImGui.SetNextItemWidth(130);
+        if (ImGui.Button("Join the Discord"))
         {
             try
             {

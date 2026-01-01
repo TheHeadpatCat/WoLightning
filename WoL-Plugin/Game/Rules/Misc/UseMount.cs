@@ -84,7 +84,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 
         public override void DrawExtraButton()
         {
-            ImGui.SameLine();
+
             bool includePillion = IncludePillion;
             if (ImGui.Checkbox("Include Pillion?", ref includePillion))
             {

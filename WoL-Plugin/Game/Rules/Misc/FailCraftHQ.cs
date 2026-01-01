@@ -194,7 +194,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 
         public override void DrawExtraButton()
         {
-            ImGui.SameLine();
+
             int minimumCollectabilitySlide = (int)MinimumQualityPercent;
             ImGui.SetNextItemWidth(250);
             if (ImGui.SliderInt("Minimum Quality in %", ref minimumCollectabilitySlide, 0, 100))

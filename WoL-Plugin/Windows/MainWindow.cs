@@ -8,6 +8,7 @@ using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Clients.OpenShock;
 using WoLightning.WoL_Plugin.Clients.Pishock;
 using WoLightning.WoL_Plugin.Util;
+using WoLightning.WoL_Plugin.Util.UI_Elements;
 using static WoLightning.Clients.OpenShock.ClientOpenShock;
 using static WoLightning.Clients.Pishock.ClientPishock;
 
@@ -94,9 +95,7 @@ public class MainWindow : Window, IDisposable
         ImGui.BeginGroup();
         ImGui.Text("Pishock API");
 
-        ImGui.SameLine();
-        ImGui.TextDisabled(" (?)       ");
-        if (ImGui.IsItemHovered()) { ImGui.SetTooltip("This is where your Shocks get sent to, if you are using a Pishock Account.\nIf you are not connected to it, you cannot receive shocks."); }
+        HoverText.ShowSameLine(" (?)       ", "This is where your Shocks get sent to, if you are using a Pishock Account.\nIf you are not connected to it, you cannot receive shocks.");
         switch (Plugin.ClientPishock.Status)
         {
             case ConnectionStatusPishock.NotStarted:
@@ -126,9 +125,7 @@ public class MainWindow : Window, IDisposable
 
         ImGui.BeginGroup();
         ImGui.Text("OpenShock API");
-        ImGui.SameLine();
-        ImGui.TextDisabled(" (?)");
-        if (ImGui.IsItemHovered()) { ImGui.SetTooltip("This is the Server that Shocks get sent to if you are using a OpenShock Account.\nIf you are not connected to it, you cannot receive shocks."); }
+        HoverText.ShowHint("This is the Server that Shocks get sent to if you are using a OpenShock Account.\nIf you are not connected to it, you cannot receive shocks.");
 
         switch (Plugin.ClientOpenShock.Status)
         {
@@ -232,7 +229,7 @@ public class MainWindow : Window, IDisposable
         if (Plugin.ControlSettings.FullControl) ImGui.BeginDisabled();
         if (Plugin.IsEnabled)
         {
-            if (ImGui.Button("Stop Plugin", new Vector2(270, 40))) // Todo: Color coding
+            if (ImGui.Button("Stop Plugin", new Vector2(WindowWidth - 15, 0))) // Todo: Color coding
             {
                 Plugin.IsEnabled = false;
                 Plugin.Configuration.ActivePreset.StopRules();
@@ -241,7 +238,7 @@ public class MainWindow : Window, IDisposable
 
         if (!Plugin.IsEnabled)
         {
-            if (ImGui.Button("Start Plugin", new Vector2(270, 40)))
+            if (ImGui.Button("Start Plugin", new Vector2(WindowWidth - 15, 0)))
             {
                 Plugin.IsEnabled = true;
                 Plugin.Configuration.ActivePreset.StartRules();
@@ -263,14 +260,13 @@ public class MainWindow : Window, IDisposable
         {
             Plugin.ShockRemoteWindow.Toggle();
         }*/
-
-        if (ImGui.Button("Open Control Settings", new Vector2(ImGui.GetWindowSize().X - 10, 25)))
+        if (ImGui.Button("Open Control Settings", new Vector2(WindowWidth - 15, 0)))
         {
             Plugin.ControlWindow.Toggle();
         }
 
         //if (Plugin.Authentification.isDisallowed) ImGui.EndDisabled();
-        if (ImGui.Button("Open Trigger Configuration", new Vector2(ImGui.GetWindowSize().X - 10, 25)))
+        if (ImGui.Button("Open Trigger Configuration", new Vector2(WindowWidth - 15, 0)))
         {
             Plugin.ToggleConfigUI();
         }
@@ -316,7 +312,7 @@ public class MainWindow : Window, IDisposable
         if (ImGui.InputTextWithHint("##PishockAPIKey", "API Key from \"Account\"", ref PishockApiField, 64, ImGuiInputTextFlags.Password))
             Plugin.Authentification.PishockApiKey = PishockApiField;
 
-        if (ImGui.Button("Save & Connect##SavePishock", new Vector2(ImGui.GetWindowSize().X - 15, 25)))
+        if (ImGui.Button("Save & Connect##SavePishock", new Vector2(WindowWidth - 15, 0)))
         {
             Plugin.Authentification.Save();
             Plugin.ClientPishock.Setup();
@@ -377,7 +373,8 @@ public class MainWindow : Window, IDisposable
         if (ImGui.InputTextWithHint("##OpenShockApiField", "API Key from \"Account\"", ref OpenShockApiField, 96, ImGuiInputTextFlags.Password))
             Plugin.Authentification.OpenShockApiKey = OpenShockApiField;
 
-        if (ImGui.Button("Save & Connect##SaveOpenShock", new Vector2(ImGui.GetWindowSize().X - 15, 25)))
+        ImGui.SetNextItemWidth(WindowWidth - 15);
+        if (ImGui.Button("Save & Connect##SaveOpenShock"))
         {
             Plugin.Authentification.Save();
             Plugin.ClientOpenShock.Setup();

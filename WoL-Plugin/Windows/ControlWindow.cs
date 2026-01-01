@@ -4,7 +4,6 @@ using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface.Windowing;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Numerics;
 using WoLightning.Configurations;
 using WoLightning.Util.Types;
@@ -694,7 +693,7 @@ namespace WoLightning.WoL_Plugin.Windows
             }
             ImGui.EndGroup();
 
-            
+
             ImGui.BeginGroup();
             ImGui.Text("Amount of Triggers to reach above Settings");
             ImGui.SameLine();
@@ -740,9 +739,9 @@ namespace WoLightning.WoL_Plugin.Windows
             }
             ImGui.EndGroup();
 
-            if(interval == durationT)
+            if (interval == durationT)
             {
-                ImGui.TextColored(ColorDescription,"You cannot set the interval lower than the maximum duration." +
+                ImGui.TextColored(ColorDescription, "You cannot set the interval lower than the maximum duration." +
                     "\n(Because setting it to the same means constant shocks already)");
             }
 

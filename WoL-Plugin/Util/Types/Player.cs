@@ -2,7 +2,6 @@
 using Dalamud.Game.Text.SeStringHandling;
 using System;
 using System.Linq;
-using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.Util.Types
 {
@@ -248,8 +247,8 @@ namespace WoLightning.Util.Types
         }
         public override string ToString()
         {
-            if (Key == null || Key.Length < 7) return $"[Player] {Name} @{getWorldName()}\nKey: [Unknown]";
-            return $"[Player] {Name} @{getWorldName()}\nKey: {Key.Substring(0, 7)}(...)";
+            if (Key == null || Key.Length < 7) return $"[Player] {Name} @{getWorldName()}";
+            return $"[Player] {Name} @{getWorldName()}";
         }
 
         public override bool Equals(object? obj)

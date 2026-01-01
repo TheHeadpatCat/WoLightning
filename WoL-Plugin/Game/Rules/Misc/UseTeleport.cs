@@ -7,6 +7,7 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using WoLightning.WoL_Plugin.Util;
+using WoLightning.WoL_Plugin.Util.UI_Elements;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 {
@@ -113,21 +114,16 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 
         public override void DrawExtraButton()
         {
-            ImGui.SameLine();
+
             bool useCosts = UseCosts;
             if (ImGui.Checkbox("Use Costs", ref useCosts))
             {
                 UseCosts = useCosts;
                 Plugin.Configuration.saveCurrentPreset();
             }
-            ImGui.SameLine();
-            ImGui.TextDisabled("(?)");
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.SetTooltip("Allows you to set a minimum and maximum Cost for teleportation." +
+            HoverText.ShowHint("Allows you to set a minimum and maximum Cost for teleportation." +
                 "\nMinimum as in \"the teleport has to cost atleast this much gil\"." +
                 "\nMaximum as in \"the teleport is not allowed to cost more than this\".");
-            }
 
             if (!UseCosts) return;
             ImGui.BeginGroup();
