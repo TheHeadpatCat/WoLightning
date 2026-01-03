@@ -25,7 +25,11 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
 
         public void Draw()
         {
-            if (Plugin == null || Options == null) return;
+            if (Plugin == null || Options == null)
+            {
+                ImGui.TextColored(UIValues.ColorNameBlocked, "Failed to load Settings. Please restart the Plugin");
+                return;
+            }
             DrawOptions();
         }
 

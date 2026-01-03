@@ -30,7 +30,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         [JsonIgnore] virtual public bool hasExtraButton { get; } = false;
         [JsonIgnore] virtual public string CreatorName { get; }
 
-        virtual public ShockOptions ShockOptions { get; set; }
+        virtual public ShockOptions ShockOptions { get; set; } = new();
 
         virtual public bool IsEnabled { get; set; } // True when the User has it checked as "On"
         [NonSerialized] public bool IsRunning;      // True when we are actually running the "Check" function
