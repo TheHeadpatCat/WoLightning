@@ -306,9 +306,9 @@ namespace WoLightning.Clients.Pishock
                 {
                     string message = reader.ReadToEnd();
                     Logger.Log(3, message);
-                    if (message == null || message.Length == 0) return;
+                    if (message == null || message.Length <= 5) return;
                     string[] parts = message.Split("],");
-                    if (parts.Length < 1) return;
+                    if (parts.Length < 2) return;
                     foreach (string part in parts)
                     {
                         string Tpart = part;
