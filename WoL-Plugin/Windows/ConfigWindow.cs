@@ -10,6 +10,7 @@ using WoLightning.Configurations;
 using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Game.Rules;
 using WoLightning.WoL_Plugin.Util;
+using WoLightning.WoL_Plugin.Util.Helpers;
 
 
 
@@ -147,6 +148,11 @@ public class ConfigWindow : Window, IDisposable
         if (Plugin.Configuration.IsLockedByController)
         {
             ImGui.Text($"{Plugin.ControlSettings.Controller.Name} doesn't allow you to edit Presets.");
+        }
+
+        if (!Plugin.IsEnabled)
+        {
+            ImGui.TextColoredWrapped(UIValues.ColorDescription,$"The Plugin is currently not started, so Rules won't trigger. Start it in the Main Window.");
         }
 
         DrawHeader();
