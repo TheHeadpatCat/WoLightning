@@ -35,6 +35,12 @@ Or if you want to be fancy, open a Issue. That also works.
 
 - Presets for quick swapping of Settings    
 
+- Control Settings   
+  Allow another player to control specific parts of the Plugin including:  
+  Preset Swapping  
+  Preset Locking  
+  Applying a Leash to you  
+
 - A safeword with /red  
   This disables all Pishock & OpenShock functionality from the plugin until used again.
   
