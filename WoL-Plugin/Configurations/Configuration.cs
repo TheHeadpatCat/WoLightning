@@ -32,7 +32,7 @@ namespace WoLightning.Configurations
     [Serializable]
     public class Configuration : IPluginConfiguration, IDisposable
     {
-        public DebugLevel DebugLevel { get; set; } = DebugLevel.Debug;
+        public DebugLevel DebugLevel { get; set; } = DebugLevel.Verbose;
         public ShownShockers ShownShockers { get; set; } = ShownShockers.All;
         public int Version { get; set; } = 620;
         public string LastPresetName { get; set; } = "Default";

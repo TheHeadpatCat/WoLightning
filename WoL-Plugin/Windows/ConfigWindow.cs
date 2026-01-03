@@ -567,7 +567,7 @@ public class ConfigWindow : Window, IDisposable
     private void DrawModalAddPreset()
     {
         ImGui.SetNextWindowPos(center, ImGuiCond.Appearing, new Vector2(0.5f, 0.5f));
-        ImGui.SetNextWindowSize(new Vector2(340, 125));
+        ImGui.SetNextWindowSize(new Vector2(440, 185));
 
         if (ImGui.BeginPopupModal("Add Preset##addPreMod", ref isModalAddPresetOpen, ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.Popup | ImGuiWindowFlags.NoTitleBar))
         {
@@ -575,8 +575,8 @@ public class ConfigWindow : Window, IDisposable
             ImGui.PushItemWidth(ImGui.GetWindowSize().X - 10);
             ImGui.InputText("##addInput", ref ModalAddPresetInputName, 32, ImGuiInputTextFlags.CharsNoBlank);
 
-            ImGui.PushItemWidth(ImGui.GetWindowSize().X / 2);
-            if (ImGui.Button("Add##addPre", new Vector2(ImGui.GetWindowSize().X / 2, 25)))
+            
+            if (ImGui.Button("Add##addPre", new Vector2(ImGui.GetWindowSize().X / 2, 0)))
             {
                 if (ModalAddPresetInputName.Length == 0)
                 {
@@ -594,10 +594,10 @@ public class ConfigWindow : Window, IDisposable
                 ImGui.CloseCurrentPopup();
             }
             ImGui.SameLine();
-            if (ImGui.Button("Cancel##canPre", new Vector2(ImGui.GetWindowSize().X / 2 - 10, 25))) ImGui.CloseCurrentPopup();
+            if (ImGui.Button("Cancel##canPre", new Vector2(ImGui.GetWindowSize().X / 2 - 10, 0))) ImGui.CloseCurrentPopup();
 
-            ImGui.PushItemWidth(ImGui.GetWindowSize().X / 2);
-            if (ImGui.Button("Duplicate Current Preset##addPreDuplicate", new Vector2(ImGui.GetWindowSize().X / 2, 25)))
+
+            if (ImGui.Button("Duplicate Current Preset##addPreDuplicate", new Vector2(ImGui.GetWindowSize().X / 2, 0)))
             {
                 if (ModalAddPresetInputName.Length == 0)
                 {
@@ -622,20 +622,19 @@ public class ConfigWindow : Window, IDisposable
     private void DrawModalDeletePreset()
     {
         ImGui.SetNextWindowPos(center, ImGuiCond.Appearing, new Vector2(0.5f, 0.5f));
-        ImGui.SetNextWindowSize(new Vector2(250, 85));
+        ImGui.SetNextWindowSize(new Vector2(440, 85));
 
         if (ImGui.BeginPopupModal("Delete Preset##delPreMod", ref isModalDeletePresetOpen, ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.Popup | ImGuiWindowFlags.NoTitleBar))
         {
             ImGui.TextWrapped("Are you sure you want to delete this preset?");
-            ImGui.PushItemWidth(ImGui.GetWindowSize().X - 10);
-            if (ImGui.Button("Confirm##conRem", new Vector2(ImGui.GetWindowSize().X / 2, 25)))
+            if (ImGui.Button("Confirm##conRem", new Vector2(ImGui.GetWindowSize().X / 2, 0)))
             {
 
                 Configuration.deletePreset(Configuration.ActivePreset);
                 ImGui.CloseCurrentPopup();
             }
             ImGui.SameLine();
-            if (ImGui.Button("Cancel##canRem", new Vector2(ImGui.GetWindowSize().X / 2 - 10, 25))) ImGui.CloseCurrentPopup();
+            if (ImGui.Button("Cancel##canRem", new Vector2(ImGui.GetWindowSize().X / 2 - 10, 0))) ImGui.CloseCurrentPopup();
             ImGui.EndPopup();
         }
     }
