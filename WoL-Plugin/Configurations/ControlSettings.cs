@@ -300,7 +300,7 @@ namespace WoLightning.WoL_Plugin.Configurations
         {
             if (LeashActive) return;
 
-            if (Plugin.IsEnabled)
+            if (!Plugin.IsEnabled)
             {
                 Service.ChatGui.PrintError($"{Controller.Name} tried to leash you, but the Plugin is stopped.");
                 return;
