@@ -209,11 +209,15 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                 Plugin.Configuration.saveCurrentPreset();
             }
 
+            
+
             ImGui.SameLine();
             ImGui.BeginGroup();
             ImGui.Text(Name);
             ImGui.TextColored(UIValues.ColorDescription, Description);
             ImGui.EndGroup();
+
+            DrawExtraButton();
 
             ImGui.Spacing();
             ImGui.Separator();
