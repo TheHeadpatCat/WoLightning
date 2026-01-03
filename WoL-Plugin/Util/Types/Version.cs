@@ -31,8 +31,8 @@ namespace WoLightning.WoL_Plugin.Util.Types
 
             short major = short.Parse(array[1]);
             short minor = short.Parse(array[2]);
-            short bugfix = short.Parse(array[3]);
-            char suffix = versionString[versionString.Length - 1];
+            short bugfix = short.Parse(array[3][0] + "");
+            char suffix = array[3][1];
 
             Major = major;
             Minor = minor;

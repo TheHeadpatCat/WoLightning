@@ -80,11 +80,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             Logger.Log(2, Name + ".Stop() is not Implemented");
         }
 
-        virtual public void Trigger(string Text) { Trigger(Text, null, null, null); }
-        virtual public void Trigger(string Text, Player? source) { Trigger(Text, source, null, null); }
-        virtual public void Trigger(string Text, Player? source, int[]? overrideOptions) { Trigger(Text, source, overrideOptions, null); }
-
-        virtual public void Trigger(string Text, Player? source, int[]? overrideOptions, bool? noNotification)
+        virtual public void Trigger(string Text, Player? source = null, ShockOptions? overrideOptions = null, bool? noNotification = null)
         {
             if (ShockOptions.hasCooldown() || !IsRunning || Plugin.IsFailsafeActive) { Logger.Log(3, " -> Aborted due to Cooldown."); return; }
             if (source != null && !Plugin.Configuration.ActivePreset.isPlayerAllowedToTrigger(source)) { Logger.Log(3, " -> Aborted due to Permissions."); return; }
@@ -97,13 +93,10 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             }
             else
             {
-                ShockOptions newOpt = new ShockOptions(0, overrideOptions[0], overrideOptions[1]);
-                newOpt.ShockersPishock = ShockOptions.ShockersPishock;
-                newOpt.ShockersOpenShock = ShockOptions.ShockersOpenShock;
-                newOpt.Validate();
+                overrideOptions.Validate();
                 Logger.Log(4, "Executing " + Name + ".Triggered?");
-                Logger.Log(4, newOpt);
-                Triggered?.Invoke(newOpt);
+                Logger.Log(4, overrideOptions);
+                Triggered?.Invoke(overrideOptions);
             }
 
             if ((noNotification == null || noNotification == false) && Plugin.Configuration.ActivePreset.showTriggerNotifs) Plugin.NotificationHandler.send(Text);

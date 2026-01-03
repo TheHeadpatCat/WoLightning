@@ -84,7 +84,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     string message = StringSanitizer.LetterOrDigit(messageE.ToString());
                     SpecificWord? result = CheckMessage(message);
                     if (result == null) return;
-                    else Trigger($"You heard {result} from {sender.Name}!", sender);
+                    else Trigger($"You heard {result} from {sender.Name}!", sender, result.ShockOptions);
                 }
             }
             catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if (e.StackTrace != null) Logger.Error(e.StackTrace); }

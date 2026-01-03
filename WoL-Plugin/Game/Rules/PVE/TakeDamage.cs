@@ -91,12 +91,14 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                     else
                     {
 
-                        int[] opts = { (int)(ShockOptions.Intensity * difference), (int)(ShockOptions.Duration * difference) };
+                        ShockOptions opts = new(ShockOptions);
 
-                        if (opts[0] <= 0) opts[0] = 1;
-                        if (opts[1] < 100 && opts[1] > 10) opts[1] = 100;
-                        Logger.Log(3, $"{Name} | Proportional is enabled." +
-                            "\n int: " + opts[0] + " dur: " + opts[1]);
+                        opts.Intensity = (int)(ShockOptions.Intensity * difference);
+                        opts.Duration = (int)(ShockOptions.Duration * difference);
+                        
+                        Logger.Log(4, $"{Name} | Proportional is enabled." +
+                            "\n int: " + opts.Intensity + " dur: " + opts.Duration);
+
                         Trigger("You took damage!", null, opts);
                     }
                 }

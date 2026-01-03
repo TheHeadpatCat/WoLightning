@@ -39,7 +39,7 @@ public sealed class Plugin : IDalamudPlugin
     private const string OpenShockRemote = "/wolremote";
     private const string SwapPreset = "/wolpreset";
 
-    public static readonly Version CurrentVersion = new(6, 2, 0, 'b');
+    public static readonly Version CurrentVersion = new(6, 2, 1, 'b');
 
     public const string randomKey = "Currently Unused";
 
@@ -229,7 +229,7 @@ public sealed class Plugin : IDalamudPlugin
             }
             catch (Exception e)
             {
-                Logger.Error(e.Message);
+                Logger.Error(e.StackTrace);
                 versionFail = true;
                 savedVersion = new Version(0, 0, 0);
             }
