@@ -237,8 +237,11 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
             ImGui.TextColored(UIValues.ColorDescription, Description);
             ImGui.EndGroup();
 
-            DrawExtraButton();
-
+            if (IsEnabled)
+            {
+                DrawExtraButton();
+            }
+            
             ImGui.Spacing();
             ImGui.Separator();
             ImGui.Spacing();

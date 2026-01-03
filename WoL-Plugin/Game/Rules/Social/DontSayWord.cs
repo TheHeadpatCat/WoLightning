@@ -233,6 +233,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
             if (IsEnabled)
             {
+                DrawExtraButton();
                 shockOptionsEditor.Draw();
             }
 
