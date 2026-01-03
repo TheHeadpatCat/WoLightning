@@ -7,7 +7,7 @@
             string output = string.Empty;
             foreach (char c in s.ToCharArray())
             {
-                if (c != ' ' && c != '\'' && !char.IsLetterOrDigit(c)) continue;
+                if (c != ' ' && !char.IsLetterOrDigit(c)) continue;
                 output += c;
             }
             return output;
@@ -15,7 +15,13 @@
 
         public static string PlayerName(string s) //todo implement
         {
-            return string.Empty;
+            string output = string.Empty;
+            foreach (char c in s.ToCharArray())
+            {
+                if (c != ' ' && c != '\'' && c!= '-' && !char.IsLetter(c)) continue;
+                output += c;
+            }
+            return output;
         }
     }
 }

@@ -81,7 +81,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
 
                 Logger.Log(4, $"{Name} | Message from: " + senderE.TextValue + " comparing against " + Plugin.LocalPlayer.Name + " type: " + type.ToString());
 
-                string senderClean = StringSanitizer.LetterOrDigit(senderE.TextValue);
+                string senderClean = StringSanitizer.PlayerName(senderE.TextValue);
                 if (sender == null && senderClean == Plugin.LocalPlayer.Name) sender = Plugin.LocalPlayer; // If there is no player payload, check if names match atleast.
 
                 if (sender != Plugin.LocalPlayer && type == XivChatType.TellOutgoing) sender = Plugin.LocalPlayer;

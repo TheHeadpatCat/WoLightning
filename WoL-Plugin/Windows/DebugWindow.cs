@@ -3,6 +3,9 @@ using Dalamud.Interface.Windowing;
 using System;
 using System.Numerics;
 using WoLightning.Configurations;
+using WoLightning.Util;
+using WoLightning.Util.Types;
+using static FFXIVClientStructs.FFXIV.Client.UI.Misc.CharaView.Delegates;
 
 namespace WoLightning.WoL_Plugin.Windows
 {
@@ -38,6 +41,12 @@ namespace WoLightning.WoL_Plugin.Windows
             ImGui.Text("Shock: " + Plugin.ControlSettings.LeashShockTimer.TimeLeft.ToString());
 
 
+        }
+
+
+        public void RunCode()
+        {
+            
         }
     }
 }
