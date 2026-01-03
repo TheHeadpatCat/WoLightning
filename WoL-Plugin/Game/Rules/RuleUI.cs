@@ -10,7 +10,6 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         RuleBase Rule;
         // UI
         bool isOptionsOpen = false;
-        bool isModalShockerSelectorOpen = false;
         ShockOptionsEditor? OptionsEditor;
 
         public RuleUI(Plugin Plugin, RuleBase RuleParent)

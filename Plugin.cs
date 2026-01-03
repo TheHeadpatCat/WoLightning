@@ -93,36 +93,21 @@ public sealed class Plugin : IDalamudPlugin
         WindowSystem.AddWindow(ControlWindow);
 
         Service.CommandManager.AddHandler(Failsafe, new CommandInfo(OnFailsafe)
-        {
-            HelpMessage = "Stops the plugin."
-        });
+        { HelpMessage = "Stops the plugin." });
         Service.CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
-        {
-            HelpMessage = "Opens the main window."
-        });
+        { HelpMessage = "Opens the main window." });
         Service.CommandManager.AddHandler(CommandNameAlias, new CommandInfo(OnCommandAlias)
-        {
-            HelpMessage = "Alias for /wolighting."
-        });
+        { HelpMessage = "Alias for /wolighting." });
         Service.CommandManager.AddHandler(CommandOpenConfig, new CommandInfo(OnCommandConfiguration)
-        {
-            HelpMessage = "Opens the Configuration window."
-        });
+        { HelpMessage = "Opens the Configuration window." });
         Service.CommandManager.AddHandler(OpenConfigFolder, new CommandInfo(OnOpenConfigFolder)
-        {
-            HelpMessage = "Opens the Configuration folder."
-        });
+        { HelpMessage = "Opens the Configuration folder." });
         Service.CommandManager.AddHandler(OpenShockRemote, new CommandInfo(OnOpenShockRemote)
-        {
-            HelpMessage = "Opens the Shock Remote Window."
-        });
+        { HelpMessage = "Opens the Shock Remote Window." });
         Service.CommandManager.AddHandler(SwapPreset, new CommandInfo(OnSwapPreset)
-        {
-            HelpMessage = "Swaps to the named Preset."
-        });
+        { HelpMessage = "Swaps to the named Preset." });
 
         Service.PluginInterface.UiBuilder.Draw += DrawUI;
-
 
         Service.PluginInterface.UiBuilder.OpenConfigUi += ToggleConfigUI;
         Service.PluginInterface.UiBuilder.OpenMainUi += ToggleMainUI;
@@ -216,7 +201,7 @@ public sealed class Plugin : IDalamudPlugin
             catch (Exception e)
             {
                 ControlSettings = new ControlSettings(ConfigurationDirectoryPath, true);
-                NotificationHandler.send("Your ControlSettings have been reset due to an error!");
+                NotificationHandler.send("Your Control Settings have been reset due to an error!");
                 Logger.Error(e.StackTrace);
             }
 
