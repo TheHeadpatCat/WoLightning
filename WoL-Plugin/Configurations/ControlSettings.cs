@@ -123,7 +123,7 @@ namespace WoLightning.WoL_Plugin.Configurations
             }
             catch (Exception ex)
             {
-                Logger.Error(ex.StackTrace);
+                Logger.Error(ex.Message);
             }
         }
 
@@ -191,7 +191,7 @@ namespace WoLightning.WoL_Plugin.Configurations
             {
                 Logger.Error("ControlSettings | Something went wrong while handling message.");
                 Logger.Error(e);
-                Logger.Error(e.StackTrace);
+                Logger.Error(e.Message);
             }
         }
 
@@ -268,7 +268,6 @@ namespace WoLightning.WoL_Plugin.Configurations
             catch (Exception e)
             {
                 Logger.Error(e.Message);
-                Logger.Error(e.StackTrace);
             }
         }
 

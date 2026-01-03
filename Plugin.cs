@@ -202,7 +202,7 @@ public sealed class Plugin : IDalamudPlugin
             {
                 ControlSettings = new ControlSettings(ConfigurationDirectoryPath, true);
                 NotificationHandler.send("Your Control Settings have been reset due to an error!");
-                Logger.Error(e.StackTrace);
+                Logger.Error(e.Message);
             }
 
             ControlSettings.Save();
@@ -229,6 +229,7 @@ public sealed class Plugin : IDalamudPlugin
             }
             catch (Exception e)
             {
+                Logger.Error(e.Message);
                 versionFail = true;
                 savedVersion = new Version(0, 0, 0);
             }

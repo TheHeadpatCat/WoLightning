@@ -37,7 +37,6 @@ namespace WoLightning.WoL_Plugin.Configurations
             {
                 Logger.Error("Failed to save file: " + this.GetType().ToString());
                 Logger.Error(e.Message);
-                Logger.Error(e.StackTrace);
             }
             return false;
         }
