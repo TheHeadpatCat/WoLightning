@@ -93,7 +93,9 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             }
             else
             {
+                Logger.Log(4, overrideOptions);
                 overrideOptions.Validate();
+                Logger.Log(4, overrideOptions);
                 Logger.Log(4, "Executing " + Name + ".Triggered?");
                 Logger.Log(4, overrideOptions);
                 Triggered?.Invoke(overrideOptions);

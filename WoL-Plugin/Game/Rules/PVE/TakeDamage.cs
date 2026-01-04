@@ -95,7 +95,10 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 
                         opts.Intensity = (int)(ShockOptions.Intensity * difference);
                         opts.Duration = (int)(ShockOptions.Duration * difference);
-                        
+
+                        if (opts.Intensity <= 0) opts.Intensity = 1;
+                        if (opts.Duration < 100 && opts.Duration > 10) opts.Duration = 100;
+
                         Logger.Log(4, $"{Name} | Proportional is enabled." +
                             "\n int: " + opts.Intensity + " dur: " + opts.Duration);
 
