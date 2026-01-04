@@ -186,19 +186,19 @@ namespace WoLightning.Clients.OpenShock
 
             if (Plugin.IsFailsafeActive)
             {
-                Logger.Log(3, " -> Blocked request due to failsafe mode!");
+                Logger.Log(3, "[OP] -> Blocked request due to failsafe mode!");
                 return;
             }
 
             if (!Options.Validate())
             {
-                Logger.Log(3, " -> Blocked due to invalid ShockOptions!");
+                Logger.Log(3, "[OP] -> Blocked due to invalid ShockOptions!");
                 return;
             }
 
             if (Options.ShockersOpenShock.Count == 0)
             {
-                Logger.Log(3, " -> No OpenShock Shockers assigned, discarding!");
+                Logger.Log(3, "[OP] -> No OpenShock Shockers assigned, discarding!");
                 return;
             }
             #endregion
@@ -214,11 +214,11 @@ namespace WoLightning.Clients.OpenShock
                     warningOptions.Duration = 1;
                     foreach (var shocker in Options.ShockersOpenShock)
                     {
-                        Logger.Log(3, "Sending Warning.");
+                        Logger.Log(4, "[OP] -> Sending Warning.");
                         StringContent jsonContentWarn = new(CommandPublish.Generate(Options.ShockersOpenShock, warningOptions), Encoding.UTF8, "application/json");
                         await Client.PostAsync($"{Plugin.Authentification.OpenShockURL}/2/shockers/control", jsonContentWarn);
                     }
-                    Logger.Log(3, "Warnings sent!");
+                    Logger.Log(3, "[OP] -> Warnings sent!");
                     int delay;
                     switch (Options.WarningMode)
                     {
@@ -230,12 +230,12 @@ namespace WoLightning.Clients.OpenShock
                     await Task.Delay(delay);
                 }
 
-                Logger.Log(3, "Sending Command");
+                Logger.Log(3, "[OP] -> Sending Command");
                 string target = CommandPublish.Generate(Options.ShockersOpenShock, Options);
                 StringContent jsonContent = new(target, Encoding.UTF8, "application/json");
                 Logger.Log(4, target);
                 var result = await Client.PostAsync($"{Plugin.Authentification.OpenShockURL}/2/shockers/control", jsonContent);
-                Logger.Log(3, new StreamReader(result.Content.ReadAsStream()).ReadToEnd());
+                Logger.Log(3, "[OP] -> " + new StreamReader(result.Content.ReadAsStream()).ReadToEnd());
             }
             catch (Exception ex)
             {

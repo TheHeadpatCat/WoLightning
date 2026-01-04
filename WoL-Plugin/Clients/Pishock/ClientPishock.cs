@@ -447,18 +447,18 @@ namespace WoLightning.Clients.Pishock
                     case WarningMode.Long: delay = new Random().Next(12000, 27000); break;
                     default: delay = 2000; break;
                 }
-                Logger.Log(3, "Warning sent!\nWaiting " + delay + "ms...");
+                Logger.Log(3, "[PI] -> Warning sent!\nWaiting " + delay + "ms...");
                 await Task.Delay(delay);
             }
 
             string sendCommand = CommandPublish.Generate(Options, Plugin, UserID, null);
             if (sendCommand == "Invalid")
             {
-                Logger.Log(3, "Failed to generate CommandPublish.");
+                Logger.Log(3, "[PI] -> Failed to generate CommandPublish.");
                 return;
             }
             await Client.Send(sendCommand);
-            Logger.Log(3, "Command sent!");
+            Logger.Log(3, "[PI] -> Command sent!");
         }
 
 
