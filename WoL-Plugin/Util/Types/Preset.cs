@@ -126,7 +126,7 @@ namespace WoLightning.Util.Types
                     }
                 }
             }
-            Plugin.Configuration.saveCurrentPreset();
+            Plugin.Configuration.SaveCurrentPreset();
         }
 
         public void Dispose()

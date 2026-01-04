@@ -39,7 +39,7 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
             DrawShockerSelector();
             DrawOptionsBase(ref changed);
             if (HasCooldown) DrawOptionsCooldown(ref changed);
-            if (AutoSave && changed) Plugin.Configuration.saveCurrentPreset();
+            if (AutoSave && changed) Plugin.Configuration.SaveCurrentPresetScheduled();
         }
         private void DrawOptionsBase(ref bool changed)
         {

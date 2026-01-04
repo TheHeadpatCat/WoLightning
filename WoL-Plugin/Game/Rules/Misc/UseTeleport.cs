@@ -119,7 +119,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             if (ImGui.Checkbox("Use Costs", ref useCosts))
             {
                 UseCosts = useCosts;
-                Plugin.Configuration.saveCurrentPreset();
+                Plugin.Configuration.SaveCurrentPresetScheduled();
             }
             HoverText.ShowHint("Allows you to set a minimum and maximum Cost for teleportation." +
                 "\nMinimum as in \"the teleport has to cost atleast this much gil\"." +
@@ -134,7 +134,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             if (ImGui.SliderInt("Minimum Cost", ref minimumGil, 0, 2000))
             {
                 MinimumGil = minimumGil;
-                Plugin.Configuration.saveCurrentPreset();
+                Plugin.Configuration.SaveCurrentPresetScheduled();
             }
             int maximumGil = MaximumGil;
 
@@ -143,7 +143,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             {
                 if (maximumGil < MinimumGil) MinimumGil = maximumGil;
                 MaximumGil = maximumGil;
-                Plugin.Configuration.saveCurrentPreset();
+                Plugin.Configuration.SaveCurrentPresetScheduled();
             }
             ImGui.EndGroup();
         }

@@ -151,7 +151,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
             if (ImGui.SliderInt("Minimum Damage% Taken##TakeDamageMinimumDamageSlider", ref minimumDamagePercentInput, 0, 100))
             {
                 minimumDamagePercent = minimumDamagePercentInput;
-                Plugin.Configuration.saveCurrentPreset();
+                Plugin.Configuration.SaveCurrentPresetScheduled();
             }
         }
 

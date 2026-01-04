@@ -1,10 +1,13 @@
 using Dalamud.Configuration;
+using Dalamud.Plugin.Services;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Timers;
+using WoLightning.Util;
 using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Util;
 
@@ -48,6 +51,8 @@ namespace WoLightning.Configurations
         [NonSerialized] public Action<Preset, int> PresetChanged;
         [NonSerialized] private Plugin plugin;
         [NonSerialized] public string ConfigurationDirectoryPath;
+        [NonSerialized] public double PresetSavingBuffer = -1;
+        [NonSerialized] public bool IsPresetSavingScheduled = false;
 
         public void Initialize(Plugin plugin, string ConfigurationDirectoryPath)
         {
@@ -92,21 +97,21 @@ namespace WoLightning.Configurations
                 loadPreset("Default");
                 return;
             }
+
+            Service.Framework.Update += OnUpdate;
         }
 
-        public void Initialize(string ConfigurationDirectoryPath)
+        private void OnUpdate(IFramework framework)
         {
-            //this.isAlternative = isAlternative;
-            this.ConfigurationDirectoryPath = ConfigurationDirectoryPath;
-
-            Save();
+            if (IsPresetSavingScheduled && PresetSavingBuffer > 0) PresetSavingBuffer -= Service.Framework.UpdateDelta.TotalMilliseconds;
+            if (IsPresetSavingScheduled && PresetSavingBuffer <= 0) SaveCurrentPreset();
         }
-
 
         #region Save and Loading
         public void Save()
         {
             Logger.Log(3, "Configuration.Save() called");
+            if (IsPresetSavingScheduled) SaveCurrentPreset();
             try
             {
                 LastPresetName = ActivePreset.Name;
@@ -115,7 +120,7 @@ namespace WoLightning.Configurations
                 foreach (var preset in Presets)
                 {
                     PresetNames.Add(preset.Name);
-                    savePreset(preset);
+                    SavePreset(preset);
                 }
             }
             catch (Exception e)
@@ -143,6 +148,7 @@ namespace WoLightning.Configurations
             if (!Presets.Exists(preset => preset.Name == Name)) return false;
             if (ActivePreset != null)
             {
+                if (IsPresetSavingScheduled) SaveCurrentPreset();
                 ActivePreset.StopRules();
                 ActivePreset.Dispose();
             }
@@ -162,21 +168,31 @@ namespace WoLightning.Configurations
         }
 
 
-        public void saveCurrentPreset()
+        public void SaveCurrentPreset()
         {
+            if(ActivePreset == null) return;
+            PresetSavingBuffer = -1;
+            IsPresetSavingScheduled = false;
             Logger.Log(3, "Saving preset: " + ActivePreset.Name);
             File.WriteAllText($"{ConfigurationDirectoryPath}\\Presets\\{ActivePreset.Name}.json", SerializePreset(ActivePreset));
         }
-        public void savePreset(Preset target)
+        public void SavePreset(Preset target)
         {
+            if (target == null) return;
             Logger.Log(3, "Saving preset: " + target.Name);
             File.WriteAllText($"{ConfigurationDirectoryPath}\\Presets\\{target.Name}.json", SerializePreset(target));
         }
-        
+
+        public void SaveCurrentPresetScheduled()
+        {
+            PresetSavingBuffer = 1200;
+            IsPresetSavingScheduled = true;
+        }
 
         public void deletePreset(Preset target)
         {
             if (!Presets.Exists(preset => preset.Name == target.Name)) return;
+            if (IsPresetSavingScheduled) SaveCurrentPreset();
             if (!File.Exists(ConfigurationDirectoryPath + "\\Presets\\" + target.Name + ".json")) return;
 
             File.Delete(ConfigurationDirectoryPath + "\\Presets\\" + target.Name + ".json");
@@ -224,6 +240,8 @@ namespace WoLightning.Configurations
         {
             Save();
             ActivePreset.Dispose();
+            IsPresetSavingScheduled = false;
+            Service.Framework.Update -= OnUpdate;
         }
     }
 }

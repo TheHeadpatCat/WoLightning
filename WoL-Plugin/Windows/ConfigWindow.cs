@@ -274,7 +274,7 @@ public class ConfigWindow : Window, IDisposable
             if (ImGui.Checkbox("Show Trigger Notifications", ref showTriggerNotifs))
             {
                 Configuration.ActivePreset.showTriggerNotifs = showTriggerNotifs;
-                Configuration.saveCurrentPreset();
+                Configuration.SaveCurrentPreset();
             }
             ImGui.SameLine();
             ImGui.TextDisabled(" (?)");
@@ -287,7 +287,7 @@ public class ConfigWindow : Window, IDisposable
             if (ImGui.Checkbox("Show Cooldown Notifications", ref showCooldownNotifs))
             {
                 Configuration.ActivePreset.showCooldownNotifs = showCooldownNotifs;
-                Configuration.saveCurrentPreset();
+                Configuration.SaveCurrentPreset();
             }
             ImGui.SameLine();
             ImGui.TextDisabled(" (?)");
@@ -301,7 +301,7 @@ public class ConfigWindow : Window, IDisposable
             if (ImGui.Checkbox("Have Rules active in PVP?", ref allowPVERulesInPVP))
             {
                 Configuration.ActivePreset.AllowRulesInPvP = allowPVERulesInPVP;
-                Configuration.saveCurrentPreset();
+                Configuration.SaveCurrentPreset();
             }
             ImGui.SameLine();
             ImGui.TextDisabled(" (?)");
@@ -439,7 +439,7 @@ public class ConfigWindow : Window, IDisposable
             if (ImGui.Checkbox("Activate Whitelist", ref isWhitelistEnabled))
             {
                 Configuration.ActivePreset.isWhitelistEnabled = isWhitelistEnabled;
-                Configuration.saveCurrentPreset();
+                Configuration.SaveCurrentPreset();
             }
             ImGui.SameLine();
             ImGui.TextDisabled(" (?)");
@@ -484,7 +484,7 @@ public class ConfigWindow : Window, IDisposable
                 Blacklist.Remove(SelectedPlayer!);
                 Whitelist.Add(SelectedPlayer!);
                 Configuration.ActivePreset.Whitelist = Whitelist;
-                Configuration.saveCurrentPreset();
+                Configuration.SaveCurrentPreset();
                 SelectedPlayerName = new String("None");
             }
 
@@ -508,7 +508,7 @@ public class ConfigWindow : Window, IDisposable
             {
                 Whitelist.RemoveAt(removeIndex);
                 Configuration.ActivePreset.Whitelist = Whitelist;
-                Configuration.saveCurrentPreset();
+                Configuration.SaveCurrentPreset();
                 removeIndex = -1;
             }
             ImGui.EndGroup();
@@ -528,7 +528,7 @@ public class ConfigWindow : Window, IDisposable
                 Whitelist.Remove(SelectedPlayer!);
                 Blacklist.Add(SelectedPlayer!);
                 Configuration.ActivePreset.Blacklist = Blacklist;
-                Configuration.saveCurrentPreset();
+                Configuration.SaveCurrentPreset();
                 SelectedPlayerName = new String("None");
             }
 
@@ -550,7 +550,7 @@ public class ConfigWindow : Window, IDisposable
             {
                 Blacklist.RemoveAt(removeIndex);
                 Configuration.ActivePreset.Blacklist = Blacklist;
-                Configuration.saveCurrentPreset();
+                Configuration.SaveCurrentPreset();
             }
 
             ImGui.EndGroup();

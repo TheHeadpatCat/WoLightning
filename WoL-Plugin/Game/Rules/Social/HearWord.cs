@@ -206,7 +206,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
             if (ImGui.Checkbox("##HearWordsEnabled", ref enabled))
             {
                 IsEnabled = enabled;
-                Plugin.Configuration.saveCurrentPreset();
+                Plugin.Configuration.SaveCurrentPreset();
             }
 
 
@@ -230,7 +230,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
             if (wordListBox == null) wordListBox = new(Name, Plugin, TriggerWords);
             bool changed = false;
             wordListBox.Draw(ref changed);
-            if (changed) Plugin.Configuration.saveCurrentPreset();
+            if (changed) Plugin.Configuration.SaveCurrentPreset();
 
             ImGui.TextColored(new Vector4(0.66f, 0.66f, 0.66f, 0.80f), "Note: Despite saying \"Word\", sentences are also supported.");
 

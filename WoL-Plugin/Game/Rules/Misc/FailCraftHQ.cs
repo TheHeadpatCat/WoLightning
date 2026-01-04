@@ -200,7 +200,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             if (ImGui.SliderInt("Minimum Quality in %", ref minimumCollectabilitySlide, 0, 100))
             {
                 MinimumQualityPercent = (uint)minimumCollectabilitySlide;
-                Plugin.Configuration.saveCurrentPreset();
+                Plugin.Configuration.SaveCurrentPresetScheduled();
             }
         }
 

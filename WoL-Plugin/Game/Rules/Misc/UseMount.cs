@@ -89,7 +89,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             if (ImGui.Checkbox("Include Pillion?", ref includePillion))
             {
                 IncludePillion = includePillion;
-                Plugin.Configuration.saveCurrentPreset();
+                Plugin.Configuration.SaveCurrentPresetScheduled();
             }
         }
 

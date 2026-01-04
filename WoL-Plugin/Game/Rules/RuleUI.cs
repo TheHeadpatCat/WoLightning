@@ -45,7 +45,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             if (ImGui.Checkbox("##checkbox" + Rule.Name, ref refEn))
             {
                 Rule.setEnabled(refEn);
-                Plugin.Configuration.saveCurrentPreset();
+                Plugin.Configuration.SaveCurrentPreset();
             }
             if (Plugin.Configuration.IsLockedByController) ImGui.EndDisabled();
             if (Rule.IsEnabled)

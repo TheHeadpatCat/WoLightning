@@ -37,7 +37,7 @@ namespace WoLightning.WoL_Plugin.Windows
             ImGui.Text("Area: " + Plugin.ControlSettings.LeashGraceAreaTimer.TimeLeft.ToString());
             ImGui.Text("Shock: " + Plugin.ControlSettings.LeashShockTimer.TimeLeft.ToString());
             ImGui.Text("damage frames " + Plugin.Configuration.ActivePreset.TakeDamage.bufferFrames);
-
+            ImGui.Text("scheduled save " + Plugin.Configuration.PresetSavingBuffer);
 
             bool pishocklogin = Plugin.Configuration.LoginOnStartPishock;
             if (ImGui.Checkbox("pishock auto login", ref pishocklogin))
