@@ -92,10 +92,11 @@ namespace WoLightning.Util.Types
         }
 
         [JsonConstructor]
-        public ShockOptions(bool isEnabled, List<ShockerPishock> shockersPishock, OpMode opMode, int intensity, int duration, double cooldown, CooldownModifier modifier, WarningMode warningMode, bool isIntensityRandomized, int randomizeIntensityMin, bool isDurationRandomized, int randomizeDurationMin, bool isModalOpen, bool isOptionsOpen, TimerPlus cooldownTimer, bool hasBeenReset)
+        public ShockOptions(bool isEnabled, List<ShockerPishock> shockersPishock, List<ShockerOpenShock> shockersOpenShock, OpMode opMode, int intensity, int duration, double cooldown, CooldownModifier modifier, WarningMode warningMode, bool isIntensityRandomized, int randomizeIntensityMin, bool isDurationRandomized, int randomizeDurationMin, bool isModalOpen, bool isOptionsOpen, TimerPlus cooldownTimer, bool hasBeenReset)
         {
             this.isEnabled = isEnabled;
             ShockersPishock = shockersPishock;
+            ShockersOpenShock = shockersOpenShock;
             OpMode = opMode;
             Intensity = intensity;
             Duration = duration;
@@ -115,6 +116,7 @@ namespace WoLightning.Util.Types
         {
             this.isEnabled = other.isEnabled;
             ShockersPishock = other.ShockersPishock;
+            ShockersOpenShock = other.ShockersOpenShock;
             OpMode = other.OpMode;
             Intensity = other.Intensity;
             Duration = other.Duration;

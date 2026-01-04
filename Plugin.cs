@@ -229,7 +229,7 @@ public sealed class Plugin : IDalamudPlugin
             }
             catch (Exception e)
             {
-                Logger.Error(e.StackTrace);
+                Logger.Error(e.Message);
                 versionFail = true;
                 savedVersion = new Version(0, 0, 0);
             }
