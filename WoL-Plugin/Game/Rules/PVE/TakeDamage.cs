@@ -54,7 +54,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 if (bufferFrames > 0)
                 {
                     bufferFrames--;
-                    Logger.Log(3, $"{Name} | MaxHP Buffer elapsed.");
+                    if(bufferFrames == 1) Logger.Log(3, $"{Name} | MaxHP Buffer elapsed.");
                     return;
                 }
 
