@@ -5,6 +5,7 @@ using System;
 using System.Text.Json.Serialization;
 using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Util;
+using WoLightning.WoL_Plugin.Util.Helpers;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 {
@@ -21,7 +22,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 
         [JsonIgnore] IPlayerCharacter Player;
         [JsonIgnore] uint lastHP = 1, lastMaxHP = 1;
-        [JsonIgnore] public int bufferFrames = 0;
+        [JsonIgnore] public int bufferFrames = 120;
 
         [JsonConstructor]
         public TakeDamage() { }
@@ -55,15 +56,17 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 {
                     bufferFrames--;
                     if(bufferFrames == 1) Logger.Log(3, $"{Name} | MaxHP Buffer elapsed.");
+                    if(lastMaxHP != Player.MaxHp) lastMaxHP = Player.MaxHp;
+                    if(lastHP != Player.CurrentHp) lastHP = Player.CurrentHp;
                     return;
                 }
 
                 if (lastMaxHP != Player.MaxHp && !Player.StatusFlags.HasFlag(Dalamud.Game.ClientState.Objects.Enums.StatusFlags.InCombat)) // out of combat maxhp increase
                 {
-                    Logger.Log(3, $"{Name} | MaxHP changed out of Combat. Buffering for 1800 frames.");
+                    Logger.Log(3, $"{Name} | MaxHP changed out of Combat. Buffering for 300 frames.");
                     lastMaxHP = Player.MaxHp;
                     lastHP = Player.CurrentHp; // avoid false positives from synch and stuff
-                    bufferFrames = 1800; // give (a bunch) seconds of buffering, for regens and stuff
+                    bufferFrames = 300; // give 300 seconds of buffering, for regens and stuff
                     return;
                 }
                 else if (lastMaxHP != Player.MaxHp) // in combat maxhp increase
@@ -113,6 +116,10 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 
         public override void DrawExtraButton()
         {
+            if(bufferFrames > 0)
+            {
+                ImGui.TextColored(UIValues.ColorNameBlocked, "Disabled for a few seconds, due to MaxHP Change...");
+            }
 
             if (isProportional)
             {
