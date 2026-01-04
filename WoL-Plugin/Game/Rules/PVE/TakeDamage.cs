@@ -55,9 +55,9 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 if (bufferFrames > 0)
                 {
                     bufferFrames--;
-                    if(bufferFrames == 1) Logger.Log(3, $"{Name} | MaxHP Buffer elapsed.");
-                    if(lastMaxHP != Player.MaxHp) lastMaxHP = Player.MaxHp;
-                    if(lastHP != Player.CurrentHp) lastHP = Player.CurrentHp;
+                    if (bufferFrames == 1) Logger.Log(3, $"{Name} | MaxHP Buffer elapsed.");
+                    if (lastMaxHP != Player.MaxHp) lastMaxHP = Player.MaxHp;
+                    if (lastHP != Player.CurrentHp) lastHP = Player.CurrentHp;
                     return;
                 }
 
@@ -116,7 +116,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 
         public override void DrawExtraButton()
         {
-            if(bufferFrames > 0)
+            if (bufferFrames > 0)
             {
                 ImGui.TextColored(UIValues.ColorNameBlocked, "Disabled for a few seconds, due to MaxHP Change...");
             }

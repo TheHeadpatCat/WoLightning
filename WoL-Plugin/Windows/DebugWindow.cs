@@ -3,15 +3,12 @@ using Dalamud.Interface.Windowing;
 using System;
 using System.Numerics;
 using WoLightning.Configurations;
-using WoLightning.Util;
-using WoLightning.Util.Types;
-using static FFXIVClientStructs.FFXIV.Client.UI.Misc.CharaView.Delegates;
 
 namespace WoLightning.WoL_Plugin.Windows
 {
     public class DebugWindow : Window, IDisposable
     {
-        private Plugin Plugin;
+        private readonly Plugin Plugin;
         public DebugWindow(Plugin plugin)
             : base("WoLightning - DebugWindow")
         {
@@ -43,7 +40,7 @@ namespace WoLightning.WoL_Plugin.Windows
 
 
             bool pishocklogin = Plugin.Configuration.LoginOnStartPishock;
-            if(ImGui.Checkbox("pishock auto login",ref pishocklogin))
+            if (ImGui.Checkbox("pishock auto login", ref pishocklogin))
             {
                 Plugin.Configuration.LoginOnStartPishock = pishocklogin;
                 if (pishocklogin) Plugin.ClientPishock.Setup();
@@ -54,7 +51,7 @@ namespace WoLightning.WoL_Plugin.Windows
 
         public void RunCode()
         {
-            
+
         }
     }
 }

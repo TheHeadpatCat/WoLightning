@@ -29,9 +29,9 @@ namespace WoLightning.Clients.OpenShock
             Connected = 200,
         }
 
-        private Plugin? Plugin;
+        private readonly Plugin? Plugin;
         public ConnectionStatusOpenShock Status { get; set; } = ConnectionStatusOpenShock.NotStarted;
-        private List<HubOpenShock> Devices = new();
+        private readonly List<HubOpenShock> Devices = [];
         public string UserId;
         public string Username;
         public HttpClient Client;
@@ -59,7 +59,7 @@ namespace WoLightning.Clients.OpenShock
             Plugin.Authentification.OpenShockShockers.Clear();
             Devices.Clear();
 
-            if (Client != null) Client.Dispose();
+            Client?.Dispose();
 
             string apikey = Plugin.Authentification.OpenShockApiKey;
             if (apikey == null || apikey.Length < 3) return;
@@ -208,7 +208,7 @@ namespace WoLightning.Clients.OpenShock
 
                 if (Options.WarningMode != WarningMode.None)
                 {
-                    ShockOptions warningOptions = new ShockOptions(Options);
+                    ShockOptions warningOptions = new(Options);
                     warningOptions.OpMode = OpMode.Vibrate;
                     warningOptions.Intensity = 55;
                     warningOptions.Duration = 1;

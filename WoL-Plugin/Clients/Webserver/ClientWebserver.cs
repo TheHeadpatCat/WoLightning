@@ -10,7 +10,7 @@ namespace WoLightning.WoL_Plugin.Clients.Webserver
 
         public ConnectionStatusWebserver Status = ConnectionStatusWebserver.NotStarted;
 
-        HttpClient HttpClient;
+        readonly HttpClient HttpClient;
         private readonly Uri Address = new Uri("wss://localhost:7149");
 
 

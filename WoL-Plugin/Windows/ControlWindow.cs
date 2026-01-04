@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using WoLightning.Configurations;
 using WoLightning.Util.Types;
+using WoLightning.WoL_Plugin.Util.Helpers;
 using Emote = Lumina.Excel.Sheets.Emote;
 
 namespace WoLightning.WoL_Plugin.Windows
@@ -20,8 +21,6 @@ namespace WoLightning.WoL_Plugin.Windows
         private Player? SelectedPlayer;
         private String SelectedPlayerName = "None";
 
-        Emote? lastEmote = null;
-
         private string lockingEmoteName = "";
         private string unlockingEmoteName = "";
         private string leashDistanceEmoteName = "";
@@ -32,13 +31,7 @@ namespace WoLightning.WoL_Plugin.Windows
 
         bool isModalShockerSelectorOpen = false;
 
-        Vector4 ColorNameEnabled = new Vector4(0.5f, 1, 0.3f, 0.9f);
-        Vector4 ColorNameBlocked = new Vector4(1.0f, 0f, 0f, 0.9f);
-        Vector4 ColorNameDisabled = new Vector4(1, 1, 1, 0.9f);
-        Vector4 ColorDescription = new Vector4(0.7f, 0.7f, 0.7f, 0.8f);
-
         private bool isOptionsOpen = false;
-        private List<int> durationArray = [100, 300, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
         public ControlWindow(Plugin plugin) : base("Warrior of Lightning - Control Settings")
         {
@@ -140,7 +133,7 @@ namespace WoLightning.WoL_Plugin.Windows
             ImGui.Separator();
             ImGui.Spacing();
 
-            ImGui.TextColored(ColorDescription, "All Emotes need to be used while targeting you.");
+            ImGui.TextColored(UIValues.ColorDescription, "All Emotes need to be used while targeting you.");
 
 
             bool lockAllowed = Plugin.ControlSettings.LockingAllowed;
@@ -546,13 +539,13 @@ namespace WoLightning.WoL_Plugin.Windows
                     {
                         ImGui.BeginGroup();
                         ImGui.Text(shocker.username);
-                        if (!shocker.isPaused) ImGui.TextColored(ColorNameEnabled, shocker.name);
-                        else ImGui.TextColored(ColorNameDisabled, "[Paused] " + shocker.name);
+                        if (!shocker.isPaused) ImGui.TextColored(UIValues.ColorNameEnabled, shocker.name);
+                        else ImGui.TextColored(UIValues.ColorNameDisabled, "[Paused] " + shocker.name);
                         ImGui.EndGroup();
                         continue;
                     }
-                    if (!shocker.isPaused) ImGui.TextColored(ColorNameEnabled, shocker.name);
-                    else ImGui.TextColored(ColorNameDisabled, "[Paused] " + shocker.name);
+                    if (!shocker.isPaused) ImGui.TextColored(UIValues.ColorNameEnabled, shocker.name);
+                    else ImGui.TextColored(UIValues.ColorNameDisabled, "[Paused] " + shocker.name);
                 }
 
                 ImGui.EndChild();
@@ -573,8 +566,8 @@ namespace WoLightning.WoL_Plugin.Windows
                         else Plugin.ControlSettings.LeashShockOptions.ShockersOpenShock.RemoveAt(Plugin.ControlSettings.LeashShockOptions.ShockersOpenShock.FindIndex(sh => sh.getInternalId() == shocker.getInternalId()));
                     }
                     ImGui.SameLine();
-                    if (!shocker.isPaused) ImGui.TextColored(ColorNameEnabled, shocker.name);
-                    else ImGui.TextColored(ColorNameDisabled, "[Paused] " + shocker.name);
+                    if (!shocker.isPaused) ImGui.TextColored(UIValues.ColorNameEnabled, shocker.name);
+                    else ImGui.TextColored(UIValues.ColorNameDisabled, "[Paused] " + shocker.name);
                 }
                 ImGui.EndChild();
                 ImGui.EndGroup();
@@ -653,10 +646,10 @@ namespace WoLightning.WoL_Plugin.Windows
             ImGui.BeginGroup();
             ImGui.Text("    Max Duration");
             ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 7);
-            int DurationIndex = durationArray.IndexOf(Plugin.ControlSettings.LeashShockOptions.Duration);
+            int DurationIndex = UIValues.DurationArray.IndexOf(Plugin.ControlSettings.LeashShockOptions.Duration);
             if (ImGui.Combo("##DurationSelectLeash", ref DurationIndex, ["0.1s", "0.3s", "1s", "2s", "3s", "4s", "5s", "6s", "7s", "8s", "9s", "10s"], 12))
             {
-                Plugin.ControlSettings.LeashShockOptions.Duration = durationArray[DurationIndex];
+                Plugin.ControlSettings.LeashShockOptions.Duration = UIValues.DurationArray[DurationIndex];
 
                 float intervalS = Plugin.ControlSettings.LeashTriggerInterval;
                 int duration = Plugin.ControlSettings.LeashShockOptions.Duration;
@@ -741,7 +734,7 @@ namespace WoLightning.WoL_Plugin.Windows
 
             if (interval == durationT)
             {
-                ImGui.TextColored(ColorDescription, "You cannot set the interval lower than the maximum duration." +
+                ImGui.TextColored(UIValues.ColorDescription, "You cannot set the interval lower than the maximum duration." +
                     "\n(Because setting it to the same means constant shocks already)");
             }
 

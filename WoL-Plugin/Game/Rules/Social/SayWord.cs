@@ -241,7 +241,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
             {
                 DrawExtraButton();
             }
-            
+
             ImGui.Spacing();
             ImGui.Separator();
             ImGui.Spacing();

@@ -16,7 +16,7 @@ namespace WoLightning.Windows;
 
 public class MainWindow : Window, IDisposable
 {
-    private Plugin Plugin;
+    private readonly Plugin Plugin;
     private int presetIndex = 0;
 
     private static Vector4 ColorGreen = new(0, 1, 0, 1);
@@ -26,7 +26,7 @@ public class MainWindow : Window, IDisposable
     private float WindowWidth = 0;
 
     private bool isEulaModalActive = false;
-    private TimerPlus eulaTimer = new TimerPlus();
+    private readonly TimerPlus eulaTimer = new();
 
     private bool isPishockMenuOpen = true;
 

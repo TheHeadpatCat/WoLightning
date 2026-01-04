@@ -30,13 +30,13 @@ namespace WoLightning.Clients.Pishock
             Connected = 200,
         }
 
-        private Plugin? Plugin;
+        private readonly Plugin? Plugin;
         public ConnectionStatusPishock Status { get; set; } = ConnectionStatusPishock.NotStarted;
         public string UserID { get; set; } = "";
         private WebSocketClient? Client;
-        HttpClient HttpClient;
+        readonly HttpClient HttpClient;
 
-        private TimerPlus ResetConnectionAttempts = new TimerPlus();
+        private readonly TimerPlus ResetConnectionAttempts = new();
 
         private string username;
         private string apikey;
@@ -258,7 +258,7 @@ namespace WoLightning.Clients.Pishock
                     {
                         foreach (var shocker in response.shockers)
                         {
-                            ShockerPishock t = new ShockerPishock(shocker.name, response.clientId, shocker.shockerId);
+                            ShockerPishock t = new(shocker.name, response.clientId, shocker.shockerId);
                             Logger.Log(3, t);
                             Plugin.Authentification.PishockShockers.Add(t);
 
@@ -298,7 +298,7 @@ namespace WoLightning.Clients.Pishock
             }
             Logger.Log(3, " -> Received ShareID Information!");
 
-            List<string> ShareIds = new List<string>();
+            List<string> ShareIds = [];
 
             using (var reader = new StreamReader(Result.Content.ReadAsStream()))
             {
@@ -373,7 +373,7 @@ namespace WoLightning.Clients.Pishock
                         {
                             Logger.Log(3, response);
                             if (name.ToLower().Equals(Plugin.Authentification.PishockName.ToLower())) continue;
-                            ShockerPishock shocker = new ShockerPishock(response.shockerName, response.clientId, response.shockerId);
+                            ShockerPishock shocker = new(response.shockerName, response.clientId, response.shockerId);
                             shocker.isPersonal = false;
                             shocker.username = name;
                             shocker.shareId = response.shareId;
@@ -437,7 +437,7 @@ namespace WoLightning.Clients.Pishock
                 warningOptions.OpMode = OpMode.Vibrate;
                 warningOptions.Intensity = 55;
                 warningOptions.Duration = 1;
-                string sendWarning = CommandPublish.Generate(warningOptions, Plugin, UserID, true);
+                string sendWarning = CommandPublish.Generate(warningOptions, UserID, true);
                 await Client.Send(sendWarning);
                 int delay;
                 switch (Options.WarningMode)
@@ -451,7 +451,7 @@ namespace WoLightning.Clients.Pishock
                 await Task.Delay(delay);
             }
 
-            string sendCommand = CommandPublish.Generate(Options, Plugin, UserID, null);
+            string sendCommand = CommandPublish.Generate(Options, UserID, null);
             if (sendCommand == "Invalid")
             {
                 Logger.Log(3, "[PI] -> Failed to generate CommandPublish.");

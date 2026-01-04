@@ -1,7 +1,5 @@
 ﻿using Dalamud.Game.ClientState.Objects.SubKinds;
-using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using System.Text.Json.Serialization;
-using WoLightning.Util.Types;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 {
@@ -15,8 +13,9 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 
         [JsonIgnore] IPlayerCharacter Player;
 
-        public UseSkill(Plugin plugin):base(plugin) {
-        
+        public UseSkill(Plugin plugin) : base(plugin)
+        {
+
         }
 
         override public void Start()

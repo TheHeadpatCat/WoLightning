@@ -18,7 +18,7 @@
             string output = string.Empty;
             foreach (char c in s.ToCharArray())
             {
-                if (c != ' ' && c != '\'' && c!= '-' && !char.IsLetter(c)) continue;
+                if (c != ' ' && c != '\'' && c != '-' && !char.IsLetter(c)) continue;
                 output += c;
             }
             return output;

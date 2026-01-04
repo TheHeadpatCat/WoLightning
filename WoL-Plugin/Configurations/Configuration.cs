@@ -94,7 +94,7 @@ namespace WoLightning.Configurations
             }
         }
 
-        public void Initialize(Plugin plugin, string ConfigurationDirectoryPath, bool createNew)
+        public void Initialize(string ConfigurationDirectoryPath)
         {
             //this.isAlternative = isAlternative;
             this.ConfigurationDirectoryPath = ConfigurationDirectoryPath;
@@ -172,10 +172,7 @@ namespace WoLightning.Configurations
             Logger.Log(3, "Saving preset: " + target.Name);
             File.WriteAllText($"{ConfigurationDirectoryPath}\\Presets\\{target.Name}.json", SerializePreset(target));
         }
-        public void savePreset(Preset target, bool isAlternative)
-        {
-            File.WriteAllText($"{ConfigurationDirectoryPath}\\MasterPresets\\{target.Name}.json", SerializePreset(target));
-        }
+        
 
         public void deletePreset(Preset target)
         {

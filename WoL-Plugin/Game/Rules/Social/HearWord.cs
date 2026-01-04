@@ -209,7 +209,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                 Plugin.Configuration.saveCurrentPreset();
             }
 
-            
+
 
             ImGui.SameLine();
             ImGui.BeginGroup();

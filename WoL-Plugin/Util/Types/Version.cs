@@ -67,6 +67,13 @@ namespace WoLightning.WoL_Plugin.Util.Types
             Downgrade = -1
         }
 
+        public override bool Equals(object? other)
+        {
+            if(other == null) return false;
+            if(other.GetType() != this.GetType()) return false;
+            return ((Version)other) == this;
+        }
+
         public static bool operator >(Version a, Version b)
         {
             if (a.Manifest > b.Manifest
@@ -113,6 +120,7 @@ namespace WoLightning.WoL_Plugin.Util.Types
             return a < b || a == b;
         }
 
+        
     }
 
 }

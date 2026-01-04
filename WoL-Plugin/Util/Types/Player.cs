@@ -21,7 +21,7 @@ namespace WoLightning.Util.Types
         Brynhildr = 34,
         Mateus = 37,
         Zalera = 41,
-        Diabolos = 63,
+        Diabolos = 62,
         Coeurl = 74,
         Malboro = 75,
         Goblin = 81,
@@ -109,7 +109,7 @@ namespace WoLightning.Util.Types
         Unicorn = 30,
         Yojimbo = 31,
         Zeromus = 32,
-        Valefor = 53,
+        Valefor = 52,
         Ramuh = 60,
         Mandragora = 82,
 
@@ -172,7 +172,7 @@ namespace WoLightning.Util.Types
         {
             string[] parts = fullString.Split("@");
             Name = parts[0];
-            foreach (Worlds world in Enum.GetValues(typeof(Worlds)).Cast<Worlds>())
+            foreach (Worlds world in Enum.GetValues<Worlds>().Cast<Worlds>())
             {
                 if (world.ToString().Equals(parts[1]))
                 {
@@ -209,7 +209,7 @@ namespace WoLightning.Util.Types
             foreach (var player in Service.ObjectTable.PlayerObjects)
             {
                 IPlayerCharacter playerCharacter = (IPlayerCharacter)player;
-                Player comparing = new Player(playerCharacter);
+                Player comparing = new(playerCharacter);
                 //Logger.Log(4, comparing);
                 if (this.Equals(comparing)) return true;
             }
@@ -221,7 +221,7 @@ namespace WoLightning.Util.Types
             foreach (var player in Service.ObjectTable.PlayerObjects)
             {
                 IPlayerCharacter playerCharacter = (IPlayerCharacter)player;
-                Player comparing = new Player(playerCharacter);
+                Player comparing = new(playerCharacter);
                 //Logger.Log(4, comparing);
                 if (this.Equals(comparing)) return playerCharacter;
             }

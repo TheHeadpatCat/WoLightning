@@ -23,7 +23,7 @@ namespace WoLightning.WoL_Plugin.Clients.OpenShock
             Connected = 200,
         }
 
-        private Plugin Plugin;
+        private readonly Plugin Plugin;
         public string Gateway { get; set; }
         public string Country { get; set; }
         public string DeviceId { get; set; }

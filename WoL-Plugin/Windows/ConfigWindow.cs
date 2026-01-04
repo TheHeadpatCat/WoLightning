@@ -20,7 +20,7 @@ namespace WoLightning.Windows;
 public class ConfigWindow : Window, IDisposable
 {
     private Configuration? Configuration;
-    private Plugin Plugin;
+    private readonly Plugin Plugin;
 
     private Preset ActivePreset;
     private int ActivePresetIndex = -1;
@@ -35,12 +35,12 @@ public class ConfigWindow : Window, IDisposable
     private Player? SelectedPlayer;
     private String SelectedPlayerName = "None";
 
-    private List<RuleBase> RulesGeneral = new();
-    private List<RuleBase> RulesMaster = new();
-    private List<RuleBase> RulesMisc = new();
-    private List<RuleBase> RulesPVE = new();
-    private List<RuleBase> RulesPVP = new();
-    private List<RuleBase> RulesSocial = new();
+    private readonly List<RuleBase> RulesGeneral = [];
+    private readonly List<RuleBase> RulesMaster = [];
+    private readonly List<RuleBase> RulesMisc = [];
+    private readonly List<RuleBase> RulesPVE = [];
+    private readonly List<RuleBase> RulesPVP = [];
+    private readonly List<RuleBase> RulesSocial = [];
 
     public ConfigWindow(Plugin plugin) : base($"Warrior of Lightning Configuration - v{Plugin.CurrentVersion}##configmain")
     {
@@ -152,7 +152,7 @@ public class ConfigWindow : Window, IDisposable
 
         if (!Plugin.IsEnabled)
         {
-            ImGui.TextColoredWrapped(UIValues.ColorDescription,$"The Plugin is currently not started, so Rules won't trigger. Start it in the Main Window.");
+            ImGui.TextColoredWrapped(UIValues.ColorDescription, $"The Plugin is currently not started, so Rules won't trigger. Start it in the Main Window.");
         }
 
         DrawHeader();
@@ -480,8 +480,8 @@ public class ConfigWindow : Window, IDisposable
                 if (SelectedPlayerName == "None") return;
                 if (SelectedPlayerName == null) return;
                 if (SelectedPlayer == null) SelectedPlayer = new Player(SelectedPlayerName);
-                if (Whitelist.Contains(SelectedPlayer!)) Whitelist.Remove(SelectedPlayer!);
-                if (Blacklist.Contains(SelectedPlayer!)) Blacklist.Remove(SelectedPlayer!);
+                Whitelist.Remove(SelectedPlayer!);
+                Blacklist.Remove(SelectedPlayer!);
                 Whitelist.Add(SelectedPlayer!);
                 Configuration.ActivePreset.Whitelist = Whitelist;
                 Configuration.saveCurrentPreset();
@@ -524,8 +524,8 @@ public class ConfigWindow : Window, IDisposable
                 if (SelectedPlayerName == "None") return;
                 if (SelectedPlayerName == null) return;
                 if (SelectedPlayer == null) SelectedPlayer = new Player(SelectedPlayerName);
-                if (Blacklist.Contains(SelectedPlayer!)) Blacklist.Remove(SelectedPlayer!);
-                if (Whitelist.Contains(SelectedPlayer!)) Whitelist.Remove(SelectedPlayer!);
+                Blacklist.Remove(SelectedPlayer!);
+                Whitelist.Remove(SelectedPlayer!);
                 Blacklist.Add(SelectedPlayer!);
                 Configuration.ActivePreset.Blacklist = Blacklist;
                 Configuration.saveCurrentPreset();
@@ -575,7 +575,7 @@ public class ConfigWindow : Window, IDisposable
             ImGui.PushItemWidth(ImGui.GetWindowSize().X - 10);
             ImGui.InputText("##addInput", ref ModalAddPresetInputName, 32, ImGuiInputTextFlags.CharsNoBlank);
 
-            
+
             if (ImGui.Button("Add##addPre", new Vector2(ImGui.GetWindowSize().X / 2, 0)))
             {
                 if (ModalAddPresetInputName.Length == 0)

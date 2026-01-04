@@ -27,7 +27,7 @@ namespace WoLightning.WoL_Plugin.Configurations
         protected override string FileName { get; } = "ControlSettings.json";
         protected override Version CurrentVersion { get; init; } = new Version(1, 1, 0, 'a');
 
-        public Player Controller { get; set; }
+        public Player? Controller { get; set; }
 
 
         public bool SwappingAllowed { get; set; }
@@ -257,7 +257,7 @@ namespace WoLightning.WoL_Plugin.Configurations
                     if (emoteId == LeashDistanceEmote)
                     {
                         LeashDistance = DistanceFromController() + 0.05f;
-                        Service.ToastGui.ShowQuest($"Leash Distance is now {LeashDistance.ToString("0.0")} Yalms");
+                        Service.ToastGui.ShowQuest($"Leash Distance is now {LeashDistance:0.0} Yalms");
                         return;
                     }
                 }
@@ -313,7 +313,7 @@ namespace WoLightning.WoL_Plugin.Configurations
             Plugin.NotificationHandler.send("You have been Leashed!", $"{Controller.Name} applied a Leash to you");
             Service.ToastGui.ShowQuest($"Follow {Controller.Name}!");
             Service.ChatGui.PrintError($"You have been Leashed to {Controller.Name}!" +
-                $"\nStay within {LeashDistance.ToString("0.0")} yalms of them.");
+                $"\nStay within {LeashDistance:0.0} yalms of them.");
 
             LeashGraceTimer.Interval = LeashGraceTime * 1000;
             LeashGraceTimer.AutoReset = false;
@@ -432,7 +432,7 @@ namespace WoLightning.WoL_Plugin.Configurations
         private void OnShockElapsed(object? sender, ElapsedEventArgs e)
         {
             Logger.Log(4, "Shock Elapsed!");
-            ShockOptions newOpt = new ShockOptions();
+            ShockOptions newOpt = new();
 
             try
             {
@@ -535,7 +535,7 @@ namespace WoLightning.WoL_Plugin.Configurations
             Logger.Log(3, $"Updating ControlSettings from {SavedVersion} to {CurrentVersion}");
             if (CurrentVersion.NeedsUpdate(SavedVersion) >= Version.NeedUpdateState.Remake)
             {
-                ControlSettings resetSettings = new ControlSettings(SaveLocation);
+                ControlSettings resetSettings = new(SaveLocation);
                 foreach (PropertyInfo property in typeof(ControlSettings).GetProperties().Where(p => p.CanWrite)) property.SetValue(this, property.GetValue(resetSettings, null), null);
             }
         }

@@ -8,7 +8,7 @@ namespace WoLightning.WoL_Plugin.Clients.Pishock
 {
     internal static class CommandPublish
     {
-        public static string Generate(ShockOptions Options, Plugin Plugin, string UserId, bool? isWarning)
+        public static string Generate(ShockOptions Options, string UserId, bool? isWarning)
         {
             try
             {
@@ -29,7 +29,7 @@ namespace WoLightning.WoL_Plugin.Clients.Pishock
 
                 return JsonSerializer.Serialize(new { Operation = "PUBLISH", PublishCommands = commands.ToArray() });
             }
-            catch (Exception ex) { Logger.Error("Fatal Error during CommandPublish.Generate()"); return "Invalid"; }
+            catch (Exception ex) { Logger.Error("Fatal Error during CommandPublish.Generate()"); Logger.Error(ex); return "Invalid"; }
         }
 
     }

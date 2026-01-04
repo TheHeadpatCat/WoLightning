@@ -39,7 +39,7 @@ public sealed class Plugin : IDalamudPlugin
     private const string OpenShockRemote = "/wolremote";
     private const string SwapPreset = "/wolpreset";
 
-    public static readonly Version CurrentVersion = new(6, 2, 6, 'b');
+    public static readonly Version CurrentVersion = new(6, 2, 7, 'b');
 
     public const string randomKey = "Currently Unused";
 
@@ -52,7 +52,7 @@ public sealed class Plugin : IDalamudPlugin
 
     // Gui Interfaces
     public readonly WindowSystem WindowSystem = new("WoLightning");
-    private readonly BufferWindow BufferWindow = new BufferWindow();
+    private readonly BufferWindow BufferWindow = new();
     public MainWindow? MainWindow { get; set; }
     public ConfigWindow? ConfigWindow { get; set; }
     public ShockRemoteWindow? ShockRemoteWindow { get; set; }
@@ -112,10 +112,10 @@ public sealed class Plugin : IDalamudPlugin
         Service.PluginInterface.UiBuilder.OpenConfigUi += ToggleConfigUI;
         Service.PluginInterface.UiBuilder.OpenMainUi += ToggleMainUI;
 
-        Service.Framework.Update += onUpdate;
+        Service.Framework.Update += OnUpdate;
 
-        Service.ClientState.Login += onLogin;
-        Service.ClientState.Logout += onLogout;
+        Service.ClientState.Login += OnLogin;
+        Service.ClientState.Logout += OnLogout;
         Service.PluginLog.Verbose("Finished initializing Plugin.");
     }
 
@@ -125,13 +125,13 @@ public sealed class Plugin : IDalamudPlugin
     }
 
 
-    private void onUpdate(IFramework framework)
+    private void OnUpdate(IFramework framework)
     {
-        if (LocalPlayerCharacter == null && Service.ObjectTable.LocalPlayer != null) onLogin();
+        if (LocalPlayerCharacter == null && Service.ObjectTable.LocalPlayer != null) OnLogin();
         if (LocalPlayerCharacter == null || !LocalPlayerCharacter.IsValid()) LocalPlayerCharacter = Service.ObjectTable.LocalPlayer;
     }
 
-    private void onLogin()
+    private void OnLogin()
     {
         try
         {
@@ -208,7 +208,7 @@ public sealed class Plugin : IDalamudPlugin
             ControlSettings.Save();
 
             //ClientWebserver.Connect();
-            if(Configuration.LoginOnStartPishock) ClientPishock.Setup();
+            if (Configuration.LoginOnStartPishock) ClientPishock.Setup();
             ClientOpenShock.Setup();
 
             EmoteReaderHooks = new EmoteReaderHooks(this);
@@ -259,7 +259,7 @@ public sealed class Plugin : IDalamudPlugin
         }
     }
 
-    public void onLogout(int type, int code)
+    public void OnLogout(int type, int code)
     {
         EmoteReaderHooks.Dispose();
         ClientWebserver.Dispose();
@@ -350,7 +350,7 @@ public sealed class Plugin : IDalamudPlugin
             return;
         }
 
-        arguments.Trim();
+        arguments = arguments.Trim();
         if (Configuration.loadPreset(arguments)) Service.ChatGui.Print($"Loaded Preset {Configuration.ActivePreset.Name}!");
         else Service.ChatGui.PrintError($"Cannot find a Preset named \"{arguments}\"!\n(This Command is case-sensitive!)");
     }

@@ -1,5 +1,4 @@
 ﻿using Dalamud.Bindings.ImGui;
-using WoLightning.WoL_Plugin.Util;
 using WoLightning.WoL_Plugin.Util.Helpers;
 using WoLightning.WoL_Plugin.Util.UI_Elements;
 
@@ -25,7 +24,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             try
             {
                 if (Rule.Name == null || Rule.Name.Length == 0) return;
-                if(OptionsEditor == null) OptionsEditor = new(Rule.Name, Plugin, Rule.ShockOptions);
+                if (OptionsEditor == null) OptionsEditor = new(Rule.Name, Plugin, Rule.ShockOptions);
                 DrawBase();
                 if (Rule.IsEnabled && isOptionsOpen)
                 {
