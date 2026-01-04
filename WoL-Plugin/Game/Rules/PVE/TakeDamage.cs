@@ -54,12 +54,13 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 if (bufferFrames > 0)
                 {
                     bufferFrames--;
+                    Logger.Log(3, $"{Name} | MaxHP Buffer elapsed.");
                     return;
                 }
 
                 if (lastMaxHP != Player.MaxHp && !Player.StatusFlags.HasFlag(Dalamud.Game.ClientState.Objects.Enums.StatusFlags.InCombat)) // out of combat maxhp increase
                 {
-                    Logger.Log(3, $"{Name} | MaxHP changed out of Combat.");
+                    Logger.Log(3, $"{Name} | MaxHP changed out of Combat. Buffering for 1800 frames.");
                     lastMaxHP = Player.MaxHp;
                     lastHP = Player.CurrentHp; // avoid false positives from synch and stuff
                     bufferFrames = 1800; // give (a bunch) seconds of buffering, for regens and stuff
@@ -67,7 +68,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 }
                 else if (lastMaxHP != Player.MaxHp) // in combat maxhp increase
                 {
-                    Logger.Log(3, $"{Name} | MaxHP changed inside Combat.");
+                    Logger.Log(3, $"{Name} | MaxHP changed inside Combat. Buffering for 180 frames.");
                     lastMaxHP = Player.MaxHp;
                     lastHP = Player.CurrentHp; // avoid false positives from synch and stuff
                     bufferFrames = 180; // give 3 seconds of buffering, for regens and stuff
