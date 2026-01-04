@@ -211,6 +211,7 @@ namespace WoLightning.Util.Types
 
             if (output <= 10) return output * 1000;
             if (output < 300) return 300;
+            if (output >= 10000) return 10000;
             return output;
         }
 
