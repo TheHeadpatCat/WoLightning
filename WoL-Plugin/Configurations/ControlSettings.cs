@@ -53,7 +53,7 @@ namespace WoLightning.WoL_Plugin.Configurations
         public bool LeashShowGraceWarning { get; set; } = true;
 
         public bool FullControl { get; set; } = false;
-        public bool SafewordDisabled { get; set; } = false;
+        public bool SafewordDisabled { get; set; } = false; // note, this doesnt actually disable the safeword... it just kinda fakes it.
 
 
 
