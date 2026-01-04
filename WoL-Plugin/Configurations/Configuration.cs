@@ -34,7 +34,7 @@ namespace WoLightning.Configurations
     {
         public DebugLevel DebugLevel { get; set; } = DebugLevel.Verbose;
         public ShownShockers ShownShockers { get; set; } = ShownShockers.All;
-        public int Version { get; set; } = 620;
+        public int Version { get; set; } = 624;
         public string LastPresetName { get; set; } = "Default";
         public bool ActivateOnStart { get; set; } = false;
         public bool LoginOnStartPishock { get; set; } = true;
