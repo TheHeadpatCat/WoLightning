@@ -21,7 +21,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 
         [JsonIgnore] IPlayerCharacter Player;
         [JsonIgnore] uint lastHP = 1, lastMaxHP = 1;
-        [JsonIgnore] int bufferFrames = 0;
+        [JsonIgnore] public int bufferFrames = 0;
 
         [JsonConstructor]
         public TakeDamage() { }
@@ -61,15 +61,15 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 {
                     Logger.Log(3, $"{Name} | MaxHP changed out of Combat.");
                     lastMaxHP = Player.MaxHp;
-                    lastHP = lastMaxHP; // avoid false positives from synch and stuff
-                    bufferFrames = 600; // give 10 seconds of buffering, for regens and stuff
+                    lastHP = Player.CurrentHp; // avoid false positives from synch and stuff
+                    bufferFrames = 1800; // give (a bunch) seconds of buffering, for regens and stuff
                     return;
                 }
                 else if (lastMaxHP != Player.MaxHp) // in combat maxhp increase
                 {
                     Logger.Log(3, $"{Name} | MaxHP changed inside Combat.");
                     lastMaxHP = Player.MaxHp;
-                    lastHP = lastMaxHP; // avoid false positives from synch and stuff
+                    lastHP = Player.CurrentHp; // avoid false positives from synch and stuff
                     bufferFrames = 180; // give 3 seconds of buffering, for regens and stuff
                     return;
                 }
