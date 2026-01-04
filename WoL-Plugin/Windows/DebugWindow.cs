@@ -40,6 +40,12 @@ namespace WoLightning.WoL_Plugin.Windows
             ImGui.Text("Area: " + Plugin.ControlSettings.LeashGraceAreaTimer.TimeLeft.ToString());
             ImGui.Text("Shock: " + Plugin.ControlSettings.LeashShockTimer.TimeLeft.ToString());
 
+            bool pishocklogin = Plugin.Configuration.LoginOnStartPishock;
+            if(ImGui.Checkbox("pishock auto login",ref pishocklogin))
+            {
+                Plugin.Configuration.LoginOnStartPishock = pishocklogin;
+                if (pishocklogin) Plugin.ClientPishock.Setup();
+            }
 
         }
 

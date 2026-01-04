@@ -208,7 +208,7 @@ public sealed class Plugin : IDalamudPlugin
             ControlSettings.Save();
 
             //ClientWebserver.Connect();
-            ClientPishock.Setup();
+            if(Configuration.LoginOnStartPishock) ClientPishock.Setup();
             ClientOpenShock.Setup();
 
             EmoteReaderHooks = new EmoteReaderHooks(this);

@@ -37,6 +37,7 @@ namespace WoLightning.Configurations
         public int Version { get; set; } = 620;
         public string LastPresetName { get; set; } = "Default";
         public bool ActivateOnStart { get; set; } = false;
+        public bool LoginOnStartPishock { get; set; } = true;
         public bool IsLockedByController { get; set; } = false;
 
         // Preset Settings
