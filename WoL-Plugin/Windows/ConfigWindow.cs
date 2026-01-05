@@ -42,7 +42,7 @@ public class ConfigWindow : Window, IDisposable
     private readonly List<RuleBase> RulesPVP = [];
     private readonly List<RuleBase> RulesSocial = [];
 
-    public ConfigWindow(Plugin plugin) : base($"Warrior of Lightning Configuration - v{Plugin.CurrentVersion}##configmain")
+    public ConfigWindow(Plugin plugin) : base($"Warrior of Lightning Configuration - v{plugin.Configuration.Version}##configmain")
     {
         Flags = ImGuiWindowFlags.AlwaysUseWindowPadding;
 

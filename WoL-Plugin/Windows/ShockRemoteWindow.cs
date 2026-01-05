@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using WoLightning.Configurations;
 using WoLightning.Util.Types;
+using WoLightning.WoL_Plugin.Util.Helpers;
 
 namespace WoLightning.WoL_Plugin.Windows
 {
@@ -14,15 +15,6 @@ namespace WoLightning.WoL_Plugin.Windows
         private ShockOptions Options { get; set; }
 
         bool isModalShockerSelectorOpen = false;
-
-        Vector4 ColorNameEnabled = new Vector4(0.5f, 1, 0.3f, 0.9f);
-        Vector4 ColorNameBlocked = new Vector4(1.0f, 0f, 0f, 0.9f);
-        Vector4 ColorNameDisabled = new Vector4(1, 1, 1, 0.9f);
-        Vector4 ColorDescription = new Vector4(0.7f, 0.7f, 0.7f, 0.8f);
-
-        List<int> durationArray = [100, 300, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-        List<CooldownModifier> modifierArray = [CooldownModifier.Miliseconds, CooldownModifier.Seconds, CooldownModifier.Minutes, CooldownModifier.Hours];
-
 
         public ShockRemoteWindow(Plugin plugin) : base("Shocker Remote")
         {
@@ -95,10 +87,10 @@ namespace WoLightning.WoL_Plugin.Windows
             ImGui.BeginGroup();
             ImGui.Text("    Duration");
             ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 4);
-            int DurationIndex = durationArray.IndexOf(Options.Duration);
+            int DurationIndex = UIValues.DurationArray.IndexOf(Options.Duration);
             if (ImGui.Combo("##DurationSelectRemote", ref DurationIndex, ["0.1s", "0.3s", "1s", "2s", "3s", "4s", "5s", "6s", "7s", "8s", "9s", "10s"], 12))
             {
-                Options.Duration = durationArray[DurationIndex];
+                Options.Duration = UIValues.DurationArray[DurationIndex];
             }
             ImGui.EndGroup();
 
@@ -188,13 +180,13 @@ namespace WoLightning.WoL_Plugin.Windows
                     {
                         ImGui.BeginGroup();
                         ImGui.Text(shocker.username);
-                        if (!shocker.isPaused) ImGui.TextColored(ColorNameEnabled, shocker.name);
-                        else ImGui.TextColored(ColorNameDisabled, "[Paused] " + shocker.name);
+                        if (!shocker.isPaused) ImGui.TextColored(UIValues.ColorNameEnabled, shocker.name);
+                        else ImGui.TextColored(UIValues.ColorNameDisabled, "[Paused] " + shocker.name);
                         ImGui.EndGroup();
                         continue;
                     }
-                    if (!shocker.isPaused) ImGui.TextColored(ColorNameEnabled, shocker.name);
-                    else ImGui.TextColored(ColorNameDisabled, "[Paused] " + shocker.name);
+                    if (!shocker.isPaused) ImGui.TextColored(UIValues.ColorNameEnabled, shocker.name);
+                    else ImGui.TextColored(UIValues.ColorNameDisabled, "[Paused] " + shocker.name);
                 }
 
                 ImGui.EndChild();
@@ -215,8 +207,8 @@ namespace WoLightning.WoL_Plugin.Windows
                         else Options.ShockersOpenShock.RemoveAt(Options.ShockersOpenShock.FindIndex(sh => sh.getInternalId() == shocker.getInternalId()));
                     }
                     ImGui.SameLine();
-                    if (!shocker.isPaused) ImGui.TextColored(ColorNameEnabled, shocker.name);
-                    else ImGui.TextColored(ColorNameDisabled, "[Paused] " + shocker.name);
+                    if (!shocker.isPaused) ImGui.TextColored(UIValues.ColorNameEnabled, shocker.name);
+                    else ImGui.TextColored(UIValues.ColorNameDisabled, "[Paused] " + shocker.name);
                 }
                 ImGui.EndChild();
                 ImGui.EndGroup();
