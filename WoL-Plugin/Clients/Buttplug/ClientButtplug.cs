@@ -123,6 +123,7 @@ namespace WoLightning.Clients.Buttplugio
             {
                 Task schedule = new Task(() =>
                 {
+                    Logger.Log(4, $"Task for {Device.Name}: Intensity: {options.Intensity / 100.0} Duration: {options.getDurationOpenShock()}ms");
                     Device.VibrateAsync(options.Intensity / 100.0);
                     Task.Delay(options.getDurationOpenShock());
                     Device.Stop();
