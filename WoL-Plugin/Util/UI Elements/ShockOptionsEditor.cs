@@ -228,6 +228,7 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
                         if (isEnabled) Options.ButtplugDevices.Add(device);
                         else Options.ButtplugDevices.RemoveAt(Options.ButtplugDevices.FindIndex(sh => sh.Index == device.Index));
                     }
+                    ImGui.Text("I" + device.Index + ": " + device.Name);
                     ImGui.SameLine();
                 }
                 ImGui.EndChild();

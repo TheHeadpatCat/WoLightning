@@ -114,6 +114,7 @@ namespace WoLightning.Clients.Buttplugio
                 return;
             }
 
+            Logger.Log(4, "Intiface Request successful! Creating Tasks...");
 
             foreach (var Device in options.ButtplugDevices)
             {
@@ -124,6 +125,7 @@ namespace WoLightning.Clients.Buttplugio
                     Device.Stop();
                 });
 
+                Logger.Log(4, $"Sending Task to {Device.Name} at Index: {Device.Index}");
                 schedule.Start();
             }
         }
