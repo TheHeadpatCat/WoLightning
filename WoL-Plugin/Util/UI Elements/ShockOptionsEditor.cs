@@ -2,6 +2,7 @@
 using System.Numerics;
 using WoLightning.Configurations;
 using WoLightning.Util.Types;
+using WoLightning.WoL_Plugin.Clients.Buttplug;
 using WoLightning.WoL_Plugin.Util.Helpers;
 
 namespace WoLightning.WoL_Plugin.Util.UI_Elements
@@ -221,15 +222,16 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
                 ImGui.BeginChild("IntifaceShockerList", new Vector2(180, 260));
                 foreach (var device in Plugin.Authentification.ButtplugDevices)
                 {
-                    bool isEnabled = Options.ButtplugDevices.Find(sh => sh.Index == device.Index) != null;
+                    IntifaceDevice? realDevice = Options.DevicesIntiface.Find(sh => sh.Index == device.Index);
+                    bool isEnabled = realDevice != null;
 
                     if (ImGui.Checkbox($"##devicebox{device.Index}", ref isEnabled))
                     { // this could probably be solved more elegantly
-                        if (isEnabled) Options.ButtplugDevices.Add(device);
-                        else Options.ButtplugDevices.RemoveAt(Options.ButtplugDevices.FindIndex(sh => sh.Index == device.Index));
+                        if (isEnabled) Options.DevicesIntiface.Add(realDevice);
+                        else Options.DevicesIntiface.RemoveAt(Options.DevicesIntiface.FindIndex(sh => sh.Index == device.Index));
                     }
-                    ImGui.Text("I" + device.Index + ": " + device.Name);
                     ImGui.SameLine();
+                    ImGui.Text("Index" + device.Index + ": " + device.Name);
                 }
                 ImGui.EndChild();
                 ImGui.EndGroup();

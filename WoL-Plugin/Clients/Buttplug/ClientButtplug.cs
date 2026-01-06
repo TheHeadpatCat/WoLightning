@@ -101,7 +101,7 @@ namespace WoLightning.Clients.Buttplugio
             }
 
 
-            if (options.ButtplugDevices.Count == 0)
+            if (options.DevicesIntiface.Count == 0)
             {
                 Logger.Log(3, " -> No Buttplug Devices assigned, discarding!");
                 return;
@@ -119,14 +119,24 @@ namespace WoLightning.Clients.Buttplugio
 
             Logger.Log(4, "Intiface Request successful! Creating Tasks...");
 
-            foreach (var Device in options.ButtplugDevices)
+            foreach (var Device in options.DevicesIntiface)
             {
+
+                if (ButtplugSession.Devices == null) return;
+
+                ButtplugClientDevice? realDevice = ButtplugSession.Devices.First( dev =>  dev.Index == Device.Index);
+                if (realDevice == null)
+                {
+                    Logger.Log(4, $"Couldnt match Index: {Device.Index}");
+                    continue;
+                }
+
                 Task schedule = new Task( async () =>
                 {
                     Logger.Log(4, $"Task for {Device.Name}: Intensity: {options.Intensity / 100.0} Duration: {options.getDurationOpenShock()}ms");
-                    await Device.VibrateAsync(options.Intensity / 100.0);
+                    await realDevice.VibrateAsync(options.Intensity / 100.0);
                     await Task.Delay(options.getDurationOpenShock());
-                    await Device.Stop();
+                    await realDevice.Stop();
                 });
 
                 Logger.Log(4, $"Sending Task to {Device.Name} at Index: {Device.Index}");
