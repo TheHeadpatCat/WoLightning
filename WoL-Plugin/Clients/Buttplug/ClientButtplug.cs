@@ -49,6 +49,7 @@ namespace WoLightning.Clients.Buttplugio
             if (ButtplugSession != null) return;
 
             ButtplugSession = new ButtplugClient("WoLightning");
+            Status = ConnectionStatusButtplug.Connecting;
 
             ButtplugSession.DeviceAdded += OnDeviceAdded;
             ButtplugSession.DeviceRemoved += OnDeviceRemoved;
@@ -59,11 +60,13 @@ namespace WoLightning.Clients.Buttplugio
                 await ButtplugSession.ConnectAsync(new ButtplugWebsocketConnector(new Uri(Plugin.Authentification.ButtplugURL)));
                 Logger.Log(4, $"Succesfully connected!" +
                     $"\nName: {ButtplugSession.Name}");
+                Status = ConnectionStatusButtplug.Connected;
             }
             catch (Exception e)
             {
                 Logger.Log(4,"[BUTTPLUG] Couldnt connect!");
                 Logger.Log(4,e?.InnerException?.Message);
+                Status = ConnectionStatusButtplug.FatalError;
             }
         }
 
