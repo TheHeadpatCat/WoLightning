@@ -121,12 +121,12 @@ namespace WoLightning.Clients.Buttplugio
 
             foreach (var Device in options.ButtplugDevices)
             {
-                Task schedule = new Task(() =>
+                Task schedule = new Task( async () =>
                 {
                     Logger.Log(4, $"Task for {Device.Name}: Intensity: {options.Intensity / 100.0} Duration: {options.getDurationOpenShock()}ms");
-                    Device.VibrateAsync(options.Intensity / 100.0);
-                    Task.Delay(options.getDurationOpenShock());
-                    Device.Stop();
+                    await Device.VibrateAsync(options.Intensity / 100.0);
+                    await Task.Delay(options.getDurationOpenShock());
+                    await Device.Stop();
                 });
 
                 Logger.Log(4, $"Sending Task to {Device.Name} at Index: {Device.Index}");
