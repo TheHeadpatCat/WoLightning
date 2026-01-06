@@ -137,9 +137,9 @@ namespace WoLightning.Configurations
             return JsonConvert.DeserializeObject<Authentification>(input)!;
         }
 
-        public int GetShockerCount()
+        public int GetDevicesCount()
         {
-            return PishockShockers.Count + OpenShockShockers.Count;
+            return PishockShockers.Count + OpenShockShockers.Count + ButtplugDevices.Count;
         }
 
         public List<ShockerBase> GetShockers()

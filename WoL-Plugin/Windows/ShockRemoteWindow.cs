@@ -36,7 +36,7 @@ namespace WoLightning.WoL_Plugin.Windows
         public override void Draw()
         {
 
-            if (Plugin == null || Plugin.Configuration == null || Plugin.Authentification == null || Plugin.Authentification.GetShockerCount() == 0)
+            if (Plugin == null || Plugin.Configuration == null || Plugin.Authentification == null || Plugin.Authentification.GetDevicesCount() == 0)
             {
                 ImGui.TextWrapped("This Window isn't initialized yet.\nPlease login with a character first and make sure you are connected to either the Pishock, or OpenShock API.");
                 return;
@@ -142,7 +142,7 @@ namespace WoLightning.WoL_Plugin.Windows
             if (ImGui.BeginPopupModal("Select Shockers##ShockerSelectRemote", ref isModalShockerSelectorOpen,
             ImGuiWindowFlags.NoResize | ImGuiWindowFlags.Popup))
             {
-                if (Plugin.Authentification.GetShockerCount() == 0)
+                if (Plugin.Authentification.GetDevicesCount() == 0)
                 {
                     ImGui.TextWrapped("The Shockers are still being loaded!" +
                         "\nIf this doesn't change, please make sure that your" +

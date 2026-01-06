@@ -143,7 +143,7 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
             if (ImGui.BeginPopupModal("Select Shockers##ShockerSelect" + Name, ref isModalShockerSelectorOpen,
             ImGuiWindowFlags.NoResize | ImGuiWindowFlags.Popup))
             {
-                if (Plugin.Authentification.GetShockerCount() == 0)
+                if (Plugin.Authentification.GetDevicesCount() == 0)
                 {
                     ImGui.TextWrapped("The Shockers are still being loaded!" +
                         "\nIf this doesn't change, please make sure that your" +
