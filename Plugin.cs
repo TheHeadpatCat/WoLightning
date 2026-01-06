@@ -21,6 +21,9 @@ using WoLightning.WoL_Plugin.Configurations;
 using WoLightning.WoL_Plugin.Util;
 using WoLightning.WoL_Plugin.Windows;
 using Version = WoLightning.WoL_Plugin.Util.Types.Version;
+using Buttplug.Client;
+using Buttplug.Core.Messages;
+using WoLightning.Clients.Buttplugio;
 
 namespace WoLightning;
 
@@ -61,6 +64,8 @@ public sealed class Plugin : IDalamudPlugin
 
 
     // Handler Classes
+
+    public ClientButtplug? ClientButtplug { get; set; }
     public EmoteReaderHooks? EmoteReaderHooks { get; set; }
     public ClientPishock? ClientPishock { get; set; }
     public ClientOpenShock? ClientOpenShock { get; set; }
@@ -175,6 +180,9 @@ public sealed class Plugin : IDalamudPlugin
             ClientWebserver = new ClientWebserver(this);
             ClientPishock = new ClientPishock(this);
             ClientOpenShock = new ClientOpenShock(this);
+            ClientButtplug = new ClientButtplug();
+
+            ClientButtplug.WebSocketTest();
 
             Configuration = new Configuration();
             try

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Buttplug.Client;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -42,7 +43,9 @@ namespace WoLightning.Configurations
         public string OpenShockApiKey { get; set; } = string.Empty;
         [JsonIgnore] public List<ShockerOpenShock> OpenShockShockers { get; set; } = new();
 
-
+        // Buttplug things
+        public string ButtplugURL { get; set; } = "ws://127.0.0.1:12345";
+        [JsonIgnore] public List<ButtplugClientDevice> ButtplugDevices { get; set; } = new();
 
 
         public Authentification() { }

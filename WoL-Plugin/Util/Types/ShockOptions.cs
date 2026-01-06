@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using Buttplug.Client;
 using WoLightning.WoL_Plugin.Clients;
 using WoLightning.WoL_Plugin.Clients.OpenShock;
 using WoLightning.WoL_Plugin.Clients.Pishock;
@@ -41,6 +42,7 @@ namespace WoLightning.Util.Types
 
         public List<ShockerPishock> ShockersPishock { get; set; } = new();
         public List<ShockerOpenShock> ShockersOpenShock { get; set; } = new();
+        public List<ButtplugClientDevice> ButtplugDevices { get; set; } = new();
 
         public OpMode OpMode { get; set; } = OpMode.Shock;
         public int Intensity { get; set; } = 1;
