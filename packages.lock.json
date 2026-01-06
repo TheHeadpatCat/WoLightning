@@ -2,6 +2,25 @@
   "version": 1,
   "dependencies": {
     "net10.0": {
+      "Buttplug": {
+        "type": "Direct",
+        "requested": "[3.1.1, )",
+        "resolved": "3.1.1",
+        "contentHash": "A8bSPitAQf70a/dCoNd07q60lwo33SlPCyzLeqcG4h/vumavlONdZ1y5LuiLKR9Pbog8su2+L7DNOVZ9B3TmWw==",
+        "dependencies": {
+          "Newtonsoft.Json": "13.0.3"
+        }
+      },
+      "Buttplug.Client.Connectors.WebsocketConnector": {
+        "type": "Direct",
+        "requested": "[3.0.1, )",
+        "resolved": "3.0.1",
+        "contentHash": "f0MlwFeUB4vC1xWi1amJu2ztKOzneJLgYkxoW656WhNQHc0Jt+JqpPozw1A1D2bagmIPIunG63eySe3IIfu/Ag==",
+        "dependencies": {
+          "Buttplug": "3.0.1",
+          "deniszykov.WebSocketListener": "4.2.16"
+        }
+      },
       "DalamudPackager": {
         "type": "Direct",
         "requested": "[14.0.1, )",
@@ -13,6 +32,32 @@
         "requested": "[1.2.39, )",
         "resolved": "1.2.39",
         "contentHash": "fcFN01tDTIQqDuTwr1jUQK/geofiwjG5DycJQOnC72i1SsLAk1ELe+apBOuZ11UMQG8YKFZG1FgvjZPbqHyatg=="
+      },
+      "deniszykov.WebSocketListener": {
+        "type": "Transitive",
+        "resolved": "4.2.16",
+        "contentHash": "WmmZWR2augvA1BHZAgiQztSht3BT48DuVXO9NvC9z7P71W6bFFjeikYGLuf24IYHYMQFP/voPkZ/+3H7s9ac8A==",
+        "dependencies": {
+          "NETStandard.Library": "1.6.1"
+        }
+      },
+      "Microsoft.NETCore.Platforms": {
+        "type": "Transitive",
+        "resolved": "1.1.0",
+        "contentHash": "kz0PEW2lhqygehI/d6XsPCQzD7ff7gUJaVGPVETX611eadGsA3A877GdSlU0LRVMCTH/+P3o2iDTak+S08V2+A=="
+      },
+      "NETStandard.Library": {
+        "type": "Transitive",
+        "resolved": "1.6.1",
+        "contentHash": "WcSp3+vP+yHNgS8EV5J7pZ9IRpeDuARBPN28by8zqff1wJQXm26PVU8L3/fYLBJVU7BtDyqNVWq2KlCVvSSR4A==",
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.1.0"
+        }
+      },
+      "Newtonsoft.Json": {
+        "type": "Transitive",
+        "resolved": "13.0.3",
+        "contentHash": "HrC5BXdl00IP9zeV+0Z848QWPAoCr9P3bDEZguI+gkLcBKAOxix/tLEAAHC+UvDNPv4a2d18lOReHMOagPa+zQ=="
       }
     }
   }

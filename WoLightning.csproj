@@ -18,6 +18,8 @@
     <None Remove="WoL-Plugin\Clients\Webserver\Operations\General\**" />
     <None Remove="WoL-Plugin\Clients\Webserver\Operations\Master\**" />
     <None Remove="WoL-Plugin\Clients\Webserver\Operations\Presets\**" />
+    <PackageReference Include="Buttplug" Version="3.1.1" />
+    <PackageReference Include="Buttplug.Client.Connectors.WebsocketConnector" Version="3.0.1" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="WoL-Plugin\Game\Rules\General\" />
