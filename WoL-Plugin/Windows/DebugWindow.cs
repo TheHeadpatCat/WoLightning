@@ -39,6 +39,11 @@ namespace WoLightning.WoL_Plugin.Windows
             ImGui.Text("damage frames " + Plugin.Configuration.ActivePreset.TakeDamage.bufferFrames);
             ImGui.Text("scheduled save " + Plugin.Configuration.PresetSavingBuffer);
 
+            if(ImGui.Button("Setup Buttplug Intiface"))
+            {
+                Plugin.ClientButtplug.Setup();
+            }
+
             bool pishocklogin = Plugin.Configuration.LoginOnStartPishock;
             if (ImGui.Checkbox("pishock auto login", ref pishocklogin))
             {

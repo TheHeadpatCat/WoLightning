@@ -17,7 +17,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 namespace WoLightning.Clients.Buttplugio
 {
-    public class ClientButtplug
+    public class ClientButtplug : IDisposable
     {
         public enum ConnectionStatusButtplug
         {
@@ -33,7 +33,6 @@ namespace WoLightning.Clients.Buttplugio
 
         private Plugin? Plugin;
         public ConnectionStatusButtplug Status { get; set; } = ConnectionStatusButtplug.NotStarted;
-        private List <ButtplugClientDevice> Devices = new();
         public string WebsocketAddress;
         public ClientButtplug(Plugin plugin)
         {
@@ -46,31 +45,26 @@ namespace WoLightning.Clients.Buttplugio
         public ButtplugClient ButtplugSession;
         public async Task SetupAllData()
         {
-            ButtplugSession = new ButtplugClient("WoLighning");
+
+            if (ButtplugSession != null) return;
+
+            ButtplugSession = new ButtplugClient("WoLightning");
 
             ButtplugSession.DeviceAdded += OnDeviceAdded;
-            
-
-
             ButtplugSession.DeviceRemoved += OnDeviceRemoved;
                 
-
-            
-
            try 
-            {
-            
-            await ButtplugSession.ConnectAsync(new ButtplugWebsocketConnector(new Uri("ws://127.0.0.1:12345")));
-            
+           {
+                Logger.Log(4, $"Connecting to Intiface on {Plugin.Authentification.ButtplugURL}");
+                await ButtplugSession.ConnectAsync(new ButtplugWebsocketConnector(new Uri(Plugin.Authentification.ButtplugURL)));
+                Logger.Log(4, $"Succesfully connected!" +
+                    $"\nName: {ButtplugSession.Name}");
             }
             catch (Exception e)
-        {
-            
-            Logger.Log(4,"[BUTTPLUG] Couldnt connect!");
-            Logger.Log(4,e?.InnerException?.Message);
-
-            
-        }
+            {
+                Logger.Log(4,"[BUTTPLUG] Couldnt connect!");
+                Logger.Log(4,e?.InnerException?.Message);
+            }
         }
 
        
@@ -120,26 +114,29 @@ namespace WoLightning.Clients.Buttplugio
                 return;
             }
 
-            var testClientDevice = ButtplugSession.Devices[0];
-            await testClientDevice.VibrateAsync(0.3);
 
             foreach (var Device in options.ButtplugDevices)
             {
                 Task schedule = new Task(() =>
                 {
                     Device.VibrateAsync(options.Intensity / 100.0);
-                    Task.Delay(options.Duration);
+                    Task.Delay(options.getDurationOpenShock());
                     Device.Stop();
-                }).Start();
-                
-            
+                });
+
+                schedule.Start();
             }
+        }
+
+        public void Dispose()
+        {
+            ButtplugSession.DeviceAdded -= OnDeviceAdded;
+            ButtplugSession.DeviceRemoved -= OnDeviceRemoved;
 
 
-
-
-
-
+            ButtplugSession?.DisconnectAsync().Wait();
+            ButtplugSession?.Dispose();
+        }
     }
 }
 

@@ -165,9 +165,7 @@ public sealed class Plugin : IDalamudPlugin
             ClientWebserver = new ClientWebserver(this);
             ClientPishock = new ClientPishock(this);
             ClientOpenShock = new ClientOpenShock(this);
-            ClientButtplug = new ClientButtplug();
-
-            ClientButtplug.WebSocketTest();
+            ClientButtplug = new ClientButtplug(this);
 
             Configuration = new Configuration();
             try
@@ -300,6 +298,7 @@ public sealed class Plugin : IDalamudPlugin
         ClientWebserver?.Dispose();
         ClientPishock?.Dispose();
         ClientOpenShock?.Dispose();
+        ClientButtplug?.Dispose();
 
         Configuration?.Dispose();
         Authentification?.Dispose();
