@@ -137,7 +137,7 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
             {
                 Vector2 center = ImGui.GetMainViewport().GetCenter();
                 ImGui.SetNextWindowPos(center, ImGuiCond.Appearing, new Vector2(0.5f, 0.5f));
-                ImGui.SetNextWindowSize(new Vector2(400, 400));
+                ImGui.SetNextWindowSize(new Vector2(900, 900));
             }
 
             if (ImGui.BeginPopupModal("Select Shockers##ShockerSelect" + Name, ref isModalShockerSelectorOpen,
@@ -196,7 +196,7 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
                 ImGui.SameLine();
 
                 ImGui.BeginGroup();
-                ImGui.Text("Available OpenShock Devices:");
+                ImGui.Text("Available OpenShock Devices:           ");
                 ImGui.BeginChild("OpenShockShockerList", new Vector2(180, 260));
                 foreach (var shocker in Plugin.Authentification.OpenShockShockers)
                 {
@@ -213,6 +213,27 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
                 }
                 ImGui.EndChild();
                 ImGui.EndGroup();
+
+                ImGui.SameLine();
+
+                ImGui.BeginGroup();
+                ImGui.Text("Available Intiface Devices:");
+                ImGui.BeginChild("IntifaceShockerList", new Vector2(180, 260));
+                foreach (var device in Plugin.Authentification.ButtplugDevices)
+                {
+                    bool isEnabled = Options.ButtplugDevices.Find(sh => sh.Index == device.Index) != null;
+
+                    if (ImGui.Checkbox($"##devicebox{device.Index}", ref isEnabled))
+                    { // this could probably be solved more elegantly
+                        if (isEnabled) Options.ButtplugDevices.Add(device);
+                        else Options.ButtplugDevices.RemoveAt(Options.ButtplugDevices.FindIndex(sh => sh.Index == device.Index));
+                    }
+                    ImGui.SameLine();
+                }
+                ImGui.EndChild();
+                ImGui.EndGroup();
+
+
 
                 ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 2 - 170, ImGui.GetWindowSize().Y - 65));
                 ImGui.SetNextItemWidth(200);
@@ -241,6 +262,7 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
                     Options.ShockersPishock.Clear();
                 }
                 ImGui.EndGroup();
+
 
 
                 ImGui.EndPopup();

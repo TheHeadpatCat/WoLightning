@@ -130,6 +130,7 @@ namespace WoLightning.Clients.Buttplugio
 
         public void Dispose()
         {
+            if (ButtplugSession == null) return;
             ButtplugSession.DeviceAdded -= OnDeviceAdded;
             ButtplugSession.DeviceRemoved -= OnDeviceRemoved;
 
