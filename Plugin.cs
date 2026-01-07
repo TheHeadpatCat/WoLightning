@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using WoLightning.Clients.Buttplugio;
+using WoLightning.Clients.Intiface;
 using WoLightning.Clients.OpenShock;
 using WoLightning.Clients.Pishock;
 using WoLightning.Configurations;
@@ -63,7 +63,7 @@ public sealed class Plugin : IDalamudPlugin
 
     // Handler Classes
 
-    public ClientIntiface? ClientButtplug { get; set; }
+    public ClientIntiface? ClientIntiface { get; set; }
     public EmoteReaderHooks? EmoteReaderHooks { get; set; }
     public ClientPishock? ClientPishock { get; set; }
     public ClientOpenShock? ClientOpenShock { get; set; }
@@ -163,7 +163,7 @@ public sealed class Plugin : IDalamudPlugin
             ClientWebserver = new ClientWebserver(this);
             ClientPishock = new ClientPishock(this);
             ClientOpenShock = new ClientOpenShock(this);
-            ClientButtplug = new ClientIntiface(this);
+            ClientIntiface = new ClientIntiface(this);
 
             Configuration = new Configuration();
             try
@@ -214,6 +214,7 @@ public sealed class Plugin : IDalamudPlugin
             //ClientWebserver.Connect();
             if (Configuration.LoginOnStartPishock) ClientPishock.Setup();
             ClientOpenShock.Setup();
+            ClientIntiface.Setup();
 
             EmoteReaderHooks = new EmoteReaderHooks(this);
 
@@ -296,7 +297,7 @@ public sealed class Plugin : IDalamudPlugin
         ClientWebserver?.Dispose();
         ClientPishock?.Dispose();
         ClientOpenShock?.Dispose();
-        ClientButtplug?.Dispose();
+        ClientIntiface?.Dispose();
 
         Configuration?.Dispose();
         Authentification?.Dispose();

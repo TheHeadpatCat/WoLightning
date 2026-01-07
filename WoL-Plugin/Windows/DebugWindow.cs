@@ -39,10 +39,18 @@ namespace WoLightning.WoL_Plugin.Windows
             ImGui.Text("damage frames " + Plugin.Configuration.ActivePreset.TakeDamage.bufferFrames);
             ImGui.Text("scheduled save " + Plugin.Configuration.PresetSavingBuffer);
 
-            if (ImGui.Button("Setup Buttplug Intiface"))
+            ImGui.Text("Auth:");
+            foreach (var device in Plugin.Authentification.DevicesIntiface)
             {
-                Plugin.ClientButtplug.Setup();
+                ImGui.Text(device.Index + " Name " + device.Name + " Display " + device.DisplayName);
             }
+
+            ImGui.Text("Rule:");
+            foreach (var device in Plugin.Configuration.ActivePreset.DoEmote.ShockOptions.DevicesIntiface)
+            {
+                ImGui.Text(device.Index + " Name " + device.Name + " Display " + device.DisplayName);
+            }
+
 
             bool pishocklogin = Plugin.Configuration.LoginOnStartPishock;
             if (ImGui.Checkbox("pishock auto login", ref pishocklogin))

@@ -94,7 +94,7 @@ namespace WoLightning.Util.Types
                         r.ShockOptions.Validate();
                         r.Triggered += Plugin.ClientPishock.SendRequest;
                         r.Triggered += Plugin.ClientOpenShock.SendRequest;
-                        r.Triggered += Plugin.ClientButtplug.SendRequest;
+                        r.Triggered += Plugin.ClientIntiface.SendRequest;
                     }
                     catch (Exception ex)
                     {

@@ -11,6 +11,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using WoLightning.WoL_Plugin.Clients;
+using WoLightning.WoL_Plugin.Clients.Intiface;
 using WoLightning.WoL_Plugin.Clients.OpenShock;
 using WoLightning.WoL_Plugin.Clients.Pishock;
 
@@ -44,8 +45,8 @@ namespace WoLightning.Configurations
         [JsonIgnore] public List<ShockerOpenShock> OpenShockShockers { get; set; } = new();
 
         // Buttplug things
-        public string ButtplugURL { get; set; } = "ws://127.0.0.1:12345";
-        [JsonIgnore] public List<ButtplugClientDevice> DevicesIntiface { get; set; } = new();
+        public string IntifaceURL { get; set; } = "ws://127.0.0.1:12345";
+        [JsonIgnore] public List<DeviceIntiface> DevicesIntiface { get; set; } = new();
 
 
         public Authentification() { }

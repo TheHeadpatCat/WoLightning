@@ -2,7 +2,7 @@
 using System.Numerics;
 using WoLightning.Configurations;
 using WoLightning.Util.Types;
-using WoLightning.WoL_Plugin.Clients.Buttplug;
+using WoLightning.WoL_Plugin.Clients.Intiface;
 using WoLightning.WoL_Plugin.Util.Helpers;
 
 namespace WoLightning.WoL_Plugin.Util.UI_Elements
@@ -138,7 +138,7 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
             {
                 Vector2 center = ImGui.GetMainViewport().GetCenter();
                 ImGui.SetNextWindowPos(center, ImGuiCond.Appearing, new Vector2(0.5f, 0.5f));
-                ImGui.SetNextWindowSize(new Vector2(900, 900));
+                ImGui.SetNextWindowSize(new Vector2(920, 700));
             }
 
             if (ImGui.BeginPopupModal("Select Shockers##ShockerSelect" + Name, ref isModalShockerSelectorOpen,
@@ -215,30 +215,36 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
                 ImGui.EndChild();
                 ImGui.EndGroup();
 
+                
                 ImGui.SameLine();
 
                 ImGui.BeginGroup();
                 ImGui.Text("Available Intiface Devices:");
-                ImGui.BeginChild("IntifaceShockerList", new Vector2(180, 260));
+                ImGui.BeginChild("IntifaceDeviceList", new Vector2(180, 260));
+                
                 foreach (var device in Plugin.Authentification.DevicesIntiface)
                 {
-                    DeviceIntiface? realDevice = Options.DevicesIntiface.Find(sh => sh.Index == device.Index);
-                    bool isEnabled = realDevice != null;
-
-                    if (ImGui.Checkbox($"##devicebox{device.Index}", ref isEnabled))
+                    
+                    bool isEnabled = Options.DevicesIntiface.Find(sh => sh.Index == device.Index) != null;
+                    
+                    if (ImGui.Checkbox($"##devicebox{device.Index}:{device.Name}", ref isEnabled))
                     { // this could probably be solved more elegantly
-                        if (isEnabled) Options.DevicesIntiface.Add(realDevice);
+                        if (isEnabled) Options.DevicesIntiface.Add(device);
                         else Options.DevicesIntiface.RemoveAt(Options.DevicesIntiface.FindIndex(sh => sh.Index == device.Index));
                     }
+                    
                     ImGui.SameLine();
-                    ImGui.Text("Index" + device.Index + ": " + device.Name);
+                    
+                    if(device.DisplayName != null && device.DisplayName.Length > 0) ImGui.TextWrapped("Index " + device.Index + ": " + device.DisplayName);
+                    else ImGui.TextWrapped("Index " + device.Index + ": " + device.Name);
                 }
+                
                 ImGui.EndChild();
                 ImGui.EndGroup();
+                
 
 
-
-                ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 2 - 170, ImGui.GetWindowSize().Y - 65));
+                ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 2 - 170, ImGui.GetWindowSize().Y - 75));
                 ImGui.SetNextItemWidth(200);
                 int ShownShockersIndex = (int)Plugin.Configuration.ShownShockers;
                 if (ImGui.Combo("Shown Shockers", ref ShownShockersIndex, ["All", "Personal Only", "Shared Only", "None...?"], 4))
@@ -253,14 +259,14 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
                     ImGui.SetTooltip("Allows you to select which Shockers show up on clicking the \"Assign Shockers\" button.");
                 }
 
-                ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 2 - 170, ImGui.GetWindowSize().Y - 35));
+                ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 3 - 170, ImGui.GetWindowSize().Y - 35));
                 ImGui.BeginGroup();
-                if (ImGui.Button($"Apply##apply{Name}", new Vector2(ImGui.GetWindowSize().X - 120, 25)))
+                if (ImGui.Button($"Apply##apply{Name}", new Vector2(ImGui.GetWindowSize().X / 3, 0)))
                 {
                     ImGui.CloseCurrentPopup();
                 }
                 ImGui.SameLine();
-                if (ImGui.Button($"Reset##resetall{Name}", new Vector2(ImGui.GetWindowSize().X / 8, 25)))
+                if (ImGui.Button($"Reset All##resetall{Name}", new Vector2(ImGui.GetWindowSize().X / 3, 0)))
                 {
                     Options.ShockersPishock.Clear();
                 }

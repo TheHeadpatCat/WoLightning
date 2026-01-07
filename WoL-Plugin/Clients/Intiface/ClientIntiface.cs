@@ -1,12 +1,14 @@
 using Buttplug.Client;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WoLightning.Util.Types;
+using WoLightning.WoL_Plugin.Clients.Intiface;
 using WoLightning.WoL_Plugin.Util;
 
 
-namespace WoLightning.Clients.Buttplugio
+namespace WoLightning.Clients.Intiface
 {
     public class ClientIntiface : IDisposable
     {
@@ -15,7 +17,7 @@ namespace WoLightning.Clients.Buttplugio
             NotStarted = 0,
             Unavailable = 1,
             FatalError = 3,
-
+            Disconnected = 4,
 
             Connecting = 99,
             ConnectedNoDevices = 101,
@@ -24,8 +26,12 @@ namespace WoLightning.Clients.Buttplugio
 
         private Plugin? Plugin;
 
-        public ButtplugClient Client;
+        public ButtplugClient? Client;
         public ConnectionStatusIntiface Status { get; set; } = ConnectionStatusIntiface.NotStarted;
+        public int ConnectionAttempts = 0;
+        private static int ConnectionAttemptsMax = 7;
+
+        private List<IntifaceTask> RunningTasks = new();
 
 
         public ClientIntiface(Plugin plugin)
@@ -39,43 +45,84 @@ namespace WoLightning.Clients.Buttplugio
 
         public async Task SetupAllData()
         {
-
-            if (Client != null) return;
+            if (Client != null)
+            {
+                await Connect();
+                return;
+            }
 
             Client = new ButtplugClient("WoLightning");
-            Status = ConnectionStatusIntiface.Connecting;
 
             Client.DeviceAdded += OnDeviceAdded;
             Client.DeviceRemoved += OnDeviceRemoved;
+            Client.ServerDisconnect += OnDisconnect;
 
-            try
+            await Connect();
+        }
+
+        private async Task Connect()
+        {
+
+            if (Client == null) return;
+            if (Status == ConnectionStatusIntiface.Connected || Status == ConnectionStatusIntiface.Connecting) return;
+
+            Status = ConnectionStatusIntiface.Connecting;
+            ConnectionAttempts = 0;
+
+            while (Status != ConnectionStatusIntiface.Connected && ConnectionAttempts < ConnectionAttemptsMax)
             {
-                Logger.Log(4, $"Connecting to Intiface on {Plugin.Authentification.ButtplugURL}");
-                await Client.ConnectAsync(new ButtplugWebsocketConnector(new Uri(Plugin.Authentification.ButtplugURL)));
-                Logger.Log(4, $"Succesfully connected!" +
-                    $"\nName: {Client.Name}");
-                Status = ConnectionStatusIntiface.Connected;
+                try
+                {
+                    Logger.Log(4, $"{ConnectionAttempts}/{ConnectionAttemptsMax} Connecting to Intiface on {Plugin.Authentification.IntifaceURL}");
+                    await Client.ConnectAsync(new ButtplugWebsocketConnector(new Uri(Plugin.Authentification.IntifaceURL)));
+                    Logger.Log(4, $"[Intiface] Succesfully connected!");
+                    Status = ConnectionStatusIntiface.Connected;
+                }
+                catch (Exception e)
+                {
+                    Logger.Log(4, $"[Intiface] Couldnt connect! Trying again in 5 seconds...");
+                    ConnectionAttempts++;
+                    await Task.Delay(5000);
+                }
             }
-            catch (Exception e)
+
+            if (Status != ConnectionStatusIntiface.Connected)
             {
-                Logger.Log(4, "[BUTTPLUG] Couldnt connect!");
-                Logger.Log(4, e?.InnerException?.Message);
-                Status = ConnectionStatusIntiface.FatalError;
+                Status = ConnectionStatusIntiface.Unavailable;
+                Logger.Log(4, "[Intiface] Failed to connect after 7 attempts!");
             }
         }
 
-
+        private void OnDisconnect(object? sender, EventArgs e)
+        {
+            Logger.Log(3, $"Intiface Server Disconnected!");
+            Status = ConnectionStatusIntiface.Disconnected;
+            SetupAllData();
+        }
 
         private void OnDeviceAdded(object? sender, DeviceAddedEventArgs Arguments)
         {
-            Logger.Log(4, $"Device {Arguments.Device.Name} Connected!");
-            Plugin.Authentification.DevicesIntiface = Client.Devices.ToList();
+            Logger.Log(4, $"[Intiface] Device {Arguments.Device.Name} Connected!");
+            UpdateDeviceList();
         }
 
         private void OnDeviceRemoved(object? sender, DeviceRemovedEventArgs Arguments)
         {
-            Logger.Log(4, $"Device {Arguments.Device.Name} Removed!");
-            Plugin.Authentification.DevicesIntiface = Client.Devices.ToList();
+            Logger.Log(4, $"[Intiface] Device {Arguments.Device.Name} Removed!");
+            UpdateDeviceList();
+        }
+
+        public void UpdateDeviceList()
+        {
+            Logger.Log(4, $"[Intiface] Updating Intiface Device list from {Plugin.Authentification.DevicesIntiface.Count} to {Client.Devices.Length}");
+            Plugin.Authentification.DevicesIntiface.Clear();
+            if (Client == null || Client.Devices == null) return;
+            foreach (var device in Client.Devices)
+            {
+                if(device == null) continue;//sometimes we can just get null???
+                DeviceIntiface converted = new(device);
+                Plugin.Authentification.DevicesIntiface.Add(converted);
+            }
         }
 
         public async void SendRequest(ShockOptions options)
@@ -84,20 +131,20 @@ namespace WoLightning.Clients.Buttplugio
 
             if (Plugin.IsFailsafeActive)
             {
-                Logger.Log(3, " -> Blocked request due to failsafe mode!");
+                Logger.Log(3, " -> [Intiface] Blocked request due to failsafe mode!");
                 return;
             }
 
             if (!options.Validate())
             {
-                Logger.Log(3, " -> Blocked due to invalid Buttplug Options!");
+                Logger.Log(3, " -> [Intiface] Blocked due to invalid Buttplug Options!");
                 return;
             }
 
 
             if (options.DevicesIntiface.Count == 0)
             {
-                Logger.Log(3, " -> No Buttplug Devices assigned, discarding!");
+                Logger.Log(3, " -> [Intiface] No Devices assigned, discarding!");
                 return;
             }
             #endregion
@@ -105,13 +152,13 @@ namespace WoLightning.Clients.Buttplugio
             if (Client == null || Status != ConnectionStatusIntiface.Connected)
             {
                 if (Status == ConnectionStatusIntiface.Connecting) return;
-                Client?.Dispose();
-                Client = null;
+                Logger.Log(3, "-> [Intiface] No Connection is made! Trying to connect now...");
                 await SetupAllData();
-                return;
             }
 
-            Logger.Log(4, "Intiface Request successful! Creating Tasks...");
+            Logger.Log(4, "[Intiface] Intiface Request successful! Creating Tasks...");
+
+
 
             foreach (var Device in options.DevicesIntiface)
             {
@@ -121,20 +168,30 @@ namespace WoLightning.Clients.Buttplugio
                 ButtplugClientDevice? realDevice = Client.Devices.First(dev => dev.Index == Device.Index);
                 if (realDevice == null)
                 {
-                    Logger.Log(4, $"Couldnt match Index: {Device.Index}");
+                    Logger.Log(4, $"[Intiface] Couldnt match Index: {Device.Index}");
                     continue;
                 }
 
-                Task schedule = new Task(async () =>
-                {
-                    Logger.Log(4, $"Task for {Device.Name}: Intensity: {options.Intensity / 100.0} Duration: {options.getDurationOpenShock()}ms");
-                    await realDevice.VibrateAsync(options.Intensity / 100.0);
-                    await Task.Delay(options.getDurationOpenShock());
-                    await realDevice.Stop();
-                });
+                RunningTasks.RemoveAll(tsk => tsk == null || tsk.IsCancelled || tsk.Task.Status != TaskStatus.Running);
 
-                Logger.Log(4, $"Sending Task to {Device.Name} at Index: {Device.Index}");
-                schedule.Start();
+                IntifaceTask? running = RunningTasks.Find(tsk => tsk.Device.Index == realDevice.Index);
+
+                if (running == null)
+                {
+                    IntifaceTask newTask = new(realDevice, options.Intensity / 100.0, options.getDurationOpenShock());
+                    RunningTasks.Add(newTask);
+                    newTask.CreateAndStart();
+                }
+                else
+                {
+                    if (running.Intensity < options.Intensity / 100.0) return;
+                    if (running.Duration - running.Timer.TimeLeft < options.getDurationOpenShock()) return;
+                    running.IsCancelled = true;
+
+                    IntifaceTask newTask = new(realDevice, options.Intensity / 100.0, options.getDurationOpenShock());
+                    RunningTasks.Add(newTask);
+                    newTask.CreateAndStart();
+                }
             }
         }
 
@@ -143,7 +200,7 @@ namespace WoLightning.Clients.Buttplugio
             if (Client == null) return;
             Client.DeviceAdded -= OnDeviceAdded;
             Client.DeviceRemoved -= OnDeviceRemoved;
-
+            Client.ServerDisconnect -= OnDisconnect;
 
             Client?.DisconnectAsync().Wait();
             Client?.Dispose();

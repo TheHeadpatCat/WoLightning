@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using WoLightning.WoL_Plugin.Clients;
-using WoLightning.WoL_Plugin.Clients.Buttplug;
+using WoLightning.WoL_Plugin.Clients.Intiface;
 using WoLightning.WoL_Plugin.Clients.OpenShock;
 using WoLightning.WoL_Plugin.Clients.Pishock;
 using WoLightning.WoL_Plugin.Util;
@@ -94,11 +94,12 @@ namespace WoLightning.Util.Types
         }
 
         [JsonConstructor]
-        public ShockOptions(bool isEnabled, List<ShockerPishock> shockersPishock, List<ShockerOpenShock> shockersOpenShock, OpMode opMode, int intensity, int duration, double cooldown, CooldownModifier modifier, WarningMode warningMode, bool isIntensityRandomized, int randomizeIntensityMin, bool isDurationRandomized, int randomizeDurationMin, bool isModalOpen, bool isOptionsOpen, TimerPlus cooldownTimer, bool hasBeenReset)
+        public ShockOptions(bool isEnabled, List<ShockerPishock> shockersPishock, List<ShockerOpenShock> shockersOpenShock, List<DeviceIntiface> devicesIntiface, OpMode opMode, int intensity, int duration, double cooldown, CooldownModifier modifier, WarningMode warningMode, bool isIntensityRandomized, int randomizeIntensityMin, bool isDurationRandomized, int randomizeDurationMin, bool isModalOpen, bool isOptionsOpen, TimerPlus cooldownTimer, bool hasBeenReset)
         {
             this.isEnabled = isEnabled;
             ShockersPishock = shockersPishock;
             ShockersOpenShock = shockersOpenShock;
+            DevicesIntiface = devicesIntiface;
             OpMode = opMode;
             Intensity = intensity;
             Duration = duration;
@@ -119,6 +120,7 @@ namespace WoLightning.Util.Types
             this.isEnabled = other.isEnabled;
             ShockersPishock = other.ShockersPishock;
             ShockersOpenShock = other.ShockersOpenShock;
+            DevicesIntiface = other.DevicesIntiface;
             OpMode = other.OpMode;
             Intensity = other.Intensity;
             Duration = other.Duration;
@@ -196,7 +198,7 @@ namespace WoLightning.Util.Types
 
         public int getShockerCount()
         {
-            return ShockersPishock.Count + ShockersOpenShock.Count;
+            return ShockersPishock.Count + ShockersOpenShock.Count + DevicesIntiface.Count;
         }
 
         public List<ShockerBase> GetShockers()
