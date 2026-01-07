@@ -164,9 +164,12 @@ namespace WoLightning.Clients.Intiface
             {
 
                 if (Client.Devices == null) return;
-
-                ButtplugClientDevice? realDevice = Client.Devices.First(dev => dev.Index == Device.Index);
-                if (realDevice == null)
+                ButtplugClientDevice? realDevice;
+                try
+                {
+                    realDevice = Client.Devices.First(dev => dev.Index == Device.Index);
+                }
+                catch (Exception e)
                 {
                     Logger.Log(4, $"[Intiface] Couldnt match Index: {Device.Index}");
                     continue;
