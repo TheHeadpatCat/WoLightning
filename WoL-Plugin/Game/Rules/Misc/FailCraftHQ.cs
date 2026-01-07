@@ -23,6 +23,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         override public bool hasExtraButton { get; } = true;
         public uint MinimumQualityPercent { get; set; } = 0;
         [JsonIgnore] bool isCrafting;
+        [JsonIgnore] int CurrentProgress = 0;
+        [JsonIgnore] int MaxProgress = 0;
         [JsonIgnore] int CurrentQuality = 0;
         [JsonIgnore] int MaxQuality = 0;
         [JsonIgnore] bool IsTriggered = false;
@@ -67,7 +69,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         {
             try
             {
-                Logger.Log(3, $"{Name} | {type} {data} - isCrafing {isCrafting}");
+                Logger.Log(4, $"{Name} | {type} {data} - isCrafing {isCrafting}");
                 if (type != GameInventoryEvent.Added) return;
                 if (!isCrafting) return;
                 Item? itemData = Service.DataManager.GetExcelSheet<Item>().GetRowOrDefault(data.Item.BaseItemId);
@@ -110,25 +112,6 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
                 if (flag == ConditionFlag.Crafting)
                 {
                     isCrafting = value;
-
-                    /*
-                    var agent = AgentRecipeNote.Instance();
-                    CurrentRecipe = Service.DataManager.GetExcelSheet<Recipe>().GetRowOrDefault(agent->ActiveCraftRecipeId);
-                    if (CurrentRecipe == null) return;
-
-                    var table = Service.DataManager.GetExcelSheet<RecipeLevelTable>();
-                    //table.GetRow(CurrentRecipe.Value.RecipeLevelTable.RowId).Quality
-                    var adjustTable = Service.DataManager.GetExcelSheet<GathererCrafterLvAdjustTable>();
-                    var resolvedLevelTableRow = CurrentRecipe.Value.RecipeLevelTable.RowId;
-
-                    var t = adjustTable.GetRow(CurrentRecipe.Value.MaxAdjustableJobLevel).RecipeLevel;
-
-
-
-
-                    var MaxQuality = (CurrentRecipe.Value.CanHq || CurrentRecipe.Value.IsExpert) ? (int)table.GetRow(t).Quality * CurrentRecipe.Value.QualityFactor / 100 : 0;
-                    if (CurrentRecipe != null) Logger.Log(4, "Max Quality: " + MaxQuality);
-                    */
                 }
             }
             catch (Exception e) { Logger.Error(Name + " UpdateState() failed."); Logger.Error(e.Message); if (e.StackTrace != null) Logger.Error(e.StackTrace); }
@@ -157,15 +140,24 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
                 if (maxQuality.Length > 0)
                     MaxQuality = int.Parse(maxQuality);
 
+                if (currentProgress.Length > 0)
+                    CurrentProgress = int.Parse(currentProgress);
+
+                if (maxProgress.Length > 0)
+                    MaxProgress = int.Parse(maxProgress);
+
+                if (MaxProgress == 0 || MaxQuality == 0)
+                    return;
+
                 //Logger.Log(4, $"{int.Parse(currentProgress)}/{int.Parse(maxProgress)} and isTriggered {!FallbackTimer.Enabled}");
 
-                if (int.Parse(currentProgress) == int.Parse(maxProgress) && !FallbackTimer.Enabled)
+                if (CurrentProgress == MaxProgress && !FallbackTimer.Enabled)
                 {
                     FallbackTimer.Start();
                     Logger.Log(4, "Started Timer.");
                 }
 
-                if (int.Parse(currentProgress) == 0)
+                if (CurrentProgress == 0)
                 {
                     IsTriggered = false;
                     FallbackTimer.Stop();
