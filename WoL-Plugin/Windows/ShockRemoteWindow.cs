@@ -1,7 +1,6 @@
 ﻿using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Windowing;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 using WoLightning.Configurations;
 using WoLightning.Util.Types;

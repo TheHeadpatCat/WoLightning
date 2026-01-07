@@ -6,8 +6,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Timers;
-using WoLightning.Util;
 using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Util;
 
@@ -170,7 +168,7 @@ namespace WoLightning.Configurations
 
         public void SaveCurrentPreset()
         {
-            if(ActivePreset == null) return;
+            if (ActivePreset == null) return;
             PresetSavingBuffer = -1;
             IsPresetSavingScheduled = false;
             Logger.Log(3, "Saving preset: " + ActivePreset.Name);

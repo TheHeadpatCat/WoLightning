@@ -1,12 +1,10 @@
 ﻿using Buttplug.Client;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace WoLightning.WoL_Plugin.Clients.Buttplug
 {
     [Serializable]
-    public class IntifaceDevice
+    public class DeviceIntiface
     {
         ButtplugClientDevice t;
 
@@ -14,7 +12,7 @@ namespace WoLightning.WoL_Plugin.Clients.Buttplug
         public string Name { get; set; } = "Unknown";
         public string DisplayName { get; set; } = "Unknown";
 
-        public IntifaceDevice(uint index, string name, string displayName)
+        public DeviceIntiface(uint index, string name, string displayName)
         {
             Index = index;
             Name = name;

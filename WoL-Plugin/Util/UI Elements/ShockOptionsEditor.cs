@@ -220,9 +220,9 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
                 ImGui.BeginGroup();
                 ImGui.Text("Available Intiface Devices:");
                 ImGui.BeginChild("IntifaceShockerList", new Vector2(180, 260));
-                foreach (var device in Plugin.Authentification.ButtplugDevices)
+                foreach (var device in Plugin.Authentification.DevicesIntiface)
                 {
-                    IntifaceDevice? realDevice = Options.DevicesIntiface.Find(sh => sh.Index == device.Index);
+                    DeviceIntiface? realDevice = Options.DevicesIntiface.Find(sh => sh.Index == device.Index);
                     bool isEnabled = realDevice != null;
 
                     if (ImGui.Checkbox($"##devicebox{device.Index}", ref isEnabled))

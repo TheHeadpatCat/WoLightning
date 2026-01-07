@@ -45,7 +45,7 @@ namespace WoLightning.Configurations
 
         // Buttplug things
         public string ButtplugURL { get; set; } = "ws://127.0.0.1:12345";
-        [JsonIgnore] public List<ButtplugClientDevice> ButtplugDevices { get; set; } = new();
+        [JsonIgnore] public List<ButtplugClientDevice> DevicesIntiface { get; set; } = new();
 
 
         public Authentification() { }
@@ -139,7 +139,7 @@ namespace WoLightning.Configurations
 
         public int GetDevicesCount()
         {
-            return PishockShockers.Count + OpenShockShockers.Count + ButtplugDevices.Count;
+            return PishockShockers.Count + OpenShockShockers.Count + DevicesIntiface.Count;
         }
 
         public List<ShockerBase> GetShockers()

@@ -3,7 +3,6 @@ using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface.Windowing;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 using WoLightning.Configurations;
 using WoLightning.Util.Types;

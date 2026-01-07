@@ -69,8 +69,8 @@ namespace WoLightning.WoL_Plugin.Util.Types
 
         public override bool Equals(object? other)
         {
-            if(other == null) return false;
-            if(other.GetType() != this.GetType()) return false;
+            if (other == null) return false;
+            if (other.GetType() != this.GetType()) return false;
             return ((Version)other) == this;
         }
 
@@ -120,7 +120,7 @@ namespace WoLightning.WoL_Plugin.Util.Types
             return a < b || a == b;
         }
 
-        
+
     }
 
 }

@@ -1,25 +1,16 @@
-using Dalamud.Game.Command;
-using Dalamud.IoC;
-using Dalamud.Plugin;
-using System.IO;
-using Dalamud.Interface.Windowing;
-using Dalamud.Plugin.Services;
 using Buttplug.Client;
 using System;
-using System.Threading.Tasks;
-using Buttplug.Core.Messages;
-using WoLightning.WoL_Plugin.Util;
-using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using WoLightning.Util.Types;
-using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
+using WoLightning.WoL_Plugin.Util;
 
 
 namespace WoLightning.Clients.Buttplugio
 {
-    public class ClientButtplug : IDisposable
+    public class ClientIntiface : IDisposable
     {
-        public enum ConnectionStatusButtplug
+        public enum ConnectionStatusIntiface
         {
             NotStarted = 0,
             Unavailable = 1,
@@ -28,13 +19,16 @@ namespace WoLightning.Clients.Buttplugio
 
             Connecting = 99,
             ConnectedNoDevices = 101,
-            Connected = 200,   
+            Connected = 200,
         }
 
         private Plugin? Plugin;
-        public ConnectionStatusButtplug Status { get; set; } = ConnectionStatusButtplug.NotStarted;
-        public string WebsocketAddress;
-        public ClientButtplug(Plugin plugin)
+
+        public ButtplugClient Client;
+        public ConnectionStatusIntiface Status { get; set; } = ConnectionStatusIntiface.NotStarted;
+
+
+        public ClientIntiface(Plugin plugin)
         {
             Plugin = plugin;
         }
@@ -42,46 +36,46 @@ namespace WoLightning.Clients.Buttplugio
         {
             await SetupAllData();
         }
-        public ButtplugClient ButtplugSession;
+
         public async Task SetupAllData()
         {
 
-            if (ButtplugSession != null) return;
+            if (Client != null) return;
 
-            ButtplugSession = new ButtplugClient("WoLightning");
-            Status = ConnectionStatusButtplug.Connecting;
+            Client = new ButtplugClient("WoLightning");
+            Status = ConnectionStatusIntiface.Connecting;
 
-            ButtplugSession.DeviceAdded += OnDeviceAdded;
-            ButtplugSession.DeviceRemoved += OnDeviceRemoved;
-                
-           try 
-           {
+            Client.DeviceAdded += OnDeviceAdded;
+            Client.DeviceRemoved += OnDeviceRemoved;
+
+            try
+            {
                 Logger.Log(4, $"Connecting to Intiface on {Plugin.Authentification.ButtplugURL}");
-                await ButtplugSession.ConnectAsync(new ButtplugWebsocketConnector(new Uri(Plugin.Authentification.ButtplugURL)));
+                await Client.ConnectAsync(new ButtplugWebsocketConnector(new Uri(Plugin.Authentification.ButtplugURL)));
                 Logger.Log(4, $"Succesfully connected!" +
-                    $"\nName: {ButtplugSession.Name}");
-                Status = ConnectionStatusButtplug.Connected;
+                    $"\nName: {Client.Name}");
+                Status = ConnectionStatusIntiface.Connected;
             }
             catch (Exception e)
             {
-                Logger.Log(4,"[BUTTPLUG] Couldnt connect!");
-                Logger.Log(4,e?.InnerException?.Message);
-                Status = ConnectionStatusButtplug.FatalError;
+                Logger.Log(4, "[BUTTPLUG] Couldnt connect!");
+                Logger.Log(4, e?.InnerException?.Message);
+                Status = ConnectionStatusIntiface.FatalError;
             }
         }
 
-       
+
 
         private void OnDeviceAdded(object? sender, DeviceAddedEventArgs Arguments)
         {
-            Logger.Log(4,$"Device {Arguments.Device.Name} Connected!");
-            Plugin.Authentification.ButtplugDevices = ButtplugSession.Devices.ToList();
+            Logger.Log(4, $"Device {Arguments.Device.Name} Connected!");
+            Plugin.Authentification.DevicesIntiface = Client.Devices.ToList();
         }
 
-         private void OnDeviceRemoved(object? sender, DeviceRemovedEventArgs Arguments)
+        private void OnDeviceRemoved(object? sender, DeviceRemovedEventArgs Arguments)
         {
-           Logger.Log(4,$"Device {Arguments.Device.Name} Removed!");
-           Plugin.Authentification.ButtplugDevices = ButtplugSession.Devices.ToList();
+            Logger.Log(4, $"Device {Arguments.Device.Name} Removed!");
+            Plugin.Authentification.DevicesIntiface = Client.Devices.ToList();
         }
 
         public async void SendRequest(ShockOptions options)
@@ -108,11 +102,11 @@ namespace WoLightning.Clients.Buttplugio
             }
             #endregion
 
-            if (ButtplugSession == null || Status != ConnectionStatusButtplug.Connected)
+            if (Client == null || Status != ConnectionStatusIntiface.Connected)
             {
-                if (Status == ConnectionStatusButtplug.Connecting) return;
-                ButtplugSession?.Dispose();
-                ButtplugSession = null;
+                if (Status == ConnectionStatusIntiface.Connecting) return;
+                Client?.Dispose();
+                Client = null;
                 await SetupAllData();
                 return;
             }
@@ -122,16 +116,16 @@ namespace WoLightning.Clients.Buttplugio
             foreach (var Device in options.DevicesIntiface)
             {
 
-                if (ButtplugSession.Devices == null) return;
+                if (Client.Devices == null) return;
 
-                ButtplugClientDevice? realDevice = ButtplugSession.Devices.First( dev =>  dev.Index == Device.Index);
+                ButtplugClientDevice? realDevice = Client.Devices.First(dev => dev.Index == Device.Index);
                 if (realDevice == null)
                 {
                     Logger.Log(4, $"Couldnt match Index: {Device.Index}");
                     continue;
                 }
 
-                Task schedule = new Task( async () =>
+                Task schedule = new Task(async () =>
                 {
                     Logger.Log(4, $"Task for {Device.Name}: Intensity: {options.Intensity / 100.0} Duration: {options.getDurationOpenShock()}ms");
                     await realDevice.VibrateAsync(options.Intensity / 100.0);
@@ -146,13 +140,13 @@ namespace WoLightning.Clients.Buttplugio
 
         public void Dispose()
         {
-            if (ButtplugSession == null) return;
-            ButtplugSession.DeviceAdded -= OnDeviceAdded;
-            ButtplugSession.DeviceRemoved -= OnDeviceRemoved;
+            if (Client == null) return;
+            Client.DeviceAdded -= OnDeviceAdded;
+            Client.DeviceRemoved -= OnDeviceRemoved;
 
 
-            ButtplugSession?.DisconnectAsync().Wait();
-            ButtplugSession?.Dispose();
+            Client?.DisconnectAsync().Wait();
+            Client?.Dispose();
         }
     }
 }
