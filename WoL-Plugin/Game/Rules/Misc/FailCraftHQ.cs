@@ -142,6 +142,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
                 nint pointerToSynthesis;
                 AddonSynthesis addonSynthesis;
                 pointerToSynthesis = Service.GameGui.GetAddonByName("Synthesis");
+                if (pointerToSynthesis == 0 || pointerToSynthesis == -1) return;
                 addonSynthesis = Dalamud.Memory.MemoryHelper.Cast<AddonSynthesis>(pointerToSynthesis);
 
                 var currentQuality = addonSynthesis.GetNodeById(62)->GetAsAtkTextNode()->NodeText;
