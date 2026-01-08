@@ -94,7 +94,7 @@ namespace WoLightning.Clients.OpenShock
             if (Plugin == null || Plugin.Authentification == null) return;
             string apikey = Plugin.Authentification.OpenShockApiKey, url = Plugin.Authentification.OpenShockURL;
 
-            Logger.Log(2, "Requesting OpenShock Account information...");
+            Logger.Log(3, "Requesting OpenShock Account information...");
 
             HttpResponseMessage Result;
 
@@ -114,7 +114,7 @@ namespace WoLightning.Clients.OpenShock
             {
                 Logger.Error("Could not retrieve Account Information from OpenShock.");
                 Status = ConnectionStatusOpenShock.Unavailable;
-                Logger.Log(1, new StreamReader(Result.Content.ReadAsStream()).ReadToEnd());
+                Logger.Log(3, new StreamReader(Result.Content.ReadAsStream()).ReadToEnd());
                 return;
             }
             try
@@ -163,7 +163,7 @@ namespace WoLightning.Clients.OpenShock
                     string message = reader.ReadToEnd();
                     if (message == null || message.Length == 0) return;
                     ResponseDevices devices = JsonConvert.DeserializeObject<ResponseDevices>(message)!;
-                    Logger.Log(3, devices);
+                    Logger.Log(4, devices);
                     foreach (var device in devices.data)
                     {
                         Devices.Add(new HubOpenShock(Plugin, device.id));

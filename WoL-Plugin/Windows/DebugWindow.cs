@@ -24,13 +24,7 @@ namespace WoLightning.WoL_Plugin.Windows
         public void Dispose() { }
         public override async void Draw()
         {
-            ImGui.TextColored(new Vector4(255, 0, 0, 255), "THESE WINDOWS OPEN BECAUSE\nYOU HAVE THE \"Dev\" DEBUGLEVEL SET.");
-            if (ImGui.Button("Oh okay! Turn it off!"))
-            {
-                Plugin.Configuration.DebugLevel = DebugLevel.Verbose;
-                Plugin.Configuration.Save();
-                this.Toggle();
-            }
+            ImGui.TextColored(new Vector4(255, 0, 0, 255), "You should not be touching these settings, if you don't know what you are doing.");
 
 
             ImGui.Text("Grace: " + Plugin.ControlSettings.LeashGraceTimer.TimeLeft.ToString());

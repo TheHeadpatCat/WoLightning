@@ -197,7 +197,7 @@ namespace WoLightning.Clients.Pishock
                 using (var reader = new StreamReader(Result.Content.ReadAsStream()))
                 {
                     string message = reader.ReadToEnd();
-                    Logger.Log(4, message);
+                    //Logger.Log(4, message);
                     var parts = message.Split(',');
                     foreach (var part in parts)
                     {
@@ -259,7 +259,7 @@ namespace WoLightning.Clients.Pishock
                         foreach (var shocker in response.shockers)
                         {
                             ShockerPishock t = new(shocker.name, response.clientId, shocker.shockerId);
-                            Logger.Log(3, t);
+                            Logger.Log(4, t);
                             Plugin.Authentification.PishockShockers.Add(t);
 
                         }
@@ -279,7 +279,7 @@ namespace WoLightning.Clients.Pishock
             {
                 string username = Plugin.Authentification.PishockName, apikey = Plugin.Authentification.PishockApiKey;
 
-                Logger.Log(3, "Requesting Pishock ShareID Information...");
+                Logger.Log(4, "Requesting Pishock ShareID Information...");
 
                 Result = await HttpClient.GetAsync($"https://ps.pishock.com/PiShock/GetShareCodesByOwner?UserId={UserID}&Token={apikey}&api=true");
                 if (Result.StatusCode != HttpStatusCode.OK)
@@ -305,7 +305,7 @@ namespace WoLightning.Clients.Pishock
                 try
                 {
                     string message = reader.ReadToEnd();
-                    Logger.Log(3, message);
+                    Logger.Log(4, message);
                     if (message == null || message.Length <= 5) return;
                     string[] parts = message.Split("],");
                     if (parts.Length < 2) return;
@@ -322,7 +322,7 @@ namespace WoLightning.Clients.Pishock
                         foreach (string shareid in shareIds)
                         {
                             ShareIds.Add(shareid);
-                            Logger.Log(3, "Shareid: " + shareid);
+                            Logger.Log(4, "Shareid: " + shareid);
                         }
                     }
                 }
@@ -371,7 +371,7 @@ namespace WoLightning.Clients.Pishock
                         SharedResponse[] test = JsonConvert.DeserializeObject<SharedResponse[]>(information)!;
                         foreach (SharedResponse response in test)
                         {
-                            Logger.Log(3, response);
+                            Logger.Log(4, response);
                             if (name.ToLower().Equals(Plugin.Authentification.PishockName.ToLower())) continue;
                             ShockerPishock shocker = new(response.shockerName, response.clientId, response.shockerId);
                             shocker.isPersonal = false;

@@ -247,7 +247,7 @@ public sealed class Plugin : IDalamudPlugin
                 if (Configuration.DebugLevel < DebugLevel.Verbose) Configuration.DebugLevel = DebugLevel.Verbose;
             }
 
-            if (Configuration.DebugLevel == DebugLevel.Dev)
+            if (Configuration.IsDeveloper)
             {
                 MainWindow.Toggle();
                 ConfigWindow.Toggle();

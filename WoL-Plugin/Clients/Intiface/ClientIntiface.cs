@@ -73,14 +73,14 @@ namespace WoLightning.Clients.Intiface
             {
                 try
                 {
-                    Logger.Log(4, $"{ConnectionAttempts}/{ConnectionAttemptsMax} Connecting to Intiface on {Plugin.Authentification.IntifaceURL}");
+                    Logger.Log(3, $"{ConnectionAttempts}/{ConnectionAttemptsMax} Connecting to Intiface on {Plugin.Authentification.IntifaceURL}");
                     await Client.ConnectAsync(new ButtplugWebsocketConnector(new Uri(Plugin.Authentification.IntifaceURL)));
-                    Logger.Log(4, $"[Intiface] Succesfully connected!");
+                    Logger.Log(3, $"[Intiface] Succesfully connected!");
                     Status = ConnectionStatusIntiface.Connected;
                 }
                 catch (Exception e)
                 {
-                    Logger.Log(4, $"[Intiface] Couldnt connect! Trying again in 5 seconds...");
+                    Logger.Log(3, $"[Intiface] Couldnt connect! Trying again in 5 seconds...");
                     ConnectionAttempts++;
                     await Task.Delay(5000);
                 }
@@ -89,7 +89,7 @@ namespace WoLightning.Clients.Intiface
             if (Status != ConnectionStatusIntiface.Connected)
             {
                 Status = ConnectionStatusIntiface.Unavailable;
-                Logger.Log(4, "[Intiface] Failed to connect after 7 attempts!");
+                Logger.Log(3, "[Intiface] Failed to connect after 7 attempts!");
             }
         }
 
@@ -114,7 +114,7 @@ namespace WoLightning.Clients.Intiface
 
         public void UpdateDeviceList()
         {
-            Logger.Log(4, $"[Intiface] Updating Intiface Device list from {Plugin.Authentification.DevicesIntiface.Count} to {Client.Devices.Length}");
+            Logger.Log(3, $"[Intiface] Updating Intiface Device list from {Plugin.Authentification.DevicesIntiface.Count} to {Client.Devices.Length}");
             Plugin.Authentification.DevicesIntiface.Clear();
             if (Client == null || Client.Devices == null) return;
             foreach (var device in Client.Devices)
@@ -156,10 +156,6 @@ namespace WoLightning.Clients.Intiface
                 await SetupAllData();
             }
 
-            Logger.Log(4, "[Intiface] Intiface Request successful! Creating Tasks...");
-
-
-
             foreach (var Device in options.DevicesIntiface)
             {
 
@@ -171,7 +167,7 @@ namespace WoLightning.Clients.Intiface
                 }
                 catch (Exception e)
                 {
-                    Logger.Log(4, $"[Intiface] Couldnt match Index: {Device.Index}");
+                    Logger.Log(3, $"[Intiface] Couldnt match Index: {Device.Index}");
                     continue;
                 }
 
@@ -181,15 +177,18 @@ namespace WoLightning.Clients.Intiface
 
                 if (running == null)
                 {
+                    Logger.Log(4, $"[Intiface] Index [{Device.Index}] does not have a running Task. Creating new...");
                     IntifaceTask newTask = new(realDevice, options.Intensity / 100.0, options.getDurationOpenShock());
                     RunningTasks.Add(newTask);
                     newTask.CreateAndStart();
                 }
                 else
                 {
+                    Logger.Log(4, $"[Intiface] Index [{Device.Index}] has a running task. Comparing...");
                     if (running.Intensity < options.Intensity / 100.0) return;
                     if (running.Duration - running.Timer.TimeLeft < options.getDurationOpenShock()) return;
                     running.IsCancelled = true;
+                    Logger.Log(4, $"-> [Intiface] Task is shorter and weaker than new task. Overriding...");
 
                     IntifaceTask newTask = new(realDevice, options.Intensity / 100.0, options.getDurationOpenShock());
                     RunningTasks.Add(newTask);
