@@ -4,6 +4,7 @@ using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.Inventory;
 using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Plugin.Services;
+using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using Lumina.Excel.Sheets;
 using System;
@@ -91,6 +92,25 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
                     return;
                 }
 
+                /*
+                    var agent = AgentRecipeNote.Instance();
+                    CurrentRecipe = Service.DataManager.GetExcelSheet<Recipe>().GetRowOrDefault(agent->ActiveCraftRecipeId);
+                    if (CurrentRecipe == null) return;
+
+                    var table = Service.DataManager.GetExcelSheet<RecipeLevelTable>();
+                    //table.GetRow(CurrentRecipe.Value.RecipeLevelTable.RowId).Quality
+                    var adjustTable = Service.DataManager.GetExcelSheet<GathererCrafterLvAdjustTable>();
+                    var resolvedLevelTableRow = CurrentRecipe.Value.RecipeLevelTable.RowId;
+
+                    var t = adjustTable.GetRow(CurrentRecipe.Value.MaxAdjustableJobLevel).RecipeLevel;
+
+
+
+
+                    var MaxQuality = (CurrentRecipe.Value.CanHq || CurrentRecipe.Value.IsExpert) ? (int)table.GetRow(t).Quality * CurrentRecipe.Value.QualityFactor / 100 : 0;
+                    if (CurrentRecipe != null) Logger.Log(4, "Max Quality: " + MaxQuality);
+                    */
+
 
             }
             catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if (e.StackTrace != null) Logger.Error(e.StackTrace); }
@@ -122,6 +142,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             if (!isCrafting) return;
             try
             {
+                
                 nint pointerToSynthesis;
                 AddonSynthesis addonSynthesis;
                 pointerToSynthesis = Service.GameGui.GetAddonByName("Synthesis");
