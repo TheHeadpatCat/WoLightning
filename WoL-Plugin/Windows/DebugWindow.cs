@@ -52,13 +52,6 @@ namespace WoLightning.WoL_Plugin.Windows
             }
 
 
-            bool pishocklogin = Plugin.Configuration.LoginOnStartPishock;
-            if (ImGui.Checkbox("pishock auto login", ref pishocklogin))
-            {
-                Plugin.Configuration.LoginOnStartPishock = pishocklogin;
-                if (pishocklogin) Plugin.ClientPishock.Setup();
-            }
-
         }
 
 

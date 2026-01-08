@@ -35,16 +35,19 @@ namespace WoLightning.Configurations
 
 
         // Pishock things
+        public bool PishockEnabled { get; set; } = false;
         public string PishockName { get; set; } = string.Empty;
         public string PishockApiKey { get; set; } = string.Empty;
         [JsonIgnore] public List<ShockerPishock> PishockShockers { get; set; } = new();
 
         // OpenShock things
+        public bool OpenShockEnabled { get; set; } = false;
         public string OpenShockURL { get; set; } = "https://api.openshock.app";
         public string OpenShockApiKey { get; set; } = string.Empty;
         [JsonIgnore] public List<ShockerOpenShock> OpenShockShockers { get; set; } = new();
 
         // Buttplug things
+        public bool IntifaceEnabled { get; set; } = false;
         public string IntifaceURL { get; set; } = "ws://127.0.0.1:12345";
         [JsonIgnore] public List<DeviceIntiface> DevicesIntiface { get; set; } = new();
 

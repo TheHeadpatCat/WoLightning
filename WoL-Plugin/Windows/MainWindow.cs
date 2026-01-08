@@ -5,10 +5,12 @@ using System.Numerics;
 using WoLightning.Clients.Webserver;
 using WoLightning.Util;
 using WoLightning.Util.Types;
+using WoLightning.WoL_Plugin.Clients.Intiface;
 using WoLightning.WoL_Plugin.Clients.OpenShock;
 using WoLightning.WoL_Plugin.Clients.Pishock;
 using WoLightning.WoL_Plugin.Util;
 using WoLightning.WoL_Plugin.Util.UI_Elements;
+using static WoLightning.Clients.Intiface.ClientIntiface;
 using static WoLightning.Clients.OpenShock.ClientOpenShock;
 using static WoLightning.Clients.Pishock.ClientPishock;
 
@@ -29,6 +31,8 @@ public class MainWindow : Window, IDisposable
     private readonly TimerPlus eulaTimer = new();
 
     private bool isPishockMenuOpen = true;
+    private bool isOpenShockMenuOpen = false;
+    private bool isIntifaceMenuOpen = false;
 
     public MainWindow(Plugin plugin)
         : base($"Warrior of Lightning - v{Plugin.CurrentVersion}##Main", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.AlwaysAutoResize)
@@ -99,7 +103,7 @@ public class MainWindow : Window, IDisposable
         switch (Plugin.ClientPishock.Status)
         {
             case ConnectionStatusPishock.NotStarted:
-                ImGui.TextColored(ColorGray, "No Userdata."); break;
+                ImGui.TextColored(ColorGray, "Not Started."); break;
 
             case ConnectionStatusPishock.Connecting:
                 ImGui.TextColored(ColorGray, "Connecting..."); break;
@@ -119,6 +123,29 @@ public class MainWindow : Window, IDisposable
             case ConnectionStatusPishock.Connected:
                 ImGui.TextColored(ColorGreen, $"Connected!"); break;
         }
+
+        ImGui.Text("Intiface");
+
+        HoverText.ShowSameLine(" (?)       ", "This is used with the Intiface Central to send Vibrations to devices.\nIf you are not connected to it, you cannot receive vibrations.");
+        switch (Plugin.ClientIntiface.Status)
+        {
+            case ConnectionStatusIntiface.NotStarted:
+                ImGui.TextColored(ColorGray, "Not Started."); break;
+
+            case ConnectionStatusIntiface.Connecting:
+                ImGui.TextColored(ColorGray, "Connecting..."); break;
+
+
+            case ConnectionStatusIntiface.Disconnected:
+                ImGui.TextColored(ColorRed, "Disconnected!"); break;
+            case ConnectionStatusIntiface.FatalError:
+                ImGui.TextColored(ColorRed, "Fatal Error!"); break;
+            case ConnectionStatusIntiface.Unavailable:
+                ImGui.TextColored(ColorRed, "Couldnt Connect!"); break;
+
+            case ConnectionStatusIntiface.Connected:
+                ImGui.TextColored(ColorGreen, $"Connected!"); break;
+        }
         ImGui.EndGroup();
 
         ImGui.SameLine();
@@ -130,7 +157,7 @@ public class MainWindow : Window, IDisposable
         switch (Plugin.ClientOpenShock.Status)
         {
             case ConnectionStatusOpenShock.NotStarted:
-                ImGui.TextColored(ColorGray, "No Userdata."); break;
+                ImGui.TextColored(ColorGray, "Not Started."); break;
 
             case ConnectionStatusOpenShock.Connecting:
                 ImGui.TextColored(ColorGray, "Connecting..."); break;
@@ -150,6 +177,8 @@ public class MainWindow : Window, IDisposable
         }
 
         ImGui.EndGroup();
+
+
 
         ImGui.SameLine();
         if (ImGui.ArrowButton("##RemoteButton", ImGuiDir.Right))
@@ -256,11 +285,6 @@ public class MainWindow : Window, IDisposable
         }
         if (Plugin.ControlSettings.FullControl) ImGui.EndDisabled();
 
-        // Todo: Move this onto the api part
-        /*if (ImGui.Button("Open Shocker Remote", new Vector2(ImGui.GetWindowSize().X - 10, 25)))
-        {
-            Plugin.ShockRemoteWindow.Toggle();
-        }*/
         if (ImGui.Button("Open Control Settings", new Vector2(WindowWidth - 15, 0)))
         {
             Plugin.ControlWindow.Toggle();
@@ -287,24 +311,49 @@ public class MainWindow : Window, IDisposable
     private async void DrawAccountPanel()
     {
         ImGui.SetNextItemWidth(WindowWidth - 15);
-        if (ImGui.CollapsingHeader("Account & Shockers", ImGuiTreeNodeFlags.CollapsingHeader))
+        if (ImGui.CollapsingHeader("Accounts & Devices", ImGuiTreeNodeFlags.CollapsingHeader))
         {
-            if (ImGui.RadioButton("Pishock", isPishockMenuOpen)) isPishockMenuOpen = true;
+            if (ImGui.RadioButton("Pishock##RadioButtonPishock", isPishockMenuOpen))
+            {
+                isPishockMenuOpen = true;
+                isOpenShockMenuOpen = false;
+                isIntifaceMenuOpen = false;
+            }
             ImGui.SameLine();
-            if (ImGui.RadioButton("OpenShock", !isPishockMenuOpen)) isPishockMenuOpen = false;
+            if (ImGui.RadioButton("OpenShock##RadioButtonOpenShock", isOpenShockMenuOpen))
+            {
+                isOpenShockMenuOpen = true;
+                isPishockMenuOpen = false;
+                isIntifaceMenuOpen = false;
+            }
+            if (ImGui.RadioButton("Intiface##RadioButtonOpenShock", isIntifaceMenuOpen))
+            {
+                isIntifaceMenuOpen = true;
+                isOpenShockMenuOpen = false;
+                isPishockMenuOpen = false;
+            }
 
             if (Plugin.Configuration.IsLockedByController) ImGui.BeginDisabled();
-            if (isPishockMenuOpen) DrawPishockAccount();
-            else DrawOpenShockAccount();
+            if (isPishockMenuOpen) DrawPishockSettings();
+            if (isOpenShockMenuOpen) DrawOpenShockSettings();
+            if (isIntifaceMenuOpen) DrawIntifaceSettings();
             if (Plugin.Configuration.IsLockedByController) ImGui.EndDisabled();
 
         }
     }
 
-    private async void DrawPishockAccount()
+
+    private async void DrawPishockSettings()
     {
         ImGui.SetNextItemWidth(WindowWidth - 15);
         //if (Plugin.Authentification.isDisallowed) ImGui.BeginDisabled();
+
+        bool isPishockEnabled = Plugin.Authentification.PishockEnabled;
+        if (ImGui.Checkbox("Connect to Pishock on Login", ref isPishockEnabled))
+        {
+            Plugin.Authentification.PishockEnabled = isPishockEnabled;
+        }
+
         var PishockNameField = Plugin.Authentification.PishockName;
         if (ImGui.InputTextWithHint("##PishockUsername", "Pishock Username", ref PishockNameField, 24))
             Plugin.Authentification.PishockName = PishockNameField;
@@ -315,6 +364,7 @@ public class MainWindow : Window, IDisposable
 
         if (ImGui.Button("Save & Connect##SavePishock", new Vector2(WindowWidth - 15, 0)))
         {
+            Plugin.Authentification.PishockEnabled = true;
             Plugin.Authentification.Save();
             Plugin.ClientPishock.Setup();
         }
@@ -362,10 +412,17 @@ public class MainWindow : Window, IDisposable
             x++;
         }
     }
-    private async void DrawOpenShockAccount()
+    private async void DrawOpenShockSettings()
     {
         ImGui.SetNextItemWidth(WindowWidth - 15);
         //if (Plugin.Authentification.isDisallowed) ImGui.BeginDisabled();
+
+        bool isOpenShockEnabled = Plugin.Authentification.OpenShockEnabled;
+        if (ImGui.Checkbox("Connect to OpenShock on Login", ref isOpenShockEnabled))
+        {
+            Plugin.Authentification.OpenShockEnabled = isOpenShockEnabled;
+        }
+
         var OpenShockURLField = Plugin.Authentification.OpenShockURL;
         if (ImGui.InputTextWithHint("##OpenShockUrl", "OpenShock URL", ref OpenShockURLField, 64))
             Plugin.Authentification.OpenShockURL = OpenShockURLField;
@@ -377,6 +434,7 @@ public class MainWindow : Window, IDisposable
         ImGui.SetNextItemWidth(WindowWidth - 15);
         if (ImGui.Button("Save & Connect##SaveOpenShock"))
         {
+            Plugin.Authentification.OpenShockEnabled = true;
             Plugin.Authentification.Save();
             Plugin.ClientOpenShock.Setup();
         }
@@ -408,6 +466,61 @@ public class MainWindow : Window, IDisposable
             ImGui.SameLine();
             if (target.isPaused) ImGui.TextColored(ColorGray, "[Paused] " + target.name);
             else ImGui.TextColored(ColorGreen, target.name);
+            ImGui.Separator();
+            x++;
+        }
+    }
+
+    private void DrawIntifaceSettings()
+    {
+        ImGui.SetNextItemWidth(WindowWidth - 15);
+        //if (Plugin.Authentification.isDisallowed) ImGui.BeginDisabled();
+
+        bool isIntifaceEnabled = Plugin.Authentification.IntifaceEnabled;
+        if (ImGui.Checkbox("Connect to Intiface on Login", ref isIntifaceEnabled))
+        {
+            Plugin.Authentification.IntifaceEnabled = isIntifaceEnabled;
+        }
+
+        var IntifaceURLField = Plugin.Authentification.IntifaceURL;
+        if (ImGui.InputTextWithHint("##IntifaceURL", "Intiface URL", ref IntifaceURLField, 64))
+            Plugin.Authentification.IntifaceURL = IntifaceURLField;
+
+        ImGui.SetNextItemWidth(WindowWidth - 15);
+        if (ImGui.Button("Save & Connect##SaveIntiface"))
+        {
+            Plugin.Authentification.IntifaceEnabled = true;
+            Plugin.Authentification.Save();
+            Plugin.ClientIntiface.Setup();
+        }
+
+        ImGui.Spacing();
+        ImGui.Separator();
+        ImGui.Spacing();
+
+        if (Plugin.ClientIntiface.Status == Clients.Intiface.ClientIntiface.ConnectionStatusIntiface.Connecting)
+        {
+            ImGui.Text("Getting Device Information...");
+            return;
+        }
+
+        int x = 0;
+        ImGui.Text("Available Devices:");
+        while (Plugin.Authentification.DevicesIntiface.Count > x)
+        {
+            DeviceIntiface target = Plugin.Authentification.DevicesIntiface[x];
+            string tName = target.Name;
+            if(target.DisplayName != null && target.DisplayName.Length > 0) tName = target.DisplayName;
+
+
+            if (ImGui.Button("Test##TestDeviceIndex" + target.Index))
+            {
+                ShockOptions temp = new ShockOptions(1, 75, 1);
+                temp.DevicesIntiface.Add(target);
+                Plugin.ClientIntiface.SendRequest(temp);
+            }
+            ImGui.SameLine();
+            ImGui.TextColored(ColorGreen, tName);
             ImGui.Separator();
             x++;
         }
