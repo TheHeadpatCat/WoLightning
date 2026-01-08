@@ -131,7 +131,7 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
             if (ImGui.Button($"Assigned {Options.getShockerCount()} Devices##AssignedDevices" + Name))
             {
                 isModalShockerSelectorOpen = true;
-                ImGui.OpenPopup("Select Devices##DevicesSelect" + Name);
+                ImGui.OpenPopup("Select Devices##DevicesSelectModal" + Name);
             }
 
             if (isModalShockerSelectorOpen) //setup modal
@@ -162,7 +162,7 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
                 ImGui.Text("Please select all shockers that should activate for this trigger:");
                 ImGui.BeginGroup();
                 ImGui.Text("Available Pishock Devices:           ");
-                ImGui.BeginChild("PishockShockerList", new Vector2(180, 260));
+                ImGui.BeginChild("PishockShockerList", new Vector2(280, 400));
                 foreach (var shocker in Plugin.Authentification.PishockShockers)
                 {
                     if (Plugin.Configuration.ShownShockers == ShownShockers.None) continue;
@@ -198,7 +198,7 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
 
                 ImGui.BeginGroup();
                 ImGui.Text("Available OpenShock Devices:           ");
-                ImGui.BeginChild("OpenShockShockerList", new Vector2(180, 260));
+                ImGui.BeginChild("OpenShockShockerList", new Vector2(280, 400));
                 foreach (var shocker in Plugin.Authentification.OpenShockShockers)
                 {
                     bool isEnabled = Options.ShockersOpenShock.Find(sh => sh.getInternalId() == shocker.getInternalId()) != null;
@@ -220,7 +220,7 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
 
                 ImGui.BeginGroup();
                 ImGui.Text("Available Intiface Devices:");
-                ImGui.BeginChild("IntifaceDeviceList", new Vector2(180, 260));
+                ImGui.BeginChild("IntifaceDeviceList", new Vector2(280, 400));
                 
                 foreach (var device in Plugin.Authentification.DevicesIntiface)
                 {
