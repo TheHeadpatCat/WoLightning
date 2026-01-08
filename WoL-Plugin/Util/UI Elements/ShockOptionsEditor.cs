@@ -128,10 +128,10 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
         protected void DrawShockerSelector()
         {
             ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 4f - 30);
-            if (ImGui.Button($"Assigned {Options.getShockerCount()} Shockers##assignedShockers" + Name))
+            if (ImGui.Button($"Assigned {Options.getShockerCount()} Devices##AssignedDevices" + Name))
             {
                 isModalShockerSelectorOpen = true;
-                ImGui.OpenPopup("Select Shockers##ShockerSelect" + Name);
+                ImGui.OpenPopup("Select Devices##DevicesSelect" + Name);
             }
 
             if (isModalShockerSelectorOpen) //setup modal
@@ -141,7 +141,7 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
                 ImGui.SetNextWindowSize(new Vector2(920, 700));
             }
 
-            if (ImGui.BeginPopupModal("Select Shockers##ShockerSelect" + Name, ref isModalShockerSelectorOpen,
+            if (ImGui.BeginPopupModal("Select Devices##DevicesSelectModal" + Name, ref isModalShockerSelectorOpen,
             ImGuiWindowFlags.NoResize | ImGuiWindowFlags.Popup))
             {
                 if (Plugin.Authentification.GetDevicesCount() == 0)
