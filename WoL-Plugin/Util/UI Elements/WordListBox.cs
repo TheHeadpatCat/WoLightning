@@ -20,6 +20,7 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
         int Index = -1;
         String SelectedWord = string.Empty;
         int[] Settings = new int[3];
+        bool existsAlready = false;
 
         bool Punctuation = false;
         bool ProperCase = false;
@@ -42,13 +43,14 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
             ImGui.SetNextItemWidth(ImGui.GetWindowWidth() - 230);
             if (ImGui.InputTextWithHint($"##{Name}Input", "Click on a entry to edit it.", ref Input, 48))
             {
-                if (Index != -1) // Get rid of the old settings, otherwise we build connections between two items
+                bool found = false;
+                int i = 0;
+                foreach (var item in Words)
                 {
-                    int[] copyArray = new int[3];
-                    Settings.CopyTo(copyArray, 0);
-                    Settings = copyArray;
+                    if(item.Word == Input && Index != i) found = true;
+                    i++;
                 }
-                Index = -1;
+                existsAlready = found;
             }
 
             ImGui.Checkbox($"Punctuation##{Name}Punctuation", ref Punctuation);
@@ -75,7 +77,15 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
             ImGui.Spacing();
 
             if (Input.Length == 0) ImGui.BeginDisabled();
-            if (ImGui.Button($"Add / Edit##{Name}Add", new Vector2(ImGui.GetWindowWidth() / 2 - 15, 35)))
+
+            string addButtonText = Index == -1 ? "Add new Word" : "Save Changes";
+            if (existsAlready)
+            {
+                addButtonText = "Word already exists!";
+                ImGui.BeginDisabled();
+            }
+
+            if (ImGui.Button($"{addButtonText}##{Name}Add", new Vector2(ImGui.GetWindowWidth() / 2 - 15, 35)))
             {
                 SpecificWord? target = null;
                 foreach (SpecificWord item in Words)
@@ -86,16 +96,17 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
                         break;
                     }
                 }
-                if (target != null)
+                if(Index != -1)
                 {
-                    Words.Remove(target);
+                    Words.RemoveAt(Index);
                 }
 
                 target = new SpecificWord(Input);
                 target.NeedsPunctuation = Punctuation;
                 target.NeedsProperCase = ProperCase;
                 target.ShockOptions = optionsEditor.Options;
-                Words.Add(target);
+                if (Index != -1) Words.Insert(Index,target);
+                else Words.Add(target);
 
                 Index = -1;
                 Input = new String("");
@@ -106,7 +117,7 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
 
                 changed = true;
             }
-            if (Input.Length == 0) ImGui.EndDisabled();
+            if (Input.Length == 0 || existsAlready) ImGui.EndDisabled();
             ImGui.SameLine();
 
             if (Index == -1) ImGui.BeginDisabled();
@@ -154,6 +165,8 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
                     string selectableText = $"[{item.Word}] - Punctuation: {item.NeedsPunctuation} - Proper Case: {item.NeedsProperCase}";
                     if (HasPerWordOptions) selectableText += $"\nShockers: {item.ShockOptions.getShockerCount()} - Mode: {item.ShockOptions.OpMode} - Intensity: {item.ShockOptions.Intensity} - Duration: {item.ShockOptions.durationString()} - Warning: {item.ShockOptions.WarningMode}";
 
+                    if (is_Selected) selectableText = "Currently Editing...\n ";
+
                     if (ImGui.Selectable(selectableText, ref is_Selected))
                     {
                         SelectedWord = item.Word;
@@ -163,6 +176,7 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
                         ProperCase = item.NeedsProperCase;
                         currentOptions = new(item.ShockOptions.toSimpleArray());
                         optionsEditor.Options = currentOptions;
+                        existsAlready = false;
                     }
                     ImGui.Separator();
                     index++;
