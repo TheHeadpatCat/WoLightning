@@ -9,6 +9,7 @@ using WoLightning.WoL_Plugin.Clients.Intiface;
 using WoLightning.WoL_Plugin.Clients.OpenShock;
 using WoLightning.WoL_Plugin.Clients.Pishock;
 using WoLightning.WoL_Plugin.Util;
+using WoLightning.WoL_Plugin.Util.Helpers;
 using WoLightning.WoL_Plugin.Util.UI_Elements;
 using static WoLightning.Clients.Intiface.ClientIntiface;
 using static WoLightning.Clients.OpenShock.ClientOpenShock;
@@ -98,7 +99,7 @@ public class MainWindow : Window, IDisposable
     {
         ImGui.BeginGroup();
         ImGui.Text("Pishock API");
-
+        // Todo: Make a generic list that works for all
         HoverText.ShowSameLine(" (?)       ", "This is where your Shocks get sent to, if you are using a Pishock Account.\nIf you are not connected to it, you cannot receive shocks.");
         switch (Plugin.ClientPishock.Status)
         {
@@ -176,12 +177,7 @@ public class MainWindow : Window, IDisposable
                 ImGui.TextColored(ColorGreen, $"Connected!"); break;
         }
 
-        ImGui.EndGroup();
-
-
-
-        ImGui.SameLine();
-        if (ImGui.ArrowButton("##RemoteButton", ImGuiDir.Right))
+        if (ImGui.Button("Open Remote##RemoteButton"))
         {
             Plugin.ShockRemoteWindow.Toggle();
         }
@@ -189,6 +185,12 @@ public class MainWindow : Window, IDisposable
         {
             ImGui.SetTooltip("Open Shocker Remote");
         }
+
+        ImGui.EndGroup();
+
+        
+
+        
 
     }
     private async void DrawWebserverAPI()
@@ -310,7 +312,6 @@ public class MainWindow : Window, IDisposable
 
     private async void DrawAccountPanel()
     {
-        ImGui.SetNextItemWidth(WindowWidth - 15);
         if (ImGui.CollapsingHeader("Accounts & Devices", ImGuiTreeNodeFlags.CollapsingHeader))
         {
             if (ImGui.RadioButton("Pishock##RadioButtonPishock", isPishockMenuOpen))
@@ -354,6 +355,7 @@ public class MainWindow : Window, IDisposable
             Plugin.Authentification.PishockEnabled = isPishockEnabled;
         }
 
+        ImGui.SetNextItemWidth(WindowWidth - 15);
         var PishockNameField = Plugin.Authentification.PishockName;
         if (ImGui.InputTextWithHint("##PishockUsername", "Pishock Username", ref PishockNameField, 24))
             Plugin.Authentification.PishockName = PishockNameField;
@@ -423,6 +425,7 @@ public class MainWindow : Window, IDisposable
             Plugin.Authentification.OpenShockEnabled = isOpenShockEnabled;
         }
 
+        ImGui.SetNextItemWidth(WindowWidth - 15);
         var OpenShockURLField = Plugin.Authentification.OpenShockURL;
         if (ImGui.InputTextWithHint("##OpenShockUrl", "OpenShock URL", ref OpenShockURLField, 64))
             Plugin.Authentification.OpenShockURL = OpenShockURLField;
@@ -482,12 +485,12 @@ public class MainWindow : Window, IDisposable
             Plugin.Authentification.IntifaceEnabled = isIntifaceEnabled;
         }
 
+        ImGui.SetNextItemWidth(WindowWidth - 15);
         var IntifaceURLField = Plugin.Authentification.IntifaceURL;
         if (ImGui.InputTextWithHint("##IntifaceURL", "Intiface URL", ref IntifaceURLField, 64))
             Plugin.Authentification.IntifaceURL = IntifaceURLField;
 
-        ImGui.SetNextItemWidth(WindowWidth - 15);
-        if (ImGui.Button("Save & Connect##SaveIntiface"))
+        if (ImGui.Button("Save & Connect##SaveIntiface", new Vector2(WindowWidth - 15,0)))
         {
             Plugin.Authentification.IntifaceEnabled = true;
             Plugin.Authentification.Save();
@@ -497,6 +500,8 @@ public class MainWindow : Window, IDisposable
         ImGui.Spacing();
         ImGui.Separator();
         ImGui.Spacing();
+
+        ImGui.TextColoredWrapped(UIValues.ColorDescription, "Small note: Vibrations seem to be very weak below 45%");
 
         if (Plugin.ClientIntiface.Status == Clients.Intiface.ClientIntiface.ConnectionStatusIntiface.Connecting)
         {

@@ -37,11 +37,11 @@ namespace WoLightning.WoL_Plugin.Windows
 
             if (Plugin == null || Plugin.Configuration == null || Plugin.Authentification == null || Plugin.Authentification.GetDevicesCount() == 0)
             {
-                ImGui.TextWrapped("This Window isn't initialized yet.\nPlease login with a character first and make sure you are connected to either the Pishock, or OpenShock API.");
+                ImGui.TextWrapped("This Window isn't initialized yet.\nPlease login with a character first and make sure you are connected to any API Service.");
                 return;
             }
 
-            if (ImGui.Button($"Assigned {Options.getShockerCount()} Shockers##assignedShockersRemote", new Vector2(150, 25)))
+            if (ImGui.Button($"Assigned {Options.getShockerCount()} Devices##assignedShockersRemote", new Vector2(150, 0)))
             {
                 isModalShockerSelectorOpen = true;
                 ImGui.OpenPopup("Select Shockers##ShockerSelectRemote");
