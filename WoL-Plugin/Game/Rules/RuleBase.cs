@@ -30,7 +30,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         [JsonIgnore] virtual public bool hasExtraButton { get; } = false;
         [JsonIgnore] virtual public string CreatorName { get; }
 
-        virtual public ShockOptions ShockOptions { get; set; } = new();
+        virtual public DeviceOptions ShockOptions { get; set; } = new();
 
         virtual public bool IsEnabled { get; set; } // True when the User has it checked as "On"
         [NonSerialized] public bool IsRunning;      // True when we are actually running the "Check" function
@@ -38,7 +38,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         virtual public bool IsLocked { get; set; }
 
         [NonSerialized] protected Plugin Plugin;
-        [NonSerialized] public Action<ShockOptions> Triggered;
+        [NonSerialized] public Action<DeviceOptions> Triggered;
         [NonSerialized] protected RuleUI RuleUI;
 
         [NonSerialized] protected List<int> DurationArray = [100, 300, 500, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -60,7 +60,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
         {
             this.Plugin = plugin;
             RuleUI = new RuleUI(plugin, this);
-            if (ShockOptions == null) ShockOptions = new ShockOptions();
+            if (ShockOptions == null) ShockOptions = new DeviceOptions();
         }
 
         virtual public void setEnabled(bool enabled)
@@ -80,7 +80,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             Logger.Log(2, Name + ".Stop() is not Implemented");
         }
 
-        virtual public void Trigger(string Text, Player? source = null, ShockOptions? overrideOptions = null, bool? noNotification = null)
+        virtual public void Trigger(string Text, Player? source = null, DeviceOptions? overrideOptions = null, bool? noNotification = null)
         {
             if (ShockOptions.hasCooldown() || !IsRunning || Plugin.IsFailsafeActive) { Logger.Log(3, " -> Aborted due to Cooldown."); return; }
             if (source != null && !Plugin.Configuration.ActivePreset.isPlayerAllowedToTrigger(source)) { Logger.Log(3, " -> Aborted due to Permissions."); return; }

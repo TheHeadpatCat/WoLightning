@@ -33,7 +33,7 @@ namespace WoLightning.Clients.Pishock
         private readonly Plugin? Plugin;
         public ConnectionStatusPishock Status { get; set; } = ConnectionStatusPishock.NotStarted;
         public string UserID { get; set; } = "";
-        private WebSocketClient? Client;
+        private WebSocketConnector? Client;
         readonly HttpClient HttpClient;
 
         private readonly TimerPlus ResetConnectionAttempts = new();
@@ -390,7 +390,7 @@ namespace WoLightning.Clients.Pishock
             }
         }
 
-        public async void SendRequest(ShockOptions Options)
+        public async void SendRequest(DeviceOptions Options)
         {
 
             #region Validation
@@ -433,7 +433,7 @@ namespace WoLightning.Clients.Pishock
 
             if (Options.WarningMode != WarningMode.None)
             {
-                ShockOptions warningOptions = new ShockOptions(Options);
+                DeviceOptions warningOptions = new DeviceOptions(Options);
                 warningOptions.OpMode = OpMode.Vibrate;
                 warningOptions.Intensity = 55;
                 warningOptions.Duration = 1;

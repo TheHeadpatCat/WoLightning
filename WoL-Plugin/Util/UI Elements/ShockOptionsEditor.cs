@@ -11,13 +11,13 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
     {
         string Name { get; set; }
         Plugin Plugin { get; set; }
-        public ShockOptions Options { get; set; }
+        public DeviceOptions Options { get; set; }
         public bool HasCooldown { get; set; } = true;
         public bool AutoSave { get; set; } = true;
 
         bool isModalShockerSelectorOpen = false;
 
-        public ShockOptionsEditor(string name, Plugin plugin, ShockOptions options)
+        public ShockOptionsEditor(string name, Plugin plugin, DeviceOptions options)
         {
             Name = name;
             Plugin = plugin;

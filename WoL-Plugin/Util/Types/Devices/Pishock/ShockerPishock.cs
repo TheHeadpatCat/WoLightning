@@ -1,14 +1,26 @@
-﻿namespace WoLightning.WoL_Plugin.Clients.Pishock
+﻿using System;
+using WoLightning.WoL_Plugin.Util.Types;
+
+namespace WoLightning.WoL_Plugin.Clients.Pishock
 {
-    public class ShockerPishock : ShockerBase
+
+    [Serializable]
+    public class ShockerPishock : Device
     {
-        public int clientId { get; set; }
-        public int shockerId { get; set; }
-        public bool isPaused { get; set; } = false;
-        public bool isPersonal { get; set; } = true;
-        public int shareId { get; set; }
-        public string shareCode { get; set; }
-        public string username { get; set; } = "";
+        public override DeviceType Type { get; } = DeviceType.Pishock;
+        public override DeviceCapability Capabilities { get; } = DeviceCapability.Shock | DeviceCapability.Vibrate | DeviceCapability.Vibrate;
+
+        public string Name { get; init; } = "Unknown";
+        public int ClientId { get; init; } = -1;
+        public int ShockerId { get; init; } = -1;
+        public bool IsPaused { get; init; } = false;
+        public bool IsPersonal { get; init; } = true;
+        public int ShareId { get; init; } = -1;
+        public string ShareCode { get; init; } = "";
+        public string Username { get; init; } = "";
+
+    
+
         public ShockerPishock(string name, int clientId, int shockerId) : base(ShockerType.Pishock, name)
         {
             this.clientId = clientId;

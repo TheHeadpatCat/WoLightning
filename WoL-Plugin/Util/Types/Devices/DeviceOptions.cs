@@ -17,14 +17,6 @@ namespace WoLightning.Util.Types
         Beep = 2
     }
 
-    public enum CooldownModifier
-    {
-        Miliseconds = 100,
-        Seconds = 1000,
-        Minutes = 60000,
-        Hours = 3600000,
-    }
-
     public enum WarningMode
     {
         None = 0,
@@ -35,42 +27,22 @@ namespace WoLightning.Util.Types
     }
 
     [Serializable]
-    public class ShockOptions
+    public class DeviceOptions
     {
-
-        public bool isEnabled { get; set; } = false;
-
-        public List<ShockerPishock> ShockersPishock { get; set; } = new();
-        public List<ShockerOpenShock> ShockersOpenShock { get; set; } = new();
-        public List<DeviceIntiface> DevicesIntiface { get; set; } = new();
-
         public OpMode OpMode { get; set; } = OpMode.Shock;
-        public int Intensity { get; set; } = 1;
-        public int Duration { get; set; } = 1;
-        public double Cooldown { get; set; } = 0;
-        public CooldownModifier modifier { get; set; } = CooldownModifier.Seconds;
+        public int IntensityMax { get; set; } = 1;
+        public int IntensityMin { get; set; } = 1;
+
+        public int DurationMax { get; set; } = 100;
+        public int DurationMin { get; set; } = 100;
 
         public WarningMode WarningMode { get; set; } = WarningMode.None;
 
-
-        // Randomization
-        public bool isIntensityRandomized { get; set; } = false;
-        public int RandomizeIntensityMin { get; set; } = 1;
-        public bool isDurationRandomized { get; set; } = false;
-        public int RandomizeDurationMin { get; set; } = 1;
-
-        [NonSerialized] public bool isModalOpen = true; // Used for Configwindow
-        [NonSerialized] public bool isOptionsOpen = false;
-        [NonSerialized] public TimerPlus CooldownTimer = new();
-        [NonSerialized] public bool hasBeenReset = false;
-
-
-
-        public ShockOptions()
+        public DeviceOptions()
         {
-            CooldownTimer.AutoReset = false;
+            
         }
-        public ShockOptions(int Mode, int Intensity, int Duration)
+        public DeviceOptions(int Mode, int Intensity, int Duration)
         {
             this.OpMode = (OpMode)Mode;
             this.Intensity = Intensity;
@@ -78,14 +50,14 @@ namespace WoLightning.Util.Types
             CooldownTimer.AutoReset = false;
         }
 
-        public ShockOptions(OpMode Mode, int Intensity, int Duration)
+        public DeviceOptions(OpMode Mode, int Intensity, int Duration)
         {
             this.OpMode = Mode;
             this.Intensity = Intensity;
             this.Duration = Duration;
             CooldownTimer.AutoReset = false;
         }
-        public ShockOptions(int[] Settings)
+        public DeviceOptions(int[] Settings)
         {
             this.OpMode = (OpMode)Settings[0];
             this.Intensity = Settings[1];
@@ -94,7 +66,7 @@ namespace WoLightning.Util.Types
         }
 
         [JsonConstructor]
-        public ShockOptions(bool isEnabled, List<ShockerPishock> shockersPishock, List<ShockerOpenShock> shockersOpenShock, List<DeviceIntiface> devicesIntiface, OpMode opMode, int intensity, int duration, double cooldown, CooldownModifier modifier, WarningMode warningMode, bool isIntensityRandomized, int randomizeIntensityMin, bool isDurationRandomized, int randomizeDurationMin, bool isModalOpen, bool isOptionsOpen, TimerPlus cooldownTimer, bool hasBeenReset)
+        public DeviceOptions(bool isEnabled, List<ShockerPishock> shockersPishock, List<ShockerOpenShock> shockersOpenShock, List<DeviceIntiface> devicesIntiface, OpMode opMode, int intensity, int duration, double cooldown, CooldownModifier modifier, WarningMode warningMode, bool isIntensityRandomized, int randomizeIntensityMin, bool isDurationRandomized, int randomizeDurationMin, bool isModalOpen, bool isOptionsOpen, TimerPlus cooldownTimer, bool hasBeenReset)
         {
             this.isEnabled = isEnabled;
             ShockersPishock = shockersPishock;
@@ -115,7 +87,7 @@ namespace WoLightning.Util.Types
             CooldownTimer = cooldownTimer;
             this.hasBeenReset = hasBeenReset;
         }
-        public ShockOptions(ShockOptions other)
+        public DeviceOptions(DeviceOptions other)
         {
             this.isEnabled = other.isEnabled;
             ShockersPishock = other.ShockersPishock;
@@ -240,9 +212,9 @@ namespace WoLightning.Util.Types
             return output;
         }
 
-        public ShockOptions Clone()
+        public DeviceOptions Clone()
         {
-            return (MemberwiseClone() as ShockOptions)!;
+            return (MemberwiseClone() as DeviceOptions)!;
         }
 
         public bool hasCooldown()

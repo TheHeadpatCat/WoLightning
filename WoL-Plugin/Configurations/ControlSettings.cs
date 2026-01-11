@@ -45,7 +45,7 @@ namespace WoLightning.WoL_Plugin.Configurations
         public ushort LeashEmote { get; set; }
         public ushort UnleashEmote { get; set; }
         public ushort LeashDistanceEmote { get; set; }
-        public ShockOptions LeashShockOptions { get; set; } = new();
+        public DeviceOptions LeashShockOptions { get; set; } = new();
         public float LeashTriggerInterval { get; set; } = 3;
         public int LeashWarningScalingAmount { get; set; } = 2;
         public int LeashShockScalingAmount { get; set; } = 5;
@@ -432,7 +432,7 @@ namespace WoLightning.WoL_Plugin.Configurations
         private void OnShockElapsed(object? sender, ElapsedEventArgs e)
         {
             Logger.Log(4, "Shock Elapsed!");
-            ShockOptions newOpt = new();
+            DeviceOptions newOpt = new();
 
             try
             {

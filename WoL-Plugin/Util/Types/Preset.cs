@@ -201,16 +201,16 @@ namespace WoLightning.Util.Types
             foreach (var property in typeof(Preset).GetProperties())
             {
                 //Logger.Log($"{property.Name} - {property.PropertyType}");
-                if (property.PropertyType == typeof(ShockOptions))
+                if (property.PropertyType == typeof(DeviceOptions))
                 {
                     object? obj = property.GetValue(this);
                     if (obj == null) continue;
-                    ShockOptions t = (ShockOptions)obj;
+                    DeviceOptions t = (DeviceOptions)obj;
 
                     if (!t.Validate())
                     {
                         property.SetValue(this, property.GetValue(cleanPreset));
-                        ((ShockOptions)property.GetValue(this)!).hasBeenReset = true;
+                        ((DeviceOptions)property.GetValue(this)!).hasBeenReset = true;
                     }
                 }
             }

@@ -8,7 +8,7 @@ namespace WoLightning.WoL_Plugin.Clients.Pishock
 {
     internal static class CommandPublish
     {
-        public static string Generate(ShockOptions Options, string UserId, bool? isWarning)
+        public static string Generate(DeviceOptions Options, string UserId, bool? isWarning)
         {
             try
             {
@@ -41,7 +41,7 @@ namespace WoLightning.WoL_Plugin.Clients.Pishock
         // Using actual var names from Pishock API
         public string Target { get; set; } //Client ID
         public object Body { get; set; } // All targeted Shockers
-        public Command(ShockerPishock Shocker, ShockOptions Options, string UserId, bool? isWarning)
+        public Command(ShockerPishock Shocker, DeviceOptions Options, string UserId, bool? isWarning)
         {
             try
             {

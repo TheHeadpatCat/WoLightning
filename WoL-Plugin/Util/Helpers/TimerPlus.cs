@@ -8,7 +8,16 @@ namespace WoLightning.Util
     {
         private DateTime m_dueTime;
 
-        public TimerPlus() : base() => Elapsed += ElapsedAction;
+        public TimerPlus() : base()
+        {
+            Elapsed += ElapsedAction;
+        }
+        public TimerPlus(int interval, bool autoReset) : base()
+        {
+            Elapsed += ElapsedAction;
+            Interval = interval;
+            AutoReset = autoReset;
+        }
         private readonly List<Action> subscribers = new();
 
         protected new void Dispose()

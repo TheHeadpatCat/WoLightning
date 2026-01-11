@@ -15,7 +15,7 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
         public bool HasPerWordOptions = true;
         ShockOptionsEditor optionsEditor;
 
-        ShockOptions currentOptions;
+        DeviceOptions currentOptions;
         string Input = string.Empty;
         int Index = -1;
         String SelectedWord = string.Empty;

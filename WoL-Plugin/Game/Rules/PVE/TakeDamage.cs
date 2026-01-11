@@ -95,7 +95,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                     else
                     {
 
-                        ShockOptions opts = new(ShockOptions);
+                        DeviceOptions opts = new(ShockOptions);
 
                         opts.Intensity = (int)(ShockOptions.Intensity * difference);
                         opts.Duration = (int)(ShockOptions.Duration * difference);

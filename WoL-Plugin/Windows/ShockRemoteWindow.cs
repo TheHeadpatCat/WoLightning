@@ -11,7 +11,7 @@ namespace WoLightning.WoL_Plugin.Windows
     public class ShockRemoteWindow : Window, IDisposable
     {
         private Plugin Plugin;
-        private ShockOptions Options { get; set; }
+        private DeviceOptions Options { get; set; }
 
         bool isModalShockerSelectorOpen = false;
 
@@ -24,7 +24,7 @@ namespace WoLightning.WoL_Plugin.Windows
             };
 
             Plugin = plugin;
-            Options = new ShockOptions();
+            Options = new DeviceOptions();
         }
 
         public void Dispose()

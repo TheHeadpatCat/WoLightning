@@ -391,7 +391,7 @@ public class MainWindow : Window, IDisposable
 
             if (ImGui.Button("Test##TestShocker" + target.getInternalId()))
             {
-                ShockOptions temp = new ShockOptions(1, 35, 1);
+                DeviceOptions temp = new DeviceOptions(1, 35, 1);
                 temp.ShockersPishock.Add(target);
                 Plugin.ClientPishock.SendRequest(temp);
             }
@@ -462,7 +462,7 @@ public class MainWindow : Window, IDisposable
 
             if (ImGui.Button("Test##TestShocker" + target.getInternalId()))
             {
-                ShockOptions temp = new ShockOptions(1, 35, 1);
+                DeviceOptions temp = new DeviceOptions(1, 35, 1);
                 temp.ShockersOpenShock.Add(target);
                 Plugin.ClientOpenShock.SendRequest(temp);
             }
@@ -520,7 +520,7 @@ public class MainWindow : Window, IDisposable
 
             if (ImGui.Button("Test##TestDeviceIndex" + target.Index))
             {
-                ShockOptions temp = new ShockOptions(1, 75, 1);
+                DeviceOptions temp = new DeviceOptions(1, 75, 1);
                 temp.DevicesIntiface.Add(target);
                 Plugin.ClientIntiface.SendRequest(temp);
             }

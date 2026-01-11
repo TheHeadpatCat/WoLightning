@@ -9,7 +9,7 @@ namespace WoLightning.WoL_Plugin.Clients.OpenShock
 {
     internal static class CommandPublish
     {
-        public static string Generate(List<ShockerOpenShock> shockers, ShockOptions Options)
+        public static string Generate(List<ShockerOpenShock> shockers, DeviceOptions Options)
         {
 
             List<Command> shocks = new();

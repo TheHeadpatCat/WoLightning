@@ -9,7 +9,7 @@ using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Clients
 {
-    public class WebSocketClient : IDisposable // todo: rewrite this garbage
+    public class WebSocketConnector : IDisposable // todo: rewrite this garbage
     {
         private Plugin Plugin { get; set; }
         private Uri Uri { get; set; }
@@ -24,7 +24,7 @@ namespace WoLightning.WoL_Plugin.Clients
         public Action<string> Received;
         private TimerPlus Heartbeat;
 
-        public WebSocketClient(Plugin Plugin, String URL)
+        public WebSocketConnector(Plugin Plugin, String URL)
         {
             try
             {
@@ -58,7 +58,7 @@ namespace WoLightning.WoL_Plugin.Clients
             return Client.State;
         }
 
-        public WebSocketClient(Plugin Plugin, String URL, string[][] Headers)
+        public WebSocketConnector(Plugin Plugin, String URL, string[][] Headers)
         {
             try
             {

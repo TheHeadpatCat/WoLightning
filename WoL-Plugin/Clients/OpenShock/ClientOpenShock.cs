@@ -177,7 +177,7 @@ namespace WoLightning.Clients.OpenShock
             }
         }
 
-        public async void SendRequest(ShockOptions Options)
+        public async void SendRequest(DeviceOptions Options)
         {
 
             if (Status != ConnectionStatusOpenShock.Connected) return;
@@ -208,7 +208,7 @@ namespace WoLightning.Clients.OpenShock
 
                 if (Options.WarningMode != WarningMode.None)
                 {
-                    ShockOptions warningOptions = new(Options);
+                    DeviceOptions warningOptions = new(Options);
                     warningOptions.OpMode = OpMode.Vibrate;
                     warningOptions.Intensity = 55;
                     warningOptions.Duration = 1;

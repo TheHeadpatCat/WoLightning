@@ -125,7 +125,7 @@ namespace WoLightning.Clients.Intiface
             }
         }
 
-        public async void SendRequest(ShockOptions options)
+        public async void SendRequest(DeviceOptions options)
         {
             #region Validation
 
