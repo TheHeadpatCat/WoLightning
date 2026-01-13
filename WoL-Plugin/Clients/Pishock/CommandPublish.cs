@@ -32,6 +32,11 @@ namespace WoLightning.WoL_Plugin.Clients.Pishock
             catch (Exception ex) { Logger.Error("Fatal Error during CommandPublish.Generate()"); Logger.Error(ex); return "Invalid"; }
         }
 
+        public static string Ping()
+        {
+            return JsonSerializer.Serialize(new { Operation = "PING" });
+        }
+
     }
 
 

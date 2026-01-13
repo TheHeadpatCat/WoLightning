@@ -11,7 +11,6 @@ namespace WoLightning.WoL_Plugin.Clients
 {
     public class WebSocketClient : IDisposable // todo: rewrite this garbage
     {
-        private Plugin Plugin { get; set; }
         private Uri Uri { get; set; }
         private ClientWebSocket? Client { get; set; }
 
@@ -21,20 +20,20 @@ namespace WoLightning.WoL_Plugin.Clients
         public bool UpholdConnection = true;
         public int FailedAttempts = 0;
 
+        public Action Connected;
         public Action<string> Received;
+        public Action FailedToConnect;
         private TimerPlus Heartbeat;
 
-        public WebSocketClient(Plugin Plugin, String URL)
+        public WebSocketClient(String URL)
         {
             try
             {
-                this.Plugin = Plugin;
                 Heartbeat = new();
                 Heartbeat.Interval = 5000;
                 Heartbeat.AutoReset = true;
                 Heartbeat.Elapsed += checkHeartbeat;
                 Uri = new Uri(URL);
-                Setup();
             }
             catch (Exception ex)
             {
@@ -46,7 +45,7 @@ namespace WoLightning.WoL_Plugin.Clients
 
         private void checkHeartbeat(object? sender, ElapsedEventArgs e)
         {
-            if (Plugin == null || Client == null)
+            if (Client == null || Client.State != WebSocketState.Open)
             {
                 Logger.Log(2, "Heartbeat failed - Killing Client.");
                 Dispose();
@@ -58,11 +57,10 @@ namespace WoLightning.WoL_Plugin.Clients
             return Client.State;
         }
 
-        public WebSocketClient(Plugin Plugin, String URL, string[][] Headers)
+        public WebSocketClient(String URL, string[][] Headers)
         {
             try
             {
-                this.Plugin = Plugin;
                 Uri = new Uri(URL);
                 this.Headers = Headers;
                 Setup();
@@ -88,22 +86,19 @@ namespace WoLightning.WoL_Plugin.Clients
             catch { }
         }
 
-        private async Task Setup()
+        public async Task Setup()
         {
             try
             {
-                if (Plugin == null)
-                {
-                    Dispose();
-                    return;
-                }
                 if (Client != null)
                 {
-                    UpholdConnection = false;
+                    Connect();
+                    return;
+                    /*UpholdConnection = false;
                     FailedAttempts = 99;
                     if (Client.State == WebSocketState.Open) await Client?.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client closed", CancellationToken.None);
                     Client.Dispose();
-                    Client = null;
+                    Client = null;*/
                 }
 
                 Client = new ClientWebSocket();
@@ -128,20 +123,16 @@ namespace WoLightning.WoL_Plugin.Clients
 
         private async Task Connect()
         {
-            if (Plugin == null)
-            {
-                Dispose();
-                return;
-            }
             if (Client == null || !UpholdConnection) return;
             if (FailedAttempts >= 5) { Logger.Error("Failed 5 Attempts. Aborting Websocket Connection."); UpholdConnection = false; return; }
-            if (Client.State == WebSocketState.Open) return;
+            if (Client.State == WebSocketState.Open || Client.State == WebSocketState.Connecting) return;
             try
             {
                 Logger.Log(2, $"[WebSocket] Connecting to {Uri.ToString().Substring(0, 16)}...");
                 await Client.ConnectAsync(Uri, CancellationToken.None);
-                Logger.Log(2, $"[WebSocket] Successfully Connected to {Uri.ToString().Substring(0, 16)}!");
+                Logger.Log(2, $"[WebSocket] Connection made!");
                 FailedAttempts = 0;
+                Connected?.Invoke();
                 Receive();
             }
             catch (Exception ex)
@@ -163,11 +154,6 @@ namespace WoLightning.WoL_Plugin.Clients
         {
             try
             {
-                if (Plugin == null)
-                {
-                    Dispose();
-                    return;
-                }
                 if (Client == null || Client.State == WebSocketState.Closed)
                 {
                     Logger.Log(2, "WebSocket Request was sent, but Client was Disposed - Resetting Connection.");
@@ -186,11 +172,6 @@ namespace WoLightning.WoL_Plugin.Clients
         {
             try
             {
-                if (Plugin == null)
-                {
-                    Dispose();
-                    return;
-                }
                 if (Client == null || Client.State != WebSocketState.Open) return;
                 WebSocketReceiveResult result = await Client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
                 string receivedMessage = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
