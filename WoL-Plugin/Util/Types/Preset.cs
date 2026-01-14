@@ -64,6 +64,7 @@ namespace WoLightning.Util.Types
 
 
         // Misc Triggers
+        public ForgetFood ForgetFood { get; set; } = new();
         public SitOnFurniture SitOnFurniture { get; set; } = new();
         public UseMount UseMount { get; set; } = new();
         public FailMeld FailMeld { get; set; } = new();
