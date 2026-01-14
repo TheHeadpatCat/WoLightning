@@ -1,6 +1,7 @@
 ﻿using Dalamud.Bindings.ImGui;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.SubKinds;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Lumina.Excel.Sheets;
 using System;
@@ -109,7 +110,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 return;
             }
 
-            if (Service.PartyList.Count < 4) return; // If party is below 4 
+            //if (Service.PartyList.Count < 4) return; // If party is below 4 
             if (!Service.Condition.Any(ConditionFlag.BoundByDuty, ConditionFlag.BoundByDuty56, ConditionFlag.BoundByDuty95)) return; // we arent actually in any content right now
 
             if (IsTriggeredByContent[ContentTypeWoL.LightParty])
@@ -137,7 +138,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 return;
             }
 
-            if ((IsTriggeredByContent[ContentTypeWoL.Trial] && territoryContentType == 4)
+            if (   (IsTriggeredByContent[ContentTypeWoL.Trial] && territoryContentType == 4)
                 || (IsTriggeredByContent[ContentTypeWoL.Raid] && territoryContentType == 5)
                 || (IsTriggeredByContent[ContentTypeWoL.Extreme] && territoryContentType == 38)) // Unreal
             {
@@ -151,11 +152,11 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
             bool isMarkerPlaced = false;
             try
             {
-                var agent = AgentFieldMarker.Instance();
+                var agent = MarkingController.Instance(); 
                 for (int i = 0; i < 8; i++)
                 {
-                    Logger.Log(4,$"Marker {i} placed: " + agent->IsFieldMarkerActive(i));
-                    if (agent->IsFieldMarkerActive(i)) isMarkerPlaced = true;
+                    Logger.Log(4,$"Marker {i} placed: " + agent->FieldMarkers[i].Active);
+                    if (agent->FieldMarkers[i].Active) isMarkerPlaced = true;
                 }
             }
             catch (Exception e) {
@@ -166,7 +167,6 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
             if (!isMarkerPlaced) return; // assume we arent doing hard content, if there isnt a single marker placed.
 
             if (   (IsTriggeredByContent[ContentTypeWoL.Extreme] && territoryContentType == 4)
-                || (IsTriggeredByContent[ContentTypeWoL.Unreal] && territoryContentType == 4)
                 || (IsTriggeredByContent[ContentTypeWoL.Savage] && territoryContentType == 5)
                 || (IsTriggeredByContent[ContentTypeWoL.Ultimate] && territoryContentType == 28)
                 )
@@ -203,7 +203,6 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
             IsTriggeredByContent.Add(ContentTypeWoL.Trial, false);
             IsTriggeredByContent.Add(ContentTypeWoL.Raid, false);
             IsTriggeredByContent.Add(ContentTypeWoL.Extreme, true);
-            IsTriggeredByContent.Add(ContentTypeWoL.Unreal, true);
             IsTriggeredByContent.Add(ContentTypeWoL.Savage, true);
             IsTriggeredByContent.Add(ContentTypeWoL.Ultimate, true);
         }
@@ -251,6 +250,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 if (ImGui.Checkbox("Normal Trials", ref ContentTrial))
                 {
                     IsTriggeredByContent[ContentTypeWoL.Trial] = ContentTrial;
+                    if (ContentTrial) IsTriggeredByContent[ContentTypeWoL.Extreme] = true;
                     Plugin.Configuration.SaveCurrentPreset();
                 }
 
@@ -258,20 +258,23 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 if (ImGui.Checkbox("Normal & Alliance Raids", ref ContentRaid))
                 {
                     IsTriggeredByContent[ContentTypeWoL.Raid] = ContentRaid;
+                    if (ContentRaid) IsTriggeredByContent[ContentTypeWoL.Savage] = true;
                     Plugin.Configuration.SaveCurrentPreset();
                 }
 
                 bool ContentExtreme = IsTriggeredByContent[ContentTypeWoL.Extreme];
-                if (ImGui.Checkbox("Extreme Trials & Chaotic", ref ContentExtreme))
+                if (ImGui.Checkbox("Extreme & Unreal Trials", ref ContentExtreme))
                 {
                     IsTriggeredByContent[ContentTypeWoL.Extreme] = ContentExtreme;
+                    if (!ContentExtreme) IsTriggeredByContent[ContentTypeWoL.Trial] = false;
                     Plugin.Configuration.SaveCurrentPreset();
                 }
 
                 bool ContentSavage = IsTriggeredByContent[ContentTypeWoL.Savage];
-                if (ImGui.Checkbox("Savage Raids", ref ContentSavage))
+                if (ImGui.Checkbox("Savage & Chaotic Raids", ref ContentSavage))
                 {
                     IsTriggeredByContent[ContentTypeWoL.Savage] = ContentSavage;
+                    if (!ContentSavage) IsTriggeredByContent[ContentTypeWoL.Raid] = false;
                     Plugin.Configuration.SaveCurrentPreset();
                 }
 

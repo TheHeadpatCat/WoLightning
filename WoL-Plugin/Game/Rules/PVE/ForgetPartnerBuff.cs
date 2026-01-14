@@ -17,7 +17,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
         public override string Name { get; } = "Forget a Partner Buff";
 
         public override string Description { get; } = "Triggers when you enter combat, without assigning your Partner Buff to someone.";
-        public override string Hint { get; } = "The currently supported Buffs are Dance Partner from Dancer and Kardia from Sage.\nYou also need to be in a party with another player.";
+        public override string Hint { get; } = "The currently supported Buffs are Dance Partner from Dancer and Kardia from Sage.\nYou also need to be in a party with another player and in a Duty.";
 
         public override RuleCategory Category { get; } = RuleCategory.PVE;
 
@@ -52,6 +52,9 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
         {
             Player = Service.ObjectTable.LocalPlayer;
             if(Player == null) return;
+
+            if (!Service.Condition.Any(ConditionFlag.BoundByDuty, ConditionFlag.BoundByDuty56, ConditionFlag.BoundByDuty95)) return; // we arent actually in any content right now
+
             uint JobId = Player.ClassJob.RowId;
             Logger.Log(4,"JobId: " + JobId);
             if (JobId != 40 && JobId != 38) return; // neither sage nor dancer
