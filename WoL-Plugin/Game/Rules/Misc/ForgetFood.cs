@@ -226,14 +226,14 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 if (ImGui.Checkbox("Crafting", ref Crafting))
                 {
                     IsTriggeredByCrafting = Crafting;
-                    Plugin.Configuration.SaveCurrentPreset();
+                    Plugin.Configuration.SaveCurrentPresetScheduled();
                 }
 
                 bool ContentAny = IsTriggeredByContent[ContentTypeWoL.Any];
                 if(ImGui.Checkbox("Any kind of Combat", ref ContentAny))
                 {
                     IsTriggeredByContent[ContentTypeWoL.Any] = ContentAny;
-                    Plugin.Configuration.SaveCurrentPreset();
+                    Plugin.Configuration.SaveCurrentPresetScheduled();
                 }
 
                 if (ContentAny) ImGui.BeginDisabled();
@@ -242,7 +242,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 if (ImGui.Checkbox("4 Man Content", ref ContentLightParty))
                 {
                     IsTriggeredByContent[ContentTypeWoL.LightParty] = ContentLightParty;
-                    Plugin.Configuration.SaveCurrentPreset();
+                    Plugin.Configuration.SaveCurrentPresetScheduled();
                 }
                 HoverText.ShowHint("This includes Dungeons, Guildhests or doing Unsynched Content with atleast 4 players.");
 
@@ -251,7 +251,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 {
                     IsTriggeredByContent[ContentTypeWoL.Trial] = ContentTrial;
                     if (ContentTrial) IsTriggeredByContent[ContentTypeWoL.Extreme] = true;
-                    Plugin.Configuration.SaveCurrentPreset();
+                    Plugin.Configuration.SaveCurrentPresetScheduled();
                 }
 
                 bool ContentRaid = IsTriggeredByContent[ContentTypeWoL.Raid];
@@ -259,7 +259,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 {
                     IsTriggeredByContent[ContentTypeWoL.Raid] = ContentRaid;
                     if (ContentRaid) IsTriggeredByContent[ContentTypeWoL.Savage] = true;
-                    Plugin.Configuration.SaveCurrentPreset();
+                    Plugin.Configuration.SaveCurrentPresetScheduled();
                 }
 
                 bool ContentExtreme = IsTriggeredByContent[ContentTypeWoL.Extreme];
@@ -267,7 +267,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 {
                     IsTriggeredByContent[ContentTypeWoL.Extreme] = ContentExtreme;
                     if (!ContentExtreme) IsTriggeredByContent[ContentTypeWoL.Trial] = false;
-                    Plugin.Configuration.SaveCurrentPreset();
+                    Plugin.Configuration.SaveCurrentPresetScheduled();
                 }
 
                 bool ContentSavage = IsTriggeredByContent[ContentTypeWoL.Savage];
@@ -275,14 +275,14 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 {
                     IsTriggeredByContent[ContentTypeWoL.Savage] = ContentSavage;
                     if (!ContentSavage) IsTriggeredByContent[ContentTypeWoL.Raid] = false;
-                    Plugin.Configuration.SaveCurrentPreset();
+                    Plugin.Configuration.SaveCurrentPresetScheduled();
                 }
 
                 bool ContentUltimate = IsTriggeredByContent[ContentTypeWoL.Ultimate];
                 if (ImGui.Checkbox("Ultimate Raids", ref ContentUltimate))
                 {
                     IsTriggeredByContent[ContentTypeWoL.Ultimate] = ContentUltimate;
-                    Plugin.Configuration.SaveCurrentPreset();
+                    Plugin.Configuration.SaveCurrentPresetScheduled();
                 }
 
                 ImGui.TextColoredWrapped(UIValues.ColorDescription, "The Plugin detects Content Difficulty by checking for placed Waymarks. (Except Alliance Raids)" +

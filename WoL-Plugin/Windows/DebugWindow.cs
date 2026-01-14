@@ -27,23 +27,8 @@ namespace WoLightning.WoL_Plugin.Windows
             ImGui.TextColored(new Vector4(255, 0, 0, 255), "You should not be touching these settings, if you don't know what you are doing.");
 
 
-            ImGui.Text("Grace: " + Plugin.ControlSettings.LeashGraceTimer.TimeLeft.ToString());
-            ImGui.Text("Area: " + Plugin.ControlSettings.LeashGraceAreaTimer.TimeLeft.ToString());
-            ImGui.Text("Shock: " + Plugin.ControlSettings.LeashShockTimer.TimeLeft.ToString());
-            ImGui.Text("damage frames " + Plugin.Configuration.ActivePreset.TakeDamage.bufferFrames);
-            ImGui.Text("scheduled save " + Plugin.Configuration.PresetSavingBuffer);
+            ImGui.Text("Interval: " + Plugin.Configuration.ActivePreset.ForgetDot.UpdateDelta);
 
-            ImGui.Text("Auth:");
-            foreach (var device in Plugin.Authentification.DevicesIntiface)
-            {
-                ImGui.Text(device.Index + " Name " + device.Name + " Display " + device.DisplayName);
-            }
-
-            ImGui.Text("Rule:");
-            foreach (var device in Plugin.Configuration.ActivePreset.DoEmote.ShockOptions.DevicesIntiface)
-            {
-                ImGui.Text(device.Index + " Name " + device.Name + " Display " + device.DisplayName);
-            }
 
 
         }
