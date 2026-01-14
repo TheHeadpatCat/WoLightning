@@ -110,7 +110,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 return;
             }
 
-            //if (Service.PartyList.Count < 4) return; // If party is below 4 
+            if (Service.PartyList.Count < 4) return; // If party is below 4 
             if (!Service.Condition.Any(ConditionFlag.BoundByDuty, ConditionFlag.BoundByDuty56, ConditionFlag.BoundByDuty95)) return; // we arent actually in any content right now
 
             if (IsTriggeredByContent[ContentTypeWoL.LightParty])
