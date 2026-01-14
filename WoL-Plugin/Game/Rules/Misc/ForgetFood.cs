@@ -32,10 +32,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
     {
 
         public override string Name { get; } = "Forget to eat Food";
-
         public override string Description { get; } = "Triggers whenever you enter combat and/or start crafting without a food buff.";
-        public override string Hint { get; } = "The Check for Food will be done whenever you enter combat.\nCurrently a few Contentypes don't properly work if they aren't named in a obvious way (Like Minstrel's Ballad not counting for Extreme)";
-
         public override RuleCategory Category { get; } = RuleCategory.Misc;
 
         public override bool hasExtraButton { get; } = true;
@@ -221,11 +218,17 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 
             Vector2 center = ImGui.GetMainViewport().GetCenter();
             ImGui.SetNextWindowPos(center, ImGuiCond.Appearing, new Vector2(0.5f, 0.5f));
-            ImGui.SetNextWindowSize(new Vector2(640, 445));
+            ImGui.SetNextWindowSize(new Vector2(640, 545));
 
             if (ImGui.BeginPopupModal("Content Selector##ForgetFoodModal", ref IsContentModalOpen,
                 ImGuiWindowFlags.Modal | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.Popup))
             {
+                bool Crafting = IsTriggeredByCrafting;
+                if (ImGui.Checkbox("Crafting", ref Crafting))
+                {
+                    IsTriggeredByCrafting = Crafting;
+                    Plugin.Configuration.SaveCurrentPreset();
+                }
 
                 bool ContentAny = IsTriggeredByContent[ContentTypeWoL.Any];
                 if(ImGui.Checkbox("Any kind of Combat", ref ContentAny))
