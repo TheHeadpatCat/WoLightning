@@ -1,6 +1,6 @@
 
 # Warrior of Lightning  
-## A FFXIV Plugin that integrates [Pishock](https://pishock.com/#/) and [OpenShock](https://openshock.org/) devices.
+## A FFXIV Plugin that integrates [Pishock](https://pishock.com/#/), [OpenShock](https://openshock.org/) and [Intiface Central](https://intiface.com/central/) devices.
 
 ![Plugin Icon](etc/iconSmall.png)
 
@@ -19,6 +19,7 @@ Or if you want to be fancy, open a Issue. That also works.
  Getting emoted at by someone  
  Saying a Banned Word from a List  
  Forgetting to say a Enforced Word from a List  
+ Hearing someone say a Trigger Word from a List  
  Losing a Deathroll  
  
  - Combat Triggers:  
@@ -26,12 +27,19 @@ Or if you want to be fancy, open a Issue. That also works.
  Failing a Mechanic  
  Any Partymember dies  
  Party Wipes  
+ Forgetting a Partner Buff (Kardia or Dance Partner)  
  Taking any kind of Damage  
+ Forgetting to Level Synch for a Fate  
 
  - Misc Triggers:  
  Sitting on Furniture  
+ Using a Mount or Riding Pillion  
  Fail a Craft  
+ Fail a HQ Craft  
+ Fail to meld Materia  
  Fail to catch a Fish  
+ Use Teleportation  
+ Forgetting to eat Food before Combat or Crafting  
 
 - Presets for quick swapping of Settings    
 
@@ -64,7 +72,7 @@ Here you can enable or disable the entire Plugin at any point - this is so it on
 Alternatively, there is a fast way to disable it using the command `/red`, this will instantly stop all operations and ignores all Settings - until used again.  
 Lastly, the "Activate whenever the game starts" is there to automatically activate the plugin right away, when you login.  
   
-Firstly, on the very bottom under "Account & Shockers" you can swap between your Pishock and OpenShock account data. Both are usable at the same time though!  
+Firstly, on the very bottom under "Account & Devices" you can swap between your different Connection Methods. All of them can be used at the same time though!  
   
 For Pishock, you will need:  
 - Your Username. It's what you use to login to the Pishock Website and what shows up on it.  
@@ -72,14 +80,18 @@ For Pishock, you will need:
   
 For OpenShock, you will need:  
 - The URL of the API you want to access. This is only if you selfhost a server, so if you use the default OpenShock API, just leave it as is.  
-- A API Token. You can get this on the Website under "API Tokens". Generate one and enter it here.  
+- A API Token. You can get this on the Website under "API Tokens". Generate one and enter it here.
 
-To finish it off, press the "Save & Conect" button and give it a moment to figure everything out.  
-If you did everything correctly, all of your available Shockers (even Shared ones) should show up!  
+For Intiface Central, you will need:
+- [Intiface Central](https://intiface.com/central/) installed and running in the background  
+- The URL/IP to connect to (you can usually leave this to the default)  
+
+To finish it off, press the "Save & Connect" button and give it a moment to figure everything out.  
+If you did everything correctly, all of your available Devices (even Shared ones) should show up!  
 If they don't... Check what is shown under the API Connection at the top of the Window.  
 Maybe you accidentally put something wrong, or the Plugin is having a weird issue. If that happens, please report it on the Discord!  
   
-You can click on "Test" on any of the Shockers to send out a 1 second Vibration on 35%.  
+You can click on "Test" on any of the Devices to send out a 1 second Vibration on 35%.  
 If it doesn't arrive for some reason, make sure that the Shocker is properly connected, and the Hub is turned on!  
 
 ## Configuration
