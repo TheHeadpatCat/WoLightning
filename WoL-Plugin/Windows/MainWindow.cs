@@ -264,43 +264,52 @@ public class MainWindow : Window, IDisposable
         if (Plugin.ControlSettings.FullControl) ImGui.BeginDisabled();
         if (Plugin.IsEnabled)
         {
-            if (ImGui.Button("Stop Plugin", new Vector2(WindowWidth - 15, 0))) // Todo: Color coding
+            ImGui.PushStyleColor(ImGuiCol.Button, new Vector4(0.45f, 0.05f, 0.05f, 0.7f));
+            if (ImGui.Button("Stop Rules", new Vector2(WindowWidth - 15, 45))) 
             {
                 Plugin.IsEnabled = false;
                 Plugin.Configuration.ActivePreset.StopRules();
                 Plugin.ControlSettings.RemoveLeash();
             }
+            ImGui.PopStyleColor(1);
         }
 
         if (!Plugin.IsEnabled)
         {
-            if (ImGui.Button("Start Plugin", new Vector2(WindowWidth - 15, 0)))
+            ImGui.PushStyleColor(ImGuiCol.Button, new Vector4(0,0.5f,0,1));
+            if (ImGui.Button("Start Rules", new Vector2(WindowWidth - 15, 45)))
             {
                 Plugin.IsEnabled = true;
                 Plugin.Configuration.ActivePreset.StartRules();
             }
+            ImGui.PopStyleColor(1);
         }
 
 
         var ActivateOnStart = Plugin.Configuration.ActivateOnStart;
 
-        if (ImGui.Checkbox("Activate whenever the game starts.", ref ActivateOnStart))
+        if (ImGui.Checkbox("Start Rules on Login?", ref ActivateOnStart))
         {
             Plugin.Configuration.ActivateOnStart = ActivateOnStart;
             Plugin.Configuration.Save();
         }
         if (Plugin.ControlSettings.FullControl) ImGui.EndDisabled();
 
+        ImGui.Separator();
+
+        if (ImGui.Button("Open Rule Configuration", new Vector2(WindowWidth - 15, 60)))
+        {
+            Plugin.ToggleConfigUI();
+        }
+
         if (ImGui.Button("Open Control Settings", new Vector2(WindowWidth - 15, 0)))
         {
             Plugin.ControlWindow.Toggle();
         }
 
+        ImGui.Separator();
+
         //if (Plugin.Authentification.isDisallowed) ImGui.EndDisabled();
-        if (ImGui.Button("Open Trigger Configuration", new Vector2(WindowWidth - 15, 0)))
-        {
-            Plugin.ToggleConfigUI();
-        }
 
         /*
         if (Plugin.ClientWebserver.Status != ConnectionStatusWebserver.Connected) ImGui.BeginDisabled();
@@ -386,7 +395,7 @@ public class MainWindow : Window, IDisposable
         }
 
         int x = 0;
-        ImGui.Text("Available Shockers:");
+        ImGui.Text($"{Plugin.Authentification.PishockShockers.Count} Available Shockers:");
         while (Plugin.Authentification.PishockShockers.Count > x)
         {
             ShockerPishock target = Plugin.Authentification.PishockShockers[x];
@@ -457,7 +466,7 @@ public class MainWindow : Window, IDisposable
         }
 
         int x = 0;
-        ImGui.Text("Available Shockers:");
+        ImGui.Text($"{Plugin.Authentification.OpenShockShockers.Count} Available Shockers:");
         while (Plugin.Authentification.OpenShockShockers.Count > x)
         {
             ShockerOpenShock target = Plugin.Authentification.OpenShockShockers[x];
@@ -514,7 +523,7 @@ public class MainWindow : Window, IDisposable
         }
 
         int x = 0;
-        ImGui.Text("Available Devices:");
+        ImGui.Text($"{Plugin.Authentification.DevicesIntiface.Count} Available Devices:");
         while (Plugin.Authentification.DevicesIntiface.Count > x)
         {
             DeviceIntiface target = Plugin.Authentification.DevicesIntiface[x];

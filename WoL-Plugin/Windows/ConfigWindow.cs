@@ -152,7 +152,7 @@ public class ConfigWindow : Window, IDisposable
 
         if (!Plugin.IsEnabled)
         {
-            ImGui.TextColoredWrapped(UIValues.ColorDescription, $"The Plugin is currently not started, so Rules won't trigger. Start it in the Main Window.");
+            ImGui.TextColoredWrapped(new Vector4(0.5f,0.05f,0.05f,1), $"Rules are currently disabled and wont trigger. Start them in the Main Window.");
         }
 
         DrawHeader();
