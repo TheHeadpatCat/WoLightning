@@ -120,7 +120,7 @@ public class MainWindow : Window, IDisposable
                 ImGui.TextColored(ColorRed, "Fatal Error!"); break;
             case ConnectionStatusPishock.KeyNotValidated:
                 ImGui.TextColored(ColorRed, "Key not Validated! (?)");
-                HoverText.Show("This error occurs when try to use a newly created API Key.\nIn short, go to pishock.com, log out of your account and log back in to resolve this.\n\nIf you need more information or help on this, please refer to the Discord.");
+                HoverText.Show("This error occurs when try to use a newly created API Key.\nIn short, go to login.pishock.com (NOT pishock.com), log out of your account and log back in to resolve this.\n\nIf you need more information or help on this, please refer to the Discord.");
                 break;
             case ConnectionStatusPishock.ExceededAttempts:
                 ImGui.TextColored(ColorRed, "Cannot Connect.\nPlease Restart the Plugin."); break;
