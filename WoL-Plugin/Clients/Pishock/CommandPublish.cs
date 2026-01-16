@@ -34,7 +34,9 @@ namespace WoLightning.WoL_Plugin.Clients.Pishock
 
         public static string Ping()
         {
-            return JsonSerializer.Serialize(new { Operation = "PING" });
+            string output = JsonSerializer.Serialize(new { Operation = "PING" });
+            Logger.Log(4, "Creating Request: " + output);
+            return output;
         }
 
     }

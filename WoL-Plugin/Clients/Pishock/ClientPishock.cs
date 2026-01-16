@@ -24,6 +24,7 @@ namespace WoLightning.Clients.Pishock
             InvalidUserdata = 2,
             FatalError = 3,
             ExceededAttempts = 4,
+            KeyNotValidated = 5,
 
             Connecting = 99,
             ConnectedNoInfo = 100,
@@ -124,6 +125,13 @@ namespace WoLightning.Clients.Pishock
         {
             if (obj.Contains("CONNECTION_ERROR"))
             {
+                if (obj.Contains("Redis"))
+                {
+                    Status = ConnectionStatusPishock.KeyNotValidated;
+                    Logger.Log(3, "API Key has not been validated to Redis. You can do this by logging out of pishock.com and logging back in.");
+                    return;
+                }
+
                 Status = ConnectionStatusPishock.FatalError;
                 Logger.Log(3, "Fatal Error while connecting to Pishock API");
                 Logger.Log(3, obj);
@@ -398,6 +406,10 @@ namespace WoLightning.Clients.Pishock
             }
         }
 
+        /// <summary>
+        /// Sends our a Request with the given parameters.
+        /// </summary>
+        /// <param name="Options">The Options to use.</param>
         public async void SendRequest(ShockOptions Options)
         {
 

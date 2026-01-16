@@ -128,9 +128,10 @@ namespace WoLightning.WoL_Plugin.Clients
             if (Client.State == WebSocketState.Open || Client.State == WebSocketState.Connecting) return;
             try
             {
-                Logger.Log(2, $"[WebSocket] Connecting to {Uri.ToString().Substring(0, 16)}...");
+                Logger.Log(4, "Websocket Headers: \"User-Agent\": \"WoLighting Plugin\"");
+                Logger.Log(2, $"[WebSocket] Connecting to {Uri.ToString().Substring(0, 32)}[...]");
                 await Client.ConnectAsync(Uri, CancellationToken.None);
-                Logger.Log(2, $"[WebSocket] Connection made!");
+                Logger.Log(2, $"[WebSocket] Connection made, starting receiver...");
                 FailedAttempts = 0;
                 Connected?.Invoke();
                 Receive();

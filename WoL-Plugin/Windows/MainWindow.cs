@@ -98,9 +98,9 @@ public class MainWindow : Window, IDisposable
     private async void DrawShockerAPI()
     {
         ImGui.BeginGroup();
-        ImGui.Text("Pishock API");
+        ImGui.Text("Pishock API                     ");
         // Todo: Make a generic list that works for all
-        HoverText.ShowSameLine(" (?)       ", "This is where your Shocks get sent to, if you are using a Pishock Account.\nIf you are not connected to it, you cannot receive shocks.");
+        //HoverText.ShowSameLine(" (?)       ", "This is where your Shocks get sent to, if you are using a Pishock Account.\nIf you are not connected to it, you cannot receive shocks.");
         switch (Plugin.ClientPishock.Status)
         {
             case ConnectionStatusPishock.NotStarted:
@@ -118,6 +118,10 @@ public class MainWindow : Window, IDisposable
                 ImGui.TextColored(ColorRed, "Unable to Connect!"); break;
             case ConnectionStatusPishock.FatalError:
                 ImGui.TextColored(ColorRed, "Fatal Error!"); break;
+            case ConnectionStatusPishock.KeyNotValidated:
+                ImGui.TextColored(ColorRed, "Key not Validated! (?)");
+                HoverText.Show("This error occurs when try to use a newly created API Key.\nIn short, go to pishock.com, log out of your account and log back in to resolve this.\n\nIf you need more information or help on this, please refer to the Discord.");
+                break;
             case ConnectionStatusPishock.ExceededAttempts:
                 ImGui.TextColored(ColorRed, "Cannot Connect.\nPlease Restart the Plugin."); break;
 
@@ -127,7 +131,7 @@ public class MainWindow : Window, IDisposable
 
         ImGui.Text("Intiface");
 
-        HoverText.ShowSameLine(" (?)       ", "This is used with the Intiface Central to send Vibrations to devices.\nIf you are not connected to it, you cannot receive vibrations.");
+        //HoverText.ShowSameLine(" (?)       ", "This is used with the Intiface Central to send Vibrations to devices.\nIf you are not connected to it, you cannot receive vibrations.");
         switch (Plugin.ClientIntiface.Status)
         {
             case ConnectionStatusIntiface.NotStarted:
@@ -152,8 +156,8 @@ public class MainWindow : Window, IDisposable
         ImGui.SameLine();
 
         ImGui.BeginGroup();
-        ImGui.Text("OpenShock API");
-        HoverText.ShowHint("This is the Server that Shocks get sent to if you are using a OpenShock Account.\nIf you are not connected to it, you cannot receive shocks.");
+        ImGui.Text("OpenShock API                     ");
+        //HoverText.ShowHint("This is the Server that Shocks get sent to if you are using a OpenShock Account.\nIf you are not connected to it, you cannot receive shocks.");
 
         switch (Plugin.ClientOpenShock.Status)
         {
@@ -177,13 +181,13 @@ public class MainWindow : Window, IDisposable
                 ImGui.TextColored(ColorGreen, $"Connected!"); break;
         }
 
-        if (ImGui.Button("Open Remote##RemoteButton"))
+        if (ImGui.Button("Manual Remote##RemoteButton"))
         {
             Plugin.ShockRemoteWindow.Toggle();
         }
         if (ImGui.IsItemHovered())
         {
-            ImGui.SetTooltip("Open Shocker Remote");
+            ImGui.SetTooltip("Open Device Remote Window");
         }
 
         ImGui.EndGroup();
