@@ -53,19 +53,16 @@ namespace WoLightning.WoL_Plugin.Windows
             ImGui.TextColored(new Vector4(255, 0, 0, 255), "You should not be touching these settings, if you don't know what you are doing.");
 
 
-            ImGui.Text("Next Request in: " + clientTimer.TimeLeftSeconds +"s");
-            ImGui.Text("Failed attempts: " + failedAttempts);
-
-            if(successful != null) ImGui.Text("SUCCESS AT: " + successful.Value.ToShortTimeString());
-
-            if(ImGui.Button("Start Pishock Test"))
+            if (Plugin == null) return;
+            if (Plugin.Authentification == null) return;
+            if (Plugin.Authentification.PishockShockers == null) return;
+            ImGui.Text(Plugin.Authentification.PishockShockers.Count + "");
+            foreach (var shocker in Plugin.Authentification.PishockShockers)
             {
-                clientTimer.Interval = 300000;
-                clientTimer.AutoReset = true;
-                clientTimer.Elapsed += RunCode;
-                clientTimer.Start();
-                RunCode(null, null);
+                ImGui.Text(shocker.name);
             }
+
+
 
         }
 

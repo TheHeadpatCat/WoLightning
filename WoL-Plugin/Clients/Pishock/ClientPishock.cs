@@ -324,7 +324,10 @@ namespace WoLightning.Clients.Pishock
                     Logger.Log(4, message);
                     if (message == null || message.Length <= 5) return;
                     string[] parts = message.Split("],");
-                    if (parts.Length < 2) return;
+                    if (parts.Length < 2)
+                    {
+                        parts[0] = message;
+                    }
                     foreach (string part in parts)
                     {
                         string Tpart = part;
@@ -345,6 +348,7 @@ namespace WoLightning.Clients.Pishock
                 catch (Exception ex)
                 {
                     Logger.Error(ex.Message);
+                    Logger.Error(ex.ToString());
                     return;
                 }
             }
@@ -372,7 +376,7 @@ namespace WoLightning.Clients.Pishock
                 {
                     string message = reader.ReadToEnd();
                     if (message == null || message.Length == 0) return;
-                    //Logger.Log(message);
+                    Logger.Log(4,message);
 
                     string[] parts = message.Split("],");
                     foreach (string part in parts)
