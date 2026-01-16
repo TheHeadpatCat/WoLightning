@@ -58,11 +58,6 @@ namespace WoLightning.Clients.Pishock
 
         public async void Setup()
         {
-            if (Client != null)
-            {
-                Logger.Log(2, "Tried to re-setup Pishock Client, but we are already setup...?");
-                return;
-            }
 
             if (Plugin == null || Plugin.Authentification == null)
             {
@@ -76,6 +71,19 @@ namespace WoLightning.Clients.Pishock
                 Logger.Log(2, "Tried to create Pishock Client, but Data doesnt make sense. Aborting.");
                 Status = ConnectionStatusPishock.InvalidUserdata;
                 return;
+            }
+
+            if (Client != null)
+            {
+                Logger.Log(2, "Client is already set-up, but setup was requested. Disposing current client...");
+                Client.Received -= OnReceived;
+                Client.FailedToConnect -= OnFailedToConnect;
+                Client.Connected -= OnConnected;
+                Client.Dispose();
+                Client = null;
+                Status = ConnectionStatusPishock.NotStarted;
+
+                Plugin.Authentification.PishockShockers?.Clear();
             }
 
             username = Plugin.Authentification.PishockName;
