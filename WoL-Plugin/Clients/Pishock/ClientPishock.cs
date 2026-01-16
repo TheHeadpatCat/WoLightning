@@ -128,7 +128,7 @@ namespace WoLightning.Clients.Pishock
                 if (obj.Contains("Redis"))
                 {
                     Status = ConnectionStatusPishock.KeyNotValidated;
-                    Logger.Log(3, "API Key has not been validated to Redis. You can do this by logging out of login.pishock.com and logging back in.");
+                    Logger.Log(3, "API Key has not been validated to Redis. You can do this by logging out of login.pishock.com (NOT pishock.com) and logging back in.");
                     return;
                 }
 
