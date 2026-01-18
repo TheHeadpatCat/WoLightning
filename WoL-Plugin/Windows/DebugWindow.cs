@@ -54,13 +54,9 @@ namespace WoLightning.WoL_Plugin.Windows
 
 
             if (Plugin == null) return;
-            if (Plugin.Authentification == null) return;
-            if (Plugin.Authentification.PishockShockers == null) return;
-            ImGui.Text(Plugin.Authentification.PishockShockers.Count + "");
-            foreach (var shocker in Plugin.Authentification.PishockShockers)
-            {
-                ImGui.Text(shocker.name);
-            }
+
+
+            ImGui.Text("timer : " + Plugin.Configuration.ActivePreset.ForgetPartnerBuff.RepeatTimer.Enabled);
 
 
 

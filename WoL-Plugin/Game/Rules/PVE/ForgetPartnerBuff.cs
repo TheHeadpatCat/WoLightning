@@ -25,7 +25,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
         public override bool hasExtraButton { get; } = true;
 
         public bool IsRepeating { get; set; } = false;
-        [JsonIgnore] TimerPlus RepeatTimer = new();
+        [JsonIgnore] public TimerPlus RepeatTimer = new();
 
         [JsonIgnore] IPlayerCharacter Player;
         public ForgetPartnerBuff() { }
@@ -39,7 +39,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
             IsRunning = true;
             Service.Condition.ConditionChange += OnConditionChange;
 
-            RepeatTimer.Interval = ShockOptions.getDurationOpenShock() + 5000;
+            RepeatTimer.Interval = ShockOptions.getDurationOpenShock() + 4000;
             RepeatTimer.AutoReset = false;
             RepeatTimer.Elapsed += OnRepeatTimerElapsed;
         }
@@ -64,10 +64,11 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 
         public void Check()
         {
-            Player = Service.ObjectTable.LocalPlayer;
-            if(Player == null) return;
+            if (Player == null) Player = Service.ObjectTable.LocalPlayer;
 
             if (!Service.Condition.Any(ConditionFlag.BoundByDuty, ConditionFlag.BoundByDuty56, ConditionFlag.BoundByDuty95)) return; // we arent actually in any content right now
+
+            if (!Service.Condition.Any(ConditionFlag.InCombat)) return;
 
             uint JobId = Player.ClassJob.RowId;
             Logger.Log(4,"JobId: " + JobId);
