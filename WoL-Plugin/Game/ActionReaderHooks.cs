@@ -45,7 +45,7 @@ namespace WoLightning.WoL_Plugin.Game
         {
             try
             {
-                if (casterEntityId != Service.ObjectTable.LocalPlayer.EntityId)
+                if (Service.ObjectTable.LocalPlayer == null || casterEntityId != Service.ObjectTable.LocalPlayer.EntityId)
                 {
                     hookReceive.Original(casterEntityId, casterPtr, targetPos, header, effects, targetEntityIds);
                     return;
@@ -54,7 +54,7 @@ namespace WoLightning.WoL_Plugin.Game
                 uint actionId = header->ActionId;
                 var ac = Plugin.GameActions.getAction(actionId);
 
-                if (actionId == 7) // Auto Attack
+                if (actionId == 7 || actionId == 8) // Auto Attack
                 { 
                     hookReceive.Original(casterEntityId, casterPtr, targetPos, header, effects, targetEntityIds);
                     return;
