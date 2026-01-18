@@ -1,4 +1,5 @@
-﻿using Dalamud.Game.ClientState.Conditions;
+﻿using Dalamud.Bindings.ImGui;
+using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Statuses;
 using FFXIVClientStructs.FFXIV.Client.Game;
@@ -8,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
+using System.Timers;
+using WoLightning.Util;
 using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.PVE
@@ -18,8 +21,11 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 
         public override string Description { get; } = "Triggers when you enter combat, without assigning your Partner Buff to someone.";
         public override string Hint { get; } = "The currently supported Buffs are Dance Partner from Dancer and Kardia from Sage.\nYou also need to be in a party with another player and in a Duty.";
-
         public override RuleCategory Category { get; } = RuleCategory.PVE;
+        public override bool hasExtraButton { get; } = true;
+
+        public bool IsRepeating { get; set; } = false;
+        [JsonIgnore] TimerPlus RepeatTimer = new();
 
         [JsonIgnore] IPlayerCharacter Player;
         public ForgetPartnerBuff() { }
@@ -32,6 +38,9 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
             if (IsRunning) return;
             IsRunning = true;
             Service.Condition.ConditionChange += OnConditionChange;
+            RepeatTimer.Interval = ShockOptions.getDurationOpenShock() + 5000;
+            RepeatTimer.AutoReset = false;
+            RepeatTimer.Elapsed += OnRepeatTimerElapsed;
         }
 
         override public void Stop()
@@ -39,11 +48,16 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
             if (!IsRunning) return;
             IsRunning = false;
             Service.Condition.ConditionChange -= OnConditionChange;
+            if (RepeatTimer == null) return;
+            RepeatTimer.Elapsed -= OnRepeatTimerElapsed;
+            RepeatTimer.Stop();
+            RepeatTimer.Dispose();
         }
 
         private void OnConditionChange(ConditionFlag flag, bool value)
         {
-            if (flag != ConditionFlag.InCombat || value == false) return;
+            if (flag != ConditionFlag.InCombat) return;
+            if (value == false) RepeatTimer.Stop();
             if (Service.PartyList.Count < 2) return;
             Check();
         }
@@ -67,8 +81,11 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 {
                     if (status.StatusId == 2604) { found = true; break; }
                 }
-                if (!found) Trigger("You forgot Kardia!");
-                return;
+                if (!found) { 
+                    Trigger("You forgot Kardia!"); 
+                    if(IsRepeating) RepeatTimer.Start(); 
+                    return; 
+                }
             }
 
             if(JobId == 38) // Dancer
@@ -79,10 +96,28 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 {
                     if (status.StatusId == 1823) { found = true; break; } // Closed Position
                 }
-                if (!found) Trigger("You forgot Dance Partner!");
+                if (!found) { 
+                    Trigger("You forgot Dance Partner!");
+                    if (IsRepeating) RepeatTimer.Start(); 
+                    return; 
+                }
                 return;
             }
         }
 
+        private void OnRepeatTimerElapsed(object? sender, ElapsedEventArgs e)
+        {
+            Check();
+        }
+
+        public override void DrawExtraButton()
+        {
+            bool repeat = IsRepeating;
+            if (ImGui.Checkbox("Keep Triggering until applied?##repeatPartnerBuff", ref repeat))
+            {
+                IsRepeating = repeat;
+                Plugin.Configuration.SaveCurrentPresetScheduled();
+            }
+        }
     }
 }

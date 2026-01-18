@@ -219,13 +219,13 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
             ImGui.Separator();
             int grace = GraceTime;
             ImGui.SetNextItemWidth(250);
-            if(ImGui.SliderInt("Grace period (s)",ref grace,2,30))
+            if(ImGui.SliderInt("Grace period (s)##graceForgetDot",ref grace,2,30))
             {
                 GraceTime = grace;
                 Plugin.Configuration.SaveCurrentPresetScheduled();
             }
             bool repeat = IsRepeating;
-            if (ImGui.Checkbox("Keep Triggering until reapplied?", ref repeat))
+            if (ImGui.Checkbox("Keep Triggering until reapplied?##repeatForgetDot", ref repeat))
             {
                 IsRepeating = repeat;
                 Plugin.Configuration.SaveCurrentPresetScheduled();
