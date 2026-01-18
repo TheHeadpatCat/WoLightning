@@ -38,6 +38,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
             if (IsRunning) return;
             IsRunning = true;
             Service.Condition.ConditionChange += OnConditionChange;
+
             RepeatTimer.Interval = ShockOptions.getDurationOpenShock() + 5000;
             RepeatTimer.AutoReset = false;
             RepeatTimer.Elapsed += OnRepeatTimerElapsed;
@@ -48,10 +49,9 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
             if (!IsRunning) return;
             IsRunning = false;
             Service.Condition.ConditionChange -= OnConditionChange;
-            if (RepeatTimer == null) return;
+
             RepeatTimer.Elapsed -= OnRepeatTimerElapsed;
             RepeatTimer.Stop();
-            RepeatTimer.Dispose();
         }
 
         private void OnConditionChange(ConditionFlag flag, bool value)
