@@ -59,6 +59,7 @@ namespace WoLightning.Util.Types
         public ForgetTankstance ForgetTankstance { get; set; } = new();
         public ForgetPartnerBuff ForgetPartnerBuff { get; set; } = new();
         public ForgetDot ForgetDot { get; set; } = new();
+        public FailDash FailDast {  get; set; } = new();
         //public UseSkill UseSkill { get; set; }
         public ForgetSync ForgetSync { get; set; } = new();
 

@@ -45,6 +45,8 @@ namespace WoLightning.WoL_Plugin.Game
         {
             try
             {
+                if (casterEntityId != Service.ObjectTable.LocalPlayer.EntityId) return;
+
                 uint actionId = header->ActionId;
                 var ac = Plugin.GameActions.getAction(actionId);
 

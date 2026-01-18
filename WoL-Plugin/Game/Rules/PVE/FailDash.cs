@@ -1,4 +1,5 @@
 ﻿using Dalamud.Game.ClientState.Objects.SubKinds;
+using Dalamud.Plugin.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -6,6 +7,7 @@ using System.Text.Json.Serialization;
 using System.Timers;
 using WoLightning.Util;
 using WoLightning.Util.Types;
+using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 {
@@ -17,7 +19,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
         public override RuleCategory Category { get; } = RuleCategory.PVE;
 
         [JsonIgnore] IPlayerCharacter Player;
-        [JsonIgnore] TimerPlus Timer = new();
+        [JsonIgnore] double MonitoringMs = 0;
 
         public FailDash() { }
         public FailDash(Plugin plugin) : base(plugin){ }
@@ -26,37 +28,53 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
         {
             if (IsRunning) return;
             IsRunning = true;
-            Plugin.ActionReaderHooks.ActionUsed += Check;
+            Plugin.ActionReaderHooks.ActionUsed += CheckActionUsed;
             Player = Service.ObjectTable.LocalPlayer;
-            Timer.Interval = 3000;
-            Timer.AutoReset = false;
-            Timer.Elapsed += OnTimerElapsed;
         }
 
         override public void Stop()
         {
             if (!IsRunning) return;
             IsRunning = false;
-            Plugin.ActionReaderHooks.ActionUsed -= Check;
-            Timer.Stop();
-            Timer.Elapsed -= OnTimerElapsed;
+            Plugin.ActionReaderHooks.ActionUsed -= CheckActionUsed;
+            Service.Framework.Update -= MonitorDeath;
         }
 
-        private void Check(Lumina.Excel.Sheets.Action action)
+        private void CheckActionUsed(Lumina.Excel.Sheets.Action action)
         {
             if(Player == null) { 
                 Player = Service.ObjectTable.LocalPlayer; 
                 if(Player == null) return; 
             }
 
-            if (IsDash(action.RowId)) Timer.Start();
+            if (IsDash(action.RowId))
+            {
+                Logger.Log(4, "Dash found, monitoring...");
+                MonitoringMs = 3000;
+                Service.Framework.Update += MonitorDeath;
+            }
 
         }
 
-        private void OnTimerElapsed(object? sender, ElapsedEventArgs e)
+        private void MonitorDeath(IFramework framework)
         {
-            if (Player.IsDead) //Player died and Shock has not been triggered yet
+            if (Player == null)
             {
+                Player = Service.ObjectTable.LocalPlayer;
+                if (Player == null) return;
+            }
+
+            if (MonitoringMs <= 0)
+            {
+                Service.Framework.Update -= MonitorDeath;
+                Logger.Log(4, "Dash Monitoring completed.");
+                return;
+            }
+            MonitoringMs -= framework.UpdateDelta.TotalMilliseconds;
+
+            if (Player.IsDead)
+            {
+                MonitoringMs = 0;
                 Trigger("You failed a Dash!");
             }
         }
