@@ -49,7 +49,11 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 
             if (IsDash(action.RowId))
             {
-                if (MonitoringMs > 0) return;
+                if (MonitoringMs > 0) {
+                    Logger.Log(4, "Dash found while already monitoring, extending monitor back to 3s...");
+                    MonitoringMs = 3000; 
+                    return; 
+                }
                 Logger.Log(4, "Dash found, monitoring...");
                 MonitoringMs = 3000;
                 Service.Framework.Update += MonitorDeath;
