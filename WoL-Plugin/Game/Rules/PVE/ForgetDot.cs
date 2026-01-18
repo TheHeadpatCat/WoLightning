@@ -99,6 +99,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
             }
             UpdateDelta = UpdateInterval;
 
+            if (Player.IsDead) return;
+
             if (IsUntargetable)
             {
                 if (LastTarget == null) return;
@@ -137,8 +139,10 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
         {
             Logger.Log(4, "Dot Ran out, validating...");
             if (LastTarget == null) return;
+            if (Player.IsDead) return;
             if (!LastTarget.IsValid()) { LastTarget = null; return; }
             if (!LastTarget.IsTargetable) { IsUntargetable = true; Logger.Log(4, "Boss is Untargetable, waiting..."); return; }
+
 
             IStatus? dot = FindDot(LastTarget);
             if (dot != null)
@@ -159,8 +163,10 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
         {
             Logger.Log(4, "Grace ran out, validating...");
             if (LastTarget == null) return;
+            if (Player.IsDead) return;
             if (!LastTarget.IsValid()) { LastTarget = null; return; }
             if (!LastTarget.IsTargetable) { IsUntargetable = true; Logger.Log(4, "Boss is Untargetable, resetting..."); return; }
+
 
             IStatus? dot = FindDot(LastTarget);
             if (dot != null)
