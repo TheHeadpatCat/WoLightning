@@ -26,6 +26,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
         public override bool hasExtraButton { get; } = true;
 
         public int GraceTime { get; set; } = 5;
+        public bool IsRepeating { get; set; } = false;
 
         [JsonIgnore] bool InCombat = false;
         [JsonIgnore] IPlayerCharacter? Player;
@@ -117,14 +118,15 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 
             if (Player.TargetObject is IBattleNpc)
             {
-                Logger.Log(4, $"{Player.TargetObject.Name} is Battle NPC");
+                //Logger.Log(4, $"{Player.TargetObject.Name} is Battle NPC");
                 IBattleNpc npc = (IBattleNpc)Player.TargetObject;
 
                 IStatus? dot = FindDot(npc);
                 if (dot != null)
                 {
                     LastTarget = npc;
-                    DotTimer.Interval = dot.RemainingTime * 1000;
+                    Logger.Log(4, $"{Player.TargetObject.Name} is Dot Target.");
+                    DotTimer.Interval = dot.RemainingTime * 1000 + 300;
                     DotTimer.Start();
                     Logger.Log(4, $"Starting Timer for {dot.GameData.Value.Name} with {dot.RemainingTime}s");
                 }
@@ -142,14 +144,14 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
             if (dot != null)
             {
                 Logger.Log(4, $"Dot was reapplied in time.");
-                DotTimer.Interval = dot.RemainingTime * 1000;
+                DotTimer.Interval = dot.RemainingTime * 1000 + 300;
                 DotTimer.Start();
                 Logger.Log(4, $"Starting Timer for {dot.GameData.Value.Name} with {dot.RemainingTime}s");
                 return;
             }
 
             Logger.Log(4, "Validated, starting grace...");
-            GraceTimer.Interval = GraceTime * 1000;
+            GraceTimer.Interval = GraceTime * 1000 + 300;
             GraceTimer.Start();
         }
 
@@ -160,8 +162,23 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
             if (!LastTarget.IsValid()) { LastTarget = null; return; }
             if (!LastTarget.IsTargetable) { IsUntargetable = true; Logger.Log(4, "Boss is Untargetable, resetting..."); return; }
 
+            IStatus? dot = FindDot(LastTarget);
+            if (dot != null)
+            {
+                Logger.Log(4, $"Dot was reapplied in time.");
+                DotTimer.Interval = dot.RemainingTime * 1000 + 300;
+                DotTimer.Start();
+                Logger.Log(4, $"Starting Timer for {dot.GameData.Value.Name} with {dot.RemainingTime}s");
+                return;
+            }
+
             Logger.Log(4, "Validated, sending request!");
             Trigger("You forgot your Dot!");
+            if (IsRepeating)
+            {
+                DotTimer.Interval = ShockOptions.getDurationOpenShock() + 1500;
+                DotTimer.Start();
+            }
         }
 
         private IStatus? FindDot(IBattleChara npc)
@@ -199,6 +216,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 
         public override void DrawExtraButton()
         {
+            ImGui.Separator();
             int grace = GraceTime;
             ImGui.SetNextItemWidth(250);
             if(ImGui.SliderInt("Grace period (s)",ref grace,2,30))
@@ -206,6 +224,13 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 GraceTime = grace;
                 Plugin.Configuration.SaveCurrentPresetScheduled();
             }
+            bool repeat = IsRepeating;
+            if (ImGui.Checkbox("Keep Triggering until reapplied?", ref repeat))
+            {
+                IsRepeating = repeat;
+                Plugin.Configuration.SaveCurrentPresetScheduled();
+            }
+            ImGui.Separator();
         }
     }
 }
