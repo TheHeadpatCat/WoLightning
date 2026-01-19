@@ -4,6 +4,7 @@ using WoLightning.Configurations;
 
 namespace WoLightning.WoL_Plugin.Util
 {
+    // Todo: Heavy Cleanup
     public static class Logger
     {
 

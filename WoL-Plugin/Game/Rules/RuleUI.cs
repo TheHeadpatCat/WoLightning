@@ -76,7 +76,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             {
                 if (Rule.IsEnabled && !Rule.hasOptions) ImGui.TextColored(UIValues.ColorNameEnabled, "  " + Rule.Name);
                 else if (Rule.IsEnabled && Rule.ShockOptions.getShockerCount() > 0) ImGui.TextColored(UIValues.ColorNameEnabled, "  " + Rule.Name + $"  [{Rule.ShockOptions.OpMode}]");
-                else if (Rule.IsEnabled) ImGui.TextColored(UIValues.ColorNameDisabled, "  " + Rule.Name + " [No Shockers]");
+                else if (Rule.IsEnabled) ImGui.TextColored(UIValues.ColorNameDisabled, "  " + Rule.Name + " [No Devices Assigned]");
                 else ImGui.TextColored(UIValues.ColorNameDisabled, "  " + Rule.Name);
                 if (Rule.CreatorName != null)
                 {

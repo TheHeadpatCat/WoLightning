@@ -107,7 +107,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             ShockOptions.startCooldown();
             if (Plugin.Configuration.ActivePreset.showCooldownNotifs && ShockOptions.Cooldown > 0)
             {
-                Plugin.NotificationHandler.send($"{Name} Cooldown", null, Dalamud.Interface.ImGuiNotification.NotificationType.Info, new TimeSpan(0, 0, ShockOptions.cooldownLeft() + 1));
+                Plugin.NotificationHandler.send($"{Name} Cooldown", null, Dalamud.Interface.ImGuiNotification.NotificationType.Info, new TimeSpan(0, 0, (int)ShockOptions.cooldownLeft() + 1));
             }
         }
 

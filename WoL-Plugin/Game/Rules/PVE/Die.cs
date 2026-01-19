@@ -28,7 +28,6 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
             IsRunning = true;
             Service.Framework.Update += Check;
             Player = Service.ObjectTable.LocalPlayer;
-
         }
 
         override public void Stop()

@@ -104,7 +104,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     ImGui.EndListBox();
                 }
 
-                if (ImGui.Button("Apply##DoEmoteToApply", new Vector2(ImGui.GetWindowSize().X / 2 - 10, 25)))
+                if (ImGui.Button("Apply##DoEmoteToApply", new Vector2(ImGui.GetWindowSize().X / 2 - 10, 0)))
                 {
                     isEmoteSelectorOpen = false;
                     Plugin.Configuration.Save();
@@ -112,7 +112,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                 }
                 ImGui.SameLine();
                 ImGui.PushItemWidth(ImGui.GetWindowSize().X / 2);
-                if (ImGui.Button("Reset All##DoEmoteToReset", new Vector2(ImGui.GetWindowSize().X / 2 - 10, 25)))
+                if (ImGui.Button("Reset All##DoEmoteToReset", new Vector2(ImGui.GetWindowSize().X / 2 - 10, 0)))
                 {
                     TriggeringEmotes.Clear();
                 }

@@ -27,7 +27,7 @@ namespace WoLightning.Util
         }
 
         public double TimeLeft => (m_dueTime - DateTime.Now).TotalMilliseconds;
-        public int TimeLeftSeconds => (m_dueTime - DateTime.Now).Seconds;
+        public double TimeLeftSeconds => (m_dueTime - DateTime.Now).TotalSeconds;
 
         public new void Start()
         {

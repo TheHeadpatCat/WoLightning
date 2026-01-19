@@ -49,7 +49,6 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
         {
             try
             {
-
                 //Logger.Log(3, flag.ToString());
                 if (flag == ConditionFlag.Mounted) isMounted = value;
                 else if (flag == ConditionFlag.RidingPillion) isMountedPillion = value;

@@ -24,6 +24,7 @@ namespace WoLightning.Clients.Pishock
             InvalidUserdata = 2,
             FatalError = 3,
             ExceededAttempts = 4,
+            KeyNotValidated = 5,
 
             Connecting = 99,
             ConnectedNoInfo = 100,
@@ -33,15 +34,11 @@ namespace WoLightning.Clients.Pishock
         private readonly Plugin? Plugin;
         public ConnectionStatusPishock Status { get; set; } = ConnectionStatusPishock.NotStarted;
         public string UserID { get; set; } = "";
-        private WebSocketConnector? Client;
+        private WebSocketClient? Client;
         readonly HttpClient HttpClient;
-
-        private readonly TimerPlus ResetConnectionAttempts = new();
 
         private string username;
         private string apikey;
-
-        private int ConnectionAttempts = 0;
 
         public ClientPishock(Plugin plugin)
         {
@@ -50,81 +47,73 @@ namespace WoLightning.Clients.Pishock
         }
         public void Dispose()
         {
-            if (Client != null)
-            {
-                Client.Dispose();
-                Client = null;
-            }
-            ResetConnectionAttempts.Elapsed -= OnResetAttempts;
-            ResetConnectionAttempts.Dispose();
+            if (Client == null) return;
+            Client.Received -= OnReceived;
+            Client.FailedToConnect -= OnFailedToConnect;
+            Client.Connected -= OnConnected;
+
+            Client?.Dispose();
+            Client = null;
         }
 
         public async void Setup()
         {
-            if (Client != null)
+
+            if (Plugin == null || Plugin.Authentification == null)
             {
-                Client.Dispose();
-                Client = null;
+                Logger.Log(2, "Tried to create Pishock Client, while Plugin or Authentification isnt loaded. Aborting.");
+                Status = ConnectionStatusPishock.InvalidUserdata;
+                return;
             }
 
-            ResetConnectionAttempts.Interval = 10000;
-            ResetConnectionAttempts.Elapsed += OnResetAttempts;
-            ResetConnectionAttempts.AutoReset = false;
-            ResetConnectionAttempts.Start();
+            if (Plugin.Authentification.PishockName.Length < 3 || Plugin.Authentification.PishockApiKey.Length < 16)
+            {
+                Logger.Log(2, "Tried to create Pishock Client, but Data doesnt make sense. Aborting.");
+                Status = ConnectionStatusPishock.InvalidUserdata;
+                return;
+            }
 
-            await CreateSocket();
+            if (Client != null)
+            {
+                Logger.Log(2, "Client is already set-up, but setup was requested. Disposing current client...");
+                Client.Received -= OnReceived;
+                Client.FailedToConnect -= OnFailedToConnect;
+                Client.Connected -= OnConnected;
+                Client.Dispose();
+                Client = null;
+                Status = ConnectionStatusPishock.NotStarted;
+
+                Plugin.Authentification.PishockShockers?.Clear();
+            }
+
+            username = Plugin.Authentification.PishockName;
+            apikey = Plugin.Authentification.PishockApiKey;
+
             await SetupAllData();
+
+            Client = new($"wss://broker.pishock.com/v2?Username={username}&ApiKey={apikey}");
+            Client.Received += OnReceived;
+            Client.FailedToConnect += OnFailedToConnect;
+            Client.Connected += OnConnected;
+
+            await ConnectWebsocket();
         }
 
-        private void OnResetAttempts(object? sender, ElapsedEventArgs e)
-        {
-            ConnectionAttempts = 0;
-        }
-
-        public async Task CreateSocket()
+        public async Task ConnectWebsocket()
         {
             try
             {
-                if (Client != null || Plugin == null || Plugin.Authentification == null) return;
-
-                if (Plugin.Authentification.PishockName.Length < 3 || Plugin.Authentification.PishockApiKey.Length < 16) return;
-
-                ResetConnectionAttempts.Refresh();
-                ConnectionAttempts++;
-                if (ConnectionAttempts >= 7)
-                {
-                    Status = ConnectionStatusPishock.ExceededAttempts;
-                    Plugin.NotificationHandler.send("Failed to connect to the Pishock API after several attempts.\nPlease restart the Plugin.", "FATAL ERROR", Dalamud.Interface.ImGuiNotification.NotificationType.Error, new TimeSpan(0, 0, 30));
-                    Service.ChatGui.PrintError("[WoLightning] Failed to connect to the Pishock API after several attempts.\nIf you are using VPN or similiar, please disable it and restart the Plugin.");
-                    Logger.Error("Failed to Connect to the Pishock API after 7 attempts. Stopping creation.");
-                    ResetConnectionAttempts.Stop();
-                    return;
-                }
-
-                Logger.Log(3, "Creating new Websocket for Pishock API - Attempt " + ConnectionAttempts + "/7");
+                if (Status == ConnectionStatusPishock.Connecting || Status == ConnectionStatusPishock.InvalidUserdata) return;
 
                 Status = ConnectionStatusPishock.Connecting;
 
-                username = Plugin.Authentification.PishockName;
-                apikey = Plugin.Authentification.PishockApiKey;
-
-                if (Client != null)
+                if (Client == null)
                 {
-                    Client.Dispose();
-                    Client = null;
+                    Setup();
+                    return;
                 }
 
-
-                Client = new(Plugin, $"wss://broker.pishock.com/v2?Username={username}&ApiKey={apikey}");
-                Client.Received += Received;
-                Task.Run(() =>
-                {
-                    Task.Delay(7000).Wait();
-                    if (Client != null && Client.getState() == System.Net.WebSockets.WebSocketState.Open)
-                    {
-                        Status = ConnectionStatusPishock.Connected;
-                    }
-                });
+                await Client.Setup();
             }
             catch (Exception e)
             {
@@ -133,23 +122,52 @@ namespace WoLightning.Clients.Pishock
             }
         }
 
-        private void Received(string obj)
+        private async void OnConnected()
+        {
+            if (Client == null) return;
+
+            await Client.Send(CommandPublish.Ping());
+        }
+
+        private void OnReceived(string obj)
         {
             if (obj.Contains("CONNECTION_ERROR"))
             {
+                if (obj.Contains("Redis"))
+                {
+                    Status = ConnectionStatusPishock.KeyNotValidated;
+                    Logger.Log(3, "API Key has not been validated to Redis. You can do this by logging out of login.pishock.com (NOT pishock.com) and logging back in.");
+                    return;
+                }
+
                 Status = ConnectionStatusPishock.FatalError;
                 Logger.Log(3, "Fatal Error while connecting to Pishock API");
                 Logger.Log(3, obj);
-                Client.Dispose();
-                Client = null;
-                CreateSocket();
+                //ConnectWebsocket();
+            }
+
+            if (obj.Contains("PONG"))
+            {
+                if (Client.getState() == System.Net.WebSockets.WebSocketState.Open)
+                {
+                    Status = ConnectionStatusPishock.Connected;
+                    Logger.Log(2, "Successfully connected to Pishock Websocket!");
+                }
             }
         }
 
-        public async Task SetupAllData()
+        private void OnFailedToConnect()
         {
-            if (Client == null || Plugin == null || Plugin.Authentification == null) return;
-            if (Status != ConnectionStatusPishock.Connecting) return; // We are already setup. Dont run everything again.
+            Status = ConnectionStatusPishock.ExceededAttempts;
+            Plugin.NotificationHandler.send("Failed to connect to the Pishock API after several attempts.\nPlease restart the Plugin.", "FATAL ERROR", Dalamud.Interface.ImGuiNotification.NotificationType.Error, new TimeSpan(0, 0, 30));
+            Service.ChatGui.PrintError("[WoLightning] Failed to connect to the Pishock API after several attempts.\nIf you are using VPN or similiar, please disable it and restart the Plugin.");
+            Logger.Error("Failed to Connect to the Pishock API after 7 attempts. Stopping creation.");
+        }
+
+        private async Task SetupAllData()
+        {
+            if (Plugin == null || Plugin.Authentification == null) return;
+            //if (Status != ConnectionStatusPishock.Connecting) return; // We are already setup. Dont run everything again.
             await RequestAccountInformation();
             if (Status != ConnectionStatusPishock.ConnectedNoInfo) return;
 
@@ -207,6 +225,12 @@ namespace WoLightning.Clients.Pishock
                             break;
                         }
                     }
+                }
+                if(UserID == null || UserID.Length == 0)
+                {
+                    Status = ConnectionStatusPishock.InvalidUserdata;
+                    Logger.Log(2, "[PI] Userdata was incorrect. Couldn't fetch UserId");
+                    return;
                 }
             }
             catch (Exception ex)
@@ -308,7 +332,10 @@ namespace WoLightning.Clients.Pishock
                     Logger.Log(4, message);
                     if (message == null || message.Length <= 5) return;
                     string[] parts = message.Split("],");
-                    if (parts.Length < 2) return;
+                    if (parts.Length < 2)
+                    {
+                        parts[0] = message;
+                    }
                     foreach (string part in parts)
                     {
                         string Tpart = part;
@@ -329,6 +356,7 @@ namespace WoLightning.Clients.Pishock
                 catch (Exception ex)
                 {
                     Logger.Error(ex.Message);
+                    Logger.Error(ex.ToString());
                     return;
                 }
             }
@@ -356,7 +384,7 @@ namespace WoLightning.Clients.Pishock
                 {
                     string message = reader.ReadToEnd();
                     if (message == null || message.Length == 0) return;
-                    //Logger.Log(message);
+                    Logger.Log(4,message);
 
                     string[] parts = message.Split("],");
                     foreach (string part in parts)
@@ -390,7 +418,11 @@ namespace WoLightning.Clients.Pishock
             }
         }
 
-        public async void SendRequest(DeviceOptions Options)
+        /// <summary>
+        /// Sends our a Request with the given parameters.
+        /// </summary>
+        /// <param name="Options">The Options to use.</param>
+        public async void SendRequest(ShockOptions Options)
         {
 
             #region Validation
@@ -424,16 +456,13 @@ namespace WoLightning.Clients.Pishock
             if (Client == null || Status != ConnectionStatusPishock.Connected)
             {
                 if (Status == ConnectionStatusPishock.Connecting) return;
-                if (ConnectionAttempts >= 7) return;
-                Client?.Dispose();
-                Client = null;
-                await CreateSocket();
+                await ConnectWebsocket();
                 return;
             }
 
             if (Options.WarningMode != WarningMode.None)
             {
-                DeviceOptions warningOptions = new DeviceOptions(Options);
+                ShockOptions warningOptions = new ShockOptions(Options);
                 warningOptions.OpMode = OpMode.Vibrate;
                 warningOptions.Intensity = 55;
                 warningOptions.Duration = 1;

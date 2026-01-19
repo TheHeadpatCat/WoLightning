@@ -6,10 +6,10 @@ namespace WoLightning.WoL_Plugin.Util
     {
 
         public static readonly string HQSymbol = "";
+        public static readonly ClientLanguage Language = (ClientLanguage)Service.GameConfig.System.GetUInt("Language");
 
         public static string FailCraftTrigger()
         {
-            ClientLanguage Language = (ClientLanguage)Service.GameConfig.System.GetUInt("Language");
 
             string output = "Unknown";
             switch (Language)
@@ -32,7 +32,6 @@ namespace WoLightning.WoL_Plugin.Util
 
         public static string FailCraftHQTrigger() // Todo: implement
         {
-            ClientLanguage Language = (ClientLanguage)Service.GameConfig.System.GetUInt("Language");
 
             string output = "Unknown";
             switch (Language)
@@ -55,7 +54,6 @@ namespace WoLightning.WoL_Plugin.Util
 
         public static string FishEscapedTrigger()
         {
-            ClientLanguage Language = (ClientLanguage)Service.GameConfig.System.GetUInt("Language");
 
             string output = "Unknown";
             switch (Language)
@@ -78,7 +76,6 @@ namespace WoLightning.WoL_Plugin.Util
 
         public static string DeathrollTrigger()
         {
-            ClientLanguage Language = (ClientLanguage)Service.GameConfig.System.GetUInt("Language");
 
             string output = "Unknown";
             switch (Language)
@@ -101,7 +98,6 @@ namespace WoLightning.WoL_Plugin.Util
 
         public static string MateriaMeldFailedTrigger()
         {
-            ClientLanguage Language = (ClientLanguage)Service.GameConfig.System.GetUInt("Language");
 
             string output = "Unknown";
             switch (Language)
@@ -124,7 +120,6 @@ namespace WoLightning.WoL_Plugin.Util
 
         public static string FateLevelNotSynchedTrigger()
         {
-            ClientLanguage Language = (ClientLanguage)Service.GameConfig.System.GetUInt("Language");
 
             string output = "Unknown";
             switch (Language)
@@ -144,6 +139,120 @@ namespace WoLightning.WoL_Plugin.Util
             }
             return output;
         }
+
+
+        #region Duty Types
+
+        public static string DutyTypeBallad()
+        {
+            string output = "Unknown";
+            switch (Language)
+            {
+                case ClientLanguage.English:
+                    output = "the Minstrel's Ballad: ";
+                    break;
+                case ClientLanguage.French:
+                    output = "(extrême)";
+                    break;
+                case ClientLanguage.German:
+                    output = "un, no";
+                    break;
+                case ClientLanguage.Japanese:
+                    output = "uh, no";
+                    break;
+            }
+            return output;
+        }
+        public static string DutyTypeExtreme()
+        {
+            string output = "Unknown";
+            switch (Language)
+            {
+                case ClientLanguage.English:
+                    output = "(Extreme)";
+                    break;
+                case ClientLanguage.French:
+                    output = "(extrême)";
+                    break;
+                case ClientLanguage.German:
+                    output = "uh, no";
+                    break;
+                case ClientLanguage.Japanese:
+                    output = "uh, no";
+                    break;
+            }
+            return output;
+        }
+
+        public static string DutyTypeSavage()
+        {
+
+            string output = "Unknown";
+            switch (Language)
+            {
+                case ClientLanguage.English:
+                    output = "(Savage)";
+                    break;
+                case ClientLanguage.French:
+                    output = "(sadique)";
+                    break;
+                case ClientLanguage.German:
+                    output = "(episch)";
+                    break;
+                case ClientLanguage.Japanese:
+                    output = "uh, no";
+                    break;
+            }
+            return output;
+        }
+
+        public static string DutyTypeUltimate()
+        {
+
+            string output = "Unknown";
+            switch (Language)
+            {
+                case ClientLanguage.English:
+                    output = "(Ultimate)";
+                    break;
+                case ClientLanguage.French:
+                    output = "(fatal)";
+                    break;
+                case ClientLanguage.German:
+                    output = "(fatal)";
+                    break;
+                case ClientLanguage.Japanese:
+                    output = "uh, no";
+                    break;
+            }
+            return output;
+        }
+
+        public static string DutyTypeUnreal()
+        {
+
+            string output = "Unknown";
+            switch (Language)
+            {
+                case ClientLanguage.English:
+                    output = "(Unreal)";
+                    break;
+                case ClientLanguage.French:
+                    output = "(irréel)";
+                    break;
+                case ClientLanguage.German:
+                    output = "Traumprüfung";
+                    break;
+                case ClientLanguage.Japanese:
+                    output = "uh, no";
+                    break;
+            }
+            return output;
+        }
+
+
+
+        #endregion
 
     }
 }
