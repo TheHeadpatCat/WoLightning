@@ -9,7 +9,7 @@ using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Clients
 {
-    public class WebSocketClient : IDisposable // todo: rewrite this garbage
+    public class WebSocketConnector : IDisposable // todo: rewrite this garbage
     {
         private Uri Uri { get; set; }
         private ClientWebSocket? Client { get; set; }
@@ -57,7 +57,7 @@ namespace WoLightning.WoL_Plugin.Clients
             return Client.State;
         }
 
-        public WebSocketClient(String URL, string[][] Headers)
+        public WebSocketClient(Plugin Plugin, String URL, string[][] Headers)
         {
             try
             {
