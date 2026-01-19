@@ -34,7 +34,7 @@ namespace WoLightning.Clients.Pishock
         private readonly Plugin? Plugin;
         public ConnectionStatusPishock Status { get; set; } = ConnectionStatusPishock.NotStarted;
         public string UserID { get; set; } = "";
-        private WebSocketClient? Client;
+        private WebSocketConnector? Client;
         readonly HttpClient HttpClient;
 
         private string username;

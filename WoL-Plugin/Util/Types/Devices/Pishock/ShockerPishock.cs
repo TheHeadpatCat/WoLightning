@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 using WoLightning.WoL_Plugin.Util.Types;
 
 namespace WoLightning.WoL_Plugin.Clients.Pishock
@@ -8,33 +9,27 @@ namespace WoLightning.WoL_Plugin.Clients.Pishock
     public class ShockerPishock : Device
     {
         public override DeviceType Type { get; } = DeviceType.Pishock;
-        public override DeviceCapability Capabilities { get; } = DeviceCapability.Shock | DeviceCapability.Vibrate | DeviceCapability.Vibrate;
+        public override DeviceCapability Capabilities { get; } = DeviceCapability.Shock | DeviceCapability.Vibrate | DeviceCapability.Beep;
 
-        public string Name { get; init; } = "Unknown";
         public int ClientId { get; init; } = -1;
         public int ShockerId { get; init; } = -1;
-        public bool IsPaused { get; init; } = false;
+        [JsonIgnore] public bool IsPaused { get; init; } = false;
         public bool IsPersonal { get; init; } = true;
         public int ShareId { get; init; } = -1;
         public string ShareCode { get; init; } = "";
-        public string Username { get; init; } = "";
-
+        public string OwnerUsername { get; init; } = "";
     
 
-        public ShockerPishock(string name, int clientId, int shockerId) : base(ShockerType.Pishock, name)
+        public ShockerPishock(string name, int clientId, int shockerId) : base(name)
         {
-            this.clientId = clientId;
-            this.shockerId = shockerId;
-        }
-
-        override public string getInternalId()
-        {
-            return Type + "#" + name + "#" + shockerId;
+            Name = name;
+            ClientId = clientId;
+            ShockerId = shockerId;
         }
 
         public override string ToString()
         {
-            return "[ShockerPishock] Name: " + name + " ShockerId: " + shockerId + " ClientId: " + clientId;
+            return $"{base.ToString()}\n -> [ShockerPishock] ShockerId: {ShockerId} ClientId: {ClientId}";
         }
 
         public override bool Equals(object? obj)
@@ -43,7 +38,7 @@ namespace WoLightning.WoL_Plugin.Clients.Pishock
             if (obj is ShockerPishock)
             {
                 ShockerPishock other = (ShockerPishock)obj;
-                return clientId == other.clientId && shockerId == other.shockerId && shareId == other.shareId && shareCode == other.shareCode;
+                return ClientId == other.ClientId && ShockerId == other.ShockerId && ShareId == other.ShareId && ShareCode == other.ShareCode;
             }
             return false;
         }

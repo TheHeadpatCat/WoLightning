@@ -39,6 +39,8 @@ namespace WoLightning.WoL_Plugin.Util.Types
     [Flags]
     public enum DeviceCapability
     {
+        None = -999999999,
+
         Stop = 1,
 
         Shock = 2,
@@ -54,24 +56,23 @@ namespace WoLightning.WoL_Plugin.Util.Types
     [Serializable]
     public abstract class Device
     {
-        public Guid Id { get; set; } = new();
+        public Guid Id { get; private set; } = new();
         public string Name { get; init; } = "Unknown";
         [JsonIgnore] public virtual DeviceStatus Status { get; set; } = DeviceStatus.Unchecked;
         public abstract DeviceType Type { get; }
         public abstract DeviceCapability Capabilities { get; }
+        public virtual bool SupportsPatterns { get; } = false;
 
         public Cooldown Cooldown { get; } = new();
 
-        public Action<DeviceOptions> Triggered;
-
-        public Device()
+        public Device(string name)
         {
-            
+            Name = name;
         }
 
         public override string ToString()
         {
-            return $"[Device-{Type}] ID: {Id} Status: {Status} Cooldown: {(Cooldown.HasCooldown ? Cooldown.ToString() : "None." )}";
+            return $"[Device-{Type}] Name: {Name} Status: {Status} Cooldown: {(Cooldown.HasCooldown ? Cooldown.ToString() : "None." )}   ID: {Id}";
         }
 
         public override bool Equals(object? obj)

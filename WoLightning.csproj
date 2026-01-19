@@ -25,7 +25,5 @@
     <Folder Include="WoL-Plugin\Game\Rules\General\" />
     <Folder Include="WoL-Plugin\Game\Rules\Master\" />
     <Folder Include="WoL-Plugin\Game\Rules\PVP\" />
-    <Folder Include="WoL-Plugin\Util\Types\Devices\Intiface\" />
-    <Folder Include="WoL-Plugin\Util\Types\Devices\OpenShock\" />
   </ItemGroup>
 </Project>

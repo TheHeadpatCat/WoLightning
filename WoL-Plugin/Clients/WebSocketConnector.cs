@@ -25,7 +25,7 @@ namespace WoLightning.WoL_Plugin.Clients
         public Action FailedToConnect;
         private TimerPlus Heartbeat;
 
-        public WebSocketClient(String URL)
+        public WebSocketConnector(String URL)
         {
             try
             {
@@ -57,7 +57,7 @@ namespace WoLightning.WoL_Plugin.Clients
             return Client.State;
         }
 
-        public WebSocketClient(Plugin Plugin, String URL, string[][] Headers)
+        public WebSocketConnector(Plugin Plugin, String URL, string[][] Headers)
         {
             try
             {
