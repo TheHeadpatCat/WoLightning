@@ -98,9 +98,9 @@ public class MainWindow : Window, IDisposable
     private async void DrawShockerAPI()
     {
         ImGui.BeginGroup();
-        ImGui.Text("Pishock API");
+        ImGui.Text("Pishock API                     ");
         // Todo: Make a generic list that works for all
-        HoverText.ShowSameLine(" (?)       ", "This is where your Shocks get sent to, if you are using a Pishock Account.\nIf you are not connected to it, you cannot receive shocks.");
+        //HoverText.ShowSameLine(" (?)       ", "This is where your Shocks get sent to, if you are using a Pishock Account.\nIf you are not connected to it, you cannot receive shocks.");
         switch (Plugin.ClientPishock.Status)
         {
             case ConnectionStatusPishock.NotStarted:
@@ -118,6 +118,10 @@ public class MainWindow : Window, IDisposable
                 ImGui.TextColored(ColorRed, "Unable to Connect!"); break;
             case ConnectionStatusPishock.FatalError:
                 ImGui.TextColored(ColorRed, "Fatal Error!"); break;
+            case ConnectionStatusPishock.KeyNotValidated:
+                ImGui.TextColored(ColorRed, "Key not Validated! (?)");
+                HoverText.Show("This error occurs when try to use a newly created API Key.\nIn short, go to login.pishock.com (NOT pishock.com), log out of your account and log back in to resolve this.\n\nIf you need more information or help on this, please refer to the Discord.");
+                break;
             case ConnectionStatusPishock.ExceededAttempts:
                 ImGui.TextColored(ColorRed, "Cannot Connect.\nPlease Restart the Plugin."); break;
 
@@ -127,7 +131,7 @@ public class MainWindow : Window, IDisposable
 
         ImGui.Text("Intiface");
 
-        HoverText.ShowSameLine(" (?)       ", "This is used with the Intiface Central to send Vibrations to devices.\nIf you are not connected to it, you cannot receive vibrations.");
+        //HoverText.ShowSameLine(" (?)       ", "This is used with the Intiface Central to send Vibrations to devices.\nIf you are not connected to it, you cannot receive vibrations.");
         switch (Plugin.ClientIntiface.Status)
         {
             case ConnectionStatusIntiface.NotStarted:
@@ -152,8 +156,8 @@ public class MainWindow : Window, IDisposable
         ImGui.SameLine();
 
         ImGui.BeginGroup();
-        ImGui.Text("OpenShock API");
-        HoverText.ShowHint("This is the Server that Shocks get sent to if you are using a OpenShock Account.\nIf you are not connected to it, you cannot receive shocks.");
+        ImGui.Text("OpenShock API                     ");
+        //HoverText.ShowHint("This is the Server that Shocks get sent to if you are using a OpenShock Account.\nIf you are not connected to it, you cannot receive shocks.");
 
         switch (Plugin.ClientOpenShock.Status)
         {
@@ -177,13 +181,13 @@ public class MainWindow : Window, IDisposable
                 ImGui.TextColored(ColorGreen, $"Connected!"); break;
         }
 
-        if (ImGui.Button("Open Remote##RemoteButton"))
+        if (ImGui.Button("Manual Remote##RemoteButton"))
         {
             Plugin.ShockRemoteWindow.Toggle();
         }
         if (ImGui.IsItemHovered())
         {
-            ImGui.SetTooltip("Open Shocker Remote");
+            ImGui.SetTooltip("Open Device Remote Window");
         }
 
         ImGui.EndGroup();
@@ -260,43 +264,52 @@ public class MainWindow : Window, IDisposable
         if (Plugin.ControlSettings.FullControl) ImGui.BeginDisabled();
         if (Plugin.IsEnabled)
         {
-            if (ImGui.Button("Stop Plugin", new Vector2(WindowWidth - 15, 0))) // Todo: Color coding
+            ImGui.PushStyleColor(ImGuiCol.Button, new Vector4(0.45f, 0.05f, 0.05f, 0.7f));
+            if (ImGui.Button("Stop Rules", new Vector2(WindowWidth - 15, 45))) 
             {
                 Plugin.IsEnabled = false;
                 Plugin.Configuration.ActivePreset.StopRules();
                 Plugin.ControlSettings.RemoveLeash();
             }
+            ImGui.PopStyleColor(1);
         }
 
         if (!Plugin.IsEnabled)
         {
-            if (ImGui.Button("Start Plugin", new Vector2(WindowWidth - 15, 0)))
+            ImGui.PushStyleColor(ImGuiCol.Button, new Vector4(0,0.5f,0,1));
+            if (ImGui.Button("Start Rules", new Vector2(WindowWidth - 15, 45)))
             {
                 Plugin.IsEnabled = true;
                 Plugin.Configuration.ActivePreset.StartRules();
             }
+            ImGui.PopStyleColor(1);
         }
 
 
         var ActivateOnStart = Plugin.Configuration.ActivateOnStart;
 
-        if (ImGui.Checkbox("Activate whenever the game starts.", ref ActivateOnStart))
+        if (ImGui.Checkbox("Start Rules on Login?", ref ActivateOnStart))
         {
             Plugin.Configuration.ActivateOnStart = ActivateOnStart;
             Plugin.Configuration.Save();
         }
         if (Plugin.ControlSettings.FullControl) ImGui.EndDisabled();
 
+        ImGui.Separator();
+
+        if (ImGui.Button("Open Rule Configuration", new Vector2(WindowWidth - 15, 60)))
+        {
+            Plugin.ToggleConfigUI();
+        }
+
         if (ImGui.Button("Open Control Settings", new Vector2(WindowWidth - 15, 0)))
         {
             Plugin.ControlWindow.Toggle();
         }
 
+        ImGui.Separator();
+
         //if (Plugin.Authentification.isDisallowed) ImGui.EndDisabled();
-        if (ImGui.Button("Open Trigger Configuration", new Vector2(WindowWidth - 15, 0)))
-        {
-            Plugin.ToggleConfigUI();
-        }
 
         /*
         if (Plugin.ClientWebserver.Status != ConnectionStatusWebserver.Connected) ImGui.BeginDisabled();
@@ -382,7 +395,7 @@ public class MainWindow : Window, IDisposable
         }
 
         int x = 0;
-        ImGui.Text("Available Shockers:");
+        ImGui.Text($"{Plugin.Authentification.PishockShockers.Count} Available Shockers:");
         while (Plugin.Authentification.PishockShockers.Count > x)
         {
             ShockerPishock target = Plugin.Authentification.PishockShockers[x];
@@ -453,7 +466,7 @@ public class MainWindow : Window, IDisposable
         }
 
         int x = 0;
-        ImGui.Text("Available Shockers:");
+        ImGui.Text($"{Plugin.Authentification.OpenShockShockers.Count} Available Shockers:");
         while (Plugin.Authentification.OpenShockShockers.Count > x)
         {
             ShockerOpenShock target = Plugin.Authentification.OpenShockShockers[x];
@@ -510,7 +523,7 @@ public class MainWindow : Window, IDisposable
         }
 
         int x = 0;
-        ImGui.Text("Available Devices:");
+        ImGui.Text($"{Plugin.Authentification.DevicesIntiface.Count} Available Devices:");
         while (Plugin.Authentification.DevicesIntiface.Count > x)
         {
             DeviceIntiface target = Plugin.Authentification.DevicesIntiface[x];

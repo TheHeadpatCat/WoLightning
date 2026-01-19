@@ -157,7 +157,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                 ImGui.Separator();
 
                 var i = 0;
-                foreach (var e in ChatType.GetOrderedChannels()) // Old Code from @lexiconmage
+                foreach (var e in ChatType.GetOrderedChannels()) // Old Code from @lexiconmage todo: cleanup
                 {
                     // See if it is already enabled by default
                     var enabled = Chats.Contains((XivChatType)ChatType.GetXivChatTypeFromChatType(e)!);

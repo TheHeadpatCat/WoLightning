@@ -19,8 +19,12 @@ using WoLightning.Util.Types;
 using WoLightning.Windows;
 using WoLightning.WoL_Plugin.Clients.Webserver;
 using WoLightning.WoL_Plugin.Configurations;
+using WoLightning.WoL_Plugin.Game;
 using WoLightning.WoL_Plugin.Util;
+using WoLightning.WoL_Plugin.Util.Helpers;
 using WoLightning.WoL_Plugin.Windows;
+using Action = Lumina.Excel.Sheets.Action;
+using Emote = Lumina.Excel.Sheets.Emote;
 using Version = WoLightning.WoL_Plugin.Util.Types.Version;
 
 namespace WoLightning;
@@ -40,7 +44,7 @@ public sealed class Plugin : IDalamudPlugin
     private const string OpenShockRemote = "/wolremote";
     private const string SwapPreset = "/wolpreset";
 
-    public static readonly Version CurrentVersion = new(7, 0, 1, 'T');
+    public static readonly Version CurrentVersion = new(7, 3, 1, 'b');
 
     public const string randomKey = "Currently Unused";
 
@@ -72,7 +76,9 @@ public sealed class Plugin : IDalamudPlugin
     public Configuration? Configuration { get; set; }
     public ControlSettings? ControlSettings { get; set; }
     public GameEmotes? GameEmotes { get; set; }
+    public GameActions? GameActions { get; set; }
     public NotificationHandler? NotificationHandler { get; set; }
+    public ActionReaderHooks ActionReaderHooks { get; set; }
 
     public Plugin(IDalamudPluginInterface pluginInterface)
     {
@@ -83,6 +89,7 @@ public sealed class Plugin : IDalamudPlugin
 
         // Brio @Brio/Resources/GameDataProvider.cs#L27
         GameEmotes = new(this, Service.DataManager.GetExcelSheet<Emote>()!.ToDictionary(x => x.RowId, x => x).AsReadOnly());
+        GameActions = new(this, Service.DataManager.GetExcelSheet<Action>()!.ToDictionary(x => x.RowId, x => x).AsReadOnly());
 
         MainWindow = new(this);
         ConfigWindow = new(this);
@@ -217,6 +224,7 @@ public sealed class Plugin : IDalamudPlugin
             if (Authentification.IntifaceEnabled) ClientIntiface.Setup();
 
             EmoteReaderHooks = new EmoteReaderHooks(this);
+            ActionReaderHooks = new ActionReaderHooks(this);
 
             ConfigWindow.SetConfiguration(Configuration);
             ControlSettings.Initialize(this);
