@@ -395,10 +395,10 @@ public class MainWindow : Window, IDisposable
         }
 
         int x = 0;
-        ImGui.Text($"{Plugin.Authentification.PishockShockers.Count} Available Shockers:");
-        while (Plugin.Authentification.PishockShockers.Count > x)
+        ImGui.Text($"{Plugin.Authentification.ShockersPishock.Count} Available Shockers:");
+        while (Plugin.Authentification.ShockersPishock.Count > x)
         {
-            ShockerPishock target = Plugin.Authentification.PishockShockers[x];
+            ShockerPishock target = Plugin.Authentification.ShockersPishock[x];
             string tName = target.name;
 
 
@@ -466,10 +466,10 @@ public class MainWindow : Window, IDisposable
         }
 
         int x = 0;
-        ImGui.Text($"{Plugin.Authentification.OpenShockShockers.Count} Available Shockers:");
-        while (Plugin.Authentification.OpenShockShockers.Count > x)
+        ImGui.Text($"{Plugin.Authentification.ShockersOpenShock.Count} Available Shockers:");
+        while (Plugin.Authentification.ShockersOpenShock.Count > x)
         {
-            ShockerOpenShock target = Plugin.Authentification.OpenShockShockers[x];
+            ShockerOpenShock target = Plugin.Authentification.ShockersOpenShock[x];
             string tName = target.name;
 
 

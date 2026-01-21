@@ -17,6 +17,7 @@ using WoLightning.Configurations;
 using WoLightning.Game;
 using WoLightning.Util.Types;
 using WoLightning.Windows;
+using WoLightning.WoL_Plugin.Clients;
 using WoLightning.WoL_Plugin.Clients.Webserver;
 using WoLightning.WoL_Plugin.Configurations;
 using WoLightning.WoL_Plugin.Game;
@@ -67,11 +68,12 @@ public sealed class Plugin : IDalamudPlugin
 
     // Handler Classes
 
-    public ClientIntiface? ClientIntiface { get; set; }
+    public ClientController? ClientController { get; set; }
+    //public ClientIntiface? ClientIntiface { get; set; }
     public EmoteReaderHooks? EmoteReaderHooks { get; set; }
-    public ClientPishock? ClientPishock { get; set; }
-    public ClientOpenShock? ClientOpenShock { get; set; }
-    public ClientWebserver? ClientWebserver { get; set; }
+    //public ClientPishock? ClientPishock { get; set; }
+    //public ClientOpenShock? ClientOpenShock { get; set; }
+    //public ClientWebserver? ClientWebserver { get; set; }
     public Authentification? Authentification { get; set; }
     public Configuration? Configuration { get; set; }
     public ControlSettings? ControlSettings { get; set; }
@@ -167,10 +169,7 @@ public sealed class Plugin : IDalamudPlugin
 
             Logger.SetupFile();
 
-            ClientWebserver = new ClientWebserver(this);
-            ClientPishock = new ClientPishock(this);
-            ClientOpenShock = new ClientOpenShock(this);
-            ClientIntiface = new ClientIntiface(this);
+            ClientController = new(this);
 
             Configuration = new Configuration();
             try
@@ -218,10 +217,7 @@ public sealed class Plugin : IDalamudPlugin
 
             ControlSettings.Save();
 
-            //ClientWebserver.Connect();
-            if (Authentification.PishockEnabled) ClientPishock.Setup();
-            if (Authentification.OpenShockEnabled) ClientOpenShock.Setup();
-            if (Authentification.IntifaceEnabled) ClientIntiface.Setup();
+            ClientController.Setup();
 
             EmoteReaderHooks = new EmoteReaderHooks(this);
             ActionReaderHooks = new ActionReaderHooks(this);
@@ -274,23 +270,14 @@ public sealed class Plugin : IDalamudPlugin
 
     public void OnLogout(int type, int code)
     {
-        EmoteReaderHooks.Dispose();
-        ClientWebserver.Dispose();
-
-        Configuration.Dispose();
-        Authentification.Dispose();
-        ConfigWindow.SetConfiguration(null);
+        EmoteReaderHooks?.Dispose();
+        Configuration?.Dispose();
+        Authentification?.Dispose();
+        ConfigWindow?.SetConfiguration(null);
     }
 
     public void Dispose()
     {
-        /* Old Way
-        if (MainWindow != null) WindowSystem.RemoveWindow(MainWindow);
-        if (ConfigWindow != null) WindowSystem.RemoveWindow(ConfigWindow);
-        if (DebugWindow != null) WindowSystem.RemoveWindow(DebugWindow);
-        if (ControlWindow != null) WindowSystem.RemoveWindow(ControlWindow);
-        if (BufferWindow != null && WindowSystem.Windows.Contains(BufferWindow)) WindowSystem?.RemoveWindow(BufferWindow);
-        */
 
         WindowSystem.RemoveAllWindows();
 
@@ -302,10 +289,7 @@ public sealed class Plugin : IDalamudPlugin
         DebugWindow?.Dispose();
 
         EmoteReaderHooks?.Dispose();
-        ClientWebserver?.Dispose();
-        ClientPishock?.Dispose();
-        ClientOpenShock?.Dispose();
-        ClientIntiface?.Dispose();
+        ClientController?.Dispose();
 
         Configuration?.Dispose();
         Authentification?.Dispose();

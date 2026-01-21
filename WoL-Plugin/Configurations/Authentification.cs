@@ -14,6 +14,9 @@ using WoLightning.WoL_Plugin.Clients;
 using WoLightning.WoL_Plugin.Clients.Intiface;
 using WoLightning.WoL_Plugin.Clients.OpenShock;
 using WoLightning.WoL_Plugin.Clients.Pishock;
+using WoLightning.WoL_Plugin.Util.Types;
+using WoLightning.WoL_Plugin.Util.Types.Devices.Intiface;
+using WoLightning.WoL_Plugin.Util.Types.Devices.OpenShock;
 
 namespace WoLightning.Configurations
 {
@@ -38,18 +41,18 @@ namespace WoLightning.Configurations
         public bool PishockEnabled { get; set; } = false;
         public string PishockName { get; set; } = string.Empty;
         public string PishockApiKey { get; set; } = string.Empty;
-        [JsonIgnore] public List<ShockerPishock> PishockShockers { get; set; } = new();
+        [JsonIgnore] public List<ShockerPishock> ShockersPishock { get; set; } = new();
 
         // OpenShock things
         public bool OpenShockEnabled { get; set; } = false;
         public string OpenShockURL { get; set; } = "https://api.openshock.app";
         public string OpenShockApiKey { get; set; } = string.Empty;
-        [JsonIgnore] public List<ShockerOpenShock> OpenShockShockers { get; set; } = new();
+        [JsonIgnore] public List<ShockerOpenShock> ShockersOpenShock { get; set; } = new();
 
         // Buttplug things
         public bool IntifaceEnabled { get; set; } = false;
         public string IntifaceURL { get; set; } = "ws://127.0.0.1:12345";
-        [JsonIgnore] public List<DeviceIntiface> DevicesIntiface { get; set; } = new();
+        [JsonIgnore] public List<VibratorIntiface> DevicesIntiface { get; set; } = new();
 
 
         public Authentification() { }
@@ -143,15 +146,16 @@ namespace WoLightning.Configurations
 
         public int GetDevicesCount()
         {
-            return PishockShockers.Count + OpenShockShockers.Count + DevicesIntiface.Count;
+            return ShockersPishock.Count + ShockersOpenShock.Count + DevicesIntiface.Count;
         }
 
-        public List<ShockerBase> GetShockers()
+        public List<Device> GetDevices()
         {
-            List<ShockerBase> shockers = new();
-            shockers.AddRange(PishockShockers);
-            shockers.AddRange(OpenShockShockers);
-            return shockers;
+            List<Device> devices = new();
+            devices.AddRange(ShockersPishock);
+            devices.AddRange(ShockersOpenShock);
+            devices.AddRange(DevicesIntiface);
+            return devices;
         }
 
     }

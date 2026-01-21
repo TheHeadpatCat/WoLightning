@@ -163,7 +163,7 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
                 ImGui.BeginGroup();
                 ImGui.Text("Available Pishock Devices:           ");
                 ImGui.BeginChild("PishockShockerList", new Vector2(280, 400));
-                foreach (var shocker in Plugin.Authentification.PishockShockers)
+                foreach (var shocker in Plugin.Authentification.ShockersPishock)
                 {
                     if (Plugin.Configuration.ShownShockers == ShownShockers.None) continue;
                     if (Plugin.Configuration.ShownShockers == ShownShockers.Personal && !shocker.isPersonal) continue;
@@ -199,7 +199,7 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
                 ImGui.BeginGroup();
                 ImGui.Text("Available OpenShock Devices:           ");
                 ImGui.BeginChild("OpenShockShockerList", new Vector2(280, 400));
-                foreach (var shocker in Plugin.Authentification.OpenShockShockers)
+                foreach (var shocker in Plugin.Authentification.ShockersOpenShock)
                 {
                     bool isEnabled = Options.ShockersOpenShock.Find(sh => sh.getInternalId() == shocker.getInternalId()) != null;
 

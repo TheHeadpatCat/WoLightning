@@ -11,6 +11,7 @@ using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Clients;
 using WoLightning.WoL_Plugin.Clients.Pishock;
 using WoLightning.WoL_Plugin.Util;
+using WoLightning.WoL_Plugin.Util.Types.Devices.Pishock;
 
 
 namespace WoLightning.Clients.Pishock
@@ -83,7 +84,7 @@ namespace WoLightning.Clients.Pishock
                 Client = null;
                 Status = ConnectionStatusPishock.NotStarted;
 
-                Plugin.Authentification.PishockShockers?.Clear();
+                Plugin.Authentification.ShockersPishock?.Clear();
             }
 
             username = Plugin.Authentification.PishockName;
@@ -171,7 +172,7 @@ namespace WoLightning.Clients.Pishock
             await RequestAccountInformation();
             if (Status != ConnectionStatusPishock.ConnectedNoInfo) return;
 
-            Plugin.Authentification.PishockShockers.Clear();
+            Plugin.Authentification.ShockersPishock.Clear();
             await RequestPersonalDevices();
             await RequestSharedDevices();
 
@@ -284,7 +285,7 @@ namespace WoLightning.Clients.Pishock
                         {
                             ShockerPishock t = new(shocker.name, response.clientId, shocker.shockerId);
                             Logger.Log(4, t);
-                            Plugin.Authentification.PishockShockers.Add(t);
+                            Plugin.Authentification.ShockersPishock.Add(t);
 
                         }
                     }
@@ -401,12 +402,14 @@ namespace WoLightning.Clients.Pishock
                         {
                             Logger.Log(4, response);
                             if (name.ToLower().Equals(Plugin.Authentification.PishockName.ToLower())) continue;
-                            ShockerPishock shocker = new(response.shockerName, response.clientId, response.shockerId);
-                            shocker.isPersonal = false;
-                            shocker.username = name;
-                            shocker.shareId = response.shareId;
-                            shocker.shareCode = response.shareCode;
-                            Plugin.Authentification.PishockShockers.Add(shocker);
+                            ShockerPishock shocker = new(response.shockerName, response.clientId, response.shockerId)
+                            {
+                                IsPersonal = false,
+                                OwnerUsername = name,
+                                ShareId = response.shareId,
+                                ShareCode = response.shareCode
+                            };
+                            Plugin.Authentification.ShockersPishock.Add(shocker);
                         }
                     }
                 }
@@ -422,7 +425,7 @@ namespace WoLightning.Clients.Pishock
         /// Sends our a Request with the given parameters.
         /// </summary>
         /// <param name="Options">The Options to use.</param>
-        public async void SendRequest(ShockOptions Options)
+        public async void SendRequest(DeviceOptionPairPishock[] Information)
         {
 
             #region Validation
@@ -445,11 +448,6 @@ namespace WoLightning.Clients.Pishock
                 return;
             }
 
-            if (Options.ShockersPishock.Count == 0)
-            {
-                Logger.Log(3, " -> No Pishock Shockers assigned, discarding!");
-                return;
-            }
             #endregion
 
 
@@ -462,8 +460,8 @@ namespace WoLightning.Clients.Pishock
 
             if (Options.WarningMode != WarningMode.None)
             {
-                ShockOptions warningOptions = new ShockOptions(Options);
-                warningOptions.OpMode = OpMode.Vibrate;
+                OptionsPishock warningOptions = new OptionsPishock();
+                warningOptions.Operation = WoL_Plugin.Util.Types.DeviceCapability.Vibrate;
                 warningOptions.Intensity = 55;
                 warningOptions.Duration = 1;
                 string sendWarning = CommandPublish.Generate(warningOptions, UserID, true);

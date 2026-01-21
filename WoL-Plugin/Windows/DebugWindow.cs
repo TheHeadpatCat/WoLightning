@@ -18,7 +18,7 @@ namespace WoLightning.WoL_Plugin.Windows
     {
         private readonly Plugin Plugin;
 
-        private WebSocketClient testClient;
+        private WebSocketConnector testClient;
         private TimerPlus clientTimer;
         private int failedAttempts = 0;
         private DateTime? successful;

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Clients.OpenShock;
 using WoLightning.WoL_Plugin.Util;
+using WoLightning.WoL_Plugin.Util.Types.Devices.OpenShock;
 
 
 
@@ -56,7 +57,7 @@ namespace WoLightning.Clients.OpenShock
         public async Task SetupAllData()
         {
             if (Plugin == null || Plugin.Authentification == null) return;
-            Plugin.Authentification.OpenShockShockers.Clear();
+            Plugin.Authentification.ShockersOpenShock.Clear();
             Devices.Clear();
 
             Client?.Dispose();
@@ -124,9 +125,9 @@ namespace WoLightning.Clients.OpenShock
                 {
                     string message = reader.ReadToEnd();
                     if (message == null || message.Length == 0) return;
-                    ResponseAccount test = JsonConvert.DeserializeObject<ResponseAccount>(message)!;
-                    UserId = test.data.id;
-                    Username = test.data.name;
+                    ResponseAccount account = JsonConvert.DeserializeObject<ResponseAccount>(message)!;
+                    UserId = account.data.id;
+                    Username = account.data.name;
                 }
             }
             catch (Exception ex)
@@ -177,7 +178,7 @@ namespace WoLightning.Clients.OpenShock
             }
         }
 
-        public async void SendRequest(DeviceOptions Options)
+        public async void SendRequest(DeviceOptionPairOpenShock[] Information)
         {
 
             if (Status != ConnectionStatusOpenShock.Connected) return;
@@ -195,12 +196,6 @@ namespace WoLightning.Clients.OpenShock
                 Logger.Log(3, "[OP] -> Blocked due to invalid ShockOptions!");
                 return;
             }
-
-            if (Options.ShockersOpenShock.Count == 0)
-            {
-                Logger.Log(3, "[OP] -> No OpenShock Shockers assigned, discarding!");
-                return;
-            }
             #endregion
 
             try
@@ -208,8 +203,8 @@ namespace WoLightning.Clients.OpenShock
 
                 if (Options.WarningMode != WarningMode.None)
                 {
-                    DeviceOptions warningOptions = new(Options);
-                    warningOptions.OpMode = OpMode.Vibrate;
+                    OptionsOpenShock warningOptions = new();
+                    warningOptions.Operation = WoL_Plugin.Util.Types.DeviceCapability.Vibrate;
                     warningOptions.Intensity = 55;
                     warningOptions.Duration = 1;
                     foreach (var shocker in Options.ShockersOpenShock)

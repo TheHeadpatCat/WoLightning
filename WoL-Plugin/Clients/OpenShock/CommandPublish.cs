@@ -3,21 +3,18 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using WoLightning.Util.Types;
+using WoLightning.WoL_Plugin.Util.Types.Devices.OpenShock;
 
 namespace WoLightning.WoL_Plugin.Clients.OpenShock
 {
     internal static class CommandPublish
     {
-        public static string Generate(List<ShockerOpenShock> shockers, DeviceOptions Options)
+        public static string Generate(ShockerOpenShock Device, OptionsOpenShock Options)
         {
 
             List<Command> shocks = new();
 
-            foreach (ShockerOpenShock shocker in shockers)
-            {
-                shocks.Add(new Command(shocker.id, Options.getOpModeOpenShock(), Options.Intensity, Options.getDurationOpenShock(), true));
-            }
+            shocks.Add(new Command(Device.ShockerId, Options.OperationString(), Options.Intensity, Options.Duration, true));
 
             return JsonSerializer.Serialize(new { shocks = shocks.ToArray() });
         }

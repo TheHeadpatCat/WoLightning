@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Buttplug.Client;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -26,6 +27,12 @@ namespace WoLightning.WoL_Plugin.Util.Types.Devices.Intiface
             DisplayName = displayName;
         }
 
+        public VibratorIntiface(ButtplugClientDevice device) : this(device.Name)
+        {
+            Index = device.Index;
+            DisplayName = device.DisplayName;
+        }
+
         public override bool Equals(object? obj)
         {
             if (obj == null) return false;
@@ -36,5 +43,8 @@ namespace WoLightning.WoL_Plugin.Util.Types.Devices.Intiface
             }
             return false;
         }
+
+        
+
     }
 }

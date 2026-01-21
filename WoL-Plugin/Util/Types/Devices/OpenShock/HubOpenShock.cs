@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using WoLightning.WoL_Plugin.Util;
 
-namespace WoLightning.WoL_Plugin.Clients.OpenShock
+namespace WoLightning.WoL_Plugin.Util.Types.Devices.OpenShock
 {
     [Serializable]
     internal class HubOpenShock : IDisposable
@@ -91,7 +91,7 @@ namespace WoLightning.WoL_Plugin.Clients.OpenShock
                     {
                         ShockerOpenShock ShockerT = new(this, shocker.name, shocker.id, shocker.isPaused);
                         Logger.Log(3, ShockerT);
-                        Plugin.Authentification.OpenShockShockers.Add(ShockerT);
+                        Plugin.Authentification.ShockersOpenShock.Add(ShockerT);
                     }
                 }
             }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Clients.Intiface;
 using WoLightning.WoL_Plugin.Util;
+using WoLightning.WoL_Plugin.Util.Types.Devices.Intiface;
 
 
 namespace WoLightning.Clients.Intiface
@@ -120,12 +121,12 @@ namespace WoLightning.Clients.Intiface
             foreach (var device in Client.Devices)
             {
                 if(device == null) continue;//sometimes we can just get null???
-                DeviceIntiface converted = new(device);
+                VibratorIntiface converted = new(device);
                 Plugin.Authentification.DevicesIntiface.Add(converted);
             }
         }
 
-        public async void SendRequest(DeviceOptions options)
+        public async void SendRequest(DeviceOptionPairIntiface[] Information)
         {
             #region Validation
 
@@ -141,12 +142,6 @@ namespace WoLightning.Clients.Intiface
                 return;
             }
 
-
-            if (options.DevicesIntiface.Count == 0)
-            {
-                Logger.Log(3, " -> [Intiface] No Devices assigned, discarding!");
-                return;
-            }
             #endregion
 
             if (Client == null || Status != ConnectionStatusIntiface.Connected)
@@ -178,7 +173,7 @@ namespace WoLightning.Clients.Intiface
                 if (running == null)
                 {
                     Logger.Log(4, $"[Intiface] Index [{Device.Index}] does not have a running Task. Creating new...");
-                    IntifaceTask newTask = new(realDevice, options.Intensity / 100.0, options.getDurationOpenShock());
+                    IntifaceTask newTask = new(realDevice, options.Intensity / 100.0, options.Duration);
                     RunningTasks.Add(newTask);
                     newTask.CreateAndStart();
                 }
@@ -186,11 +181,11 @@ namespace WoLightning.Clients.Intiface
                 {
                     Logger.Log(4, $"[Intiface] Index [{Device.Index}] has a running task. Comparing...");
                     if (running.Intensity < options.Intensity / 100.0) return;
-                    if (running.Duration - running.Timer.TimeLeft < options.getDurationOpenShock()) return;
+                    if (running.Duration - running.Timer.TimeLeft < options.Duration) return;
                     running.IsCancelled = true;
                     Logger.Log(4, $"-> [Intiface] Task is shorter and weaker than new task. Overriding...");
 
-                    IntifaceTask newTask = new(realDevice, options.Intensity / 100.0, options.getDurationOpenShock());
+                    IntifaceTask newTask = new(realDevice, options.Intensity / 100.0, options.Duration);
                     RunningTasks.Add(newTask);
                     newTask.CreateAndStart();
                 }

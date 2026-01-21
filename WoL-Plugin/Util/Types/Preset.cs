@@ -123,7 +123,7 @@ namespace WoLightning.Util.Types
                     try
                     {
                         RuleBase r = (RuleBase)property.GetValue(this, null)!;
-                        int i = r.ShockOptions.ShockersPishock.RemoveAll((shocker) => !Plugin.Authentification.PishockShockers.Contains(shocker));
+                        int i = r.ShockOptions.ShockersPishock.RemoveAll((shocker) => !Plugin.Authentification.ShockersPishock.Contains(shocker));
                         if (i > 0) Logger.Log(2, "Removed " + i + " Invalid Shockers from " + r.Name);
                     }
                     catch (Exception ex)

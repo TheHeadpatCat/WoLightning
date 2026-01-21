@@ -40,7 +40,6 @@ namespace WoLightning.Util.Types
 
         public int Duration { get; set; }
         public int DurationMax { get; set; }
-
         public abstract int Duration_MIN_SUPPORTED { get; }
         public abstract int Duration_MAX_SUPPORTED { get; }
 
@@ -73,6 +72,10 @@ namespace WoLightning.Util.Types
             DurationMax = Math.Clamp(other.DurationMax, Duration_MIN_SUPPORTED, Duration_MAX_SUPPORTED);
         }
 
+
+        public abstract string OperationString();
+
+
         public virtual bool Validate()
         {
             if (Operation == DeviceCapability.None) return false;
@@ -87,5 +90,18 @@ namespace WoLightning.Util.Types
         }
 
 
+    }
+
+
+    public struct IdOptionPair
+    {
+        public Guid Id;
+        public DeviceOptions Options;
+    }
+
+    public struct DeviceOptionPair
+    {
+        public Device Device;
+        public DeviceOptions Options;
     }
 }

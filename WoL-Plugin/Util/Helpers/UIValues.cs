@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
 using WoLightning.Util.Types;
+using WoLightning.WoL_Plugin.Util.Types;
 
 namespace WoLightning.WoL_Plugin.Util.Helpers
 {
