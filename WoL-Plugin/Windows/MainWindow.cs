@@ -406,6 +406,7 @@ public class MainWindow : Window, IDisposable
             {
                 ShockOptions temp = new ShockOptions(1, 35, 1);
                 temp.ShockersPishock.Add(target);
+                Logger.Log(Configurations.DebugLevel.Verbose, "Shocker Test:");
                 Plugin.ClientPishock.SendRequest(temp);
             }
             ImGui.SameLine();
