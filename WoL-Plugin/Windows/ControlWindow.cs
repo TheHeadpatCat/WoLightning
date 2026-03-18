@@ -4,9 +4,11 @@ using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface.Windowing;
 using System;
 using System.Numerics;
+using WoLightning.Clients.Webserver.Operations.Account;
 using WoLightning.Configurations;
 using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Util.Helpers;
+using WoLightning.WoL_Plugin.Util.UI_Elements;
 using Emote = Lumina.Excel.Sheets.Emote;
 
 namespace WoLightning.WoL_Plugin.Windows
@@ -28,6 +30,7 @@ namespace WoLightning.WoL_Plugin.Windows
 
         private Vector4 Red = new(1, 0.2f, 0.2f, 1);
 
+        ShockOptionsEditor leashOptions;
         bool isModalShockerSelectorOpen = false;
 
         private bool isOptionsOpen = false;
@@ -206,7 +209,16 @@ namespace WoLightning.WoL_Plugin.Windows
             bool leashShowDistanceWarning = Plugin.ControlSettings.LeashShowDistanceWarning;
             bool leashShowGraceWarning = Plugin.ControlSettings.LeashShowGraceWarning;
 
-            if (leashEmote == 0 || unleashEmote == 0 || leashDistanceEmote == 0) ImGui.BeginDisabled();
+            if (leashEmote == 0 || unleashEmote == 0 || leashDistanceEmote == 0)
+            {
+                string missingEmotes = "";
+                if (leashEmote == 0) missingEmotes += "Attach Leash\n";
+                if (unleashEmote == 0) missingEmotes += "Remove Leash\n";
+                if (leashDistanceEmote == 0) missingEmotes += "Change Distance";
+                
+                ImGui.TextColored(UIValues.ColorDescription, "Please set emotes for: \n" + missingEmotes);
+                ImGui.BeginDisabled();
+            }
 
             if (ImGui.Checkbox("Allow Leashing", ref leashAllowed))
             {
@@ -430,6 +442,7 @@ namespace WoLightning.WoL_Plugin.Windows
                 if (ImGui.Button("Set as Controller"))
                 {
                     Plugin.ControlSettings.Controller = new(SelectedPlayerName);
+
                     Plugin.ControlSettings.Save();
                 }
             }
@@ -481,130 +494,6 @@ namespace WoLightning.WoL_Plugin.Windows
 
         }
 
-
-        protected void DrawShockerSelector()
-        {
-            if (ImGui.Button($"Assigned {Plugin.ControlSettings.LeashShockOptions.getShockerCount()} Shockers##assignedShockersLeash", new Vector2(150, 25)))
-            {
-                isModalShockerSelectorOpen = true;
-                ImGui.OpenPopup("Select Shockers##ShockerSelectLeash");
-            }
-
-            if (isModalShockerSelectorOpen) //setup modal
-            {
-                Vector2 center = ImGui.GetMainViewport().GetCenter();
-                ImGui.SetNextWindowPos(center, ImGuiCond.Appearing, new Vector2(0.5f, 0.5f));
-                ImGui.SetNextWindowSize(new Vector2(400, 400));
-            }
-
-            if (ImGui.BeginPopupModal("Select Shockers##ShockerSelectLeash", ref isModalShockerSelectorOpen,
-            ImGuiWindowFlags.NoResize | ImGuiWindowFlags.Popup))
-            {
-                if (Plugin.Authentification.GetDevicesCount() == 0)
-                {
-                    ImGui.TextWrapped("The Shockers are still being loaded!" +
-                        "\nIf this doesn't change, please make sure that your" +
-                        "\nAccount Settings are properly set up!");
-                    if (ImGui.Button($"Okay##okayShockerSelectorAbort", new Vector2(ImGui.GetWindowSize().X / 2, 25)))
-                    {
-                        ImGui.CloseCurrentPopup();
-                    }
-                    ImGui.EndPopup();
-                    return;
-                }
-
-
-
-                ImGui.Text("Please select all shockers that should activate for this trigger:");
-                ImGui.BeginGroup();
-                ImGui.Text("Available Pishock Devices:           ");
-                ImGui.BeginChild("PishockShockerList", new Vector2(180, 260));
-                foreach (var shocker in Plugin.Authentification.PishockShockers)
-                {
-                    if (Plugin.Configuration.ShownShockers == ShownShockers.None) continue;
-                    if (Plugin.Configuration.ShownShockers == ShownShockers.Personal && !shocker.isPersonal) continue;
-                    if (Plugin.Configuration.ShownShockers == ShownShockers.Shared && shocker.isPersonal) continue;
-
-
-                    bool isEnabled = Plugin.ControlSettings.LeashShockOptions.ShockersPishock.Find(sh => sh.getInternalId() == shocker.getInternalId()) != null;
-
-                    if (ImGui.Checkbox($"##shockerbox{shocker.getInternalId()}", ref isEnabled))
-                    { // this could probably be solved more elegantly
-                        if (isEnabled) Plugin.ControlSettings.LeashShockOptions.ShockersPishock.Add(shocker);
-                        else Plugin.ControlSettings.LeashShockOptions.ShockersPishock.RemoveAt(Plugin.ControlSettings.LeashShockOptions.ShockersPishock.FindIndex(sh => sh.getInternalId() == shocker.getInternalId()));
-                    }
-                    ImGui.SameLine();
-                    if (!shocker.isPersonal)
-                    {
-                        ImGui.BeginGroup();
-                        ImGui.Text(shocker.username);
-                        if (!shocker.isPaused) ImGui.TextColored(UIValues.ColorNameEnabled, shocker.name);
-                        else ImGui.TextColored(UIValues.ColorNameDisabled, "[Paused] " + shocker.name);
-                        ImGui.EndGroup();
-                        continue;
-                    }
-                    if (!shocker.isPaused) ImGui.TextColored(UIValues.ColorNameEnabled, shocker.name);
-                    else ImGui.TextColored(UIValues.ColorNameDisabled, "[Paused] " + shocker.name);
-                }
-
-                ImGui.EndChild();
-                ImGui.EndGroup();
-
-                ImGui.SameLine();
-
-                ImGui.BeginGroup();
-                ImGui.Text("Available OpenShock Devices:");
-                ImGui.BeginChild("OpenShockShockerList", new Vector2(180, 260));
-                foreach (var shocker in Plugin.Authentification.OpenShockShockers)
-                {
-                    bool isEnabled = Plugin.ControlSettings.LeashShockOptions.ShockersOpenShock.Find(sh => sh.getInternalId() == shocker.getInternalId()) != null;
-
-                    if (ImGui.Checkbox($"##shockerbox{shocker.getInternalId()}", ref isEnabled))
-                    { // this could probably be solved more elegantly
-                        if (isEnabled) Plugin.ControlSettings.LeashShockOptions.ShockersOpenShock.Add(shocker);
-                        else Plugin.ControlSettings.LeashShockOptions.ShockersOpenShock.RemoveAt(Plugin.ControlSettings.LeashShockOptions.ShockersOpenShock.FindIndex(sh => sh.getInternalId() == shocker.getInternalId()));
-                    }
-                    ImGui.SameLine();
-                    if (!shocker.isPaused) ImGui.TextColored(UIValues.ColorNameEnabled, shocker.name);
-                    else ImGui.TextColored(UIValues.ColorNameDisabled, "[Paused] " + shocker.name);
-                }
-                ImGui.EndChild();
-                ImGui.EndGroup();
-
-                ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 2 - 170, ImGui.GetWindowSize().Y - 65));
-                ImGui.SetNextItemWidth(200);
-                int ShownShockersIndex = (int)Plugin.Configuration.ShownShockers;
-                if (ImGui.Combo("Shown Shockers", ref ShownShockersIndex, ["All", "Personal Only", "Shared Only", "None...?"], 4))
-                {
-                    Plugin.Configuration.ShownShockers = (ShownShockers)ShownShockersIndex;
-                    Plugin.Configuration.Save();
-                }
-                ImGui.SameLine();
-                ImGui.TextDisabled(" (?)");
-                if (ImGui.IsItemHovered())
-                {
-                    ImGui.SetTooltip("Allows you to select which Shockers show up on clicking the \"Assign Shockers\" button.");
-                }
-
-                ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 2 - 170, ImGui.GetWindowSize().Y - 35));
-                ImGui.BeginGroup();
-                if (ImGui.Button($"Apply##applyLeash", new Vector2(ImGui.GetWindowSize().X - 120, 25)))
-                {
-                    ImGui.CloseCurrentPopup();
-                }
-                ImGui.SameLine();
-                if (ImGui.Button($"Reset##resetallLeash", new Vector2(ImGui.GetWindowSize().X / 8, 25)))
-                {
-                    Plugin.ControlSettings.LeashShockOptions.ShockersPishock.Clear();
-                }
-                ImGui.EndGroup();
-
-
-                ImGui.EndPopup();
-            }
-        }
-
-
         public void DrawLeashBase()
         {
             if (!Plugin.ControlSettings.LeashAllowed)
@@ -624,52 +513,19 @@ namespace WoLightning.WoL_Plugin.Windows
         public void DrawLeashOptions()
         {
             bool changed = false;
-            DrawShockerSelector();
             DrawLeashOptionsBase(ref changed);
             if (changed) Plugin.ControlSettings.Save();
         }
         protected void DrawLeashOptionsBase(ref bool changed)
         {
-            ImGui.BeginGroup();
-            ImGui.Text("    Mode");
-            ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 3 - 50);
-            int OpMode = (int)Plugin.ControlSettings.LeashShockOptions.OpMode;
-            if (ImGui.Combo("##OpModeSelectLeash", ref OpMode, ["Shock", "Vibrate", "Beep"], 3))
+            if (leashOptions == null)
             {
-                Plugin.ControlSettings.LeashShockOptions.OpMode = (OpMode)OpMode;
-                changed = true;
+                leashOptions = new("LeashOptions", Plugin, Plugin.ControlSettings.LeashShockOptions);
+                leashOptions.HasCooldown = false;
+                leashOptions.HasWarning = false;
+                leashOptions.SetNames("Mode", "Max Duration", "Max Intensity");
             }
-            ImGui.EndGroup();
-
-            ImGui.SameLine();
-            ImGui.BeginGroup();
-            ImGui.Text("    Max Duration");
-            ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 7);
-            int DurationIndex = UIValues.DurationArray.IndexOf(Plugin.ControlSettings.LeashShockOptions.Duration);
-            if (ImGui.Combo("##DurationSelectLeash", ref DurationIndex, ["0.1s", "0.3s", "1s", "2s", "3s", "4s", "5s", "6s", "7s", "8s", "9s", "10s"], 12))
-            {
-                Plugin.ControlSettings.LeashShockOptions.Duration = UIValues.DurationArray[DurationIndex];
-
-                float intervalS = Plugin.ControlSettings.LeashTriggerInterval;
-                int duration = Plugin.ControlSettings.LeashShockOptions.Duration;
-                if (duration > 10) duration = 1;
-                if (intervalS < duration) intervalS = duration;
-                Plugin.ControlSettings.LeashTriggerInterval = intervalS;
-                changed = true;
-            }
-            ImGui.EndGroup();
-
-            ImGui.SameLine();
-            ImGui.BeginGroup();
-            ImGui.Text("    Max Intensity");
-            ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 2.50f - 30);
-            int Intensity = Plugin.ControlSettings.LeashShockOptions.Intensity;
-            if (ImGui.SliderInt("##IntensitySelectLeash", ref Intensity, 1, 100))
-            {
-                Plugin.ControlSettings.LeashShockOptions.Intensity = Intensity;
-                changed = true;
-            }
-            ImGui.EndGroup();
+            leashOptions.Draw();
 
             ImGui.BeginGroup();
             ImGui.Text("Amount of Warning Vibrations");
@@ -721,9 +577,9 @@ namespace WoLightning.WoL_Plugin.Windows
             float interval = Plugin.ControlSettings.LeashTriggerInterval;
             int durationT = Plugin.ControlSettings.LeashShockOptions.Duration;
             if (durationT > 10) durationT = 1;
+            if (interval < durationT) interval = durationT;
             if (ImGui.InputFloat("##ShockInterval", ref interval))
             {
-                if (interval < durationT) interval = durationT;
                 if (interval > 60) interval = 60;
 
                 Plugin.ControlSettings.LeashTriggerInterval = interval;

@@ -278,6 +278,7 @@ namespace WoLightning.WoL_Plugin.Configurations
             LockingAllowed = false;
             LockingEmote = 0;
             UnlockingEmote = 0;
+            
 
             SwappingAllowed = false;
             SwappingCommand = "";
@@ -285,6 +286,7 @@ namespace WoLightning.WoL_Plugin.Configurations
             LeashAllowed = false;
             LeashEmote = 0;
             UnleashEmote = 0;
+            LeashDistanceEmote = 0;
 
             FullControl = false;
 

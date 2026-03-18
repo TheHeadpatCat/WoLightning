@@ -13,15 +13,27 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
         Plugin Plugin { get; set; }
         public ShockOptions Options { get; set; }
         public bool HasCooldown { get; set; } = true;
+        public bool HasWarning { get; set; } = true;
         public bool AutoSave { get; set; } = true;
 
         bool isModalShockerSelectorOpen = false;
+
+        string modeName = "Mode";
+        string durationName = "Duration";
+        string intensityName = "Intensity";
 
         public ShockOptionsEditor(string name, Plugin plugin, ShockOptions options)
         {
             Name = name;
             Plugin = plugin;
             Options = options;
+        }
+
+        public void SetNames(string mode, string duration, string intensity)
+        {
+            modeName = mode;
+            durationName = duration;
+            intensityName = intensity;
         }
 
         public void Draw()
@@ -45,7 +57,7 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
         private void DrawOptionsBase(ref bool changed)
         {
             ImGui.BeginGroup();
-            ImGui.Text("    Mode");
+            ImGui.Text("    " + modeName);
             ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 3 - 50);
             int OpMode = (int)Options.OpMode;
             if (ImGui.Combo("##OpModeSelect" + Name, ref OpMode, ["Shock", "Vibrate", "Beep"], 3))
@@ -57,7 +69,7 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
 
             ImGui.SameLine();
             ImGui.BeginGroup();
-            ImGui.Text("    Duration");
+            ImGui.Text("    " + durationName);
             ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 7);
             int DurationIndex = UIValues.DurationArray.IndexOf(Options.Duration);
             if (ImGui.Combo("##DurationSelect" + Name, ref DurationIndex, ["0.1s", "0.3s", "1s", "2s", "3s", "4s", "5s", "6s", "7s", "8s", "9s", "10s"], 12))
@@ -69,7 +81,7 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
 
             ImGui.SameLine();
             ImGui.BeginGroup();
-            ImGui.Text("    Intensity");
+            ImGui.Text("    " + intensityName);
             ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 2.50f - 30);
             int Intensity = Options.Intensity;
             if (ImGui.SliderInt("##IntensitySelect" + Name, ref Intensity, 1, 100))
@@ -79,27 +91,30 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
             }
             ImGui.EndGroup();
 
-            ImGui.SameLine();
-            ImGui.BeginGroup();
-            ImGui.Text("    Warning Mode");
-            ImGui.SameLine();
-            ImGui.TextDisabled("(?)");
-            if (ImGui.IsItemHovered())
+            if (HasWarning)
             {
-                ImGui.SetTooltip("Sends out a 1 second Vibration before the actual command." +
-                "\nHigher settings have a longer waiting time between the Warning and Command." +
-                "\nShort is between 1-3 seconds." +
-                "\nMedium is between 5-10 seconds." +
-                "\nLong is between 10-25 seconds.");
+                ImGui.SameLine();
+                ImGui.BeginGroup();
+                ImGui.Text("    Warning Mode");
+                ImGui.SameLine();
+                ImGui.TextDisabled("(?)");
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetTooltip("Sends out a 1 second Vibration before the actual command." +
+                    "\nHigher settings have a longer waiting time between the Warning and Command." +
+                    "\nShort is between 1-3 seconds." +
+                    "\nMedium is between 5-10 seconds." +
+                    "\nLong is between 10-25 seconds.");
+                }
+                ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 5 - 30);
+                int warning = (int)Options.WarningMode;
+                if (ImGui.Combo("##WarningMode" + Name, ref warning, ["None", "Short", "Medium", "Long"], 4))
+                {
+                    Options.WarningMode = (WarningMode)warning;
+                    changed = true;
+                }
+                ImGui.EndGroup();
             }
-            ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 5 - 30);
-            int warning = (int)Options.WarningMode;
-            if (ImGui.Combo("##WarningMode" + Name, ref warning, ["None", "Short", "Medium", "Long"], 4))
-            {
-                Options.WarningMode = (WarningMode)warning;
-                changed = true;
-            }
-            ImGui.EndGroup();
 
         }
 
