@@ -1,5 +1,6 @@
 ﻿using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
+using Dalamud.Game.Chat;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
@@ -15,6 +16,7 @@ using System.Timers;
 using WoLightning.Util;
 using WoLightning.Util.Types;
 using WoLightning.WoL_Plugin.Util;
+using static FFXIVClientStructs.FFXIV.Client.UI.Misc.CharaView.Delegates;
 using Version = WoLightning.WoL_Plugin.Util.Types.Version;
 
 namespace WoLightning.WoL_Plugin.Configurations
@@ -90,7 +92,7 @@ namespace WoLightning.WoL_Plugin.Configurations
             CheckFriendListTimer.Interval = 3000;
         }
 
-
+        
 
         private unsafe void CheckFriendList(object? sender, ElapsedEventArgs e)
         {
@@ -140,6 +142,61 @@ namespace WoLightning.WoL_Plugin.Configurations
             LastFriendAmount = 0;
         }
 
+        private void OnChatMessage(IHandleableChatMessage message)
+        {
+            try
+            {
+                
+                if (!SwappingAllowed || SwappingCommand.Length < 3) return;
+                if (message.Sender.TextValue == null || message.Sender.TextValue == "") return;
+                if (message.LogKind == XivChatType.StandardEmote || message.LogKind == XivChatType.CustomEmote) return;
+
+                Player? sender = null;
+                foreach (var payload in message.Sender.Payloads)
+                {
+                    if (payload.Type == PayloadType.Player) sender = new(payload);
+                }
+
+                if (sender == null) return;
+
+                Logger.Log(4, sender);
+
+                if (!sender.Equals(Controller)) return;
+
+                if ((int)message.LogKind <= 107 && message.LogKind != XivChatType.TellOutgoing) // Allow all possible social channels, EXCEPT Tell_Outgoing
+                {
+                    string messageE = StringSanitizer.LetterOrDigit(message.Message.ToString());
+
+                    if (!messageE.Contains(SwappingCommand)) return;
+
+                    var array = messageE.Split(SwappingCommand);
+                    if (array.Length != 2)
+                    {
+                        Logger.Log(3, "Command to Swap was heard, but Message was malformed.");
+                        Plugin.NotificationHandler.send($"Cannot swap Preset, as Message was malformed.", "Swap Failed", Dalamud.Interface.ImGuiNotification.NotificationType.Warning, new TimeSpan(0, 0, 5));
+                        return;
+                    }
+
+                    array[1] = array[1].Trim();
+                    Logger.Log(3, $"Swapping to \"{array[1]}\" via Command.");
+
+                    if (Plugin.Configuration.loadPreset(array[1]))
+                    {
+                        Plugin.NotificationHandler.send($"Swapping to Preset \"{array[1]}\"!", "Swap Success!", Dalamud.Interface.ImGuiNotification.NotificationType.Info, new TimeSpan(0, 0, 10));
+                        return;
+                    }
+                    Plugin.NotificationHandler.send($"No Preset named \"{array[1]}\" exists.", "Swap Failed", Dalamud.Interface.ImGuiNotification.NotificationType.Warning, new TimeSpan(0, 0, 10));
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error("ControlSettings | Something went wrong while handling message.");
+                Logger.Error(e);
+                Logger.Error(e.Message);
+            }
+        }
+
+        /*
         private void OnChatMessage(XivChatType type, int timestamp, ref SeString senderE, ref SeString messageE, ref bool isHandled)
         {
 
@@ -194,6 +251,7 @@ namespace WoLightning.WoL_Plugin.Configurations
                 Logger.Error(e.Message);
             }
         }
+        */
 
         private void OnEmoteIncoming(IPlayerCharacter character, ushort emoteId)
         {

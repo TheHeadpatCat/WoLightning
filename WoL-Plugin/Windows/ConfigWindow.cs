@@ -456,7 +456,7 @@ public class ConfigWindow : Window, IDisposable
             var Blacklist = Configuration.ActivePreset.Blacklist;
 
             IGameObject? st = Service.ObjectTable.LocalPlayer.TargetObject;
-            if (st != null && st.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.Player)
+            if (st != null && st.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.Pc)
             {
                 IPlayerCharacter st1 = (IPlayerCharacter)st;
                 if (SelectedPlayer == null || SelectedPlayer.Name != st1.Name.ToString())

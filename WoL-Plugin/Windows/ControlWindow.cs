@@ -420,7 +420,7 @@ namespace WoLightning.WoL_Plugin.Windows
         private void drawSelectController()
         {
             IGameObject? st = Service.ObjectTable.LocalPlayer.TargetObject;
-            if (st != null && st.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.Player)
+            if (st != null && st.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.Pc)
             {
                 IPlayerCharacter st1 = (IPlayerCharacter)st;
                 if (SelectedPlayer == null || SelectedPlayer.Name != st1.Name.ToString())

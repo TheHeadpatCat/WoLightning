@@ -1,4 +1,5 @@
 ﻿using Dalamud.Bindings.ImGui;
+using Dalamud.Game.Chat;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
 using Newtonsoft.Json;
@@ -58,8 +59,13 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
             Service.ChatGui.ChatMessage -= Check;
         }
 
+        private void Check(IHandleableChatMessage message)
+        {
+            Check(message.LogKind, message.Timestamp, message.Sender, message.Message, message.IsHandled);
+        }
+
         // All of the passed variables have to match with Plugin.ChatGui.ChatMessage - you can let this be generated for you if you are using Visual Studio or similiar
-        private void Check(XivChatType type, int timestamp, ref SeString senderE, ref SeString messageE, ref bool isHandled)
+        private void Check(XivChatType type, int timestamp, SeString senderE, SeString messageE, bool isHandled)
         {
             try
             {

@@ -50,7 +50,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             Service.Condition.ConditionChange -= HandleFlagUpdate;
         }
 
-        private void Check(ushort obj)
+        private void Check(uint obj)
         {
             try
             {

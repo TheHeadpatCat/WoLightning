@@ -49,7 +49,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
             {
                 if (Service.ObjectTable.LocalPlayer == null) return;
                 if (!TriggeringEmotes.Contains(emoteId)) return; // Emote isnt listed
-                if (target.ObjectKind != Dalamud.Game.ClientState.Objects.Enums.ObjectKind.Player) return; // We arent targeting a player - somehow.
+                if (target.ObjectKind != Dalamud.Game.ClientState.Objects.Enums.ObjectKind.Pc) return; // We arent targeting a player - somehow.
                 IPlayerCharacter character = (IPlayerCharacter)target;
                 Player targetedPlayer = new Player(character.Name.ToString(), (int)character.HomeWorld.RowId);
                 Trigger("You used a forbidden emote on " + targetedPlayer, targetedPlayer);

@@ -1,4 +1,5 @@
-﻿using Dalamud.Game.Text;
+﻿using Dalamud.Game.Chat;
+using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
 using System;
 using System.Collections.Generic;
@@ -33,7 +34,12 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
             IsRunning = false;
             Service.ChatGui.ChatMessage -= Check;
         }
-        private void Check(XivChatType type, int timestamp, ref SeString senderE, ref SeString messageE, ref bool isHandled)
+
+        private void Check(IHandleableChatMessage message)
+        {
+            Check(message.LogKind, message.Timestamp, message.Sender, message.Message, message.IsHandled);
+        }
+        private void Check(XivChatType type, int timestamp, SeString senderE, SeString messageE, bool isHandled)
         {
             try
             {

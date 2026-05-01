@@ -1,9 +1,11 @@
-﻿using Dalamud.Game.ClientState.Objects.SubKinds;
+﻿using Dalamud.Game.Chat;
+using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
 using System;
 using System.Text.Json.Serialization;
 using WoLightning.WoL_Plugin.Util;
+using static FFXIVClientStructs.FFXIV.Client.UI.Misc.CharaView.Delegates;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 {
@@ -38,6 +40,22 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             Service.ChatGui.ChatMessage -= Check;
         }
 
+        private void Check(IHandleableChatMessage message)
+        {
+            try
+            {
+                Player = Service.ObjectTable.LocalPlayer;
+                if (Player == null) return;
+                if (message == null || message.ToString() == null) return;
+                Logger.Log(4, $"{message.LogKind} {message.Sender} {message.Sender.TextValue} {message.Message.TextValue}");
+                if (message.Sender.TextValue != "" || (int)message.LogKind != 2114) return;
+                String messageE = message.Message.ToString();
+                if (messageE.Contains(LanguageStrings.MateriaMeldFailedTrigger())) Trigger("You failed to meld Materia!");
+            }
+            catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if (e.StackTrace != null) Logger.Error(e.StackTrace); }
+        }
+
+        /*
         private void Check(XivChatType type, int timestamp, ref SeString senderE, ref SeString messageE, ref bool isHandled)
         {
             try
@@ -52,5 +70,6 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
             }
             catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if (e.StackTrace != null) Logger.Error(e.StackTrace); }
         }
+        */
     }
 }
