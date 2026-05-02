@@ -26,7 +26,7 @@ namespace WoLightning.WoL_Plugin.Util
             Plugin = plugin;
             RateLimiter.Interval = 3000;
             RateLimiter.AutoReset = true;
-            RateLimiter.Elapsed += LowerLimit;
+            RateLimiter.Elapsed += LowerLimit; // you fucking idiot could have also just used timestamps
             RateLimiter.Start();
         }
 

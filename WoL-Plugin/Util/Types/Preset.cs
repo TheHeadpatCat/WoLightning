@@ -26,8 +26,14 @@ namespace WoLightning.Util.Types
 
         public bool AllowRulesInPvP { get; set; } = false;
 
+
+        public bool showTriggerMessage { get; set; } = false;
         public bool showTriggerNotifs { get; set; } = false;
         public bool showCooldownNotifs { get; set; } = false;
+
+        
+        
+        
 
         public bool isWhitelistEnabled { get; set; } = false;
         public List<Player> Whitelist { get; set; } = new();

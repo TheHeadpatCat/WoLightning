@@ -270,6 +270,21 @@ public class ConfigWindow : Window, IDisposable
         {
             if (Configuration.IsLockedByController) ImGui.BeginDisabled();
 
+
+            bool showTriggerMessages = Configuration.ActivePreset.showTriggerMessage;
+            if (ImGui.Checkbox("Show Trigger Message", ref showTriggerMessages))
+            {
+                Configuration.ActivePreset.showTriggerMessage = showTriggerMessages;
+                Configuration.SaveCurrentPreset();
+            }
+            ImGui.SameLine();
+            ImGui.TextDisabled(" (?)");
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.SetTooltip("Activating this will send a message in chat whenever you trigger a Rule");
+            }
+
+
             bool showTriggerNotifs = Configuration.ActivePreset.showTriggerNotifs;
             if (ImGui.Checkbox("Show Trigger Notifications", ref showTriggerNotifs))
             {

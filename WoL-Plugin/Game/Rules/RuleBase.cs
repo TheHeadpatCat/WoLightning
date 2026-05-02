@@ -103,8 +103,14 @@ namespace WoLightning.WoL_Plugin.Game.Rules
                 Triggered?.Invoke(overrideOptions);
             }
 
-            if ((noNotification == null || noNotification == false) && Plugin.Configuration.ActivePreset.showTriggerNotifs) Plugin.NotificationHandler.send(Text);
+            if (noNotification == null || noNotification == false)
+            {
+                if (Plugin.Configuration.ActivePreset.showTriggerNotifs)
+                    Plugin.NotificationHandler.send(Text);
 
+                if (Plugin.Configuration.ActivePreset.showTriggerMessage)
+                    Service.ChatGui.PrintError("[WoLightning] " + Text);
+            }
 
             ShockOptions.startCooldown();
             if (Plugin.Configuration.ActivePreset.showCooldownNotifs && ShockOptions.Cooldown > 0)

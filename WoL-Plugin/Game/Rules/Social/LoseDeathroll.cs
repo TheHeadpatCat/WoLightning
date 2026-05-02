@@ -43,7 +43,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
         {
             try
             {
-                if ((int)type == 2122 && messageE.Payloads.Find(pay => pay.Type == PayloadType.Icon) != null) // Deathroll channel and Icon found
+                if (type == XivChatType.RandomNumber && messageE.Payloads.Find(pay => pay.Type == PayloadType.Icon) != null) // Deathroll channel and Icon found
                 {
                     string message = messageE.ToString();
                     string[] parts = message.Split(" ");
