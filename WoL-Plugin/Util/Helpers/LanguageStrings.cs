@@ -140,6 +140,27 @@ namespace WoLightning.WoL_Plugin.Util
             return output;
         }
 
+        public static string SellMarketItemTrigger()
+        {
+            string output = "Unknown";
+            switch (Language)
+            {
+                case ClientLanguage.English:
+                    output = "you put up for sale";
+                    break;
+                case ClientLanguage.French:
+                    output = "Un servant a vendu une";
+                    break;
+                case ClientLanguage.German:
+                    output = "verkauft und"; // kinda scuffed, but german has a stupid sentence
+                    break;
+                case ClientLanguage.Japanese:
+                    output = "uh, no";
+                    break;
+            }
+            return output;
+        }
+
 
         #region Duty Types
 
