@@ -72,6 +72,9 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
                 if (Player.StatusFlags.HasFlag(Dalamud.Game.ClientState.Objects.Enums.StatusFlags.InCombat))
                 {
                     buffer = 5;
+                    lastHP = Player.CurrentHp;
+                    lastMaxHP = Player.MaxHp;
+                    lastPosition = Player.Position;
                     return;
                 }
 

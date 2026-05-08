@@ -267,6 +267,27 @@ namespace WoLightning.WoL_Plugin.Util
             return output;
         }
 
+        public static string DeepDungeonTrapLandmine()
+        {
+            string output = "Unknown";
+            switch (Language)
+            {
+                case ClientLanguage.English:
+                    output = "The landmine is triggered...";
+                    break;
+                case ClientLanguage.French:
+                    output = "Une mine s'est déclenchée et a explosé.";
+                    break;
+                case ClientLanguage.German:
+                    output = "Eine Mine ist explodiert!";
+                    break;
+                case ClientLanguage.Japanese:
+                    output = "--------";
+                    break;
+            }
+            return output;
+        }
+
         public static string DeepDungeonCofferBomb()
         {
             string output = "Unknown";

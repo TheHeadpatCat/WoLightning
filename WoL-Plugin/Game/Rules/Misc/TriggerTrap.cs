@@ -49,14 +49,23 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Misc
                 if (messageE == null || messageE.ToString() == null) { return; }
                 String message = messageE.ToString();
 
-                if (message.Contains(LanguageStrings.DeepDungeonTrap())) 
+                if (message.Contains(LanguageStrings.DeepDungeonTrap()) || message.Contains(LanguageStrings.DeepDungeonTrapLandmine()))
+                {
                     Trigger("You triggered a Trap!");
+                    return;
+                }
 
-                if(TriggeredMimic && message.Contains(LanguageStrings.DeepDungeonCofferMimic()))
+                if (TriggeredMimic && message.Contains(LanguageStrings.DeepDungeonCofferMimic()))
+                {
                     Trigger("You triggered a Mimic!");
+                    return;
+                }
 
                 if (TriggeredBomb && message.Contains(LanguageStrings.DeepDungeonCofferBomb()))
+                {
                     Trigger("You triggered a Bomb Coffer!");
+                    return;
+                }
 
             }
             catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if (e.StackTrace != null) Logger.Error(e.StackTrace); }
