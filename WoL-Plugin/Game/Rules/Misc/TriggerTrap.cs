@@ -4,6 +4,7 @@ using System.Text;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 {
+    [Serializable]
     public class TriggerTrap
     {
 

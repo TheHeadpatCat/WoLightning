@@ -13,6 +13,7 @@ using WoLightning.WoL_Plugin.Util.Helpers;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 {
+    [Serializable]
     public class TakeFalldamage : RuleBase
     {
         public override string Name { get; } = "Take Falldamage";

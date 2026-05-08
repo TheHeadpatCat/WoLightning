@@ -3,6 +3,8 @@ using System.Text.Json.Serialization;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 {
+
+    [Serializable]
     public class UseSkill : RuleBase
     {
         public override string Name { get; } = "Use a Skill";

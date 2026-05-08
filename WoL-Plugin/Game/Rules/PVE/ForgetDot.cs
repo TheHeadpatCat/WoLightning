@@ -16,6 +16,7 @@ using WoLightning.WoL_Plugin.Util.UI_Elements;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 {
+    [Serializable]
     public class ForgetDot : RuleBase
     {
         public override string Name { get; } = "Forget your Dot";

@@ -15,6 +15,7 @@ using WoLightning.WoL_Plugin.Util.UI_Elements;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Social
 {
+    [Serializable]
     public class DontSayWord : RuleBase
     {
         public override string Name { get; } = "Forget to say a Enforced Word";

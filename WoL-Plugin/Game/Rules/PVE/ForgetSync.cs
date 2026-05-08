@@ -4,7 +4,7 @@ using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 {
-    // Todo: implement
+    [Serializable]
     public class ForgetSync : RuleBase
     {
         public override string Name { get; } = "Forget to Level Synch";

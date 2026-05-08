@@ -11,6 +11,7 @@ using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 {
+    [Serializable]
     public class GreedRaise : RuleBase
     {
         public override string Name { get; } = "Greed on a Resurrection";

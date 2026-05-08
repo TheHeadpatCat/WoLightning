@@ -9,6 +9,7 @@ using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 {
+    [Serializable]
     public class UseMount : RuleBase
     {
         override public string Name { get; } = "Mount up";

@@ -17,6 +17,7 @@ using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 {
+    [Serializable]
     public class ForgetTankstance : RuleBase
     {
         public override string Name { get; } = "Forget Tankstance";

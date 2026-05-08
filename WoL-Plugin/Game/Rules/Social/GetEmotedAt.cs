@@ -10,6 +10,7 @@ using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Social
 {
+    [Serializable]
     public class GetEmotedAt : RuleBase
     {
         override public string Name { get; } = "Get Emoted at";

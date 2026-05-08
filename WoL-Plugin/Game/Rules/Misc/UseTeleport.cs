@@ -11,6 +11,7 @@ using WoLightning.WoL_Plugin.Util.UI_Elements;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Misc
 {
+    [Serializable]
     public class UseTeleport : RuleBase
     {
         override public string Name { get; } = "Use Teleportation";

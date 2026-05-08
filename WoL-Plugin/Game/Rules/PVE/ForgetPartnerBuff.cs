@@ -15,6 +15,7 @@ using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 {
+    [Serializable]
     public class ForgetPartnerBuff : RuleBase
     {
         public override string Name { get; } = "Forget a Partner Buff";

@@ -29,6 +29,8 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
         Savage = 8,
         Ultimate = 9,
     }
+
+    [Serializable]
     public class ForgetFood : RuleBase
     {
 

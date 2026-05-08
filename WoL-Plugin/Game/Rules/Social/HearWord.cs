@@ -15,6 +15,7 @@ using WoLightning.WoL_Plugin.Util.UI_Elements;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Social
 {
+    [Serializable]
     public class HearWord : RuleBase
     {
         public override string Name { get; } = "Hear a Trigger Word";

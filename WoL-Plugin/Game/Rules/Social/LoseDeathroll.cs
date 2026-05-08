@@ -8,6 +8,7 @@ using WoLightning.WoL_Plugin.Util;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.Social
 {
+    [Serializable]
     public class LoseDeathroll : RuleBase
     {
         override public string Name { get; } = "Lose a Deathroll";
