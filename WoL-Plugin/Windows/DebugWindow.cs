@@ -29,7 +29,7 @@ namespace WoLightning.WoL_Plugin.Windows
 
             SizeConstraints = new WindowSizeConstraints
             {
-                MinimumSize = new Vector2(25, 25),
+                MinimumSize = new Vector2(300, 200),
                 MaximumSize = new Vector2(2000, 2000)
             };
             clientTimer = new();
@@ -56,9 +56,9 @@ namespace WoLightning.WoL_Plugin.Windows
             if (Plugin == null) return;
 
 
-            ImGui.Text("timer : " + Plugin.Configuration.ActivePreset.ForgetPartnerBuff.RepeatTimer.Enabled);
+            ImGui.Text(Service.ClientState.MapId + "");
 
-
+            
 
         }
 

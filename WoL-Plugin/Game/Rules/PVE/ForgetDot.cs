@@ -92,6 +92,12 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
         {
             if (DotTimer.Enabled || GraceTimer.Enabled) return; // would love to just unsubscribe, but that leads to possible edge cases...
 
+            if(Player == null)
+            {
+                Player = Service.ObjectTable.LocalPlayer;
+                return;
+            }
+
             if (UpdateDelta > 0)
             {
                 UpdateDelta -= framework.UpdateDelta.TotalMilliseconds;

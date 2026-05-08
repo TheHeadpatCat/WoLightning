@@ -161,6 +161,90 @@ namespace WoLightning.WoL_Plugin.Util
             return output;
         }
 
+        public static string TreasureExpelledTrap()
+        {
+            string output = "Unknown";
+            switch (Language)
+            {
+                case ClientLanguage.English:
+                    output = "A trap is triggered! You are expelled from the area!";
+                    break;
+                case ClientLanguage.French:
+                    output = "Un piège se déclenche, vous expulsant de l'endroit !";
+                    break;
+                case ClientLanguage.German:
+                    output = "Eine Falle! Du wirst aus der Schatzkammer teleportiert ...";
+                    break;
+                case ClientLanguage.Japanese:
+                    output = "罠が作動し、宝物庫から強制転送された……";
+                    break;
+            }
+            return output;
+        }
+
+        public static string TreasureExpelledDevour()
+        {
+            string output = "Unknown";
+            switch (Language)
+            {
+                case ClientLanguage.English:
+                    output = "and wake far from the sanctum.";
+                    break;
+                case ClientLanguage.French:
+                    output = "vous aspire et vous expulse de l'endroit...";
+                    break;
+                case ClientLanguage.German:
+                    output = "saugt dich ein und spuckt dich aus der Altarhalle ...";
+                    break;
+                case ClientLanguage.Japanese:
+                    output = "に吸い込まれ、宝物庫から強制転送された……";
+                    break;
+            }
+            return output;
+        }
+
+        public static string TreasureExpelledWake()
+        {
+            string output = "Unknown";
+            switch (Language)
+            {
+                case ClientLanguage.English:
+                    output = "Your party wakes far from";
+                    break;
+                case ClientLanguage.French:
+                    output = "Votre équipe a été terrassée. Vous êtes expulsé";
+                    break;
+                case ClientLanguage.German:
+                    output = "Du bist der Glücksaltäre nicht länger würdig ...";
+                    break;
+                case ClientLanguage.Japanese:
+                    output = "全滅したことで、宝物庫から強制転送された……";
+                    break;
+            }
+            return output;
+        }
+
+        public static string TreasureExpelledWakeExtra()
+        {
+            string output = "Unknown";
+            switch (Language)
+            {
+                case ClientLanguage.English:
+                    output = "---------------";
+                    break;
+                case ClientLanguage.French:
+                    output = "---------------";
+                    break;
+                case ClientLanguage.German:
+                    output = "Ihr erwacht weit, weit weg vom Tresor Oneiron...";
+                    break;
+                case ClientLanguage.Japanese:
+                    output = "全滅したことで、ボルト・オネイロンから強制転送された……";
+                    break;
+            }
+            return output;
+        }
+        
 
         #region Duty Types
 
