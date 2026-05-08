@@ -1,5 +1,6 @@
 ﻿using Dalamud.Game.ClientState.Objects.SubKinds;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
+using System;
 
 namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 {

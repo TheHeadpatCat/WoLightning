@@ -77,6 +77,7 @@ namespace WoLightning.Util.Types
         public TakeFalldamage TakeFalldamage { get; set; } = new();
         public DutyPops DutyPops { get; set; } = new();
         public FailTreasureInstance FailTreasureInstance { get; set; } = new();
+        public TriggerTrap TriggerTrap { get; set; } = new();
         public SellMarketItem SellMarketItem { get; set; } = new();
         public ForgetFood ForgetFood { get; set; } = new();
         public SitOnFurniture SitOnFurniture { get; set; } = new();

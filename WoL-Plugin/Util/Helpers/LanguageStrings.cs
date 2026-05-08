@@ -90,7 +90,7 @@ namespace WoLightning.WoL_Plugin.Util
                     output = "Du würfelst eine ";
                     break;
                 case ClientLanguage.Japanese:
-                    output = "ダイス！ ---"; // Doesnt work since it always includes the name of the player
+                    output = "--------"; // Doesnt work since it always includes the name of the player
                     break;
             }
             return output;
@@ -134,7 +134,7 @@ namespace WoLightning.WoL_Plugin.Util
                     output = "Du kannst nicht angreifen, weil deine Stufe zu hoch ist.";
                     break;
                 case ClientLanguage.Japanese:
-                    output = "uh, no";
+                    output = "--------";
                     break;
             }
             return output;
@@ -155,7 +155,7 @@ namespace WoLightning.WoL_Plugin.Util
                     output = "verkauft und"; // kinda scuffed, but german has a stupid sentence
                     break;
                 case ClientLanguage.Japanese:
-                    output = "uh, no";
+                    output = "--------";
                     break;
             }
             return output;
@@ -230,10 +230,10 @@ namespace WoLightning.WoL_Plugin.Util
             switch (Language)
             {
                 case ClientLanguage.English:
-                    output = "---------------";
+                    output = "--------";
                     break;
                 case ClientLanguage.French:
-                    output = "---------------";
+                    output = "--------";
                     break;
                 case ClientLanguage.German:
                     output = "Ihr erwacht weit, weit weg vom Tresor Oneiron...";
@@ -244,7 +244,70 @@ namespace WoLightning.WoL_Plugin.Util
             }
             return output;
         }
-        
+
+
+        public static string DeepDungeonTrap()
+        {
+            string output = "Unknown";
+            switch (Language)
+            {
+                case ClientLanguage.English:
+                    output = "trap is triggered";
+                    break;
+                case ClientLanguage.French:
+                    output = "s'est déclenché.";
+                    break;
+                case ClientLanguage.German:
+                    output = "wurde ausgelöst";
+                    break;
+                case ClientLanguage.Japanese:
+                    output = "--------";
+                    break;
+            }
+            return output;
+        }
+
+        public static string DeepDungeonCofferBomb()
+        {
+            string output = "Unknown";
+            switch (Language)
+            {
+                case ClientLanguage.English:
+                    output = "The detonator is triggered! The treasure coffer is no more...";
+                    break;
+                case ClientLanguage.French:
+                    output = "Un piège s'est déclenché, faisant exploser le coffre au trésor.";
+                    break;
+                case ClientLanguage.German:
+                    output = "Eine Falle wurde ausgelöst und die Schatztruhe explodiert!";
+                    break;
+                case ClientLanguage.Japanese:
+                    output = "--------";
+                    break;
+            }
+            return output;
+        }
+
+        public static string DeepDungeonCofferMimic()
+        {
+            string output = "Unknown";
+            switch (Language)
+            {
+                case ClientLanguage.English:
+                    output = "The coffer...bares its fangs!";
+                    break;
+                case ClientLanguage.French:
+                    output = "Le coffre au trésor était en réalité";
+                    break;
+                case ClientLanguage.German:
+                    output = "Die Schatztruhe war in Wirklichkeit";
+                    break;
+                case ClientLanguage.Japanese:
+                    output = "--------";
+                    break;
+            }
+            return output;
+        }
 
         #region Duty Types
 
