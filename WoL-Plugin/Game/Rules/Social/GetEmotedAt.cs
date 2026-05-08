@@ -55,7 +55,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                 if (!TriggeringEmotes.Contains(emoteId)) return; // Emote isnt listed
                 if (player.ObjectKind != Dalamud.Game.ClientState.Objects.Enums.ObjectKind.Pc) return; // The Sender wasnt a player
                 Player sendingPlayer = new Player(player.Name.ToString(), (int)player.HomeWorld.RowId);
-                Trigger(sendingPlayer + " has used Emote " + emoteId + " on you!", sendingPlayer);
+                Trigger(sendingPlayer + " has used Emote " + Plugin.GameEmotes.getEmote(emoteId)!.Value.Name.ToString() + " on you!", sendingPlayer);
             }
             catch (Exception e) { Logger.Error(Name + " Check() failed."); Logger.Error(e.Message); if (e.StackTrace != null) Logger.Error(e.StackTrace); }
         }

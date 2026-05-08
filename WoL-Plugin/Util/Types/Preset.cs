@@ -74,6 +74,7 @@ namespace WoLightning.Util.Types
 
 
         // Misc Triggers
+        public TakeFalldamage TakeFalldamage { get; set; } = new();
         public DutyPops DutyPops { get; set; } = new();
         public SellMarketItem SellMarketItem { get; set; } = new();
         public ForgetFood ForgetFood { get; set; } = new();
