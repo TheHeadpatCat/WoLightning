@@ -322,12 +322,12 @@ public class ConfigWindow : Window, IDisposable
             ImGui.TextDisabled(" (?)");
             if (ImGui.IsItemHovered())
             {
-                ImGui.SetTooltip("This does not include PVP specific Rules. Those will always be active.");
+                ImGui.SetTooltip("This does not include PVP specific Rules. Those will are always active in PvP and disabled outside of it.");
             }
 
             ImGui.SetNextItemWidth(200);
             int ShownShockersIndex = (int)Configuration.ShownShockers;
-            if (ImGui.Combo("Shown Shockers", ref ShownShockersIndex, ["All", "Personal Only", "Shared Only", "None...?"], 4))
+            if (ImGui.Combo("Shown Devices in Selectors", ref ShownShockersIndex, ["All", "Personal Only", "Shared Only", "None...?"], 4))
             {
                 Configuration.ShownShockers = (ShownShockers)ShownShockersIndex;
                 Configuration.Save();
@@ -403,6 +403,16 @@ public class ConfigWindow : Window, IDisposable
             {
                 Rule.Draw();
             }
+
+            ImGui.Spacing();
+            ImGui.Spacing();
+            ImGui.Spacing();
+            ImGui.Text("Or maybe try having someone else take control?");
+            if(ImGui.Button("Open Control Settings##SocialControlButton"))
+            {
+                Plugin.ControlWindow.Toggle();
+            }
+
             ImGui.EndTabItem();
         }
     }

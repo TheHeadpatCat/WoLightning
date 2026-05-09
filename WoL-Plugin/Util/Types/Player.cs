@@ -42,10 +42,10 @@ namespace WoLightning.Util.Types
         Maduin = 407,
         Marilith = 404,
         Seraph = 405,
-        Cuchalainn = 900, // UNKNOWN
-        Golem = 901, // UNKNOWN
-        Kraken = 902, // UNKNOWN
-        Rafflesia = 903, // UNKNOWN
+        Cuchulainn = 408,
+        Golem = 411, 
+        Kraken = 409, 
+        Rafflesia = 410, 
 
         // Chaos Data Center
         Omega = 39,
@@ -68,10 +68,10 @@ namespace WoLightning.Util.Types
         Raiden = 403,
 
         // Shadow Data Center
-        Innocence = 904, // UNKNOWN
-        Pixie = 905, // UNKNOWN
-        Titania = 906, // UNKNOWN
-        Tycoon = 907, // UNKNOWN
+        Innocence = 413,
+        Pixie = 414, 
+        Titania = 412, 
+        Tycoon = 415,
 
         // Elemental Data Center
         Carbuncle = 45,
