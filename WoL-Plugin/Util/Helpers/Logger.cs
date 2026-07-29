@@ -100,8 +100,8 @@ namespace WoLightning.WoL_Plugin.Util
                     break;
 
                 case DebugLevel.Verbose:
-                    Service.PluginLog.Verbose(message);
-                    WriteLog("[Verbose] " + message);
+                    Service.PluginLog.Debug(message);
+                    WriteLog("[Debug+] " + message);
                     break;
 
                 case DebugLevel.Debug:

@@ -82,7 +82,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules
 
         virtual public void Trigger(string Text, Player? source = null, ShockOptions? overrideOptions = null, bool? noNotification = null)
         {
-            Logger.Log(WoLightning.Configurations.DebugLevel.Verbose, "Triggered: " + Text);
+            Logger.Log(2, "Triggered: " + Text);
 
             if (ShockOptions.hasCooldown() || !IsRunning || Plugin.IsFailsafeActive) { Logger.Log(3, " -> Aborted due to Cooldown."); return; }
             if (source != null && !Plugin.Configuration.ActivePreset.isPlayerAllowedToTrigger(source)) { Logger.Log(3, " -> Aborted due to Permissions."); return; }
@@ -95,11 +95,11 @@ namespace WoLightning.WoL_Plugin.Game.Rules
             }
             else
             {
-                Logger.Log(4, overrideOptions);
+                Logger.Log(2, overrideOptions);
                 overrideOptions.Validate();
-                Logger.Log(4, overrideOptions);
-                Logger.Log(4, "Executing " + Name + ".Triggered?");
-                Logger.Log(4, overrideOptions);
+                Logger.Log(2, overrideOptions);
+                Logger.Log(2, "Executing " + Name + ".Triggered?");
+                Logger.Log(2, overrideOptions);
                 Triggered?.Invoke(overrideOptions);
             }
 

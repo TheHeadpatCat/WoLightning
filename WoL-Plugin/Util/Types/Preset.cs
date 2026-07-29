@@ -98,7 +98,8 @@ namespace WoLightning.Util.Types
                 CreatorFullName = Plugin.LocalPlayer.getFullName();
             }
 
-            foreach (PropertyInfo property in this.GetType().GetProperties())
+            foreach (
+                var property in this.GetType().GetProperties())
             {
                 if (property.PropertyType.BaseType == typeof(RuleBase))
                 {
