@@ -11,6 +11,7 @@ using WoLightning.WoL_Plugin.Util.Helpers;
 using WoLightning.WoL_Plugin.Util.UI_Elements;
 using Emote = Lumina.Excel.Sheets.Emote;
 
+
 namespace WoLightning.WoL_Plugin.Windows
 {
     public class ControlWindow : Window, IDisposable
@@ -208,6 +209,7 @@ namespace WoLightning.WoL_Plugin.Windows
             ushort leashDistanceEmote = Plugin.ControlSettings.LeashDistanceEmote;
             bool leashShowDistanceWarning = Plugin.ControlSettings.LeashShowDistanceWarning;
             bool leashShowGraceWarning = Plugin.ControlSettings.LeashShowGraceWarning;
+            int leashOnDeathBehavior = Plugin.ControlSettings.LeashOnDeathBehavior;
 
             if (leashEmote == 0 || unleashEmote == 0 || leashDistanceEmote == 0)
             {
@@ -231,6 +233,7 @@ namespace WoLightning.WoL_Plugin.Windows
                 Plugin.ControlSettings.LeashDistanceEmote = leashDistanceEmote;
                 Plugin.ControlSettings.LeashShowDistanceWarning = leashShowDistanceWarning;
                 Plugin.ControlSettings.LeashShowGraceWarning = leashShowGraceWarning;
+                Plugin.ControlSettings.LeashOnDeathBehavior = leashOnDeathBehavior;
                 Plugin.ControlSettings.Save();
             }
 
@@ -256,7 +259,7 @@ namespace WoLightning.WoL_Plugin.Windows
             if (!Plugin.ControlSettings.LeashAllowed)
             {
                 ImGui.SameLine();
-                ImGui.Text("Options");
+                ImGui.Text("Device Options");
             }
             if (isOptionsOpen)
             {
@@ -353,6 +356,13 @@ namespace WoLightning.WoL_Plugin.Windows
             if (ImGui.Checkbox("Show Grace Warning", ref leashShowGraceWarning))
             {
                 Plugin.ControlSettings.LeashShowGraceWarning = leashShowGraceWarning;
+            }
+
+            ImGui.Text("On Death Behavior:");
+            ImGui.SetNextItemWidth(250);
+            if (ImGui.Combo("##LeashOnDeathBehaviorCombo", ref leashOnDeathBehavior, ["Stay active", "Pause until Revived", "Break Leash"], 3))
+            {
+                Plugin.ControlSettings.LeashOnDeathBehavior = leashOnDeathBehavior;
             }
 
             if (leashAllowed) ImGui.EndDisabled();

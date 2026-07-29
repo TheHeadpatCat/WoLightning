@@ -53,6 +53,8 @@ namespace WoLightning.WoL_Plugin.Configurations
         public int LeashShockScalingAmount { get; set; } = 5;
         public bool LeashShowDistanceWarning { get; set; } = true;
         public bool LeashShowGraceWarning { get; set; } = true;
+        public int LeashOnDeathBehavior { get; set; } = 0;
+
 
         public bool FullControl { get; set; } = false;
         public bool SafewordDisabled { get; set; } = false; // note, this doesnt actually disable the safeword... it just kinda fakes it.
@@ -418,6 +420,30 @@ namespace WoLightning.WoL_Plugin.Configurations
                 return;
             }
 
+            if (Plugin.LocalPlayerCharacter != null && Plugin.LocalPlayerCharacter.IsDead && LeashOnDeathBehavior == 2) //"Break"
+            {
+                 RemoveLeash();
+                 return;
+            }
+
+            if (Plugin.LocalPlayerCharacter != null && Plugin.LocalPlayerCharacter.IsDead && LeashOnDeathBehavior == 1)
+            {
+
+                if ((HasBeenWarned || HasBeenToldToFollow) && LeashShowDistanceWarning)
+                {
+                    Service.ChatGui.Print($"The leash has been paused.");
+                }
+
+                HasBeenToldToFollow = false;
+                HasBeenWarned = false;
+                LeashGraceTimer.Stop();
+                LeashGraceAreaTimer.Stop();
+                LeashShockTimer.Stop();
+                LeashShockAmount = 0;
+                return;
+            }
+
+
             if (ControllerReference == null)
             {
                 if (!HasBeenToldToFollow)
@@ -458,6 +484,11 @@ namespace WoLightning.WoL_Plugin.Configurations
             }
             else
             {
+                if (HasBeenWarned && LeashShowDistanceWarning)
+                {
+                    Service.ChatGui.Print($"You are within range of {Controller.Name}");
+                }
+
                 HasBeenWarned = false;
                 LeashGraceTimer.Stop();
                 LeashGraceAreaTimer.Stop();
@@ -469,6 +500,7 @@ namespace WoLightning.WoL_Plugin.Configurations
 
         private void OnGraceElapsed(object? sender, ElapsedEventArgs e)
         {
+
             if (LeashShowGraceWarning)
             {
                 Service.ToastGui.ShowError($"Get closer to {Controller.Name} or you will get shocked!");
@@ -480,6 +512,7 @@ namespace WoLightning.WoL_Plugin.Configurations
 
         private void OnGraceAreaElapsed(object? sender, ElapsedEventArgs e)
         {
+
             if (LeashShowGraceWarning)
             {
                 Service.ToastGui.ShowError($"Follow {Controller.Name} or you will get shocked!");
@@ -493,6 +526,12 @@ namespace WoLightning.WoL_Plugin.Configurations
         {
             Logger.Log(4, "Shock Elapsed!");
             ShockOptions newOpt = new();
+
+            if(!HasBeenWarned && !HasBeenToldToFollow)
+            {
+                LeashShockTimer.Stop();
+                return;
+            }
 
             try
             {
@@ -538,6 +577,7 @@ namespace WoLightning.WoL_Plugin.Configurations
         {
             if (Controller == null) return 0;
             if (Plugin.LocalPlayer == null) return 0;
+            if (Plugin.LocalPlayerCharacter != null && Plugin.LocalPlayerCharacter.IsDead && LeashOnDeathBehavior == 1) return 0; // "Pause on Death"
 
             ControllerReference = Controller.FindInObjectTable();
 
