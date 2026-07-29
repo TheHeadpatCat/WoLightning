@@ -9,11 +9,11 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
     public class FailMechanic : RuleBase
     {
         override public string Name { get; } = "Fail Mechanic";
-        override public string Description { get; } = "Triggers whenever you get a [Vulnerability Up] or [Damage Down]";
+        override public string Description { get; } = "Triggers whenever you get a [Vulnerability Up], a [Damage Down] or [Sustained Damage]";
         override public RuleCategory Category { get; } = RuleCategory.PVE;
 
         [JsonIgnore] IPlayerCharacter Player;
-        [JsonIgnore] ushort lastVulnUpStacks = 0, lastDamageDownStacks = 0;
+        [JsonIgnore] ushort lastVulnUpStacks = 0, lastDamageDownStacks = 0, lastSustainedDamage = 0;
 
         [JsonConstructor]
         public FailMechanic() { }
@@ -46,7 +46,7 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                 var Statuses = Player.StatusList;
                 if (Statuses == null || Statuses.Length == 0) { lastVulnUpStacks = 0; lastDamageDownStacks = 0; return; }
 
-                bool foundVuln = false, foundDamage = false;
+                bool foundVuln = false, foundDamage = false, foundSustained = false;
                 foreach (var Status in Statuses)
                 {
                     if (Status == null) continue;
@@ -72,10 +72,19 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                         continue;
                     }
 
+                    if (icon >= 219941 && icon <= 219956) // Sustained Damage
+                    {
+                        if (amount > lastSustainedDamage) Trigger("You have failed a Mechanic!");
+                        lastSustainedDamage = amount;
+                        foundSustained = true;
+                        continue;
+                    }
+
 
                 }
                 if (!foundVuln) lastVulnUpStacks = 0;
                 if (!foundDamage) lastDamageDownStacks = 0;
+                if (!foundSustained) lastSustainedDamage = 0;
             }
             catch (Exception ex)
             {
