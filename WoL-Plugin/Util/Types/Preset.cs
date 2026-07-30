@@ -64,9 +64,10 @@ namespace WoLightning.Util.Types
         public TakeDamage TakeDamage { get; set; } = new();
         public ForgetTankstance ForgetTankstance { get; set; } = new();
         public ForgetPartnerBuff ForgetPartnerBuff { get; set; } = new();
+        public LeaveLeylines LeaveLeylines { get; set; } = new();
         public GreedRaise GreedRaise { get; set; } = new();
         public ForgetDot ForgetDot { get; set; } = new();
-        public FailDash FailDast {  get; set; } = new();
+        public FailDash FailDash {  get; set; } = new();
         //public UseSkill UseSkill { get; set; }
         public ForgetSync ForgetSync { get; set; } = new();
 
