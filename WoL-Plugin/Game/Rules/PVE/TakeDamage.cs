@@ -94,7 +94,6 @@ namespace WoLightning.WoL_Plugin.Game.Rules.PVE
                     if (!isProportional) Trigger("You took damage!");
                     else
                     {
-
                         ShockOptions opts = new(ShockOptions);
 
                         opts.Intensity = (int)(ShockOptions.Intensity * difference);

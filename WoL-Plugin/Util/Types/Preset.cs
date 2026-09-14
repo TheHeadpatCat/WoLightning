@@ -32,8 +32,9 @@ namespace WoLightning.Util.Types
         public bool showCooldownNotifs { get; set; } = false;
 
         
-        
-        
+        public bool IsUsingNameCompatibilityMode { get; set; } = false;
+        public string NameCompatibilityModeName { get; set; } = string.Empty;
+
 
         public bool isWhitelistEnabled { get; set; } = false;
         public List<Player> Whitelist { get; set; } = new();
@@ -64,6 +65,7 @@ namespace WoLightning.Util.Types
         public TakeDamage TakeDamage { get; set; } = new();
         public ForgetTankstance ForgetTankstance { get; set; } = new();
         public ForgetPartnerBuff ForgetPartnerBuff { get; set; } = new();
+        public LowMP LowMP { get; set; } = new();
         public LeaveLeylines LeaveLeylines { get; set; } = new();
         public GreedRaise GreedRaise { get; set; } = new();
         public ForgetDot ForgetDot { get; set; } = new();

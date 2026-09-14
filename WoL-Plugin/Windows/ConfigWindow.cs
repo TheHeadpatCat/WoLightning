@@ -339,6 +339,38 @@ public class ConfigWindow : Window, IDisposable
                 ImGui.SetTooltip("Allows you to select which Shockers show up on clicking the \"Assign Shockers\" button.");
             }
 
+
+            bool nameCompatMode = Configuration.ActivePreset.IsUsingNameCompatibilityMode;
+            if (ImGui.Checkbox("Use Name-Change Compatibility Mode?", ref nameCompatMode))
+            {
+                Configuration.ActivePreset.IsUsingNameCompatibilityMode = nameCompatMode;
+                Configuration.SaveCurrentPreset();
+            }
+            ImGui.SameLine();
+            ImGui.TextDisabled(" (?)");
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.SetTooltip("This is for usecases where you use other mods to change your Name in the chat window." +
+                    "\nThe plugin will use the given name instead of your internal one for rules that need it.");
+            }
+
+            ImGui.SetNextItemWidth(200);
+            string nameCompatModeName = Configuration.ActivePreset.NameCompatibilityModeName;
+            if (ImGui.InputTextWithHint("##Compatibility Name","(Compatibility Name)", ref nameCompatModeName))
+            {
+                Configuration.ActivePreset.NameCompatibilityModeName = nameCompatModeName;
+                Configuration.SaveCurrentPresetScheduled();
+            }
+
+            /*
+            ImGui.SameLine();
+            if(ImGui.Button("Copy current Nameplate"))
+            {
+                //Todo implement
+            }
+            */
+
+
             if (Configuration.IsLockedByController) ImGui.EndDisabled();
 
             ImGui.Spacing();

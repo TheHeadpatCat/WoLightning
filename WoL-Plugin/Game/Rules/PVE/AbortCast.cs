@@ -1,6 +1,9 @@
 ﻿namespace WoLightning.WoL_Plugin.Game.Rules.PVE
 {
-    internal class AbortCast
+    public class AbortCast
     {
+
+
+
     }
 }

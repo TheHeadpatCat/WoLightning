@@ -87,10 +87,12 @@ namespace WoLightning.WoL_Plugin.Game.Rules.Social
                     if (payload.Type == PayloadType.Player) sender = new(payload);
                 }
 
-                Logger.Log(4, $"{Name} | Message from: " + senderE.TextValue + " comparing against " + Plugin.LocalPlayer.Name + " type: " + type.ToString());
+                string LocalPlayerName = Plugin.Configuration.ActivePreset.IsUsingNameCompatibilityMode ? Plugin.Configuration.ActivePreset.NameCompatibilityModeName : Plugin.LocalPlayer.Name!;
+
+                Logger.Log(4, $"{Name} | Message from: " + senderE.TextValue + " comparing against " + LocalPlayerName + " type: " + type.ToString());
 
                 string senderClean = StringSanitizer.PlayerName(senderE.TextValue);
-                if (sender == null && senderClean == Plugin.LocalPlayer.Name) sender = Plugin.LocalPlayer; // If there is no player payload, check if names match atleast.
+                if (sender == null && senderClean == LocalPlayerName) sender = Plugin.LocalPlayer; // If there is no player payload, check if names match atleast.
 
                 if (sender != Plugin.LocalPlayer && type == XivChatType.TellOutgoing) sender = Plugin.LocalPlayer;
 
