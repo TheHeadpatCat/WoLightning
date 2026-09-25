@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -194,7 +195,16 @@ namespace WoLightning.Clients.Pishock
 
                 Logger.Log(3, "Requesting Pishock Account information...");
 
-                Result = await HttpClient.GetAsync($"https://auth.pishock.com/Auth/GetUserIfAPIKeyValid?apikey={apikey}&username={username}");
+
+                if (!HttpClient.DefaultRequestHeaders.Contains("x-pishock-api-key") || HttpClient.DefaultRequestHeaders.GetValues("x-pishock-api-key").First() != apikey)
+                {
+                    HttpClient.DefaultRequestHeaders.Remove("x-pishock-api-key");
+                    HttpClient.DefaultRequestHeaders.Add("x-pishock-api-key", apikey);
+                }
+
+
+                Result = await HttpClient.GetAsync($"https://api.pishock.com/Account");
+
                 if (Result.StatusCode != HttpStatusCode.OK)
                 {
                     Logger.Error("Could not retrieve UserID from Pishock.");
