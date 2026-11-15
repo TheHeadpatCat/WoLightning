@@ -4,10 +4,16 @@ using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface.Windowing;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Numerics;
+using System.Xml.Linq;
 using WoLightning.Configurations;
 using WoLightning.Util.Types;
+using WoLightning.WoL_Plugin.Clients;
+using WoLightning.WoL_Plugin.Clients.Intiface;
+using WoLightning.WoL_Plugin.Clients.OpenShock;
+using WoLightning.WoL_Plugin.Clients.Pishock;
 using WoLightning.WoL_Plugin.Game.Rules;
 using WoLightning.WoL_Plugin.Util;
 using WoLightning.WoL_Plugin.Util.Helpers;
@@ -29,6 +35,11 @@ public class ConfigWindow : Window, IDisposable
 
     private bool isModalAddPresetOpen = false;
     private bool isModalDeletePresetOpen = false;
+    private bool isModalShockerSelectorOpen = false;
+    private List<ShockerPishock> globalPishocks = new List<ShockerPishock>();
+    private List<ShockerOpenShock> globalOpenshocks = new List<ShockerOpenShock>();
+    private List<DeviceIntiface> globalDevices = new List<DeviceIntiface>();
+    private bool globalGeneral = true, globalMaster = true, globalMisc = true, globalPVE = true, globalPVP = true, globalSocial = true;
 
     private string ModalAddPresetInputName = string.Empty;
 
@@ -369,6 +380,16 @@ public class ConfigWindow : Window, IDisposable
                 //Todo implement
             }
             */
+
+
+            DrawGlobalShockerSelector();
+
+            ImGui.SameLine();
+            ImGui.TextDisabled(" (?)");
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.SetTooltip("Lets you quickly set a Collection of Devices to ALL rules of a specific category!");
+            }
 
 
             if (Configuration.IsLockedByController) ImGui.EndDisabled();
@@ -718,6 +739,210 @@ public class ConfigWindow : Window, IDisposable
 
 
         }
+    }
+
+    private void DrawGlobalShockerSelector()
+    {
+        ImGui.SetNextItemWidth(ImGui.GetWindowWidth() / 4f - 30);
+        if (ImGui.Button($"Overwrite Selected Devices##GlobalAssignedDevices"))
+        {
+            globalPishocks.Clear();
+            globalOpenshocks.Clear();
+            globalDevices.Clear();
+            isModalShockerSelectorOpen = true;
+            ImGui.OpenPopup("Select Devices##GlobalDevicesSelectModal");
+        }
+
+        if (isModalShockerSelectorOpen) //setup modal
+        {
+            Vector2 center = ImGui.GetMainViewport().GetCenter();
+            ImGui.SetNextWindowPos(center, ImGuiCond.Appearing, new Vector2(0.5f, 0.5f));
+            ImGui.SetNextWindowSize(new Vector2(920, 900));
+        }
+
+        if (ImGui.BeginPopupModal("Select Devices##GlobalDevicesSelectModal", ref isModalShockerSelectorOpen,
+        ImGuiWindowFlags.NoResize | ImGuiWindowFlags.Popup))
+        {
+            if (Plugin.Authentification.GetDevicesCount() == 0)
+            {
+                ImGui.TextWrapped("The Shockers are still being loaded!" +
+                    "\nIf this doesn't change, please make sure that your" +
+                    "\nAccount Settings are properly set up!");
+                if (ImGui.Button($"Okay##okayShockerSelectorAbort", new Vector2(ImGui.GetWindowSize().X / 2, 25)))
+                {
+                    ImGui.CloseCurrentPopup();
+                }
+                ImGui.EndPopup();
+                return;
+            }
+
+
+
+            ImGui.Text("Please select all shockers that should be set for ALL Rules:");
+            ImGui.BeginGroup();
+            ImGui.Text("Available Pishock Devices:           ");
+            ImGui.BeginChild("PishockShockerList", new Vector2(280, 400));
+            foreach (var shocker in Plugin.Authentification.PishockShockers)
+            {
+                if (Plugin.Configuration.ShownShockers == ShownShockers.None) continue;
+                if (Plugin.Configuration.ShownShockers == ShownShockers.Personal && !shocker.isPersonal) continue;
+                if (Plugin.Configuration.ShownShockers == ShownShockers.Shared && shocker.isPersonal) continue;
+
+
+                bool isEnabled = globalPishocks.Find(sh => sh.getInternalId() == shocker.getInternalId()) != null;
+
+                if (ImGui.Checkbox($"##shockerbox{shocker.getInternalId()}", ref isEnabled))
+                { // this could probably be solved more elegantly
+                    if (isEnabled) globalPishocks.Add(shocker);
+                    else globalPishocks.RemoveAt(globalPishocks.FindIndex(sh => sh.getInternalId() == shocker.getInternalId()));
+                }
+                ImGui.SameLine();
+                if (!shocker.isPersonal)
+                {
+                    ImGui.BeginGroup();
+                    ImGui.Text(shocker.username);
+                    if (!shocker.isPaused) ImGui.TextColored(UIValues.ColorNameEnabled, shocker.name);
+                    else ImGui.TextColored(UIValues.ColorNameDisabled, "[Paused] " + shocker.name);
+                    ImGui.EndGroup();
+                    continue;
+                }
+                if (!shocker.isPaused) ImGui.TextColored(UIValues.ColorNameEnabled, shocker.name);
+                else ImGui.TextColored(UIValues.ColorNameDisabled, "[Paused] " + shocker.name);
+            }
+
+            ImGui.EndChild();
+            ImGui.EndGroup();
+
+            ImGui.SameLine();
+
+            ImGui.BeginGroup();
+            ImGui.Text("Available OpenShock Devices:           ");
+            ImGui.BeginChild("OpenShockShockerList", new Vector2(280, 400));
+            foreach (var shocker in Plugin.Authentification.OpenShockShockers)
+            {
+                bool isEnabled = globalOpenshocks.Find(sh => sh.getInternalId() == shocker.getInternalId()) != null;
+
+                if (ImGui.Checkbox($"##shockerbox{shocker.getInternalId()}", ref isEnabled))
+                { // this could probably be solved more elegantly
+                    if (isEnabled) globalOpenshocks.Add(shocker);
+                    else globalOpenshocks.RemoveAt(globalOpenshocks.FindIndex(sh => sh.getInternalId() == shocker.getInternalId()));
+                }
+                ImGui.SameLine();
+                if (!shocker.isPaused) ImGui.TextColored(UIValues.ColorNameEnabled, shocker.name);
+                else ImGui.TextColored(UIValues.ColorNameDisabled, "[Paused] " + shocker.name);
+            }
+            ImGui.EndChild();
+            ImGui.EndGroup();
+
+
+            ImGui.SameLine();
+
+            ImGui.BeginGroup();
+            ImGui.Text("Available Intiface Devices:");
+            ImGui.BeginChild("IntifaceDeviceList", new Vector2(280, 400));
+
+            foreach (var device in Plugin.Authentification.DevicesIntiface)
+            {
+
+                bool isEnabled = globalDevices.Find(sh => sh.Index == device.Index) != null;
+
+                if (ImGui.Checkbox($"##devicebox{device.Index}:{device.Name}", ref isEnabled))
+                { // this could probably be solved more elegantly
+                    if (isEnabled) globalDevices.Add(device);
+                    else globalDevices.RemoveAt(globalDevices.FindIndex(sh => sh.Index == device.Index));
+                }
+
+                ImGui.SameLine();
+
+                if (device.DisplayName != null && device.DisplayName.Length > 0) ImGui.TextWrapped("Index " + device.Index + ": " + device.DisplayName);
+                else ImGui.TextWrapped("Index " + device.Index + ": " + device.Name);
+            }
+
+            ImGui.EndChild();
+            ImGui.EndGroup();
+
+            ImGui.BeginGroup();
+            ImGui.Text("Select which Categories should be overwritten:");
+            ImGui.Checkbox("General Rules", ref globalGeneral);
+            ImGui.Checkbox("Social Rules", ref globalSocial);
+            ImGui.Checkbox("PVE Rules", ref globalPVE);
+            ImGui.Checkbox("PVP Rules", ref globalPVP);
+            ImGui.Checkbox("Master Rules", ref globalMaster);
+            ImGui.Checkbox("Misc Rules", ref globalMisc);
+            ImGui.EndGroup();
+
+            ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 2 - 170, ImGui.GetWindowSize().Y - 85));
+            ImGui.SetNextItemWidth(200);
+            int ShownShockersIndex = (int)Plugin.Configuration.ShownShockers;
+            if (ImGui.Combo("Shown Shockers", ref ShownShockersIndex, ["All", "Personal Only", "Shared Only", "None...?"], 4))
+            {
+                Plugin.Configuration.ShownShockers = (ShownShockers)ShownShockersIndex;
+                Plugin.Configuration.Save();
+            }
+            ImGui.SameLine();
+            ImGui.TextDisabled(" (?)");
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.SetTooltip("Allows you to select which Shockers show up on clicking the \"Assign Shockers\" button.");
+            }
+
+            ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 3 - 270, ImGui.GetWindowSize().Y - 45));
+            ImGui.BeginGroup();
+            if (ImGui.Button($"Apply to selected Categories##globalapply", new Vector2(ImGui.GetWindowSize().X / 3.33f, 0)))
+            {
+                // do the magic here
+
+                List<RuleBase> rules = new List<RuleBase>();
+                if (globalGeneral) rules.AddRange(RulesGeneral);
+                if (globalSocial) rules.AddRange(RulesSocial);
+                if (globalPVE) rules.AddRange(RulesPVE);
+                if (globalPVP) rules.AddRange(RulesPVP);
+                if (globalMaster) rules.AddRange(RulesMaster);
+                if (globalMisc) rules.AddRange(RulesMisc);
+
+                rules.ForEach(rule =>
+                {
+                    Logger.Log(4, "Overwriting Rule " + rule.Name + "...");
+                    rule.ShockOptions.ShockersPishock.Clear();
+                    rule.ShockOptions.ShockersPishock.AddRange(globalPishocks);
+
+                    rule.ShockOptions.ShockersOpenShock.Clear();
+                    rule.ShockOptions.ShockersOpenShock.AddRange(globalOpenshocks);
+
+                    rule.ShockOptions.DevicesIntiface.Clear();
+                    rule.ShockOptions.DevicesIntiface.AddRange(globalDevices);
+                });
+
+
+                globalPishocks.Clear();
+                globalOpenshocks.Clear();
+                globalDevices.Clear();
+                Logger.Log(4, "Overwriting completed.");
+                ImGui.CloseCurrentPopup();
+            }
+            ImGui.SameLine();
+            if (ImGui.Button($"Reset##globalresetall", new Vector2(ImGui.GetWindowSize().X / 3.33f, 0)))
+            {
+                globalPishocks.Clear();
+                globalOpenshocks.Clear();
+                globalDevices.Clear();
+            }
+            ImGui.SameLine();
+            if (ImGui.Button($"Cancel##globalcancel", new Vector2(ImGui.GetWindowSize().X / 3.33f, 0)))
+            {
+                globalPishocks.Clear();
+                globalOpenshocks.Clear();
+                globalDevices.Clear();
+                ImGui.CloseCurrentPopup();
+            }
+            ImGui.EndGroup();
+
+
+
+            ImGui.EndPopup();
+        }
+
+
     }
 
 

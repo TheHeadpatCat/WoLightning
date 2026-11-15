@@ -259,7 +259,7 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
                 
 
 
-                ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 2 - 170, ImGui.GetWindowSize().Y - 75));
+                ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 2 - 170, ImGui.GetWindowSize().Y - 85));
                 ImGui.SetNextItemWidth(200);
                 int ShownShockersIndex = (int)Plugin.Configuration.ShownShockers;
                 if (ImGui.Combo("Shown Shockers", ref ShownShockersIndex, ["All", "Personal Only", "Shared Only", "None...?"], 4))
@@ -274,7 +274,7 @@ namespace WoLightning.WoL_Plugin.Util.UI_Elements
                     ImGui.SetTooltip("Allows you to select which Shockers show up on clicking the \"Assign Shockers\" button.");
                 }
 
-                ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 3 - 170, ImGui.GetWindowSize().Y - 35));
+                ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 3 - 170, ImGui.GetWindowSize().Y - 45));
                 ImGui.BeginGroup();
                 if (ImGui.Button($"Apply##apply{Name}", new Vector2(ImGui.GetWindowSize().X / 3, 0)))
                 {
